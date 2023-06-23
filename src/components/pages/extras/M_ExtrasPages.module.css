@@ -1,0 +1,235 @@
+.iconStyle {
+    width:7.3vw;
+    height:7.3vw ;
+    margin-left: 1vw;
+    margin-right: 0.3vw;
+    margin-bottom: 0.57vh;
+}
+
+.iconStyleP {
+    width:8.3vw;
+    height:8.3vw ;
+    margin-left: 0.53vw;
+    margin-right: 0.3vw;
+    margin-bottom: 0.57vh;
+}
+
+.iconStyle1 {
+    width:9.7vw;
+    height:8.7vw ;
+    margin-left: -0.57vw;
+    margin-right: 0.3vw;
+    margin-bottom: 0.57vh;
+}
+
+.iconStyle1P {
+    width:9.3vw;
+    height:8.7vw ;
+    margin-left: -0.3vw;
+    margin-right: 0.3vw;
+    margin-bottom: 0.57vh;
+}
+
+.iconStyle3 {
+    width:8.7vw;
+    height:8.3vw ;
+    margin-right: 0.3vw;
+    margin-bottom: 0.57vh;
+}
+
+.iconStyle4 {
+    width:7.3vw;
+    height:7.3vw ;
+    margin-left: 1vw;
+    margin-top: 1.3vh;
+    border-radius: 1px;
+    margin-right: 3px;
+}
+
+.iconStyle4P {
+    width:7.3vw;
+    height:7.3vw ;
+    margin-left: 1.3vw;
+    margin-top: 1.3vh;
+    margin-bottom: 1vh;
+    border-radius: 1px;
+    margin-right: 3px;
+}
+
+.iconStyle4P {
+    width:7.3vw;
+    height:7.3vw ;
+    margin-left: 1.3vw;
+    margin-top: 1.3vh;
+    margin-bottom: 1vh;
+    border-radius: 1px;
+    margin-right: 3px;
+}
+
+.size72Vw{
+    min-width:72vw;    
+}
+
+.pageTitle {
+    font-size: 3.3vh;
+    font-weight: 770;
+    display: flex;
+    flex-direction: row;
+    margin-left: 3.7%;
+    margin-bottom: -2vh;
+    margin-top: 2.7vh;
+    padding-bottom: 1vh;
+}
+
+.classesListTitle{
+    margin-left: 3%;
+    margin-top: 1.6%;
+}
+
+.classesListSelect{
+    margin-left: 2.2%;
+    margin-top: 3%;
+}
+
+
+
+.progresBar{
+    width:700px;
+}
+
+.rowDisplay {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 2.7vh;
+    height: 6.7vh;   
+}
+
+.imageMargin1{
+    margin-top: -0.1vw;
+    width :2.7vw;
+    height:2.7vw;
+}
+
+.viewContent {
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: flex-start;
+}
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_mainContentPosition {
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: center;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    height:68.7vh;
+    width:93%;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    border-color: rgb(60, 160, 21);
+    border-radius: 7px 7px 7px 7px;
+}
+
+/*--------------------- Theme2 ----------------------- */
+.Theme2_mainContentPosition {
+    scroll-behavior:auto;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: center;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    height:68.7vh;
+    width:93%;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    border-color: rgb(35, 88, 187); ;
+    border-radius: 7px 7px 7px 7px;
+}
+
+/*--------------------- Theme3 ----------------------- */
+.Theme3_mainContentPosition {
+    scroll-behavior:auto;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: center;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    height:68.7vh;
+    width:93%;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    border-color: rgb(209, 30, 90);
+    border-radius: 7px 7px 7px 7px;
+}
+
+@media (min-width: 380px) and (max-width: 900px) {
+    .pageTitle{
+        font-size: 2.7vw;
+        font-weight: 770;
+        display: flex;
+        flex-direction: row;
+        margin-left: 3.7%;
+        margin-bottom: -2vw;
+    }
+
+    .rowDisplay {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-top: 6.7vw;
+        height: 5.7vw;
+    }
+}
+@media screen and (max-height: 420px) {
+    .pageTitle {
+        font-size: 3.3vw;
+        font-weight: 770;
+        display: flex;
+        flex-direction: row;
+        margin-left: 3.7%;
+        margin-bottom: -2vh;
+        margin-top:-28.7vh;
+        padding-bottom: 0vh;
+    }
+}
+/*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
+/*----------------------------horizontalement------------------------------*/
+@media screen and (min-width: 900px) {
+    .pageTitle {
+        font-size: 4.3vh;
+        font-weight: 770;
+        display: flex;
+        flex-direction: row;
+        margin-left: 3.7%;
+        margin-bottom: -2vh;
+        margin-top: 3.7vh;
+        padding-bottom: 1vh;
+    }
+}
+
+/*----------------------------Verticalement-----------------------------*/
+@media screen and (min-height: 900px) {
+
+    .pageTitle {
+        font-size: 3.3vw;
+        font-weight: 770;
+        display: flex;
+        flex-direction: row;
+        margin-left: 3.7%;
+        margin-bottom: -1.7vh;
+        margin-top: 1.7vh;
+        padding-bottom: 1vh;
+    }
+    
+}

@@ -1,0 +1,609 @@
+/*------------------------- CALENDAR --------------------*/
+.react-calendar__month-view__days {
+  border-style: solid;
+  border-color: rgb(60, 160, 21); 
+}
+
+ 
+button.react-calendar__tile.react-calendar__tile--now.react-calendar__tile--active.react-calendar__tile--range.react-calendar__tile--rangeStart.react-calendar__tile--rangeEnd.react-calendar__tile--rangeBothEnds.react-calendar__month-view__days__day{
+  background-color: rgb(60, 160, 21);
+  color:white
+}
+
+  
+/*------------------------------SIDENAV ------------------------*/ 
+/* ----------- Non-Retina Screens ----------- */
+ .side-menu {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+@media screen 
+and (min-device-width: 1200px) 
+and (max-device-width: 1600px) 
+and (-webkit-min-device-pixel-ratio: 1) { 
+  .sidenav-overlay{
+    width: 20vw;
+  }
+  .sidenav.side-menu.right-aligned{
+    width: 80vw;
+  }
+
+}
+
+/* ----------- Retina Screens ----------- */
+@media screen 
+and (min-device-width: 1200px) 
+and (max-device-width: 1600px) 
+and (-webkit-min-device-pixel-ratio: 2)
+and (min-resolution: 192dpi) { 
+  .sidenav-overlay{
+    width: 20vw;
+  }
+  .sidenav.side-menu.right-aligned{
+    width: 80vw;
+  }
+
+}
+  
+/*-----------PROGRESS BARS STYLE----------*/
+
+.bg-success {
+  background-color: rgb(7, 150, 14);
+}
+
+.bg-warning {
+  background-color: rgb(236, 140, 14);
+}
+
+.bg-info {
+  background-color: rgb(53, 119, 241);
+}
+
+.bg-danger {
+  background-color:red;
+}
+
+
+div.progress-bar{
+  padding-top: 0.5vh;
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+}
+
+
+div.progress {
+  background-color: #9b9c9c;
+  color: white;
+  /*height: 3.7vh;*/
+  /*width: 20vw;*/
+  display: flex;
+  flex-direction: row;
+  font-size: 0.77vw;
+}
+
+/*---------------------- INPUT TEXTBOX POUR MOBILE ---------------------*/
+
+@media screen and (max-height: 420px) {
+  div.input-field {
+    position: relative;
+    margin-top: 0.57vh !important;
+    margin-bottom: 3vh !important;
+  }
+
+}
+
+@media screen and (min-width: 200px) and (max-width: 640px) {
+ div.input-field {
+    position: relative;
+    margin-top: 0.57vh !important;
+    margin-bottom: -2.3vh !important;
+  } 
+}
+
+.input-field>label {
+  font-size: 0.8rem;
+}
+
+.input-field {
+  position: relative;
+  margin-top: 0.8rem;
+  margin-bottom: 8rem;
+}
+
+
+
+
+/******* Combobox du side content (main page)******/
+/*#annee div.select__input-container.css-6j8wv5-Input {
+  margin-top: -18px !important;  
+}
+
+#section div.select__input-container.css-6j8wv5-Input {
+  margin-top: -18px !important;
+}
+
+#cycle div.select__input-container.css-6j8wv5-Input {
+  margin-top: -18px !important;
+}
+
+#trimestre div.select__input-container.css-6j8wv5-Input {
+  margin-top: -18px !important;
+}
+
+#sequence div.select__input-container.css-6j8wv5-Input {
+  margin-top: -18px !important;
+}*/
+
+/******* Combobox du login (roles)******/
+#roles div.select__input-container.css-6j8wv5-Input {
+  margin-top: -7px !important;
+}
+
+span.select__indicator-separator.css-1okebmr-indicatorSeparato{
+  margin-top: -1px;
+  height:2vh;
+}
+
+/****************** Les Tableaux *******************/
+.css-i4bv87-MuiSvgIcon-root{
+  display: none !important;
+
+}
+
+
+/*les checkbox des tableaux*/
+.css-i4bv87-MuiSvgIcon-root{  
+  width: 0.7em !important;
+  height: 0.7em !important;
+}
+
+
+div.MuiDataGrid-main.css-204u17-MuiDataGrid-main{
+ overflow-y: scroll !important;
+}
+div.MuiDataGrid-columnHeaders.css-f3jnds-MuiDataGrid-columnHeaders {
+  min-width: 5vh   !important;
+  min-height: 5vh  !important;
+  line-height: 5vh !important;
+  background-color: rgb(6, 83, 134);
+ 
+}
+
+div.MuiDataGrid-virtualScroller.css-1w5m2wr-MuiDataGrid-virtualScroller {
+  margin-top: 4vh !important;
+  height: 51vh !important;
+}
+
+div.MuiDataGrid-footerContainer.css-17jjc08-MuiDataGrid-footerContainer {
+  background-color: rgb(6, 83, 134);
+  color:white;
+  min-height: 5vh !important;
+  height: 5vh;
+}
+
+.css-zylse7-MuiButtonBase-root-MuiIconButton-root.Mui-disabled{
+  background-color: transparent;
+  color: white !important;
+}
+
+.css-zylse7-MuiButtonBase-root-MuiIconButton-root.Mui-disabled{
+  background-color: transparent;
+  color: white;
+}
+
+.css-rtrcn9-MuiTablePagination-root:last-child{
+  color: white !important;
+  padding:0;
+}
+.css-pqjvzy-MuiSvgIcon-root-MuiSelect-icon{
+  color: white !important;
+
+}
+
+/*
+.css-1w5m2wr-MuiDataGrid-virtualScroller {
+  margin-top :4vh;
+}
+.css-f3jnds-MuiDataGrid-columnHeaders{
+  min-height: 5vh !important;
+  max-height: 5vh !important;
+  line-height: 56px;
+  background-color: rgb(100, 104, 100);
+  color: white;
+  font-size: 1vw;
+  font-weight: 800;
+}
+
+.MuiDataGrid-row{
+  min-height: 4.7vh !important;
+  max-height: 4.7vh !important;
+
+}*/
+
+
+
+/******************* Les Onglets *******************/
+
+/************** THEME 1 **************/
+.Theme1_menuLi:hover{
+  background-color:rgb(14, 94, 199);
+}
+
+.Theme1_menuLi.active{
+  background-color:rgb(14, 94, 199);
+}
+
+/************** THEME 2 **************/
+.Theme2_menuLi:hover{
+  background-color:rgb(60, 160, 21);
+}
+
+.Theme2_menuLi.active{
+  background-color:rgb(60, 160, 21);
+}
+
+/************** THEME 3 **************/
+.Theme3_menuLi:hover{
+  background-color:rgb(64, 49, 165);
+}
+
+.Theme3_menuLi.active{
+  background-color:rgb(64, 49, 165);
+}
+
+/******************* BUTTON DEFAULT ********************/ 
+.buttonDefault {
+  cursor: pointer;
+}
+
+.buttonDefault:hover{
+  cursor: pointer;
+}
+
+
+.buttonDefault.disable {
+  cursor: pointer;
+  background-color: rgb(133, 134, 133) !important;
+}
+
+.buttonDefault.disable:hover{
+  cursor: pointer;
+  background-color: rgb(133, 134, 133)!important;
+}
+
+
+
+/******************** INPUTS **********************/
+.formInput0{
+  height: 1rem !important;
+  width: 19.3vw !important;
+}
+
+.formInput{
+  height: 1.5rem !important;
+  width:23vw !important;
+}
+
+.formInput.medium{
+  height: 1.3rem !important;
+  width:12vw !important;
+}
+
+.formInput.small{
+  height: 1rem !important;
+  width:8vw !important;
+}
+
+
+/******************** EMPLOI DE TEMPS ***************/
+/*#matieres div {
+  cursor: pointer;
+  background-color: rgb(21, 122, 21)!important;
+  color:white;
+}*/
+
+#matieres div:hover{
+  cursor: pointer;
+  background-color: rgb(212, 143, 14)!important;
+}
+
+/*********** ANIMATIONS ************/   
+/****** MOVE TO LEFT ANIMS ******/
+.moveToLeft1 {
+  animation-duration: 0.7s;
+  animation-name: toLeft1;
+}
+
+@keyframes toLeft1 {
+  from {
+    margin-left: 0vw;
+  }
+
+  75% {
+    margin-left: -10vw;
+  }
+
+  to {
+    margin-left: -45.7vw; 
+  }
+}
+
+
+.moveToLeft2 {
+  animation-duration: 0.7s;
+  animation-name: toLeft2;
+}
+
+@keyframes toLeft2 {
+  from {
+      margin-left: 15vw;
+  }
+
+  75% {
+    margin-left: 0vw;
+  }
+
+  to {
+    margin-left: -45.7vw; 
+  }
+}
+
+
+.gotoLeft {
+  animation-duration: 0.7s;
+  animation-name: goLeft;
+ 
+}
+
+@keyframes goLeft {
+  from {
+      margin-left: 15vw;
+      background-color: white;
+  }
+
+ /* 50% {
+    margin-left: 15vw;
+    background-color: white;
+  }*/
+
+  to {
+    margin-left: 0vw; 
+    background-color: white;
+  }
+}
+
+
+
+/****** MOVE TO RIGHT ANIMS ******/
+.moveToRight1 {
+  animation-duration: 0.7s;
+  animation-name: toRight1;
+}
+
+@keyframes toRight1 {
+  from {
+      margin-left: 0vw;
+  }
+
+  75%{
+    margin-left: 10vw;
+  }
+
+  to {
+    margin-left: 15vw; 
+  }
+}
+
+
+.moveToRight2 {
+  animation-duration: 0.7s;
+  animation-name: toRight2;
+}
+
+@keyframes toRight2 {
+  from {
+    margin-left: -45.7vw;
+  }
+
+  75% {
+    margin-left: 0vw;
+  }
+
+  to {
+    margin-left: 15vw; 
+  }
+}
+
+.moveToRight3 {
+  animation-duration: 0.7s;
+  animation-name: toRight3;
+}
+
+@keyframes toRight3 {
+  from {
+    margin-left: -45.7vw;
+  }
+
+  75% {
+    margin-left: -15vw;
+  }
+
+  to {
+    margin-left: 0vw; 
+  }
+}
+
+.gotoRight {
+  animation-duration: 0.7s;
+  animation-name: goRight;
+}
+
+@keyframes goRight {
+  from {
+    margin-left: -15vw;
+    background-color: white;
+
+  }
+
+  /*50% {
+    margin-left: -15vw;
+    background-color: white;
+  }*/
+
+  to {
+    margin-left: 0vw; 
+    background-color: white;
+  }
+}
+
+
+/********************************** Les Checkboxes **********************************/
+input[type=checkbox]{
+  position: relative !important;
+  opacity: unset !important;
+  pointer-events: unset !important;
+}
+
+/********************************** Les Radios **********************************/
+input[type=radio]{
+  position: relative !important;
+  opacity: unset !important;
+  pointer-events: unset !important;
+}
+
+
+
+/********************************** Les Selects **********************************/
+
+select{
+  padding: unset !important;
+  display:unset !important;
+}
+
+
+/*////////////////////////////////////////// MOBILE VERSION STYLES //////////////////////////////////////////*/
+ 
+@media (min-width: 380px) and (max-width: 900px) {
+  .sidenav-overlay{
+    width: 5vw;
+  }
+  .sidenav.side-menu.right-aligned{
+    width: 95vw;
+  }
+}
+
+@media (min-width: 200px) and (max-width: 640px) {
+  .btn-small {
+    height: 5vh !important;
+    line-height: 5vh !important;
+    font-size: 3vw !important;
+  }
+
+  input[type=text],  input[type=password]{
+    font-size: 3vh !important;
+    margin: 2vh 0 5vh 0 !important;
+    height:5vh !important;
+  }
+
+ 
+  .input-field>label:not(.label-icon).active {
+    transform: translateY(-3px) scale(0.8) !important;
+    transform-origin: 0 0  !important;
+}
+
+.input-field>input[type]:-webkit-autofill:not(.browser-default)+label, .input-field>input[type=date]:not(.browser-default)+label, .input-field>input[type=time]:not(.browser-default)+label {
+    transform: translateY(-3px) scale(0.8) !important;
+    transform-origin: 0 0 !important;
+}
+
+/******************* Les Onglets *******************/
+
+/************** THEME 1 **************/
+
+.Theme1_menuLi:hover{
+  background-color:rgb(14, 94, 199);
+  min-width: 5vh;
+}
+
+.Theme1_menuLi.active{
+  background-color:rgb(14, 94, 199);
+  min-width: 5vh;
+}
+
+/************** THEME 2 **************/
+.Theme2_menuLi:hover{
+  background-color:rgb(60, 160, 21);
+  min-width: 5vh;
+}
+
+.Theme2_menuLi.active{
+  background-color:rgb(60, 160, 21);
+  min-width: 5vh;
+}
+
+/************** THEME 3 **************/
+.Theme3_menuLi:hover{
+  background-color:rgb(64, 49, 165);
+  min-width: 5vh;
+}
+
+.Theme3_menuLi.active{
+  background-color:rgb(64, 49, 165);
+  min-width: 5vh;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  div.select__value-container.select__value-container--has-value.css-319lph-ValueContainer{
+    margin-top: -17px;
+    font-weight: bold;
+    
+  }
+
+  span.select__indicator-separator {
+    margin-top: -1px;
+    height:12vh;
+  }
+
+  div.select__indicator.select__dropdown-indicator.css-tlfecz-indicatorContainer{
+    margin-top: -15px;
+    width: 20px;
+    height: 20px;
+  }
+
+  div.select__indicator.select__dropdown-indicator.css-tlfecz-indicatorContainer {
+    color: hsl(0, 0%, 80%);
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 1px;
+     -webkit-transition: color 150ms;
+    transition: color 150ms;
+    box-sizing: border-box;
+  }
+
+  div.select__control.select__select__control--isfocused.select__control--menu-is-open{
+    margin-top: -15px;
+    width: 20px;
+    height: 20px;
+  }
+  
+ 
+
+ }

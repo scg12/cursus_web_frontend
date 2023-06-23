@@ -1,0 +1,129 @@
+
+.titleHmself{
+    align-self: flex-start;
+    margin-top: 3.0vh;
+}
+
+
+.size72Vw{
+    min-width:72vw;    
+}
+
+.pageTitle {
+    position: absolute;
+    top: 14.3vh;
+    font-size: 1.3vw;
+    font-weight: 770;
+    background-color: rgba(241, 246, 248, 0.918);
+    display: flex;
+    flex-direction: row;
+    margin-left: 2.2%;
+    margin-bottom: 0.3vh;
+    /*margin-top: 23.7vh;   */
+
+}
+
+.classesListTitle{
+    margin-left: 3%;
+    margin-top: 1.6%;
+}
+
+.classesListSelect{
+    margin-left: 2.2%;
+    margin-top: 3%;
+}
+
+
+
+.progresBar{
+    width:700px;
+}
+
+.rowDisplay {
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 1px;
+    height:30px;
+}
+
+.imageMargin1{
+    width: 4.3vw;
+    height: 3.7vw;
+    align-self: flex-end;
+    padding-top: 1.7vh;
+}
+
+.viewContent {
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: flex-start;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_mainContentPosition {
+    position:absolute;
+    top:21vh;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    height:86vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;    
+    border-radius: 7px 7px 7px 7px;
+    border-color: rgb(60, 160, 21);
+}
+
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_mainContentPosition {
+    position:absolute;
+    top:21vh;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    height:86vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;    
+    border-radius: 7px 7px 7px 7px;
+    border-color: rgb(35, 88, 187); ;
+}
+
+
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_mainContentPosition {
+    position:absolute;
+    top:21vh;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    height:86vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;    
+    border-radius: 7px 7px 7px 7px;
+    border-color: rgb(209, 30, 90);
+}

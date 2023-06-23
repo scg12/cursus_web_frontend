@@ -1,0 +1,636 @@
+/******************************* Margins *******************************/
+.margLeft12{
+    margin-left: 12vw;
+}
+
+.margLeft2{
+    margin-left: 2vw;
+}
+
+.margLeft3{
+    margin-left: 3vw;
+}
+
+.margLeft5{
+    margin-left: 5vw;
+}
+
+.margLeft7{
+    margin-left: 7vw;
+}
+
+.margRight7{
+    margin-right: 7vw;
+}
+
+.margTop3{
+    margin-top: 3vh;
+}
+
+.margTop7{
+    margin-top: 7vh;
+}
+
+.margBottom3{
+    margin-bottom: 3vh;
+}
+
+.margBottom7{
+    margin-bottom: 7vh;
+}
+
+
+/*********************************** Styles *******************************/
+.comboBoxStyle{
+    font-weight: 600;
+    font-size: 0.97vw;
+    height:4.3vh;
+    border-radius:1vh;
+    border-style:solid;
+    border-color: rgb(128, 180, 248);
+    border-width: 0.47vh;
+    padding-left: 0.7vh !important;
+    padding-bottom: 0.7vh !important;  
+}
+
+.borderBottom{
+    border-bottom-style:solid;
+    border-width: 1.3px;
+}
+.buttonList{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+}
+
+
+.inputRow23{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    width:23vw;
+}
+
+.inputRow33{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    width:33vw;
+}
+
+.spaceAround{
+    justify-content: space-around;
+}
+
+.matiereProgress{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: fit-content;
+    margin-bottom: 1vh;
+    margin-right: 7vw;
+}
+
+.selectStyle{
+    display: flex;
+    justify-content: center;
+    margin-top: -1.3vh;
+}
+
+.bold{
+    font-weight: bold;
+}
+
+.fontNormal{
+    font-weight:normal;
+}
+
+
+.fontSize1{
+    font-size: 1vw;
+}
+
+.inputRow {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    width:100%;
+}
+
+
+.inputRowLeft {
+    display:flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-self: center;
+    width:100%;
+}
+
+
+.inputRowRight {
+    display:flex;
+    flex-direction: row;
+    justify-content:flex-end;
+    align-self: center;
+    width:100%;
+}
+
+
+
+.inputSection{
+    width:50vw;
+    display:flex;
+    flex-direction: column;
+    align-self: flex-start;
+
+}
+
+.right{
+    justify-content:flex-end;   
+}
+
+
+.inputRowLabel {
+    width:12vw;
+}
+
+.inputRowLabelSmall {
+    width:4vw;
+    font-size: 1vw;
+}
+
+
+.inputRowControl {
+    width:35vw;
+    height:5px;   
+}
+
+.formStyle {
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width:100%;
+    height:93%;
+}
+
+.formContaintStyle {
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    flex-wrap: wrap;
+    width:100%;
+    margin-top: -20vh;
+}
+
+.buttonRow { 
+    align-self: center;   
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-items:center;
+    width: 30%;
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.btnTextStyle {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    color: rgb(236, 238, 234);
+    font-size: 1vw;
+    font-weight: 555;
+    
+}
+
+.widgetIcon{
+    width:5vw;
+    height:4.5vw;
+}
+
+.photoStyle {
+    border-radius: 8px;
+    border-color: lightgray;
+    border-width: 2px;
+    border-style: solid;
+    align-self: center;
+    /*margin-top: 7px;*/
+}
+
+.imgStyle{
+    position: relative;
+    width:1.9vw;
+    height: 1.9vw;
+    border-radius: 3px;
+    margin-right: 5px;
+    border-style: solid;
+    border-width: 1.7px;
+    margin-left: 2.7px;
+   
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    
+}
+
+
+.PuceStyle {
+    width:2.3vw;
+    height:1.3vw;
+    margin-left: 7px;
+}
+
+.etabLogo{
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;   
+    align-self: flex-end;
+    /*margin-top: 7px;*/
+    margin-bottom: 7px;   
+    width:9vw; 
+}
+
+.logoImg{
+    width:7vw;
+    height:7vw;
+    border-radius: 3px;
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;   
+    /*border-color: ;*/
+    border-width: 0.2vw;
+    border-style: solid;
+}
+
+
+.btnSmallTextStyle {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    color: rgb(236, 238, 234);
+    font-size: 0.7vw;
+    font-weight: 555;
+    padding: 2px;
+}
+
+.gridTitle {
+    font-weight: 800;
+    font-size: 0.97vw;
+    align-self: flex-end;
+}
+
+.gridAction {
+    align-self: flex-start;
+    margin-bottom: 2px;
+}
+
+.gridTitleRow {
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    width:100%;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    /*border-bottom-color: rgb(60, 160, 21);;*/
+
+}
+
+.tableCell{
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    width:10px;
+    /*height: 12px;  */
+}
+
+.cellPointer {
+    cursor: pointer;
+}
+
+.gridColumn{
+   font-weight: 700;
+}
+
+.formTitle{
+    font-size: 1.13vw;
+    font-weight: 670;
+    align-self: center;
+    border-bottom-style:solid;
+    border-bottom-width: 1.3px;   
+}
+
+.margTop1{
+    margin-top: 1vw;
+}
+
+.formModal {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    width:37vw;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1.7px;
+    position:relative;
+    /*z-index: 1;*/
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+.noSelect{
+    background-color: transparent;
+}
+
+/************************ THEME 1 ***********************/
+.Theme1_BtnstyleSmall{
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:2vw;
+    height:2vw;
+    background-color: rgb(60, 160, 21);
+  
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+
+}
+
+.Theme1_BtnstyleSmall:hover {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:2vw;
+    height:2vw;
+    background-color: rgb(14, 94, 199);
+    
+   
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+
+}
+
+
+.Theme1_BtnstyleConfig {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(60, 160, 21);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213); 
+}
+
+
+.Theme1_Btnstyle {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(60, 160, 21);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+   
+}
+
+.Theme1_Btnstyle:hover {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4.3px;
+    width:7vw;
+    height:30px;
+    background-color: rgb(14, 94, 199);
+  
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+}
+
+/************************ THEME 2 ***********************/
+
+.Theme2_BtnstyleSmall{
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:2vw;
+    height:2vw;
+    background-color: rgb(35, 88, 187);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+
+}
+
+.Theme2_BtnstyleSmall:hover{
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:2vw;
+    height:2vw;
+    background-color: rgb(60, 160, 21);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+
+}
+
+
+.Theme2_BtnstyleConfig {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(35, 88, 187);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+   
+}
+
+.Theme2_Btnstyle {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(35, 88, 187);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+
+}
+
+.Theme2_Btnstyle:hover {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(60, 160, 21);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+}
+
+
+/************************ THEME 3 ***********************/
+
+.Theme3_BtnstyleSmall{
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:2vw;
+    height:2vw;
+    background-color: rgb(209, 30, 90);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+
+}
+
+
+.Theme3_BtnstyleSmall:hover {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:2vw;
+    height:2vw;
+    background-color: rgb(64, 49, 165);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+
+}
+
+
+.Theme3_BtnstyleConfig {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(209, 30, 90);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+}
+
+
+.Theme3_Btnstyle {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(174, 179, 174);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(209, 30, 90);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213); 
+
+}
+
+.Theme3_Btnstyle:hover {
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(174, 179, 174);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:30px;
+    background-color: rgb(64, 49, 165);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213); 
+}
+

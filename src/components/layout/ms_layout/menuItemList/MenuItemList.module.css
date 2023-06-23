@@ -1,0 +1,121 @@
+.size72Vw{
+    min-width:72vw;    
+}
+
+.size70Vw{
+    min-width: 70vw;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_menuItenList {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /*min-width: 72vw;*/
+    margin-bottom: 15px;
+    align-items: flex-start;
+    padding: 7px;
+    font-size: 1.09vw;
+
+}
+.Theme1_menuItenListGlobal{
+    display: flex;
+    flex-direction: column;
+    border-style: solid;
+    justify-content: flex-start;
+    /*min-width: 70vw;*/
+    border-color: rgb(60, 160, 21);
+    border-radius: 7px 7px 7px 7px;
+    /*margin-bottom: 15px;*/
+    align-items: flex-start;
+    padding: 7px;
+    font-size: 1.09vw;
+}
+
+.Theme1_menuHeader{
+    color: white;
+    border-radius: 3px 3px 3px 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    margin-bottom: 7px;
+    padding: 2px;
+    font-size: 1.7vh;
+    background-color: rgb(60, 160, 21);
+}
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_menuItenListGlobal{
+    display: flex;
+    flex-direction: column;
+    border-style: solid;
+    border-color: rgb(35, 88, 187); 
+    border-radius: 7px 7px 7px 7px;
+    margin-bottom: 15px;
+    padding: 7px;
+    font-size: 1.09vw;
+}
+
+.Theme2_menuItenList {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /*min-width: 72vw;*/
+    margin-bottom: 15px;
+    align-items: flex-start;
+    padding: 7px;
+    font-size: 1.09vw;
+
+}
+
+.Theme2_menuHeader{
+    color: white;
+    border-radius: 3px 3px 3px 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    margin-bottom: 7px;
+    padding: 2px;
+    font-size: 1.7vh;
+    background-color: rgb(35, 88, 187);
+}
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_menuItenListGlobal{
+    display: flex;
+    flex-direction: column;
+    border-style: solid;
+    border-color: rgb(209, 30, 90); 
+    border-radius: 7px 7px 7px 7px;
+    margin-bottom: 15px;
+    padding: 7px;
+    font-size: 1.09vw;
+}
+
+.Theme3_menuItenList {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /*min-width: 72vw;*/
+    margin-bottom: 15px;
+    align-items: flex-start;
+    padding: 7px;
+    font-size: 1.09vw;
+
+}
+
+.Theme3_menuHeader{
+    color: white;
+    border-radius: 3px 3px 3px 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    margin-bottom: 7px;
+    padding: 2px;
+    font-size: 1.7vh;
+    background-color: rgb(209, 30, 90);
+}
+

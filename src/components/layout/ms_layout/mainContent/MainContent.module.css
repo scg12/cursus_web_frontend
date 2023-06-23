@@ -1,0 +1,19 @@
+.Theme1_mainContent {
+    background-color:skyblue; 
+    margin-top: -29px; 
+    display: flex;
+    flex-direction: column;
+
+    z-index:1;
+  }
+
+  .Theme2_mainContent {
+    background-color:skyblue;  
+  }
+
+  .Theme3_mainContent {
+    background-color:skyblue; 
+    
+  }
+
+  

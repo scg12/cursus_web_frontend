@@ -1,0 +1,1021 @@
+/*///////////////////////////TOUTES LES DEVICES//////////////////////////*/
+
+.loadingImg{
+    height: 10vw;
+}
+.loading{
+    display:flex;
+    flex-Direction:column;
+    align-Items:center;
+    width:100%; 
+    height:3vw;
+    overflow:'hidden';
+}
+
+
+.loginContainer{
+    display: flex;
+    flex-direction: column;
+    height:93vh;
+    font-size: 0.7em;
+}
+
+.formTitle{
+    height: 15%;
+}
+
+.formContent{
+    margin-top: -25px;
+    font-size: 1.87vw;
+}
+
+
+.loginMainContent{
+    height: 70%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: white ;    
+}
+
+.mainContentPosition {
+    width: 75vw;
+    height: 50vh !important;
+    height:fit-content;
+    padding-bottom: 2vh;
+    align-self: center;
+    max-width: 370px;
+    
+    /*max-height: 300px;*/
+
+    border-radius: 10px;
+    border-color: rgb(218, 214, 214);
+    border-width: 0.5px;
+    border-style: solid;
+}
+
+
+.errorMsgStyle{
+    color:red;
+    font-weight: bold;
+}
+
+.linkStyle{
+    color:green;
+    font-weight: bold;
+}
+
+.langButton {
+    width:25px;
+    height:25px;
+    border-style:none;
+  }
+
+
+
+.aboutApp {
+    align-self: flex-start;
+    margin-right: -40vw;
+}
+
+
+
+.aboutAppTextStyle {
+    font-size: 1.7vh;    
+}
+
+.logoStyle {
+    margin-top: -3vh;
+    max-height: 70px;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+
+    .Theme1_header {
+        background-color:rgb(60, 160, 21);  
+        color:white;
+
+        -moz-box-shadow: 8px 8px 12px #aaa; 
+        -webkit-box-shadow: 8px 8px 12px  #aaa; 
+        box-shadow: 8px 8px 12px #555; 
+
+    }
+
+    .Theme1_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(7, 75, 153);
+        /*rgb(28, 107, 197)*/
+    }
+
+    .Theme1_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:green;
+    }
+
+    .Theme1_footer {
+        background-color:rgb(5, 107, 5);
+        color:white;
+        height:9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-top: solid 10px rgb(7, 75, 153);
+
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+         box-shadow: 8px -5px 12px #555; 
+         padding-left: 2%;
+    }
+    
+    .Theme1_widget {
+        height: 30px;
+        border-radius: 0px 0px 10px 10px;
+        position : relative;
+        z-index:3;
+    }
+    
+    .Theme1_widget_content {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: -2px;
+        margin-right: 10%;
+        font-size: small;
+        color: white;
+        background-color: rgb(14, 94, 199);
+        align-self: flex-end;
+
+        -moz-box-shadow: 8px 8px 12px #aaa; 
+        -webkit-box-shadow: 8px 8px 12px  #aaa; 
+        box-shadow: 8px 8px 12px #555; 
+    }
+    
+
+    div .Theme1_widget_content :hover {
+        cursor: pointer;
+        background-color: rgb(151, 150, 150);
+        border-radius: 3px;
+    } 
+
+/*--------------------- Theme2 ----------------------- */
+    
+    .Theme2_header {
+        background-color:rgb(35, 88, 187);  
+        color:white;
+
+        -moz-box-shadow: 8px 8px 12px #aaa; 
+        -webkit-box-shadow: 8px 8px 12px  #aaa; 
+        box-shadow: 8px 8px 12px #555; 
+    }
+
+    .Theme2_loginHeader{
+        height: 17%;
+        border-bottom: solid 5px rgb(60, 160, 21);
+    }
+
+    .Theme2_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(35, 88, 187);       
+    }
+
+ 
+    .Theme2_footer {
+        background-color:rgb(12, 32, 160); 
+        color:white; 
+        height: 15%;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-top: solid 10px rgb(60, 160, 21);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+         box-shadow: 8px -5px 12px #555; 
+
+         
+    }
+
+    .Theme2_widget {
+        height: 30px;
+        border-radius: 0px 0px 10px 10px;
+        position : relative;
+        z-index:3;
+    }
+    
+    .Theme2_widget_content {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: -2px;
+        margin-right : 15px;
+        font-size: small;
+        color: white;
+        background-color:rgb(60, 160, 21);
+        align-self: flex-end;
+
+        -moz-box-shadow: 8px 8px 12px #aaa; 
+        -webkit-box-shadow: 8px 8px 12px  #aaa; 
+        box-shadow: 8px 8px 12px #555; 
+    }
+    
+    div .Theme2_widget_content :hover {
+        cursor: pointer;
+        background-color: rgb(151, 150, 150);
+        border-radius: 3px;
+    } 
+
+/*--------------------- Theme3 ----------------------- */
+
+    .Theme3_header {
+        background-color: rgb(209, 30, 90);  
+        color:white;
+
+        -moz-box-shadow: 8px 8px 12px #aaa; 
+        -webkit-box-shadow: 8px 8px 12px  #aaa; 
+        box-shadow: 8px 8px 12px #555; 
+    }
+
+    .Theme3_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(209, 30, 90);       
+    }
+   
+    .Theme3_footer {
+        background-color:rgb(134, 4, 59);  
+        color:white;
+        height: 15%;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-top: solid 10px rgb(64, 49, 165);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+         box-shadow: 8px -5px 12px #555; 
+    }
+
+    .Theme3_widget {
+        height: 30px;
+        border-radius: 0px 0px 10px 10px;
+        position : relative;
+        z-index:3;
+    }
+    
+    .Theme3_widget_content {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: -2px;
+        margin-right : 15px;
+        font-size: small;
+        color: white;
+        background-color:rgb(64, 49, 165); 
+        align-self: flex-end;
+
+        -moz-box-shadow: 8px 8px 12px #aaa; 
+        -webkit-box-shadow: 8px 8px 12px  #aaa; 
+        box-shadow: 8px 8px 12px #555; 
+    }
+   
+    .Theme3_loginHeader{
+        height: 17%;
+        border-bottom: solid 5px rgb(64, 49, 165);
+    }
+
+    div .Theme1_widget_content :hover {
+        cursor: pointer;
+        background-color: rgb(151, 150, 150);
+        border-radius: 3px;
+    } 
+
+
+    
+
+   
+/*////////////////////////////////TELEPHONES/////////////////////////////*/
+/*----------------------------verticalement------------------------------*/
+@media screen and (min-width: 200px) and (max-width: 640px) {
+
+    .loginInput{
+        width:18vw;
+    }
+
+    .loadingImg{
+        height: 10vw;
+       
+    }
+    .loading{
+        display:flex;
+        flex-Direction:column;
+        align-Items:center;
+        width:100%; 
+        height:3vw;
+        overflow:'hidden';
+    }
+    
+    
+                
+    .loginContainer{
+        display: flex;
+        flex-direction: column;
+        height:93vh;
+        font-size: 0.7em;
+    }
+
+    .errorMsgStyle{
+        color:red;
+        font-weight: bold;
+        margin-top: -0.7vh;
+        margin-bottom: -1vh;
+    }
+    
+    .logoStyle {
+        margin-top: -0.33vh;
+        max-height: 12vh;
+    }
+
+            
+    .loginMainContent{
+        height: 81vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        background-color: white ;    
+    }
+
+    .mainContentPosition {
+        width: 89%;
+        height:37vh;
+        padding-bottom: 2vh;
+        align-self: center;
+        max-width: 87vw; 
+        max-height: 47vh;         
+    
+        border-radius: 10px;
+        border-color: rgb(218, 214, 214);
+        border-width: 0.5px;
+        border-style: solid;
+    }
+
+    .formContent{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+      
+        margin-top: -3.7vh;
+        font-size: 1.7vh;
+        padding-left: 3vw;
+        padding-right: 3vw;
+        width: 100%;
+    }
+
+    
+    /*--------------------- Theme1 ----------------------- */
+    .Theme1_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(7, 75, 153);
+    }
+
+    .Theme1_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:green;
+    }
+
+    .Theme1_footer {
+        background-color:rgb(5, 107, 5);
+        color:white;
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(7, 75, 153);
+
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+       
+    }
+    
+  
+ 
+    /*--------------------- Theme2 ----------------------- */   
+    .Theme2_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(60, 160, 21);
+    }
+
+    .Theme2_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(35, 88, 187);       
+    }
+
+    .Theme2_footer {
+        background-color:rgb(12, 32, 160); 
+        color:white; 
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(60, 160, 21);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555;
+        
+    }
+    
+    /*--------------------- Theme3 ----------------------- */
+    .Theme3_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(64, 49, 165);
+    }
+
+    .Theme3_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(209, 30, 90);       
+    }
+
+    .Theme3_footer {
+        background-color:rgb(134, 4, 59);  
+        color:white;
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(64, 49, 165);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+    }  
+    
+}
+
+/*----------------------------Horizontalement----------------------------*/
+@media screen and (max-height: 420px) {
+
+    .loginInput{
+        width:18vw;
+    }
+
+    .loadingImg{
+        height: 10vw;   
+        width: 13vw;    
+        margin-top: -3.87vw;
+
+    }
+
+    .loading{
+        display:flex;
+        flex-Direction:column;
+        align-Items:center;
+        width:100%; 
+        height:3vw;
+        overflow:'hidden';
+    }
+    
+    .formContent{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+      
+        margin-top: -3.7vh;
+        font-size: 1.7vw;
+        padding-left: 3vw;
+        padding-right: 3vw;
+        width: 100%;
+    }
+
+    .copyRight {
+        margin-left: 7px;
+        font-size: 2vw;
+    }
+      
+    .aboutApp {
+        align-self: flex-start;
+        display:flex;
+        flex-direction: column;
+        align-items: flex-end;
+        width:80%;
+        margin-right: 1vw;
+        margin-bottom: 1.3%;           
+    }
+      
+    .aboutAppTextStyle {
+        font-size:1.7vw;
+        /*width: 200px; */
+    }
+    
+    .loginContainer{
+        display: flex;
+        flex-direction: column;
+        height: 170vh;
+        font-size: 0.7em;
+    }
+
+    .loginMainContent{
+        height: 120vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        background-color: white;    
+    }
+
+    .mainContentPosition {
+        width: 75vw;
+        height: 100vh !important;
+        
+        padding-bottom: 2vh;
+        align-self: center;
+        max-width: 370px;
+        
+        /*max-height: 300px;*/
+    
+        border-radius: 10px;
+        border-color: rgb(218, 214, 214);
+        border-width: 0.5px;
+        border-style: solid;
+    }
+    
+    
+   
+
+    /*--------------------- Theme1 ----------------------- */
+    .Theme1_loginHeader{
+        height: 11%;
+        border-bottom: solid 5px rgb(7, 75, 153);
+        /*rgb(28, 107, 197)*/
+    }
+
+    .Theme1_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vw;
+        margin-bottom: 2vh;
+        color:green;
+    }
+
+    .Theme1_footer {
+        background-color:rgb(5, 107, 5);
+        color:white;
+        height: 13%;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(7, 75, 153);
+
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+        
+    }
+
+    /*--------------------- Theme2 ----------------------- */
+    .Theme2_loginHeader{
+        height: 11%;
+        border-bottom: solid 5px rgb(60, 160, 21);
+    }
+
+    .Theme2_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vw;
+        margin-bottom: 2vh;
+        color:rgb(35, 88, 187);       
+    }
+
+    .Theme2_footer {
+        background-color:rgb(12, 32, 160); 
+        color:white; 
+        height: 13%;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(60, 160, 21);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555;
+        
+    }
+
+    /*--------------------- Theme3 ----------------------- */
+    .Theme3_loginHeader{
+        height: 11%;
+        border-bottom: solid 5px rgb(64, 49, 165);
+    }
+
+    .Theme3_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vw;
+        margin-bottom: 2vh;
+        color:rgb(209, 30, 90);       
+    }
+
+    .Theme3_footer {
+        background-color:rgb(134, 4, 59);  
+        color:white;
+        height: 13%;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(64, 49, 165);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+    }
+    
+}
+
+
+/*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
+/*----------------------------horizontalement------------------------------*/
+@media screen and (min-width: 900px) {
+
+    .inputSpace{
+        margin-bottom: -1vh;
+        margin-top: 0.7vh;
+    }
+
+    .loadingImg{
+        height: 7vh;
+        width: 6vw;
+        margin-top: -5.7vh;
+        
+    }
+    .loading{
+        display:flex;
+        flex-Direction:column;
+        align-Items:center;
+        width:100%; 
+        height:3vh;       
+    }
+    
+  
+    .loginInput{
+        width:10vw;
+    }
+    
+    .loginContainer{
+        display: flex;
+        flex-direction: column;
+        height:87vh;
+        font-size: 0.7em;
+    }
+
+    .errorMsgStyle{
+        color:red;
+        font-weight: bold;
+        margin-top: -0.7vh;
+        margin-bottom: -1vh;
+    }
+    
+    .logoStyle {
+        margin-top: -0.33vh;
+        max-height: 12vh;
+    }
+
+            
+    .loginMainContent{
+        height: 81vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        background-color: white;    
+    }
+
+    .mainContentPosition {
+        width: 30vw;
+        height:53vh;
+        padding-bottom: 2vh;
+        align-self: center;
+        max-width: 30vw; 
+        max-height: 53vh;    
+    
+        border-radius: 10px;
+        border-color: rgb(218, 214, 214);
+        border-width: 0.5px;
+        border-style: solid;
+    }
+
+    .formContent{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+      
+        margin-top: -3.7vh;
+        font-size: 1.7vh;
+        padding-left: 3vw;
+        padding-right: 3vw;
+        width: 100%;
+    }
+
+    
+    /*--------------------- Theme1 ----------------------- */
+    .Theme1_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(7, 75, 153);
+    }
+
+    .Theme1_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:green;
+    }
+
+    .Theme1_footer {
+        background-color:rgb(5, 107, 5);
+        color:white;
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(7, 75, 153);
+
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+       
+    }
+    
+  
+ 
+    /*--------------------- Theme2 ----------------------- */   
+    .Theme2_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(60, 160, 21);
+    }
+
+    .Theme2_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(35, 88, 187);       
+    }
+
+    .Theme2_footer {
+        background-color:rgb(12, 32, 160); 
+        color:white; 
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(60, 160, 21);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555;
+        
+    }
+    
+    /*--------------------- Theme3 ----------------------- */
+    .Theme3_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(64, 49, 165);
+    }
+
+    .Theme3_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(209, 30, 90);       
+    }
+
+    .Theme3_footer {
+        background-color:rgb(134, 4, 59);  
+        color:white;
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(64, 49, 165);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+    }  
+}
+
+
+/*----------------------------Verticalement-----------------------------*/
+@media screen and (min-height: 900px) {
+
+    .loadingImg{
+        height: 10vw;
+        width: 10vh;
+        margin-top: -7.7vw;
+        
+    }
+    .loading{
+        display:flex;
+        flex-Direction:column;
+        align-Items:center;
+        width:100%; 
+        height:3vh;       
+    }
+
+    .loginInput{
+        width:18vw;
+    }
+    
+    
+    .loginContainer{
+        display: flex;
+        flex-direction: column;
+        height:93vh;
+        font-size: 0.7em;
+    }
+
+    .errorMsgStyle{
+        color:red;
+        font-weight: bold;
+        margin-top: -0.7vh;
+        margin-bottom: -1vh;
+    }
+    
+    .logoStyle {
+        margin-top: -0.33vh;
+        max-height: 12vh;
+    }
+
+            
+    .loginMainContent{
+        height: 81vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        background-color: white ;    
+    }
+
+    .mainContentPosition {
+        width: 60vw;
+        height:10vh;
+        padding-bottom: 2vh;
+        align-self: center;
+        max-width: 67vw; 
+        max-height: 37vh;    
+    
+        border-radius: 10px;
+        border-color: rgb(218, 214, 214);
+        border-width: 0.5px;
+        border-style: solid;
+    }
+
+    .formContent{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+      
+        margin-top: -3.7vh;
+        font-size: 1.7vh;
+        padding-left: 3vw;
+        padding-right: 3vw;
+        width: 100%;
+    }
+
+    
+    /*--------------------- Theme1 ----------------------- */
+    .Theme1_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(7, 75, 153);
+    }
+
+    .Theme1_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:green;
+    }
+
+    .Theme1_footer {
+        background-color:rgb(5, 107, 5);
+        color:white;
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(7, 75, 153);
+
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+       
+    }
+    
+  
+ 
+    /*--------------------- Theme2 ----------------------- */   
+    .Theme2_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(60, 160, 21);
+    }
+
+    .Theme2_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(35, 88, 187);       
+    }
+
+    .Theme2_footer {
+        background-color:rgb(12, 32, 160); 
+        color:white; 
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(60, 160, 21);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555;
+        
+    }
+    
+    /*--------------------- Theme3 ----------------------- */
+    .Theme3_loginHeader{
+        height: 10vh;
+        border-bottom: solid 5px rgb(64, 49, 165);
+    }
+
+    .Theme3_formHeader{
+        margin-left: 20px;        
+        font-weight:600;
+        font-size: 5vh;
+        margin-bottom: 2vh;
+        color:rgb(209, 30, 90);       
+    }
+
+    .Theme3_footer {
+        background-color:rgb(134, 4, 59);  
+        color:white;
+        height: 9vh;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 2%;
+        border-top: solid 10px rgb(64, 49, 165);
+
+        -moz-box-shadow: 8px -5px 12px #aaa; 
+        -webkit-box-shadow: 8px -5px 12px  #aaa; 
+        box-shadow: 8px -5px 12px #555; 
+    }  
+}
+
+
+/*/////////////////////////TABLETTES CARREES////////////////////////////*/
+
+
+
+
+   
+    
+
+
+
+ 
+ 
+  

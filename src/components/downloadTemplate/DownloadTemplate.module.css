@@ -1,0 +1,25 @@
+.Btnstyle {
+    font-size: 1vw;
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: 4.3px;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:7vw;
+    height:4.7vh;
+    background-color: rgb(61, 107, 233);
+    color:white;
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+   
+}
+
+.btnTextStyle{
+    color:white;
+    font-size: 0.9vw;
+}

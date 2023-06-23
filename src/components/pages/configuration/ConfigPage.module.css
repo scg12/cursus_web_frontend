@@ -1,0 +1,192 @@
+.size72Vw{
+    min-width:72vw;    
+}
+
+
+.titleHmself{
+    align-self: flex-end;
+    margin-top: 1.7vh;
+}
+
+
+.pageTitle {
+    position: absolute;
+    top: 14.3vh;
+    font-size:1.3vw; /*2vw;*/
+    font-weight:770;/*700;*/
+    background-color:rgba(241, 246, 248, 0.918); 
+    display: flex;
+    flex-direction: row;
+    justify-content:baseline;
+    margin-left: 2.2%;
+    margin-bottom: 0.3vh;
+    margin-top: 2px;
+}
+
+.rowDisplay {
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 7px;
+    height:30px;
+}
+
+.imageMargin1{
+    width: 2.3vw;
+    height: 2.7vw;
+    padding-top: 0.7vh;
+    align-self: flex-end;
+}
+
+.viewContent {
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: flex-start;
+}
+
+.imageStyle {
+    width:2.3vw;
+    height:1.3vw;
+    margin-left: 7px;
+}
+
+.MenuItemsection {
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:flex-start;
+    align-self: flex-start;
+    /*width:37vw;*/
+    margin-top: -1vh;
+    margin-right: 1vw;
+}
+
+
+.MenuGroup {
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    /*align-items:center;  */
+}
+
+
+.MenuItemSectionDetails_BLANK {
+    border-style:none;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+
+.Theme1_MenuItemSectionDetails {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items: center;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1.5px;
+    border-color: rgb(60, 160, 21);
+    min-width: 37vw;
+    min-height: 12vh;
+    padding:7px;
+}
+
+.Theme1_mainContentPosition {
+    position: absolute;
+    top: 21vh;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    height:86vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;
+    border-radius: 7px 7px 7px 7px;
+    
+    border-color: rgb(60, 160, 21);
+}
+
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_MenuItemSectionDetails {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items: center;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1.5px;
+    align-self: flex-start;
+    border-color: rgb(35, 88, 187);
+    min-width: 37vw;
+    min-height: 12vh;
+    padding:7px;
+}
+
+.Theme2_mainContentPosition {
+    position: absolute;
+    top: 21vh;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    height:86vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;
+    border-radius: 7px 7px 7px 7px;
+
+    border-color: rgb(35, 88, 187);
+}
+
+
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_MenuItemSectionDetails {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items: center;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1.5px;
+    align-self: flex-start;
+    border-color: rgb(209, 30, 90); 
+    min-width: 37vw;
+    min-height: 12vh;
+    padding:7px;
+}
+
+
+.Theme3_mainContentPosition {
+    position: absolute;
+    top: 21vh;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    height:86vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;
+    border-radius: 7px 7px 7px 7px;
+
+    border-color: rgb(209, 30, 90);
+}

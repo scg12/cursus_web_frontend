@@ -1,0 +1,488 @@
+.profList {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.profDivStyle{
+    width: 5vw;
+    height: 1.5vw;
+   /* background-color: rgb(134, 138, 133);
+    border-color: rgb(129, 131, 129);
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1.3px;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 13px;
+}
+
+.profTextSyle {
+    font-size: 0.65vw;
+    font-weight: 600;    
+}
+
+.profImgStyle{
+    display: flex;
+    flex-direction: column;
+    justify-content:space-around;
+    align-items: center;
+}
+
+.btnTextStyle {
+    font-size: 1.7vw;
+    font-weight: 400;
+    color:white
+}
+
+.btnTextStyleX {
+    font-size: 1.3vw;
+    font-weight: 400;
+    color:white
+}
+
+.btnTextStyleBlack{
+    font-size: 1.7vw;
+    font-weight: 400;
+    color: black;
+}
+
+.btnTextStyleRed {
+    font-size: 1.7vw;
+    font-weight: 400;
+    color: rgb(165, 12, 12);
+}
+
+
+.imgStyle {
+    position: relative;
+    width:1.5vw;
+    height: 1.5vw;
+    border-radius: 0.3px    
+}
+.imgStyleTeacher {
+    position: relative;
+    width:1.7vw;
+    height: 1.7vw;
+    border-radius: 0.3px    
+}
+
+
+
+
+.colorContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 3px;
+}
+
+.colorRow{
+    width:80%;
+    display:flex;
+    flex-direction: row;
+    justify-content:space-between;
+    align-items: center;
+    width:2.7vw;
+    margin-bottom: 1px;
+}
+
+.paletteContainer {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 2.7vw;
+    min-width: 2.7vw;
+
+    border-left-style:solid;
+    border-left-width: 2.5px;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+
+    border-bottom-style:solid;
+    border-bottom-width: 1.5px;
+
+    border-top-style:solid;
+    border-top-width:1.95px;
+
+    border-right-style: none;
+    margin-right: 0.3vw;
+    background-color: rgb(219, 217, 217);
+    /*background-color: rgb(208, 214, 219);*/
+    /*background-color: rgb(182, 180, 180);*/
+   
+}
+
+
+.buttonStyleGreenDark {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(22, 122, 22);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleGreen {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(60, 170, 60);
+ 
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleYellow {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(180, 219, 38);
+ 
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleYellowGold {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(228, 224, 7);
+ 
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleBleuDark {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(6, 29, 92);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+
+.buttonStyleBleu {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(43, 86, 206);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+
+.buttonStyleVioletDark {   
+    /*background-color: rgb(158, 8, 163);;*/
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(117, 25, 121);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleViolet {   
+    /*background-color: rgb(158, 8, 163);;*/
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(206, 16, 212);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleYellow {  
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(152, 204, 7);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+    /*background-color: rgb(158, 8, 163);*/
+    /*background-color: rgb(71, 212, 16);*/
+    /*background-color: rgb(176, 230, 27);*/
+}
+
+.buttonStyleOrange {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(219, 90, 15);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleRed {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(201, 10, 10);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStylePinkDark {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(95, 22, 65);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStylePink {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(212, 16, 92);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleGrey {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: grey;
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyleBlack {
+    width:1.3vw;
+    height:1.3vw;
+    background-color: rgb(26, 25, 25);
+    
+    border-style: solid;
+    border-color: black;
+    border-radius: 2px;
+    border-width: 0.7px;
+}
+
+.buttonStyle {
+    width:1.67vw;
+    height:1.67vw;
+
+    /*background-color: rgba(5, 35, 119, 0.904);*/
+    /*background-color: rgb(14, 94, 199);*/
+    background-color: rgb(91 133 200 / 90%);
+   
+    /*background-color: rgba(40, 69, 150, 0.904);*/
+    border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+    /*border-color: rgb(3, 36, 80);*/
+    border-color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+.buttonStyle:hover {
+    width:1.67vw;
+    height:1.67vw;
+
+
+    
+    /*background-color: rgb(85, 85, 85);*/
+    background-color: rgb(14, 94, 199);
+    color:white;
+
+    border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+    /*border-color: rgb(54, 54, 54);*/
+    border-color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+    
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_buttonStyle {
+    width:2vw;
+    height:2vw;
+
+    /*background-color: rgba(10, 141, 60, 0.904);*/
+    background-color:#555;
+    border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+    border-color: rgb(210, 212, 211);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+.Theme1_buttonStyle:hover {
+    width:1.97vw;
+    height:1.97vw;
+
+    background-color: rgb(14, 94, 199);
+    color:white;
+
+    border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+    border-color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+    
+    
+
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+/*--------------------- Theme2 ----------------------- */
+.Theme2_buttonStyle {
+    width:1.97vw;
+    height:1.97vw;
+
+    background-color: rgb(35, 88, 187);
+    border-color: rgb(12, 32, 160);
+
+    border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+    border-color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+.Theme2_buttonStyle:hover {
+    width:1.97vw;
+    height:1.97vw;
+
+    border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+   
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+   
+    background-color: rgb(60, 160, 21);
+    border-color: rgb(1, 78, 31);
+    color:white;
+
+
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+
+/*--------------------- Theme3 ----------------------- */
+.Theme3_buttonStyle {
+    width:1.97vw;
+    height: 1.97vw;
+
+    background-color: rgb(170, 166, 167);
+    border-color: rgb(151, 148, 149); 
+
+   border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+.Theme3_buttonStyle:hover {
+    width:1.97vw;
+    height:1.97vw;
+
+    border-radius: 4px;   
+    border-style: solid;
+    border-width: 1.3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3px;
+    
+    background-color: rgb(64, 49, 165);
+    color:white;
+
+    -moz-box-shadow: 0px 1.5px 1px #aaa; 
+    -webkit-box-shadow: 0px 1.5px 1px  #aaa; 
+    box-shadow: 0px 1.5px 1px #555; 
+}
+
+

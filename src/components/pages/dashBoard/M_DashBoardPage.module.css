@@ -1,0 +1,230 @@
+.size72Vw{
+    min-width:72vw;    
+}
+
+.titleHmself{
+    align-self: center;
+}
+
+
+.pageTitle {
+    font-size: 3.3vh;
+    font-weight: 770;
+    display: flex;
+    flex-direction: row;
+    margin-left: 3.7%;
+    margin-bottom: -2.3vh;
+}
+
+.classesListTitle{
+    margin-left: 3%;
+    margin-top: 1.6%;
+}
+
+.classesListSelect{
+    margin-left: 2.2%;
+    margin-top: 3%;
+}
+
+
+
+.progresBar{
+    width:700px;
+}
+
+.rowDisplay {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 7vh;
+    height: 6.7vh;
+}
+
+.imageMargin1{
+    margin-top: -0.4vw;
+    width :3.1vw;
+    height:3.1vw;
+}
+
+.viewContent {
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: flex-start;
+}
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_mainContentPosition {
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: center;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    width:93%;
+    height:68.7vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    border-color: rgb(60, 160, 21);
+    border-radius: 7px 7px 7px 7px;
+}
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_mainContentPosition {
+    scroll-behavior:auto;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: center;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    height:68.7vh;
+    width:93%;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    border-color: rgb(35, 88, 187); ;
+    border-radius: 7px 7px 7px 7px;
+}
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_mainContentPosition {
+    scroll-behavior:auto;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: center;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    height:68.7vh;
+    width:93%;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    border-color: rgb(209, 30, 90);
+    border-radius: 7px 7px 7px 7px;
+}
+
+@media (min-width: 380px) and (max-width: 900px) {
+    .pageTitle{
+        font-size: 2.7vw;
+        font-weight: 770;
+        display: flex;
+        flex-direction: row;
+        margin-left: 3.7%;
+        margin-bottom: -2vw;
+    }
+
+    .rowDisplay {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-top: 10.7vw;
+        height: 5.7vw;
+    }
+}
+
+/*///////////////////////////////////TELEPHONES/////////////////////////////*/
+/*----------------------------horizontalement------------------------------*/
+@media screen and (max-height: 420px) {
+    .sectionTitle {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-weight: 670;
+        align-self: center;
+        transform: rotate(-90deg);
+        width: 33vh;
+        height: 2vw;
+        border-style: solid;
+        border-width: 1.3px;
+        margin-left: -6.7vw;
+        font-size: 2vh;   
+    } 
+
+    .Theme1_mainContentPosition {
+        position :absolute;
+        top:33vh;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-self: flex-start;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        height: 100vh;
+        overflow-y: scroll;
+        border-style: solid;
+        min-width: 78vw;
+        border-radius: 3px 3px 3px 3px;
+        overflow-y: scroll;
+        
+        border-color: rgb(60, 160, 21);
+    }
+    
+}
+
+/*----------------------------Verticalement-----------------------------*/
+
+@media screen and (max-width: 420px) {
+    .sectionTitle {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-weight: 670;
+        align-self: center;
+        transform: rotate(-90deg);
+        width: 33vh;
+        height: 4vw;
+        border-style: solid;
+        border-width: 1.3px;
+        margin-left: -6.7vw;
+        font-size: 2vh;   
+    }
+}
+
+/*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
+/*----------------------------horizontalement------------------------------*/
+@media screen and (min-width: 900px) {
+    .sectionTitle {
+        margin-left: -8.53vw;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-weight: 670;
+        align-self: center;
+        transform: rotate(-90deg);
+        width: 33vh;
+        height: 2vw;
+        border-style: solid;
+        border-width: 1.3px;
+        font-size: 2vh;   
+    }   
+}
+
+/*----------------------------Verticalement-----------------------------*/
+@media screen and (min-height: 900px) {
+    .sectionTitle {       
+        margin-left: -12.47vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-weight: 670;
+        align-self: center;
+        transform: rotate(-90deg);
+        width: 33vh;
+        height: 4vw;
+        border-style: solid;
+        border-width: 1.3px;       
+        font-size: 2vh;   
+    }
+
+}

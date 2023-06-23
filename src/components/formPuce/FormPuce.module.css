@@ -1,0 +1,59 @@
+.imgStyle {
+    width:3.3vw;
+    height:3.3vw;
+    margin-left: 7px;
+}
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_menuLibelle{
+    align-self:center;
+    color:rgb(60, 160, 21); 
+    font-weight: 670;
+    font-size: 1vw;
+}
+
+.Theme1_puce{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+    /*background-color: rgb(60, 160, 21);*/
+}
+
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_menuLibelle{
+    align-self:center;
+    color:rgb(35, 88, 187); 
+    font-weight: 670;
+    font-size: 1vw;
+}
+
+.Theme2_puce{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+   /* background-color: rgb(35, 88, 187);*/
+}
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_menuLibelle{
+    align-self:center;
+    color:rgb(209, 30, 90); 
+    font-weight: 670;
+    font-size: 1vw;
+}
+
+.Theme3_puce{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    /* background-color: rgb(209, 30, 90);*/
+}
+
+

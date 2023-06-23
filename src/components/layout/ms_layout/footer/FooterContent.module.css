@@ -1,0 +1,104 @@
+
+.copyRight {
+  margin-left: 7px;
+  font-size: 2vh;
+}
+
+.aboutApp {
+  align-self: flex-end;
+  width:200px;
+  margin-right: 0%;
+  margin-bottom: 2%;
+}
+
+.aboutAppTextStyle {
+  font-size: x-small;
+  width: 200px; 
+}
+
+.logoStyle {
+  max-height: 8.7vh;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+
+.Theme1_footer {
+  border-top: solid 8px rgb(7, 75, 153);
+  background-color:rgb(5, 107, 5);
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color:white;
+  position: relative;
+  z-index: 3;
+  height: 12.8vh;
+
+  -moz-box-shadow: 8px -5px 12px #aaa; 
+  -webkit-box-shadow: 8px -5px 12px  #aaa; 
+   box-shadow: 8px -5px 12px #555; 
+}
+
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_footer {
+  border-top: solid 8px rgb(60, 160, 21);
+  background-color:rgb(12, 32, 160); 
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color:white;
+  z-index: 3;
+  height: 12.8vh;
+
+  -moz-box-shadow: 8px -5px 12px #aaa; 
+  -webkit-box-shadow: 8px -5px 12px  #aaa; 
+   box-shadow: 8px -5px 12px #555; 
+}
+
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_footer {
+  border-top: solid 8px rgb(64, 49, 165);
+  background-color:rgb(134, 4, 59); 
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color:white; 
+  z-index: 3;
+  height: 12.8vh;
+
+  -moz-box-shadow: 8px -5px 12px #aaa; 
+  -webkit-box-shadow: 8px -5px 12px  #aaa; 
+   box-shadow: 8px -5px 12px #555; 
+}
+
+@media (min-width: 380px) and (max-width: 700px) {
+  .copyRight {
+    margin-left: 7px;
+    font-size: 2vw;
+  }
+
+  .logoStyle {
+    max-height: 7.3vw;
+    margin-top: -2vh;
+  }
+}
+
+@media screen and (max-height: 420px) {
+  .copyRight {
+    margin-left: 7px;
+    font-size: 2vw;
+  }
+
+  .logoStyle {
+    max-height: 7.3vw;
+    margin-top: -3.7vh;
+  }
+}
+
+
+  
+  

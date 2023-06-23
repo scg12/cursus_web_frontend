@@ -1,0 +1,272 @@
+.Theme1_BtnstyleConfig {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: 4.3px;
+    
+    width:auto;
+    height:1.7vw;
+    padding-left: 3px;
+    padding-right: 3px;
+    background-color: rgb(44, 60, 97);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213); 
+}
+
+.btnTextStyle {
+    font-size: 0.83vw;
+    font-weight: 400;
+    color:white
+}
+
+
+.selectZone{
+    display:flex;
+    flex-direction: row;
+    justify-content:flex-start;
+    align-items: flex-start;
+    align-self: flex-start;
+    margin-top: 1.3vh;
+}
+
+.labelTitle{
+    font-size: 0.87vw;
+    font-weight: 900;
+    align-self: flex-start;
+    margin-right: 3px;
+}
+
+.comboBoxStyle{
+    font-weight: 600;
+    font-size: 0.97vw;
+    height:4.3vh;
+    border-radius:1vh;
+    border-style:solid;
+    border-color: rgb(128, 180, 248);
+    border-width: 0.47vh;
+    padding-left: 0.7vh !important;
+    padding-bottom: 0.7vh !important;  
+}
+
+
+
+.column25{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 18vw;
+    border-right: 1px solid black;
+
+}
+
+.column26{
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-width:25.5vw;  
+    border-right: 1px solid black;
+}
+
+.column30{
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-width:30vw;  
+    border-right: 1px solid black;
+}
+
+
+
+.dashBoardRow{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    border-bottom: 1px solid black;
+    min-height: 33vh;
+}
+
+.dashBoardRow27{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    border-bottom: 1px solid black;
+    height: 27vh;
+}
+
+.sectionTitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-weight: 670;
+    align-self: center;
+    transform: rotate(-90deg);
+    width: 33vh;
+    height: 2vw;
+    border-style: solid;
+    border-width: 1.3px;
+    margin-left: -6.7vw;
+    font-size: 2vh;   
+}
+
+.size72Vw{
+    min-width:72vw;    
+}
+
+
+.titleHmself{
+    align-self: flex-end;
+    margin-top: 2.7vh;
+}
+
+
+.pageTitle {
+    font-size: 1.3vw;
+    font-weight: 770;
+    background-color: rgba(241, 246, 248, 0.918);
+    display: flex;
+    flex-direction: row;
+    margin-left: 2.2%;
+    margin-bottom: 0.3vh;
+    margin-top: 23.7vh;
+
+}
+
+.classesListTitle{
+    margin-left: 3%;
+    margin-top: 1.6%;
+}
+
+.classesListSelect{
+    margin-left: 2.2%;
+    margin-top: 3%;
+}
+
+
+
+.progresBar{
+    width:700px;
+}
+
+.rowDisplay {
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 7px;
+    height:30px;
+}
+
+.imageMargin1{
+    margin-top: 1.3vw;
+    width :5.7vw;
+    height:3vw;
+}
+
+.viewContent {
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: flex-start;
+}
+
+.dashBoardRow{
+    display:flex;
+    flex-direction: row;
+    justify-content:flex-start;
+   
+}
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_mainContentPosition {
+    position :absolute;
+    top:18vh;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    height: 87vh;
+    overflow-y: scroll;
+    border-style: solid;
+    min-width: 78vw;
+    border-radius: 3px 3px 3px 3px;
+    overflow-y: scroll;
+    
+    border-color: rgb(60, 160, 21);
+}
+
+.Theme1_sectionBg{
+    background-color: rgb(60, 160, 21);
+    color:white;
+    text-transform: uppercase;
+}
+
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_mainContentPosition {
+    position :absolute;
+    top:18vh;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    height: 87vh;
+    overflow-y: scroll;
+    border-style: solid;
+    min-width: 78vw;
+    border-radius: 3px 3px 3px 3px;
+    overflow-y: scroll;
+    
+    border-color: rgb(35, 88, 187); 
+}
+
+
+.Theme2_sectionBg{
+    background-color: rgb(35, 88, 187);
+    color:white;
+    text-transform: uppercase;
+}
+
+
+
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_mainContentPosition {
+    position :absolute;
+    top:18vh;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    height: 87vh;
+    overflow-y: scroll;
+    border-style: solid;
+    min-width: 78vw;
+    border-radius: 3px 3px 3px 3px;
+    overflow-y: scroll;
+    
+    border-color: rgb(209, 30, 90);
+}
+
+
+.Theme3_sectionBg{
+    background-color: rgb(209, 30, 90);
+    color:white;
+    text-transform: uppercase;
+}
+
+

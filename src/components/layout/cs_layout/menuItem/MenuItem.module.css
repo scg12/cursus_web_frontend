@@ -1,0 +1,182 @@
+.imgStyle {
+    width:3.3vw;
+    height:3.3vw;
+    margin-left: 7px;
+}
+
+
+.imgStyleP {
+    width:8.7vw;
+    height:8.3vw;
+}
+
+.menuLibelle{
+    align-self:center;
+}
+
+.menuLibelleP{
+    align-self:center;
+    font-size: small;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme1_menuItemSimple {
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+    min-width:33vw;
+
+}
+
+
+div .Theme1_menuItemSimple:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 20vw;*/
+}
+/**************************************************/
+.Theme1_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+    /*background-color: rgb(60, 160, 21);*/
+}
+
+.Theme1_menuItemP{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor:pointer;
+    font-size: 1vw;
+    font-weight: bold;    
+    margin-right: 1.3vw;
+}
+
+
+div .Theme1_menuItem:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+div .Theme1_menuItemP:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;   
+}
+
+/*--------------------- Theme2 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme2_menuItemSimple{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+    min-width:33vw;
+   /* background-color: rgb(35, 88, 187);*/
+}
+
+div .Theme2_menuItemSimple:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 72vw;*/
+}
+
+
+/**************************************************/
+
+.Theme2_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+   /* background-color: rgb(35, 88, 187);*/
+}
+
+.Theme2_menuItemP{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor:pointer;
+    font-size: 1vw;
+    font-weight: bold;    
+    margin-right: 1.3vw;
+}
+
+div .Theme2_menuItem:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+div .Theme2_menuItemP:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;  
+}
+
+/*--------------------- Theme3 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme3_menuItemSimple{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    min-width:33vw;
+    /* background-color: rgb(209, 30, 90);*/
+}
+
+div .Theme3_menuItemSimple:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 72vw;*/
+}
+
+/**************************************************/
+
+.Theme3_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+    
+   /* background-color: rgb(209, 30, 90);*/
+}
+
+
+.Theme3_menuItemP{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor:pointer;
+    font-size: 1vw;
+    font-weight: bold;    
+    margin-right: 1.3vw;
+}
+
+div .Theme3_menuItem:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+div .Theme3_menuItemP:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;   
+}
+

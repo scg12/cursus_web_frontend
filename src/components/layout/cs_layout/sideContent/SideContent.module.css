@@ -1,0 +1,101 @@
+.bgImg{
+  background-image: url("sideImg.jpeg") ;
+}
+
+.comboBoxStyle{
+  font-weight: 700;
+  font-size: 1.07vw;
+  height:5vh;
+  border-radius:3vh;
+  border-style:solid;
+  border-width: 0.47vh;
+  padding-left: 0.7vh !important;
+  padding-bottom: 0.7vh !important;
+  margin-bottom: 2vh;
+
+}
+
+.mainInfosStyle{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 15%;
+  margin-top: 7%;
+  margin-bottom: 2%;
+  height: 50vh;
+}
+
+.upperCase{
+  text-transform: uppercase;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_sideContent {
+    background-color:rgb(77, 75, 75);
+    height:80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color:black;
+    /*margin-bottom: %;*/
+
+  }
+
+  
+  .Theme1_sideContentLabel{
+    /*font-size: large;*/
+    font-size: 1.07vw;
+    font-weight: bold;
+    /*color: rgb(60, 160, 21);*/
+    color:white;
+  }
+
+
+/*--------------------- Theme2 ----------------------- */
+
+  .Theme2_sideContent {
+    background-color:rgb(77, 75, 75);
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color:black;
+
+  }
+
+  .Theme2_sideContent {
+    background-color:rgb(77, 75, 75); 
+    height:100%; 
+  }
+
+  .Theme2_sideContentLabel{
+    font-size: 1.07vw;
+    font-weight: bold;
+    /*color: rgb(35, 88, 187);*/
+    color:white;
+  }
+
+/*--------------------- Theme3 ----------------------- */
+
+  .Theme3_sideContent {
+    background-color:rgb(77, 75, 75);
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color:black;
+
+  }
+
+  .Theme3_sideContent {
+    background-color:rgb(77, 75, 75);  
+    height:100%;
+  }
+
+  .Theme3_sideContentLabel{
+    font-size: 1.07vw;
+    font-weight: bold;
+    /*color: rgb(209, 30, 90);*/
+    color:white;
+  }

@@ -1,0 +1,145 @@
+.gridLayoutDashBoard{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%; 
+  overflow-y: hidden; 
+
+}
+
+.gridLayoutConf{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100vh; 
+  overflow-y: hidden; 
+}
+
+.headNavPosition{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 10vh;
+  position:relative;
+  z-index: 11;
+}
+
+.mainContentPosition{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  
+}
+
+.mainDisplayPosition{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 80%;
+  height: 80vh;
+  padding-top: 3.7vh;
+}
+
+
+.sideContentPosition {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 20vw;  
+  height: 100vh;
+  padding-top: 7vh;
+  overflow-y: scroll;   
+}
+
+
+.footerPosition{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 7vh;
+  position:relative;
+  z-index: 11; 
+}
+
+
+/*--------------------- Theme1 Template Style ------------------*/
+.Theme1_headerStyle {
+    background-color:rgb(60, 160, 21);  
+}
+
+  .Theme1_mainContentStyle{
+    /*background-color:rgba(241, 246, 248, 0.918);*/
+    background-color:'white';
+  }
+  
+  .Theme1_sideContentStyle{
+    background-color:rgb(77, 75, 75);
+    /*height:100%;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color:black;
+    /*margin-bottom: 10%;*/
+}
+
+
+.Theme1_footerStyle{
+    background-color:rgb(5, 107, 5); ;
+}
+
+
+/*--------------------- Theme2 Template Style ------------------*/
+
+.Theme2_headerStyle {
+    background-color:rgb(35, 88, 187);  
+  }
+
+  .Theme2_mainContentStyle{
+    background-color:rgba(241, 246, 248, 0.918); 
+  }
+  
+  .Theme2_sideContentStyle{
+    background-color:rgb(77, 75, 75);
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color:black;
+/*    margin-bottom: 10%;*/
+}
+
+.Theme2_footerStyle{
+    background-color:rgb(12, 32, 160); 
+}
+
+
+/*--------------------- Theme3 Template Style ------------------*/
+
+.Theme3_headerStyle {
+  background-color: rgb(209, 30, 90);  
+}
+
+.Theme3_mainContentStyle{
+  background-color:rgba(241, 246, 248, 0.918); 
+}
+  
+.Theme3_sideContentStyle{
+  background-color:rgb(77, 75, 75);
+  height:100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color:black;
+  /* margin-bottom: 10%;*/
+}
+
+.Theme3_footerStyle{
+  background-color:rgb(134, 4, 59);
+}
+

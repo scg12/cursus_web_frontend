@@ -1,0 +1,885 @@
+.msgContent{
+  display: flex;
+  color:black;
+  font-size: 1vw;
+  font-weight: 657;
+  align-self: center;
+  margin-left: 0.17vw;
+}
+
+.msgBoxImgStyleP{
+  width:2.7vw;
+  height: 2.7vw;
+}
+
+.langButton {
+  width: 3.8vh;
+  height: 3.8vh;
+  border-style:none;
+  margin-left: 0.05vw;
+  /*margin-top: -1vh;*/
+}
+
+.widgetIcon {
+  width: 3.8vh;
+  height: 3.8vh;
+  margin-right: 0.05vh;
+}
+
+.divider{
+  width: 1px;
+  height: 3.8vh;
+  border-left: 0.07vw solid rgb(70, 69, 69);
+  border-top: 0.5vh;
+  margin-right: 0.15vh;
+  margin-left: 0.1vh;
+}
+
+.profileLabel{
+  font-size: 0.7vw;
+  color: white;
+  margin-top:0.5vw;
+  margin-right:0.1vw;
+  
+  height: 1.7vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+ }
+
+
+.logout{
+  align-self: flex-end;
+  height:12px;
+  margin-top: -50px;
+}
+
+.etabInfos{
+  position: fixed;
+  top:0;
+  z-index: 1;
+  /*height: 70px;*/
+  display:flex;
+  flex-direction: row;
+  max-height: 58px;
+  
+ 
+}
+ 
+.logoStyle {
+  align-self: center;
+  max-height: 7.3vh;
+  max-width: 7.3vh;
+  margin-left: 1.3vw;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;  
+
+}
+
+
+.etabNameDisplayPos{
+  display: flex;
+  flex-direction: column;
+  color: white;
+  margin-left: 3vw;
+  margin-top: -1.3vh;
+  justify-content: center;
+}
+
+.etabNameStyle{
+  font-size: 2.3vh;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.etabMotoStyle {
+  font-size: 2vh;
+ /* margin-top: -5vh;*/
+}
+
+
+.rowDisplay {
+  display:flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: -2px;
+  font-size: 0.9vw;
+  font-weight: 500;
+  
+}
+
+.menuLi1{
+  width:7vh;
+  border-top-style: solid;
+  border-top-width: 1.7px;
+  border-top-color: rgb(235, 235, 241);
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  border-left-style: solid;
+  border-left-width: 1.7px;
+  border-left-color: rrgb(235, 235, 241);
+ /*width:fit-content;*/
+}
+
+.menuLi2{
+  width:7vh;
+  border-top-style: solid;
+  border-top-width: 1.7px;
+  border-top-color: rgb(235, 235, 241);
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  border-left-style: solid;
+  border-left-width: 1.7px;
+  border-left-color: rgb(235, 235, 241);
+}
+
+ .menuLi3{
+  
+  width:7vh;
+  border-top-style: solid;
+  border-top-width: 1.7px;
+  border-top-color: rgb(235, 235, 241);
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  border-left-style: solid;
+  border-left-width: 1.7px;
+  border-left-color: rgb(235, 235, 241);
+}
+ 
+.imageMargin0{
+  padding-top: 5px;
+  padding-bottom: 2px;
+  width: 5.5vh;
+  height: 6.7vh;
+  margin-left: -2.3vh;
+}
+
+.imageMargin01{
+  padding-top: 2px;
+  width: 7vh;
+  height: 6.7vh;
+  margin-left: -2.6vh;
+}
+
+.imageMargin02{
+  padding-top: 5px;
+  margin-left: -1.7vh;
+  width: 6vh;
+  height: 6vh;
+}
+
+.imageMargin1{
+  margin-top: -23px;
+  width :3vw;
+  height:3vw;
+}
+
+.imageMargin2P{
+  margin-top: -1px;
+  padding-top: 5px;
+  margin-left: -2.3vh;
+  width: 7.7vh;
+  height: 6.3vh;
+}
+  
+.imageMargin2{
+  margin-top: -1px;
+  padding-top: 5px;
+  margin-left: -1.7vh;
+  width: 6.3vh;
+  height: 6.3vh;
+}
+
+.imageMargin3{
+  margin-top: -1px;
+  padding-top: 5px;
+  margin-left: -1.7vh;
+  width: 5.7vh;
+  height: 5.7vh;
+}
+
+
+
+/*--------------------- Theme1 ----------------------- */
+
+.Theme1_border {
+  border-bottom: solid 1vh rgb(14, 94, 199);
+}
+
+.Theme1_header {
+  background-color: rgb(60, 160, 21);
+  height: 8vh;
+  position: fixed;
+  top:8vh;
+  /*z-index: 1;*/   
+}
+
+
+.Theme1_widget {
+  border-radius: 0px 0px 10px 10px;
+  position: relative;
+  align-self: flex-end;
+  margin-right: 5vw;
+  z-index: 1;
+}
+
+.Theme1_widget_content {
+  min-width: 10vh;
+  height: 4.7vh;
+  display: flex;
+  flex-direction: row;
+  color: white;
+  background-color:rgb(14, 94, 199);
+  
+  -moz-box-shadow: 8px 8px 12px #aaa; 
+  -webkit-box-shadow: 8px 8px 12px  #aaa; 
+  box-shadow: 8px 8px 12px #555; 
+  right: 0;  
+}
+
+div .Theme1_widget_content  :hover {
+  cursor: pointer;
+  background-color: rgb(240, 242, 250);
+  border-radius: 3px;
+  color: black; 
+}
+
+  
+ 
+ /*--------------------- Theme2 ----------------------- */
+
+.Theme2_border {
+  border-bottom: solid 1vh rgb(60, 160, 21);
+}
+
+.Theme2_header {
+  background-color:rgb(35, 88, 187);  
+  height: 8vh;
+  position: fixed;
+  top:8vh;
+   /*z-index: 1;*/  
+}
+
+
+
+.Theme2_widget {
+  border-radius: 0px 0px 10px 10px;
+  position: relative;
+  align-self: flex-end;
+  margin-right: 5vw;
+  z-index: 1;  
+}
+
+.Theme2_widget_content {
+  min-width: 10vh;
+  height: 4.7vh;
+  display: flex;
+  flex-direction: row;
+  color: white;
+  background-color:rgb(60, 160, 21);
+
+  -moz-box-shadow: 8px 8px 12px #aaa; 
+  -webkit-box-shadow: 8px 8px 12px  #aaa; 
+  box-shadow: 8px 8px 12px #555; 
+  right: 0;
+}
+
+div .Theme2_widget_content :hover {
+  cursor: pointer;
+  background-color: rgb(240, 242, 250);
+  border-radius: 3px;
+  color:black
+
+} 
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_border {
+  border-bottom: solid 1vh rgb(64, 49, 165);
+}
+
+.Theme3_header {
+  background-color: rgb(209, 30, 90);  
+  height: 8vh;
+  position: fixed;
+  top:8vh;
+}
+
+.Theme3_widget {
+  border-radius: 0px 0px 10px 10px;
+  position: relative;
+  align-self: flex-end;
+  margin-right: 5vw;
+  z-index: 1;
+}
+
+.Theme3_widget_content {
+  min-width: 10vh;
+  height: 4.7vh;
+  display: flex;
+  flex-direction: row;
+  color: white;
+  background-color:rgb(64, 49, 165); 
+
+  -moz-box-shadow: 8px 8px 12px #aaa; 
+  -webkit-box-shadow: 8px 8px 12px  #aaa; 
+  box-shadow: 8px 8px 12px #555;
+  right: 0; 
+}
+
+div .Theme3_widget_content :hover {
+  cursor: pointer;
+  background-color: rgb(240, 242, 250);
+  border-radius: 3px;
+  color:black; 
+} 
+
+.siteNav{
+  position:fixed;
+  top:0.7vh;
+  z-index: 2;
+}
+
+
+
+
+/*////////////////////////////////TELEPHONES/////////////////////////////*/
+/*----------------------------Horizontalement----------------------------*/
+@media screen and (max-height: 420px) {
+
+ 
+  .siteNav{
+    position:fixed;
+    top:9.3vh;
+    z-index:2;
+  }
+  
+    .imageMargin2P{
+      margin-top: -1px;
+      padding-top: 5px;
+      margin-left: -2.3vw;
+      width: 7.7vw;
+      height: 4.3vw;
+    }
+      
+    .etabNameStyle{
+      font-size: 3vw;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .etabMotoStyle{
+      font-size: 3vw;
+      margin-top: -1vh;
+    }
+  
+    .logoStyle {
+      align-self: center;
+      max-height: 7.3vw;
+      max-width: 7.3vw;
+      margin-left: 1.3vw;
+      border-radius: 5px;
+      position: relative;
+      z-index: 1;
+    }
+  
+    .logoStyle {
+      align-self: center;
+      max-height: 7.3vw;
+      max-width: 7.3vw;
+      margin-left: 1.3vw;
+      border-radius: 5px;
+      position: relative;
+      z-index: 1;
+    }
+  
+    .menuLi1 {
+      width: 7vw;
+      border-top-style: solid;
+      border-top-width: 1.7px;
+      border-top-color: rgb(235, 235, 241);
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-left-style: solid;
+      border-left-width: 1.7px;    
+    }
+  
+    .menuLi2 {
+      width: 7vw;
+      border-top-style: solid;
+      border-top-width: 1.7px;
+      border-top-color: rgb(235, 235, 241);
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-left-style: solid;
+      border-left-width: 1.7px;
+      border-left-color: rgb(235, 235, 241);
+    }
+  
+    .menuLi3 {
+      width: 7vw;
+      border-top-style: solid;
+      border-top-width: 1.7px;
+      border-top-color: rgb(235, 235, 241);
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-left-style: solid;
+      border-left-width: 1.7px;
+      border-left-color: rgb(235, 235, 241);
+    }
+  
+    .imageMargin0 {
+      padding-top: 5px;
+      padding-bottom: 2px;
+      width: 5.5vw;
+      height: 4.7vw;
+      margin-left: -2.9vh;
+    }
+  
+    .imageMargin01 {
+      padding-top: 2px;
+      width: 7vw;
+      height: 4.7vw;
+      margin-left: -2.7vh;
+    }
+  
+    .imageMargin2{
+      margin-top: -1px;
+      padding-top: 2px;
+      margin-left: -2.7vh;
+      width: 5.3vw;
+      height: 4.7vw;
+    }
+  
+    .imageMargin02 {
+      padding-top: 3.7px;
+      margin-left: -2.7vh;
+      width: 6vw;
+      height: 4.7vw;
+    }
+  
+    .imageMargin3 {
+      margin-top: -1px;
+      padding-top: 5px;
+      margin-left: -2.3vh;
+      width: 5.7vw;
+      height: 4.7vw;
+    }
+  
+    .langButton {
+      width: 3.8vw;
+      height: 3.8vw;
+      border-style: none;
+      margin-left: 0.05vw;
+      /*margin-top: -1vh;*/
+    }
+  
+  
+    .divider{
+      width: 1px;
+      height: 3.8vw;
+      border-left: 0.07vw solid rgb(70, 69, 69);
+      border-top: 0.5vh;
+      margin-right: 0.15vh;
+      margin-left: 0.1vh;
+    }
+  
+    .widgetIcon {
+      width: 3.8vw;
+      height: 3.8vw;
+      margin-right: 0.05vh;
+    }
+  
+    /*------------------------- Theme 1 -------------------------*/
+  
+    .Theme1_header{
+      background-color: rgb(60, 160, 21);
+      height: 20.3vh;
+      flex-direction: column;
+      position: fixed;
+      top:0vh;
+  
+    }
+  
+  
+    .Theme1_widget_content{
+      height: 3.7vw;
+      display: flex;
+      flex-direction: row;
+      color: white;
+      background-color:rgb(14, 94, 199);
+    
+      -moz-box-shadow: 8px 8px 12px #aaa; 
+      -webkit-box-shadow: 8px 8px 12px  #aaa; 
+      box-shadow: 8px 8px 12px #555; 
+  
+      top:1vh;
+      right: 0;
+    }
+  
+    
+  
+    
+    /*------------------------- Theme 2 -------------------------*/
+  
+    .Theme2_header{
+      background-color: rgb(35, 88, 187);
+      height: 20.3vh;
+      flex-direction: column;
+      position: fixed;
+      top:0vh;
+    }
+  
+    .Theme2_widget_content{
+      height: 3.7vw;
+      display: flex;
+      flex-direction: row;
+      color: white;
+      background-color:rgb(60, 160, 21);
+  
+      -moz-box-shadow: 8px 8px 12px #aaa; 
+      -webkit-box-shadow: 8px 8px 12px  #aaa; 
+      box-shadow: 8px 8px 12px #555; 
+  
+      top:1h;
+      right: 0;
+    }
+    
+    /*------------------------- Theme 3 -------------------------*/
+  
+    .Theme3_header{
+      background-color: rgb(209, 30, 90);
+      height: 20.3vh;
+      flex-direction: column;
+      position: fixed;
+      top:0vh;
+    }
+  
+    .Theme3_widget_content{
+      height: 3.7vw;
+      display: flex;
+      flex-direction: row;
+      color: white;
+      background-color:rgb(64, 49, 165); 
+  
+      -moz-box-shadow: 8px 8px 12px #aaa; 
+      -webkit-box-shadow: 8px 8px 12px  #aaa; 
+      box-shadow: 8px 8px 12px #555; 
+  
+      top:1vh;
+      right: 0;
+    }
+  }
+    
+
+
+/*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
+/*----------------------------horizontalement------------------------------*/
+@media screen and (min-width: 900px) {
+
+  
+.logoStyle {
+  align-self: center;
+  max-height: 7.3vw;
+  max-width: 7.3vw;
+  margin-left: 1.3vw;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;  
+
+}
+
+  .etabNameStyle{
+    font-size: 2.3vw;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
+  .etabMotoStyle {
+    font-size: 2vw;
+   /* margin-top: -5vh;*/
+  }
+  
+
+  .Theme1_widget {
+    border-radius: 0px 0px 10px 10px;
+    position: fixed;
+    align-self: flex-end;
+    margin-right: 10vw;
+    top:23.3vh;
+    z-index: 1;
+  }
+
+  .Theme2_widget {
+    border-radius: 0px 0px 10px 10px;
+    position: fixed;
+    align-self: flex-end;
+    margin-right: 10vw;
+    top:23.3vh;
+    z-index: 1;
+  }
+
+  .Theme3_widget {
+    border-radius: 0px 0px 10px 10px;
+    position: fixed;
+    align-self: flex-end;
+    margin-right: 10vw;
+    top:23.3vh;
+    z-index: 1;
+  }
+  
+  .menuLi1{
+    width:7vw;
+    border-top-style: solid;
+    border-top-width: 1.7px;
+    border-top-color: rgb(235, 235, 241);
+  
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  
+    border-left-style: solid;
+    border-left-width: 1.7px;
+    border-left-color: rrgb(235, 235, 241);
+   /*width:fit-content;*/
+  }
+  
+  .menuLi2{
+    width:7vw;
+    border-top-style: solid;
+    border-top-width: 1.7px;
+    border-top-color: rgb(235, 235, 241);
+  
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  
+    border-left-style: solid;
+    border-left-width: 1.7px;
+    border-left-color: rgb(235, 235, 241);
+  }
+  
+   .menuLi3{
+    
+    width:7vw;
+    border-top-style: solid;
+    border-top-width: 1.7px;
+    border-top-color: rgb(235, 235, 241);
+  
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  
+    border-left-style: solid;
+    border-left-width: 1.7px;
+    border-left-color: rgb(235, 235, 241);
+  }
+
+  .etabInfos{
+    position: fixed;
+    top:0;
+    z-index: 1;
+   
+    display:flex;
+    flex-direction: row;
+    max-height: 80px;
+    padding-top: 2.3vw;          
+  }
+   
+  .imageMargin0{
+    padding-top: 5px;
+    padding-bottom: 2px;
+    width: 6.5vh;
+    height: 6.7vh;
+    margin-left: 0.37vh;
+  }
+  
+  .imageMargin01{
+    padding-top: 2px;
+    width: 7vh;
+    height: 6.7vh;
+    margin-left: 0.37vh;
+  }
+  
+  .imageMargin02{
+    padding-top: 5px;
+    margin-left: 0.37vh;
+    width: 6vh;
+    height: 6vh;
+  }
+  
+  .imageMargin1{
+    margin-top: -23px;
+    width :3vw;
+    height:3vw;
+  }
+  
+  .imageMargin2P{
+    margin-top: -1px;
+    padding-top: 5px;
+    margin-left: 0.37vh;
+    width: 7.7vh;
+    height: 6.3vh;
+  }
+    
+  .imageMargin2{
+    margin-top: -1px;
+    padding-top: 5px;
+    margin-left: 0.47vh;
+    width: 6.3vh;
+    height: 6.3vh;
+  }
+  
+  .imageMargin3{
+    margin-top: -1px;
+    padding-top: 5px;
+    margin-left: 0.47vh;
+    width: 5.7vh;
+    height: 5.7vh;
+  }
+  
+  .siteNav{
+    margin-right:0.47vw ;
+    position:fixed;
+    top:0.7vh;
+    z-index: 2;
+  }
+
+   
+}
+
+
+/*----------------------------Verticalement-----------------------------*/
+@media screen and (min-height: 900px) {
+
+  
+.logoStyle {
+  align-self: center;
+  max-height: 7.3vh;
+  max-width: 7.3vh;
+  margin-left: 1.3vw;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;  
+}
+
+  .etabNameStyle{
+    font-size: 2.3vh;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
+  .etabMotoStyle {
+    font-size: 2vh;
+   /* margin-top: -5vh;*/
+  }
+  
+
+  .Theme1_widget {
+    border-radius: 0px 0px 10px 10px;
+    position: fixed;
+    align-self: flex-end;
+    margin-right: 10vw;
+    top:23.3vh;
+    z-index: 1;
+  }
+
+  .Theme2_widget {
+    border-radius: 0px 0px 10px 10px;
+    position: fixed;
+    align-self: flex-end;
+    margin-right: 10vw;
+    top:23.3vh;
+    z-index: 1;
+  }
+
+  .Theme3_widget {
+    border-radius: 0px 0px 10px 10px;
+    position: fixed;
+    align-self: flex-end;
+    margin-right: 10vw;
+    top:23.3vh;
+    z-index: 1;
+  }
+
+  .etabInfos{
+    position: fixed;
+    top:0;
+    z-index: 1;
+   
+    display:flex;
+    flex-direction: row;
+    max-height: 80px;
+    padding-top: 2.3vw;
+          
+  }
+
+  .imageMargin0{
+    padding-top: 5px;
+    padding-bottom: 2px;
+    width: 5.5vh;
+    height: 6.7vh;
+    margin-left: -1.47vw;
+  }
+  
+  .imageMargin01{
+    padding-top: 2px;
+    width: 7vh;
+    height: 6.7vh;
+    margin-left: -1.57vw;
+  }
+  
+  .imageMargin02{
+    padding-top: 5px;
+    margin-left: -1.37vw;
+    width: 6vh;
+    height: 6vh;
+  }
+  
+  .imageMargin1{
+    margin-top: -23px;
+    width :3vw;
+    height:3vw;
+  }
+  
+  .imageMargin2P{
+    margin-top: -1px;
+    padding-top: 5px;
+    margin-left: -1.7vh;
+    width: 7.7vh;
+    height: 6.3vh;
+  }
+    
+  .imageMargin2{
+    margin-top: -1px;
+    padding-top: 5px;
+    margin-left: -1.07vw;
+    width: 6.3vh;
+    height: 6.3vh;
+  }
+  
+  .imageMargin3{
+    margin-top: -1px;
+    padding-top: 5px;
+    margin-left: -1.17vw;
+    width: 5.7vh;
+    height: 5.7vh;
+  }
+  
+  .siteNav{
+    margin-right:0.87vw ;
+    position:fixed;
+    top:0.7vh;
+    z-index: 2;
+  }
+
+}
+
+
+/*/////////////////////////TABLETTES CARREES////////////////////////////*/
+
+

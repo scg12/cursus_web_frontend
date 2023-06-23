@@ -1,0 +1,233 @@
+.imgStyle {
+    width: 7.3vh;
+    height: 7.3vh;
+}
+
+.menuLibelle{
+    align-self:center;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme1_menuItemSimple {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+    min-width: 28.7vh;
+    width:47vh;
+}
+
+
+div .Theme1_menuItemSimple:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 20vw;*/
+}
+/**************************************************/
+.Theme1_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+}
+
+/*.Theme1_menuItemP{
+    display: flex;
+    flex-direction: column;
+    cursor:pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+    
+}*/
+
+.Theme1_menuItemP{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor:pointer;
+    font-size: 1vw;
+    font-weight: bold;    
+    margin-right: 1.3vw;
+}
+
+
+
+div .Theme1_menuItem:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+div .Theme1_menuItemP:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;    
+}
+
+/*--------------------- Theme2 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme2_menuItemSimple{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+    min-width: 28.7vh;
+    width:47vh;   
+}
+
+div .Theme2_menuItemSimple:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 72vw;*/
+}
+
+
+/**************************************************/
+.Theme2_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 2vh;
+    font-weight: 474;
+}
+
+.Theme2_menuItemP{
+    display: flex;
+    flex-direction: column;
+    cursor:pointer;
+    font-size: 2vh;
+    font-weight: 474;
+   /* background-color: rgb(35, 88, 187);*/
+}
+
+div .Theme2_menuItem:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+div .Theme2_menuItemP:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;  
+}
+
+
+/*--------------------- Theme3 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme3_menuItemSimple{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+    min-width: 28.7vh;
+    width:47vh;
+}
+
+div .Theme3_menuItemSimple:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 72vw;*/
+}
+
+/**************************************************/
+
+.Theme3_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 2vh;
+    font-weight: 474;
+}
+
+.Theme3_menuItemP{
+    display: flex;
+    flex-direction: column;
+    cursor:pointer;
+    font-size: 2vh;
+    font-weight: 474;
+   /* background-color: rgb(209, 30, 90);*/
+}
+
+
+div .Theme3_menuItem:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+div .Theme3_menuItemP:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;  
+}
+
+.conStyle {
+    width:7.67vh; 
+    height:7.3vh;
+}
+
+.iconStyle1 {
+    width:7.97vh; 
+    height:7.3vh;
+}
+
+@media (min-width: 380px) and (max-width: 900px) {
+
+    .imgStyle {
+        width: 6.73vw;
+        height: 6.73vw;
+    }
+
+
+    .iconStyle {
+        width:6.9vw;
+        height:6.73vw ;
+    }
+
+    .iconStyle1 {
+        width:6vw;
+        height:6vw ;
+    }
+
+
+/*--------------------------------------- Theme 1 ---------------------------------------*/
+    .Theme1_menuItem{
+        display: flex;
+        flex-direction: row;
+        cursor: pointer;
+        font-size: 1.77vw;
+        font-weight: 474;
+    }
+
+/*--------------------------------------- Theme 2 ---------------------------------------*/
+    .Theme2_menuItem{
+        display: flex;
+        flex-direction: row;
+        cursor: pointer;
+        font-size: 1.77vw;
+        font-weight: 474;
+    }
+
+/*--------------------------------------- Theme 3 ---------------------------------------*/
+    .Theme3_menuItem{
+        display: flex;
+        flex-direction: row;
+        cursor: pointer;
+        font-size: 1.77vw;
+        font-weight: 474;
+    }
+}
+

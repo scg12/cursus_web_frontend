@@ -1,0 +1,119 @@
+.size72Vw{
+    min-width:72vw;    
+}
+
+.pageTitle {
+    font-size:1.7vw; /*2vw;*/
+    font-weight:770;/*700;*/
+    background-color:rgba(241, 246, 248, 0.918); 
+    display: flex;
+    flex-direction: row;
+    justify-content:baseline;
+    margin-left: 2.2%;
+    margin-bottom: 0.3vh;
+    margin-top: 2px;
+
+}
+
+.classesListTitle{
+    margin-left: 3%;
+    margin-top: 1.6%;
+}
+
+.classesListSelect{
+    margin-left: 2.2%;
+    margin-top: 3%;
+}
+
+
+
+.progresBar{
+    width:700px;
+}
+
+.rowDisplay {
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 7px;
+    height:30px;
+}
+
+.imageMargin1{
+    margin-top: -0.4vw;
+    width :3.1vw;
+    height:3.1vw;
+}
+
+.viewContent {
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: flex-start;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+.Theme1_mainContentPosition {
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    /*height: 430px;*/
+    height:68.7vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;
+    border-color: rgb(60, 160, 21);
+    border-radius: 7px 7px 7px 7px;
+}
+
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_mainContentPosition {
+    scroll-behavior:auto;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    /*height: 430px;*/
+    height:68.7vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;
+    border-color: rgb(35, 88, 187); ;
+    border-radius: 7px 7px 7px 7px;
+}
+
+
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_mainContentPosition {
+    scroll-behavior:auto;
+    z-index: 1;
+    display : flex;
+    flex-direction: column;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    justify-content:flex-start;
+    margin-left: 20px;
+    /*height: 430px;*/
+    height:68.7vh;
+    overflow-y: scroll;
+    white-space: nowrap;
+    border-style: solid;
+    min-width: 73vw;
+    border-color: rgb(209, 30, 90);
+    border-radius: 7px 7px 7px 7px;
+}

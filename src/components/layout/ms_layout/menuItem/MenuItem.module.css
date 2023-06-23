@@ -1,0 +1,117 @@
+.imgStyle {
+    width: 5.3vh;
+    height: 5.3vh;
+}
+
+.menuLibelle{
+    align-self:center;
+}
+
+
+/*--------------------- Theme1 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme1_menuItemSimple {
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+    min-width:33vw;
+
+}
+
+
+div .Theme1_menuItemSimple:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 20vw;*/
+}
+/**************************************************/
+.Theme1_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+}
+
+
+div .Theme1_menuItem:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+/*--------------------- Theme2 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme2_menuItemSimple{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    font-size: 1.07vw;
+    font-weight: 474;
+    min-width:33vw;
+   /* background-color: rgb(35, 88, 187);*/
+}
+
+div .Theme2_menuItemSimple:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 72vw;*/
+}
+
+
+/**************************************************/
+
+.Theme2_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+}
+
+div .Theme2_menuItem:hover{
+    background-color: rgb(60, 160, 21);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+
+/*--------------------- Theme3 ----------------------- */
+/****************** Simple Mode *******************/
+.Theme3_menuItemSimple{
+    display: flex;
+    flex-direction: row;
+    cursor:pointer;
+    min-width:33vw;
+    /* background-color: rgb(209, 30, 90);*/
+}
+
+div .Theme3_menuItemSimple:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    /*min-width: 72vw;*/
+}
+
+/**************************************************/
+
+.Theme3_menuItem{
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    font-size: 1.77vh;
+    font-weight: 474;
+}
+
+div .Theme3_menuItem:hover{
+    background-color: rgb(97, 147, 221);
+    border-radius: 3px 3px 3px 3px;
+    color :white;
+    min-width: 72vw;
+}
+

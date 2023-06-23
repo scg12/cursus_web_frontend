@@ -1,0 +1,247 @@
+.flexLayoutConf{
+    /*display : flex;
+    flex-direction: column;
+    height: 100vh;
+    font-size: 0.7em;
+    background-color:rgb(227, 228, 227);*/
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+     width: 100%;
+    height: 100vh; 
+    overflow-y: hidden; 
+   /* background-color: -webkit-linear-gradient( bottom, rgb(77, 75, 75),rgb(107, 103, 103),rgb(131, 128, 128));
+    background-color: -webkit-linear-gradient( bottom, rgb(77, 75, 75),rgb(107, 103, 103),rgb(131, 128, 128));
+    background-color: -moz-linear-gradient( bottom, rgb(77, 75, 75),rgb(107, 103, 103),rgb(131, 128, 128));
+    background-color: -o-gradient( bottom, rgb(77, 75, 75),rgb(107, 103, 103),rgb(131, 128, 128));*/
+}
+
+
+.headNavPosition{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 10vh;
+    position:relative;
+    z-index: 11;
+}
+  
+.fixedTopBar {
+    width: 100%;
+    height: 7.7vh;
+    position: fixed;
+    top:15.7vh;
+    border-bottom: solid 2px rgb(58, 58, 58) ; 
+ }
+
+  
+.mainContentPosition{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  height: 83vh; 
+}
+
+.mainDisplayPosition{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 80vh;
+    padding-top: 19.7vh;
+    padding-left: 1vw;
+}
+
+
+.mainContentStyle{
+    /*background-color:rgba(241, 246, 248, 0.918);*/
+    background-color:'white';
+}
+  
+
+
+.footerPosition{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 7vh;
+  position:relative;
+  z-index: 11; 
+}
+
+.mainContentStyle{
+    background-color:rgba(241, 246, 248, 0.918); 
+}
+
+
+.footerPosition{
+    background-color:darkslategrey;
+    height:12%;
+}
+
+.topFixedBarContentStyle{
+    background-color: rgb(77, 75, 75);
+    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: black;
+    position: fixed;
+
+}
+
+
+
+
+
+
+/*--------------------- Theme1 Template Style ------------------*/
+.Theme1_headerStyle {
+    background-color:rgb(60, 160, 21);  
+}
+
+.Theme1_footerStyle{
+    background-color:rgb(5, 107, 5); ;
+}
+
+
+/*--------------------- Theme2 Template Style ------------------*/
+.Theme2_headerStyle {
+    background-color:rgb(35, 88, 187);  
+}
+
+.Theme2_footerStyle{
+    background-color:rgb(12, 32, 160); 
+}
+
+/*--------------------- Theme3 Template Style ------------------*/
+.Theme3_headerStyle {
+    background-color: rgb(209, 30, 90);  
+}
+
+.Theme3_footerStyle{
+    background-color:rgb(134, 4, 59);
+}
+  
+
+@media (min-width: 380px) and (max-width: 900px) {
+    .headNavPosition {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        height: 10vw;
+        position: relative;
+        z-index: 11;
+        padding-top: 7vh;
+    }
+
+        
+    .fixedTopBar {
+        width: 100%;
+        height: 12.7vh;
+    }
+
+}
+
+@media screen and (max-height: 420px) {
+    .headNavPosition{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        height: 10vh;
+        margin-top: 5vh;
+        position:relative;
+        z-index: 11;
+    }
+
+    .fixedTopBar {
+        width: 100%;
+        height: 11.7vh;
+        position: fixed;
+        top:20.3vh;
+        border-bottom: solid 2px rgb(58, 58, 58) ; 
+    }
+    
+}
+
+@media screen and (min-width: 200px) and (max-width: 640px) {
+    .fixedTopBar {
+        width: 100%;
+        height: 7.7vh;
+        position: fixed;
+        top:15.7vh;
+        border-bottom: solid 2px rgb(58, 58, 58) ; 
+    }
+}
+
+/*///////////////////////////////////TELEPHONES/////////////////////////////*/
+/*----------------------------horizontalement------------------------------*/
+@media screen and (max-height: 420px) {
+    .mainContentPosition{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        height: 120vh; 
+    }
+
+    .mainDisplayPosition{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        height: 120vh;
+        padding-top: 19.7vh;
+        padding-left: 1vw;
+    }
+
+    .flexLayoutConf{       
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+         width: 100%;
+        height: 150vh; 
+        overflow-y: hidden;       
+    }
+    
+    
+
+}
+
+/*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
+/*----------------------------horizontalement------------------------------*/
+@media screen and (min-width: 900px) {
+   
+
+   
+}
+
+
+/*----------------------------Verticalement-----------------------------*/
+@media screen and (min-height: 900px) {
+    .fixedTopBar {
+        width: 100%;
+        height: 7.7vh;
+        position: fixed;
+        top:15.7vh;
+        border-bottom: solid 2px rgb(58, 58, 58) ; 
+    }
+
+    
+.headNavPosition{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 8.3vh;
+    position:relative;
+    z-index: 11;
+}
+    
+}

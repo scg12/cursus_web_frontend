@@ -1,0 +1,358 @@
+
+.msgContent{
+  display: flex;
+  color:black;
+  font-size: 1vw;
+  font-weight: 657;
+  align-self: center;
+  margin-left: 0.17vw;
+
+}
+
+.msgBoxImgStyleP{
+  width:2.7vw;
+  height: 2.7vw;
+}
+
+.langButton {
+  width:1.8vw;
+  height:25px;
+  border-style:none;
+  margin-left: 0.05vw;
+}
+
+.widgetIcon {
+  width :1.8vw;
+  height:1.8vw;
+  margin-right: 0.05vw;
+}
+
+.divider{
+  width:1px;
+  height:1.8vw;
+  border-left:0.07vw solid rgb(70, 69, 69);
+  border-top: .5vw;
+  margin-right: 0.15vw;
+  margin-left: .1vw;
+}
+
+.profileLabel{
+  font-size: 0.7vw;
+  color: white;
+  margin-top:0.5vw;
+  margin-right:0.1vw;
+  
+  height: 1.7vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+ }
+
+
+ .logout{
+   align-self: flex-end;
+   height:12px;
+   margin-top: -50px;
+ }
+
+ .etabInfos{
+  display:flex;
+  flex-direction: row;
+  max-height: 58px;
+  position: absolute;
+  top: 0;
+ }
+ 
+ .logoStyle {
+  align-self: center;
+  max-height: 13vh;
+  max-width: 9.3vw;
+  margin-left: 7px;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;
+  margin-top: 1vh;
+}
+
+.etabNameDisplayPos{
+  display: flex;
+  flex-direction: column;
+  justify-content: safe;
+  color: white;
+  margin-left: 15px;
+  margin-top: -1.3vh;
+}
+
+.etabNameStyle{
+  font-size: x-large;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.etabMotoStyle {
+  font-size: large;
+  margin-top: -3vh
+}
+
+
+.rowDisplay {
+  display:flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: -2px;
+  font-size: 0.9vw;
+  font-weight: 500;
+  
+}
+
+.menuLi1{
+  width:8vw;
+  border-top-style: solid;
+  border-top-width: 1.7px;
+  border-top-color: rgb(235, 235, 241);
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  border-left-style: solid;
+  border-left-width: 1.7px;
+  border-left-color: rrgb(235, 235, 241);
+ /*width:fit-content;*/
+}
+
+.menuLi2{
+  width:10vw;
+  border-top-style: solid;
+  border-top-width: 1.7px;
+  border-top-color: rgb(235, 235, 241);
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  border-left-style: solid;
+  border-left-width: 1.7px;
+  border-left-color: rgb(235, 235, 241);
+}
+
+ .menuLi3{
+  /*width:13vw;*/
+  /*width:fit-content*/
+  border-top-style: solid;
+  border-top-width: 1.7px;
+  border-top-color: rgb(235, 235, 241);
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  border-left-style: solid;
+  border-left-width: 1.7px;
+  border-left-color: rgb(235, 235, 241);
+}
+ 
+.imageMargin0{
+  padding-top: 5px;
+  padding-bottom: 2px;
+  width :2.5vw;
+  height:2.7vw;
+  margin-left: -1.2vw;
+}
+
+.imageMargin01{
+  padding-top: 0.1px;
+  width :3.5vw;
+  height:3vw;
+  margin-left: -1.2vw;
+}
+
+.imageMargin02{
+  margin-top: 2px;
+  padding-top: 2px;
+  padding-bottom: 1px;
+  width :2.3vw;
+  height:2.3vw;
+  margin-left: -0.7vw;
+}
+
+.imageMargin1{
+  margin-top: -23px;
+  width :3vw;
+  height:3vw;
+}
+  
+.imageMargin2{
+  margin-top: -3px;
+  padding-top: 5px;
+  margin-left: -1.37vw;
+  margin-right: -0.7vw;
+  width :6.7vw;
+  height:3vw;
+}
+
+.imageMargin3{
+  margin-top: 7px;
+  padding-top: 1px;
+  margin-left: -1vw;
+  margin-right: 0.2vw;
+  width :1.8vw;
+  height:1.8vw;
+}
+
+.imageMargin4{
+  margin-top: -3px;
+  padding-top: 5px;
+  margin-left: -1vw;
+   width :2.7vw;
+  height:3vw;
+}
+
+
+
+
+/*--------------------- Theme1 ----------------------- */
+
+.Theme1_border {
+  border-bottom: solid 7px rgb(14, 94, 199);
+}
+
+.Theme1_header {
+  background-color:rgb(60, 160, 21);  
+  line-height: 40px;
+  height: 38px;
+  display: flex;
+  flex-direction: column;
+  margin-top: -2vh;
+  position: relative;
+
+}
+
+
+.Theme1_widget {
+  height: 30px;
+  border-radius: 0px 0px 10px 10px;
+  position : relative;
+  align-self: flex-end;
+  margin-right: 5vw;
+  z-index: 1;
+  top:14vh;
+  position:absolute
+}
+
+.Theme1_widget_content {
+  display: flex;
+  flex-direction: row;
+  margin-top: -0.9vh;
+  font-size: small;
+  color: white;
+  background-color:rgb(14, 94, 199);
+  
+  -moz-box-shadow: 8px 8px 12px #aaa; 
+  -webkit-box-shadow: 8px 8px 12px  #aaa; 
+  box-shadow: 8px 8px 12px #555; 
+}
+
+div .Theme1_widget_content  :hover {
+  cursor: pointer;
+  background-color: rgb(240, 242, 250);
+  border-radius: 3px;
+  color: black; 
+}
+
+  
+ 
+ /*--------------------- Theme2 ----------------------- */
+
+.Theme2_border {
+  border-bottom: solid 7px rgb(60, 160, 21);
+}
+
+.Theme2_header {
+  background-color:rgb(35, 88, 187);  
+  line-height: 40px;
+  height: 38px;
+  display: flex;
+  flex-direction: column;
+  margin-top: -2vh;
+}
+
+.Theme2_widget {
+  height: 30px;
+  border-radius: 0px 0px 10px 10px;
+  position : relative;
+  align-self: flex-end;
+  margin-right: 5vw;
+  z-index: 1;
+  top:14vh;
+  position:absolute
+}
+
+.Theme2_widget_content {
+  display: flex;
+  flex-direction: row;
+  margin-top: -0.9vh;
+  font-size: small;
+  color: white;
+  background-color:rgb(60, 160, 21);
+
+  -moz-box-shadow: 8px 8px 12px #aaa; 
+  -webkit-box-shadow: 8px 8px 12px  #aaa; 
+  box-shadow: 8px 8px 12px #555; 
+}
+
+div .Theme2_widget_content :hover {
+  cursor: pointer;
+  background-color: rgb(240, 242, 250);
+  border-radius: 3px;
+  color:black
+
+} 
+ 
+
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_border {
+  border-bottom: solid 7px rgb(64, 49, 165);
+}
+
+.Theme3_header {
+  background-color: rgb(209, 30, 90);  
+  line-height: 40px;
+  height: 38px;
+  display: flex;
+  flex-direction: column;
+  margin-top: -2vh;
+}
+
+.Theme3_widget {
+  height: 30px;
+  border-radius: 0px 0px 10px 10px;
+  position : relative;
+  align-self: flex-end;
+  margin-right: 5vw;
+  z-index: 1;
+  top:14vh;
+  position:absolute
+}
+
+.Theme3_widget_content {
+  display: flex;
+  flex-direction: row;
+  margin-top: -0.9vh;
+  font-size: small;
+  color: white;
+  background-color:rgb(64, 49, 165); 
+
+  -moz-box-shadow: 8px 8px 12px #aaa; 
+  -webkit-box-shadow: 8px 8px 12px  #aaa; 
+  box-shadow: 8px 8px 12px #555; 
+}
+
+div .Theme3_widget_content :hover {
+  cursor: pointer;
+  background-color: rgb(240, 242, 250);
+  border-radius: 3px;
+  color:black;
+  
+  
+} 
