@@ -17,6 +17,13 @@ import StudentList from '../reports/StudentList';
 import BulletinSequence from '../reports/BulletinSequence';
 import {useTranslation} from "react-i18next";
 
+
+
+var chosenMsgBox;
+const MSG_SUCCESS_NOTES =11;
+const MSG_WARNING_NOTES =12;
+const MSG_ERROR_NOTES   =13;
+
 let CURRENT_CLASSE_ID;
 let CURRENT_PERIOD_ID;
 let CURRENT_CLASSE_LABEL;
@@ -76,7 +83,7 @@ function PrintStudentReport(props) {
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
-    const [optPeriode, setOpPeriode] = useState([]);
+    const [optPeriode, setOptPeriode] = useState([]);
     const selectedTheme = currentUiContext.theme;
 
     const tabPeriode =[
@@ -88,7 +95,7 @@ function PrintStudentReport(props) {
     ]
 
     useEffect(()=> {
-        setOpPeriode(tabPeriode);
+        getActivatedEvalPeriods(0);
 
         if(gridRows.length==0){
             CURRENT_CLASSE_ID = undefined;
@@ -164,6 +171,47 @@ function PrintStudentReport(props) {
     }
 
 
+    function getActivatedEvalPeriods(coursId){
+        var tempTable=[{value: 0,      label: (i18n.language=='fr') ? '  - Choisir une periode - ' : ' - Select period - '  }]
+        var tabSequences;  
+
+        if(coursId!=0){
+            axiosInstance.post(`list-sequences/`, {
+                id_sousetab: currentAppContext.currentEtab,
+                id_trimestre:""
+            }).then((res)=>{   
+                
+                tabSequences = [...res.data.sequences];    
+                     
+                res.data.sequences.map((seq)=>{
+                    if(seq.is_active == true){
+                        tempTable.push({value:seq.id, label:seq.libelle});
+                    }                              
+                })
+    
+                setOptPeriode(tempTable); 
+    
+                if(tabSequences.length==0){
+                    chosenMsgBox = MSG_WARNING_NOTES;
+                    currentUiContext.showMsgBox({
+                        visible:true, 
+                        msgType:"info", 
+                        msgTitle:t("error_M"), 
+                        message:t("no_activated_period")
+                    }) 
+        
+                }
+            })
+
+        } else {
+            setOptPeriode(tempTable); 
+        }
+        
+        if( document.getElementById('optPeriode').options[0]!= undefined)
+        document.getElementById('optPeriode').options[0].selected=true;
+    }
+
+
     function dropDownHandler(e){
         //console.log(e.target.value)
         var grdRows;
@@ -171,6 +219,7 @@ function PrintStudentReport(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getClassStudentList(CURRENT_CLASSE_ID); 
+            getActivatedEvalPeriods(-1);
             
             if(CURRENT_PERIOD_ID!=undefined) setOpenCheck(true);
             else setIsValid(false); 
@@ -187,8 +236,6 @@ function PrintStudentReport(props) {
 
     
     function dropDownPeriodHandler(e){
-        //console.log(e.target.value)
-        var grdRows;
         if(e.target.value != optPeriode[0].value){
             CURRENT_PERIOD_ID = e.target.value; 
             if(CURRENT_CLASSE_ID == undefined) setOpenCheck(false);
@@ -668,18 +715,18 @@ const columnsFr = [
     const acceptHandler=()=>{
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS: {
+            case MSG_SUCCESS_NOTES: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 }) 
-                getClassStudentList(CURRENT_CLASSE_ID); 
+                //getClassStudentList(CURRENT_CLASSE_ID); 
                 return 1;
             }
 
-            case MSG_WARNING: {
+            case MSG_WARNING_NOTES: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -705,10 +752,31 @@ const columnsFr = [
         
     }
 
+
+    const generateBulletinHandler=()=>{
+        if(CURRENT_CLASSE_ID != undefined){ 
+            setModalOpen(5);
+            axiosInstance.post(`generer-bulletin-classe/`, {
+                id_classe   : CURRENT_CLASSE_ID,
+                id_sequence : CURRENT_PERIOD_ID
+            }).then((res)=>{
+                setModalOpen(0);
+                chosenMsgBox = MSG_SUCCESS_NOTES;
+                currentUiContext.showMsgBox({
+                    visible:true, 
+                    msgType:"info", 
+                    msgTitle:t("success_operation_M"), 
+                    message:t("success_operation")
+                })   
+                
+            })  
+        }
+
+    }
+
     const printStudentList=()=>{
-        if(CURRENT_CLASSE_ID != undefined){
-           
-           
+        if(CURRENT_CLASSE_ID != undefined){           
+            setModalOpen(5);
             let formData = new FormData();
            
             formData.append('id_classe',CURRENT_CLASSE_ID);
@@ -717,7 +785,8 @@ const columnsFr = [
             const config = {headers:{'Content-Type':'multipart/form-data'}};
             axiosInstance
             .post(`imprimer-bulletin-classe/`,formData,config)
-            .then((response) => {                
+            .then((response) => {  
+                setModalOpen(0);              
                 ElevePageSet={};
                 ElevePageSet.eleveNotes = {... response.data.eleve_results};
                 ElevePageSet.noteRecaps = {... response.data.note_recap_results};
@@ -805,6 +874,34 @@ const columnsFr = [
                     buttonRejectHandler = {rejectHandler}            
                 />               
             }
+
+            {(modalOpen==5) && <BackDrop/>}
+            {(modalOpen==5) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:'50%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                    {t('traitement')}...
+                </div>                    
+            }
+            {(modalOpen==5) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'50%',
+                    zIndex: '1200',
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
+            }
+
+
             <div className={classes.inputRow} >
                 {(props.formMode=='generation')?  
                     <div className={classes.formTitle}>
@@ -839,7 +936,7 @@ const columnsFr = [
                         </div>
                       
                         <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
-                            <select onChange={dropDownPeriodHandler} id='selectPeriod1' className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                            <select onChange={dropDownPeriodHandler} id='optPeriode' className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                                 {(optPeriode||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>
@@ -851,31 +948,32 @@ const columnsFr = [
                     
                                 
                     <div className={classes.gridAction}> 
-                        {/*(props.formMode=='ajout')?
+                      
+                        {(props.formMode =="generation") &&                      
                             <CustomButton
-                                btnText='Nvel. Eleve'
+                                btnText='Générer'
                                 hasIconImg= {true}
-                                imgSrc='images/addNewUserOrg.png'
+                                imgSrc='images/engrenage1.png'
+                                imgStyle = {classes.grdBtnImgStyleP}  
+                                buttonStyle={getGridButtonStyle()}
+                                btnTextStyle = {classes.gridBtnTextStyle}
+                                btnClickHandler={generateBulletinHandler}
+                                disable={(isValid==false)}   
+                            />
+                        }
+                      
+                        {(props.formMode =="impression") &&
+                            <CustomButton
+                                btnText={t('imprimer')}
+                                hasIconImg= {true}
+                                imgSrc='images/printing1.png'
                                 imgStyle = {classes.grdBtnImgStyle}  
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={AddNewStudentHandler}
-                                disable={(modalOpen==1||modalOpen==2)}   
+                                btnClickHandler={printStudentList}
+                                disable={(isValid==false)}   
                             />
-                            :
-                            null
-                            */}
-
-                        <CustomButton
-                            btnText={t('imprimer')}
-                            hasIconImg= {true}
-                            imgSrc='images/printing1.png'
-                            imgStyle = {classes.grdBtnImgStyle}  
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printStudentList}
-                            disable={(isValid==false)}   
-                        />
+                        }
 
                         {/*<CustomButton
                             btnText='Importer'

@@ -98,11 +98,11 @@ function FormLayout(props){
             case '120':  return   t('saisie_note_eval_M');
             case '121':  return   t('look_note_eval_M');
             case '122':  return   t('Gen_bulletin_M');
-            //case '16':  return   'Nouvelle Evaluation';
+            case '123':  return   t('print_bulletin_M');
             
-            case '123':  return   t('examen_officiels');
-            case '124':  return   t('Saisie Des Notes Aux Examens Officiels');
-            case '125':  return   t('official_exams_results');
+            case '124':  return   t('examen_officiels');
+            case '125':  return   t('Saisie Des Notes Aux Examens Officiels');
+            case '126':  return   t('official_exams_results');
             
 
             //----FINANCES ----
@@ -168,7 +168,7 @@ function FormLayout(props){
             case '107':   return  'images/lookSchedule.png';
             case '109':   return  'images/FicheProgession.png';
             case '110':   return  'images/ProgramClasse.png';
-            case '111':  return  'images/CahierTexte.png';
+            case '111':  return   'images/CahierTexte.png';
 
             case '112':  return  'images/Appel.png';
             case '113':  return  'images/lookPresence.png';
@@ -179,11 +179,12 @@ function FormLayout(props){
 
             case '120':  return  'images/SaveNotesP.png';
             case '121':  return  'images/LookNotes.png';
-            case '122':  return  'images/ListingNotes3.png';
+            case '122':  return  'images/genBulletins.png';
+            case '123':  return  'images/printReport.png';
             
-            case '123':  return  'images/NewEvaluation.png';
-            case '124':  return  'images/saisiExam.png';
-            case '125':  return  'images/ListAdmis.png';
+            case '124':  return  'images/NewEvaluation.png';
+            case '125':  return  'images/saisiExam.png';
+            case '126':  return  'images/ListAdmis.png';
             
             //----FINANCES ----
             case '200':  return  'images/SchoolFees.png';
