@@ -53,64 +53,92 @@ export function updateInitialState(value){
     INITIAL_STATE = value;
 }
 
-export function createCTStructure(coursId,ficheP){
-    var i,j,k;
-    var tempTab=[];
-    var cur_module = '';
-    var cur_chapitre = '';
-    var lessons = '';
-    var chaps='';
-    
-    
-    console.log(ficheP)
+export function createCTStructure(coursId,cahierDeTexte,mods,chapitres){
+
+    let current_mod = "", current_chap = "";
+    let chaps = "", cpt_module = 0;
+    let size = cahierDeTexte.length;
+    let addLecon = true,addChap = true;
+    let lessons = "";
+    let passe = false;
     modulesStringMap = [];
     modulesString =[];
-
-
-    i=0;
-    var cpt_module = 0;
-
-    while( i < ficheP.length) {
-        
-        cur_module = ficheP[i].module;
-        cpt_module ++;  
-
-        modulesStringMap ['module'+(cpt_module-1)] = ficheP[i].module;
-        
-        while(i < ficheP.length && cur_module == ficheP[i].module){
-            i++;
-        }             
+    // k permet de compter les chapitres
+    let k = 0;
+    console.log("SIZE: ",size);
+    if(size>0){
+        modulesStringMap['module'+cpt_module] = cahierDeTexte[0].module;
+        current_mod = cahierDeTexte[0].module;
+        current_chap = cahierDeTexte[0].chapitre;
     }
-
-    console.log("lalilo",modulesStringMap);
-
-    i=0; k=0;
-    while(i<cpt_module){
-        tempTab = [...ficheP.filter((elt)=>elt.module == modulesStringMap['module'+i])];
-        
-        j=0; chaps='';
-        while(j<tempTab.length){
-            cur_chapitre = tempTab[j].chapitre;
-            
-            lessons='';
-            while(j<tempTab.length && cur_chapitre ==  tempTab[j].chapitre){
-                if(lessons.length==0) lessons = 'lesson'+(k+1)+'_'+ficheP[j].lecon+'_'+ficheP[j].status+'_'+ficheP[j].id;
-                else lessons = lessons +'*'+ 'lesson'+(k+1)+'_'+ficheP[j].lecon+'_'+ficheP[j].status+'_'+ficheP[j].id;                
-                j++; k++;
-                
-            }
-            
-            if(chaps.length==0) chaps = 'chap'+(j+1)+'_'+cur_chapitre+'#'+lessons;
-            else chaps = chaps+'#' +'chap'+(j+1)+'_'+cur_chapitre+'#'+lessons;
-
+    for(let i=0;i<size;i++){
+        // console.log(i+" "+cahierDeTexte[i].lecon)
+        if(addLecon){
+            lessons = 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id;
+            addLecon = false;
         }
-        modulesString[i]= chaps;
-        i++;
+        else
+            lessons = lessons +'*'+ 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id;
+        
+        if(i+1<size){
+            if(current_chap !== cahierDeTexte[i+1].chapitre)
+             {    if(addChap){
+                    chaps = 'chap'+(k+1)+'_'+cahierDeTexte[i].chapitre+'#'+lessons;
+                    addChap = false;
+                    }
+                    else
+                        chaps =  chaps+'#' +'chap'+(k+1)+'_'+cahierDeTexte[i].chapitre+'#'+lessons;
+                    k++;
+                    current_chap = cahierDeTexte[i+1].chapitre;
+                    addLecon = true;
+             }
+        // console.log(i+" chap "+cahierDeTexte[i].chapitre)
+        }
+        // ici i== size - 1
+        else {
+            console.log("i==",i);
+            if(addChap){
+                chaps = 'chap'+(k+1)+'_'+cahierDeTexte[i].chapitre+'#'+lessons;
+                addChap = false;
+            }
+            else
+                chaps =  chaps+'#' +'chap'+(k+1)+'_'+cahierDeTexte[i].chapitre+'#'+lessons;
+            k++;
+        }
+        if(i+1<size){
+            if(current_mod !== cahierDeTexte[i+1].module)
+                { modulesString[cpt_module]= chaps;
+                current_mod = cahierDeTexte[i+1].module;
+                cpt_module++;
+                modulesStringMap['module'+cpt_module] = current_mod;
+                chaps = '';
+                lessons = '';
+                addLecon = true;
+                addChap = true;
+                if(i==size-1) passe = true;
+                else passe = false;}
+        }
+        // ici i== size - 1
+        else{
+            if(current_mod !== cahierDeTexte[i].module){
+                modulesString[cpt_module]= chaps;
+                current_mod = cahierDeTexte[i].module;
+                cpt_module++;
+                modulesStringMap['module'+cpt_module] = current_mod;
+                passe = true;
+            }
+            else passe = false;
+        }
+        if(i==size-1 && !passe){
+            console.log("la fin")
+            modulesString[cpt_module]= chaps;
+        }
     }
 
     createModule();
 
     console.log('donnees',modulesString);
+    
     CURRENT_SELECTED_COURS_ID = coursId;
 }
   
@@ -168,7 +196,7 @@ export const createModule=()=>{
       TAB_MODULES[i] = {...MODULE};
       TAB_CHAPITRE['module'+i] =[];
     }
-
+    console.log("modulesString:",modulesString);
     for(var i=0; i < modulesString.length; i++){
       modulesTab = modulesString[i].split('#');
       

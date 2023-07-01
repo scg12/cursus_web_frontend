@@ -15,6 +15,7 @@ var cur_fileToUpload = undefined;
 var cur_classeId = undefined;
 var cur_coursId = undefined;
 var selected_file_name='';
+var filename = '';
 
 
 var chosenMsgBox;
@@ -319,7 +320,8 @@ function AddFicheProgess(props) {
 
         axiosInstance.post(`sauvegarder-fiche-progression/`, {
             id_cours : coursId,
-            id_sousetab : currentAppContext.idEtabInit, 
+            id_sousetab : currentAppContext.idEtabInit,
+            filename : filename,
            
         }).then((res)=>{
             console.log("cours, sous etab:", coursId, currentAppContext.idEtabInit);
@@ -367,6 +369,7 @@ function AddFicheProgess(props) {
                  
         }).then((res)=>{
             console.log(res.data);
+            filename = res.data.filename;
             storeFicheProgress(cur_coursId);  
            // setFileUploaded(true);           
         })

@@ -41,12 +41,22 @@ function TableOfContents(props){
     
 
     const createFicheProgression=(coursId)=>{  
-            
-        axiosInstance.post(`get-fiche-progression/`, {
+        let cts = [];
+        let mods = [];
+        let chaps = [];
+        // axiosInstance.post(`get-fiche-progression/`, {
+        axiosInstance.post(`get-cahier-texte/`, {
             id_cours: coursId,
         }).then((res)=>{
-            console.log('fiche progress:', res.data);
-            createCTStructure(coursId,res.data);   
+            // console.log('fiche progress:', res.data);
+            res.data.cts.map(item=>cts.push(item));
+            res.data.mods.map(item=>mods.push(item));
+            res.data.chaps.map(item=>chaps.push(item));
+
+            console.log("cts: ",cts);
+            console.log("mods: ",mods);
+            console.log("chaps: ",chaps);
+            createCTStructure(coursId,cts,mods,chaps);   
             /*currentAppContext.setEtatLesson(TAB_ETATLESSONS)
             console.log('etats', currentAppContext.etatLesson)*/                     
         }) 
