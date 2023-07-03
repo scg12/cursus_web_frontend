@@ -18,6 +18,9 @@ import { useTranslation } from "react-i18next";
 let CURRENT_CLASSE_ID;
 let CURRENT_COURS_ID;
 let CURRENT_SEQUENCE_ID;
+let CURRENT_COURS_COEF;
+let CURRENT_COURS_GROUPE;
+var NOTES_CHANGED_IDS;
 
 var listElt ={
     rang:1, 
@@ -62,7 +65,8 @@ function SaveNotes(props) {
     const [optPeriode, setOptPeriode] = useState([]);
     
 
-    useEffect(()=> {        
+    useEffect(()=> {   
+        NOTES_CHANGED_IDS =[];     
         currentUiContext.setIsParentMsgBox(false);
 
         if(gridRows.length ==0){
@@ -90,18 +94,74 @@ function SaveNotes(props) {
         }) 
     }
 
-    const  getClassStudentListWithNotes=(classId, coursId, sequenceId)=>{
-        listEleves = []; 
-        axiosInstance.post(`eleves-notes-cours-sequence/`, {
+    const  getClassStudentList=(classId)=>{
+        listEleves = []
+        axiosInstance.post(`list-eleves/`, {
             id_classe: classId,
+        }).then((res)=>{
+            console.log(res.data);
+            listEleves = [...formatList(res.data)]
+            console.log(listEleves);
+            setGridRows(listEleves);
+            calculTendance();  
+            console.log(gridRows);
+        })  
+        return listEleves;     
+    }
+
+    const formatList=(list) =>{
+        var rang = 1;
+        var formattedList =[]
+        list.map((elt)=>{
+            listElt={};
+            listElt.id = elt.id;
+            listElt.nom  = elt.nom +' '+elt.prenom;
+            listElt.rang = rang;            
+            listElt.matricule = elt.matricule;
+            listElt.note = '00'; 
+            formattedList.push(listElt);
+            rang ++;
+        })
+        return formattedList;
+    }
+
+    const  getClassStudentListWithNotes=(coursId, sequenceId)=>{
+        listNotes = []; 
+        axiosInstance.post(`eleves-notes-cours-sequence/`, {
             id_cours: coursId,
             id_sequence:sequenceId
         }).then((res)=>{
-            listEleves = [...res.data];
-            console.log("LES LISTE",listEleves);
-            setGridRows(listEleves);          
+            listNotes = [...res.data];
+            console.log("LES NOTES",listNotes);
+            updateStudentsNote(listNotes);          
             calculTendance();  
         })  
+    }
+
+    function updateStudentsNote(notes){
+        var notesElev;
+        if(notes.length>0){
+            if(listEleves.length>0){
+                listEleves.map((elev)=>{
+                    notesElev = notes.find((elv)=>elv.eleves[0]==elev.id);
+                    if(notesElev!=-1||notesElev!=undefined){
+                        elev.note = notesElev.score;
+                    }
+                })
+
+                setGridRows(listEleves);
+            }
+
+        } else{
+
+            if(listEleves.length>0){
+                listEleves.map((elev)=>{
+                    elev.note = '00';
+                });
+                setGridRows(listEleves);
+            } 
+            else setGridRows([]);
+        }
     }
 
     function getNotesCoursSequence(coursId, sequenceId){
@@ -123,7 +183,7 @@ function SaveNotes(props) {
         if(classeId!=0){
             tabCours = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
             tabCours.map((cours)=>{
-                tempTable.push({value:cours.id_cours, label:cours.libelle_cours});
+                tempTable.push({value:cours.id_cours, label:cours.libelle_cours, coef:cours.coef_cours, groupeId:cours.id_groupe});
             })
 
             console.log("liste cours", tabCours);
@@ -169,14 +229,12 @@ function SaveNotes(props) {
                 }
             })
 
+        } else {
+            setOptPeriode(tempTable); 
         }
             
-        setGridRows([]);
+        //setGridRows([]);
 
-        //setSuperieurA10(0);
-        //setInferieureA10(0); 
-       
-        
         if( document.getElementById('optPeriode').options[0]!= undefined)
         document.getElementById('optPeriode').options[0].selected=true;
     }
@@ -184,9 +242,12 @@ function SaveNotes(props) {
     function classeChangeHandler(e){       
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value;
+            getClassStudentList(CURRENT_CLASSE_ID)
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
+            getActivatedEvalPeriods(-1);
         }else{
             CURRENT_CLASSE_ID = undefined;
+            setGridRows([]);
             getCoursClasse(currentAppContext.currentEtab, 0);
             getActivatedEvalPeriods(0);
         }
@@ -194,13 +255,22 @@ function SaveNotes(props) {
 
    
     function coursChangeHandler(e){
+       
         if(e.target.value != optCours[0].value){
             CURRENT_COURS_ID = e.target.value;
-            getActivatedEvalPeriods(CURRENT_COURS_ID);            
+            var index = optCours.findIndex((op)=>op.value ==CURRENT_COURS_ID)
+            CURRENT_COURS_COEF = e.target[index].id.split('_')[0];
+            CURRENT_COURS_GROUPE = e.target[index].id.split('_')[2];
+            console.log("groupe",CURRENT_COURS_GROUPE, parseInt(CURRENT_COURS_GROUPE));
+            getActivatedEvalPeriods(CURRENT_COURS_ID);  
+            updateStudentsNote([]);          
             
         } else {
             CURRENT_COURS_ID = undefined;
+            CURRENT_COURS_COEF = undefined;
+            CURRENT_COURS_GROUPE = undefined;
             //document.getElementById('optClasse').options[0].selected=true;
+            updateStudentsNote([]);
             getActivatedEvalPeriods(0);
         }
     }
@@ -208,39 +278,15 @@ function SaveNotes(props) {
     function periodeChangeHandler(e){
         if(e.target.value != optPeriode[0].value){
             CURRENT_SEQUENCE_ID = e.target.value;
-            getClassStudentListWithNotes(CURRENT_CLASSE_ID, CURRENT_COURS_ID,CURRENT_SEQUENCE_ID);   
+            getClassStudentListWithNotes(CURRENT_COURS_ID,CURRENT_SEQUENCE_ID);   
             //On pourra mettre les >10 et <10
             /*setSuperieurA10(presents);
             setInferieureA10(absents); */ 
         } else {
             CURRENT_SEQUENCE_ID = undefined;
-            setGridRows([]);
-           /* setSuperieurA10(0);
-            setInferieureA10(0); */
+            updateStudentsNote([]); 
+          
         }
-    }
-
-
-    const formatList=(list) =>{
-        var rang = 1;
-        var formattedList =[]
-        list.map((elt)=>{
-            listElt={};
-            listElt.id = elt.id;
-            listElt.nom  = elt.nom +' '+elt.prenom;
-            listElt.rang = rang;            
-            listElt.matricule = elt.matricule;
-            listElt.note = '00'; 
-            // listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            // listElt.lieu_naissance = elt.lieu_naissance;
-            // listElt.date_entree = convertDateToUsualDate(elt.date_entree);
-            // listElt.nom_pere = elt.nom_pere;
-            // listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant"; 
-            formattedList.push(listElt);
-            rang ++;
-
-        })
-        return formattedList;
     }
 
     /*************************** Theme Functions ***************************/
@@ -344,22 +390,23 @@ function SaveNotes(props) {
     }
 
     function saveNotesHandler(e){
-        var notes=[];
-        
+        var notes=[];       
         setModalOpen(4);
         listEleves.map((eleve)=>notes.push(eleve.note));
         axiosInstance.post(`save-classe-note/`, {
             id_classe : CURRENT_CLASSE_ID,
-            id_cours : CURRENT_COURS_ID,
-            id_groupe : 1, //a remplacer
+            id_cours  : CURRENT_COURS_ID,
+            id_groupe : CURRENT_COURS_GROUPE, 
             id_sequence : CURRENT_SEQUENCE_ID,
-            coef : 3, //a remplacer
+            coef : CURRENT_COURS_COEF,
             notes : notes.join('_')
         }).then((res)=>{
+            //NOTES_CHANGED_IDS=[];
             calculTendance();
             setModalOpen(0);
-            setDataSaved(true)
+            setDataSaved(true);
             console.log(res.data);
+            
             chosenMsgBox = MSG_SUCCESS_NOTES;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -370,25 +417,6 @@ function SaveNotes(props) {
         })  
 
     }
-
-
-    function getPresentCount(tab){
-        var countPresent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 1) countPresent++;
-        }
-        return countPresent;
-    }
-
-    function getAbsentCount(tab){
-        var countAbsent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 0) countAbsent++;
-        }
-        return countAbsent;
-    } 
-   
-   
 
     function updateNoteColor(e){
         console.log(e)
@@ -401,6 +429,12 @@ function SaveNotes(props) {
             listEleves[index].note = 0
             
         } else {
+            var id_note = NOTES_CHANGED_IDS.find((noteId)=>noteId==listEleves[index].id)
+
+            if(id_note != -1 || id_note == undefined){
+                NOTES_CHANGED_IDS.push(listEleves[index].id);
+            }
+            
             listEleves[index].note = note
             document.getElementById(idnote).value = note;
             if(note >=props.noteMax/2) {
@@ -414,11 +448,6 @@ function SaveNotes(props) {
 
         }
         setGridRows(listEleves);
-       /* if(e){}
-            setSuperieurA10(supA10);
-            setInferieureA10(infA10);
-        }*/
-     
     }
 
     function calculTendance(){
@@ -438,18 +467,6 @@ function SaveNotes(props) {
             setInferieureA10(inferieureA10+1);
             document.getElementById(suivant).focus();
         }
-    }
-
-    function moveOnMax(e,currentField, nextField){
-        if(nextField!=null){
-            e = e || window.event;
-            if(e.keyCode != 9){
-                if(currentField.value.length >= currentField.maxLength){
-                    nextField.focus();
-                }
-            }
-        }
-     
     }
 
     /*************************** DataGrid Declaration ***************************/    
@@ -618,7 +635,7 @@ function SaveNotes(props) {
                             <select id='optCours' onChange={coursChangeHandler} className={classes.comboBoxStyle} style={{width:'13.3vw', marginBottom:1, marginLeft:'1vw'}}>
                                 {(optCours||[]).map((option)=> {
                                     return(
-                                        <option value={option.value}>{option.label}</option>
+                                        <option id={option.coef+'_'+option.value+'_'+option.groupeId} value={option.value}>{option.label}</option>
                                     );
                                 })}
                             </select>               
