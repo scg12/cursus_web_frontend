@@ -48,19 +48,24 @@ function ProgramCoverClass(props){
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [barchartData, setBarChartData] = useState([]);
+
+    const [barchartDataLabels, setBarchartDataLabels] = useState(props.barchartDataLabels);
+    const [barchartDataValues, setBarchartDataValues] = useState(props.barchartDataValues);
+
     
   useEffect(()=> {
     getData(props.selectedClass);
   },[]);
 
   const state = {
-    labels: ['6emes', '5emes', '4iemes', '3iemes', '2nds', '1eres', "Tles"],                
+    // labels: ['6emes', '5emes', '4iemes', '3iemes', '2nds', '1eres', "Tles"],                
+    labels: props.barchartDataLabels,                
     datasets: [{        
         label: t('couverture_pourcent'),
         backgroundColor: '#6800B4',
         borderColor: 'white',
         borderWidth: 1,
-        data: barchartData
+        data: props.barchartDataValues
     }]        
   };
 

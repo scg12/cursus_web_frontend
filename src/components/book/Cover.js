@@ -132,7 +132,7 @@ function Cover(props){
             console.log("cts: ",cts);
             console.log(mods);
             console.log(chaps);
-            createCTStructure(coursId,cts,mods,chaps);   
+            createCTStructure(coursId,cts);   
             /*currentAppContext.setEtatLesson(TAB_ETATLESSONS)
             console.log('etats', currentAppContext.etatLesson)*/                     
         }) 

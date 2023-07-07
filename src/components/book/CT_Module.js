@@ -53,7 +53,7 @@ export function updateInitialState(value){
     INITIAL_STATE = value;
 }
 
-export function createCTStructure(coursId,cahierDeTexte,mods,chapitres){
+export function createCTStructure(coursId,cahierDeTexte){
 
     let current_mod = "", current_chap = "";
     let chaps = "", cpt_module = 0;
@@ -74,11 +74,11 @@ export function createCTStructure(coursId,cahierDeTexte,mods,chapitres){
     for(let i=0;i<size;i++){
         // console.log(i+" "+cahierDeTexte[i].lecon)
         if(addLecon){
-            lessons = 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id;
+            lessons = 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id+'_'+cahierDeTexte[i].resumes+'_'+cahierDeTexte[i].devoirs;
             addLecon = false;
         }
         else
-            lessons = lessons +'*'+ 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id;
+            lessons = lessons +'*'+ 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id+'_'+cahierDeTexte[i].resumes+'_'+cahierDeTexte[i].devoirs;
         
         if(i+1<size){
             if(current_chap !== cahierDeTexte[i+1].chapitre)
@@ -222,8 +222,8 @@ export const createModule=()=>{
           LESSON.libelleLesson = lesson[1];
           LESSON.etat = lesson[2];
           LESSON.libelleChapitre = CHAPITRE.libelleChapitre;
-          LESSON.tabDevoirs = devoirs;
-          LESSON.tabResumes = resumes;
+          LESSON.tabDevoirs = lesson[5].split("²²");
+          LESSON.tabResumes = lesson[4].split("²²");
           LESSON.resume = '';
 
           TAB_ETATLESSONS[k] =  LESSON.etat;
@@ -233,6 +233,7 @@ export const createModule=()=>{
           LISTE_LECONS.push(LESSON);
           previousLesson = LESSON.lessonId;
         }
+        console.log("LESSON :",LISTE_LECONS)
     
         TAB_MODULES[i].tabChapitre.push(CHAPITRE);        
         j= j+2;            

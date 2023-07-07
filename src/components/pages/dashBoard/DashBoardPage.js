@@ -82,6 +82,10 @@ function DashBoardPage() {
 
 
     const [DoughnutData, setDoughnutData] = useState([100,0]);
+    const [barchartData, setBarChartData] = useState([]);
+    const [barchartDataLabels, setBarchartDataLabels] = useState([]);
+    const [barchartDataValues, setBarchartDataValues] = useState([]);
+
 
 
   useEffect(()=> {
@@ -235,7 +239,9 @@ function getData(niveauId){
       
   }).then((res)=>{
       console.log(res.data);
-      setDoughnutData(res.data.data);       
+      setDoughnutData(res.data.doughnut_data);       
+      setBarchartDataLabels(res.data.barchart_data.classes);       
+      setBarchartDataValues(res.data.barchart_data.taux);       
   })
   // if(niveauId<=3)
   //   setDoughnutData([55,45]);  
@@ -439,7 +445,7 @@ const resultatsMatiereHandler=(e)=>{
 
             </div>
             <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-              <ProgramCoverClass selectedClasse={prgramCoverSelectedClass.id}/>
+              <ProgramCoverClass barchartDataLabels={barchartDataLabels} barchartDataValues={barchartDataValues}  selectedClasse={prgramCoverSelectedClass.id}/>
             </div>
             
           </div>

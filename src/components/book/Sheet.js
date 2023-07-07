@@ -33,7 +33,8 @@ function Sheet(props){
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
-        setEtaLesson(props.etat);       
+        setEtaLesson(props.etat);
+        console.log("props.contenu.tabDevoirs: ",props.contenu.tabDevoirs)       
     },[CURRENT_SELECTED_COURS_ID]);
 
     
@@ -148,7 +149,7 @@ function Sheet(props){
             console.log("cts: ",cts);
             console.log(mods);
             console.log(chaps);
-            createCTStructure(coursId,cts,mods,chaps);   
+            createCTStructure(coursId,cts);   
             /*currentAppContext.setEtatLesson(TAB_ETATLESSONS)
             console.log('etats', currentAppContext.etatLesson)*/                     
         }) 
@@ -271,10 +272,10 @@ function Sheet(props){
                             return(  
                                 <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
                                     <div style={{width:'80%', borderBottom:"1px solid black"}}>
-                                        <div className={classes.textStyleP}> {devoir.libelle}</div>
-                                    </div>
+                                        <div className={classes.textStyleP}> {devoir.split("&&")[1]}</div>
+                                    </div> 
                                     <div style={{width:'20%', borderBottom:"1px solid black"}}>
-                                        <div className={classes.textStyleP}> {devoir.date}</div>
+                                        <div className={classes.textStyleP}> {devoir.split("&&")[0]}</div>
                                     </div>                                        
                                 </div>                     
                             );
@@ -285,10 +286,10 @@ function Sheet(props){
                                 return(  
                                     <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
                                         <div style={{width:'80%', borderBottom:"1px solid black"}}>
-                                            <div className={classes.textStyleP}> {resume.libelle}</div>
+                                            <div className={classes.textStyleP}> {resume.split("&&")[1]}</div>
                                         </div>
                                         <div style={{width:'20%',borderBottom:"1px solid black"}}>
-                                            <div className={classes.textStyleP}> {resume.date}</div>
+                                            <div className={classes.textStyleP}> {resume.split("&&")[0]}</div>
                                         </div>                                        
                                     </div>                     
                                 );
