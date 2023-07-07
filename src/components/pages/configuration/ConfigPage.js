@@ -44,6 +44,7 @@ import ConfigSpecialiteEns from "./subPages/ConfigSpecialiteEns";
 import ConfigActiverUser from "./subPages/ConfigActiverUser";
 import ConfigEnseignantSpecialites from "./subPages/ConfigEnseignantSpecialites";
 import ConfigAppreciationNote from "./subPages/ConfigAppreciationNote";
+import ConfigCausesConvocationCD from "./subPages/ConfigCausesConvocationCD";
 
 
 
@@ -227,6 +228,7 @@ function ConfigPage(props) {
                                 {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Matières de spécialité des Enseignants"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(21):(section2SelectedItem == 21) ? setSection2SelectedItem(0):setSection2SelectedItem(21)}}></MenuItem> : null}
                                 {/* {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={classes.imageStyle}   libelle="Définition des Quotas Cursus"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(13):(section2SelectedItem == 13) ? setSection2SelectedItem(0):setSection2SelectedItem(13)}}></MenuItem> : null} */}
                                 {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion Des Appréciation De Notes"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(22):(section2SelectedItem == 22) ? setSection2SelectedItem(0):setSection2SelectedItem(22)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Causes de Convocation au Conseil de Discipline"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(23):(section2SelectedItem == 23) ? setSection2SelectedItem(0):setSection2SelectedItem(23)}}></MenuItem> : null}
 
                             </div>
                             
@@ -326,6 +328,10 @@ function ConfigPage(props) {
                                 }
                                 {(section2SelectedItem==22) ?
                                     <ConfigAppreciationNote/>
+                                    : null
+                                }
+                                {(section2SelectedItem==23) ?
+                                    <ConfigCausesConvocationCD/>
                                     : null
                                 }
                                 
