@@ -5,12 +5,18 @@ import UiContext from "../../../../store/UiContext";
 import AppContext from '../../../../store/AppContext';
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import PDFTemplate from '../reports/PDFTemplate';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import MsgBox from '../../../msgBox/MsgBox';
 import AddStudent from "../modals/AddStudent";
+import ListNotesEleves from "../reports/ListNotesEleves";
 import BackDrop from "../../../backDrop/BackDrop";
+import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 
 
@@ -20,7 +26,11 @@ let CURRENT_COURS_ID;
 let CURRENT_SEQUENCE_ID;
 let CURRENT_COURS_COEF;
 let CURRENT_COURS_GROUPE;
+var CURRENT_CLASSE_LABEL;
+var CURRENT_COURS_LABEL;
 var NOTES_CHANGED_IDS;
+var NOTES_CHANGES;
+var printedETFileName='';
 
 var listElt ={
     rang:1, 
@@ -39,11 +49,14 @@ var listEleves;
 var listNotes;
 var supA10 = 0;
 var infA10 = 0;
+var nonSaisi =0;
 
 var chosenMsgBox;
 const MSG_SUCCESS_NOTES =11;
 const MSG_WARNING_NOTES =12;
 const MSG_ERROR_NOTES   =13;
+const ROWS_PER_PAGE= 40;
+var ElevePageSet=[];
 
 
 
@@ -59,6 +72,7 @@ function SaveNotes(props) {
     const [dataSaved, setDataSaved] = useState(false);
     const [superieurA10, setSuperieurA10]= useState(0);
     const [inferieureA10, setInferieureA10]= useState(0);
+    const [notesNonSaisie, setNotesNonSaisie]= useState(0);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const [optClasse, setOpClasse] = useState([]);
     const [optCours, setOpCours] = useState([]);
@@ -119,6 +133,7 @@ function SaveNotes(props) {
             listElt.rang = rang;            
             listElt.matricule = elt.matricule;
             listElt.note = '00'; 
+            listElt.deja_saisi = -1;
             formattedList.push(listElt);
             rang ++;
         })
@@ -146,14 +161,17 @@ function SaveNotes(props) {
                     notesElev = notes.find((elv)=>elv.eleves[0]==elev.id);
                     if(notesElev!=-1||notesElev!=undefined){
                         elev.note = notesElev.score;
+                        elev.deja_saisi = notesElev.deja_saisi
+                        ;
+                    } else {
+                        elev.deja_saisi = -1;
+                        document.getElementById("div"+elev.id).style.backgroundColor="#ecc010cf";
                     }
                 })
-
                 setGridRows(listEleves);
             }
 
         } else{
-
             if(listEleves.length>0){
                 listEleves.map((elev)=>{
                     elev.note = '00';
@@ -224,17 +242,14 @@ function SaveNotes(props) {
                         msgType:"info", 
                         msgTitle:t("error_M"), 
                         message:t("no_activated_period")
-                    }) 
-        
+                    })         
                 }
             })
 
         } else {
             setOptPeriode(tempTable); 
-        }
-            
+        }            
         //setGridRows([]);
-
         if( document.getElementById('optPeriode').options[0]!= undefined)
         document.getElementById('optPeriode').options[0].selected=true;
     }
@@ -242,11 +257,14 @@ function SaveNotes(props) {
     function classeChangeHandler(e){       
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value;
+            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
+            
             getClassStudentList(CURRENT_CLASSE_ID)
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
             getActivatedEvalPeriods(-1);
         }else{
             CURRENT_CLASSE_ID = undefined;
+            CURRENT_CLASSE_LABEL =undefined;
             setGridRows([]);
             getCoursClasse(currentAppContext.currentEtab, 0);
             getActivatedEvalPeriods(0);
@@ -254,14 +272,17 @@ function SaveNotes(props) {
     }
 
    
-    function coursChangeHandler(e){
-       
+    function coursChangeHandler(e){       
         if(e.target.value != optCours[0].value){
             CURRENT_COURS_ID = e.target.value;
+            
             var index = optCours.findIndex((op)=>op.value ==CURRENT_COURS_ID)
+            CURRENT_COURS_LABEL = optCours[index].label;
+
             CURRENT_COURS_COEF = e.target[index].id.split('_')[0];
             CURRENT_COURS_GROUPE = e.target[index].id.split('_')[2];
             console.log("groupe",CURRENT_COURS_GROUPE, parseInt(CURRENT_COURS_GROUPE));
+            
             getActivatedEvalPeriods(CURRENT_COURS_ID);  
             updateStudentsNote([]);          
             
@@ -269,6 +290,7 @@ function SaveNotes(props) {
             CURRENT_COURS_ID = undefined;
             CURRENT_COURS_COEF = undefined;
             CURRENT_COURS_GROUPE = undefined;
+            CURRENT_COURS_LABEL = undefined;
             //document.getElementById('optClasse').options[0].selected=true;
             updateStudentsNote([]);
             getActivatedEvalPeriods(0);
@@ -392,17 +414,23 @@ function SaveNotes(props) {
     function saveNotesHandler(e){
         var notes=[];       
         setModalOpen(4);
-        listEleves.map((eleve)=>notes.push(eleve.note));
+        listEleves.map((eleve)=>{
+            if(NOTES_CHANGED_IDS.includes(eleve.id)) {
+                notes.push(eleve.note);
+            }
+            
+        });
         axiosInstance.post(`save-classe-note/`, {
             id_classe : CURRENT_CLASSE_ID,
             id_cours  : CURRENT_COURS_ID,
             id_groupe : CURRENT_COURS_GROUPE, 
             id_sequence : CURRENT_SEQUENCE_ID,
-            coef : CURRENT_COURS_COEF,
-            notes : notes.join('_')
+            coef   : CURRENT_COURS_COEF,
+            notes  :  notes.join('_'),
+            elevesIds: NOTES_CHANGED_IDS.join('_')
         }).then((res)=>{
-            //NOTES_CHANGED_IDS=[];
-            calculTendance();
+            NOTES_CHANGED_IDS=[];
+            getClassStudentListWithNotes(CURRENT_COURS_ID,CURRENT_SEQUENCE_ID);
             setModalOpen(0);
             setDataSaved(true);
             console.log(res.data);
@@ -422,13 +450,19 @@ function SaveNotes(props) {
         console.log(e)
         var note = e.target.value;
         var idnote = e.target.id;
+        var NoteDiv = "div"+e.target.id;
         var index = listEleves.findIndex((eleve)=>eleve.id==idnote)
-        if(note > props.noteMax || isNaN(note)){
+        if(note < props.noteMax || note > props.noteMax || isNaN(note)){
+            document.getElementById(NoteDiv).style.backgroundColor='red';
             document.getElementById(idnote).value = 'ERR';
-            document.getElementById(idnote).style.color='red';
-            listEleves[index].note = 0
+            document.getElementById(idnote).style.color='white';
+            listEleves[index].note = 0;
             
         } else {
+            listEleves[index].deja_saisi = 0;
+            document.getElementById(NoteDiv).style.backgroundColor='#dcd05c94';
+            
+            
             var id_note = NOTES_CHANGED_IDS.find((noteId)=>noteId==listEleves[index].id)
 
             if(id_note != -1 || id_note == undefined){
@@ -437,37 +471,18 @@ function SaveNotes(props) {
             
             listEleves[index].note = note
             document.getElementById(idnote).value = note;
-            if(note >=props.noteMax/2) {
-                document.getElementById(idnote).style.color='black';  
-                supA10+=1;             
-            }
-            else {
-                document.getElementById(idnote).style.color='red';  
-                infA10+=1             
-            }
-
         }
         setGridRows(listEleves);
     }
 
     function calculTendance(){
-        var supA10, infA10;
-        supA10 = 0; infA10 = 0;
-        listEleves.map((eleve)=>{(eleve.note>=10)? supA10++ : infA10++});
-        setSuperieurA10(supA10); setInferieureA10(infA10);
+        var supA10, infA10, nonSaisi;
+        supA10 = 0; infA10 = 0; nonSaisi=0;
+        listEleves.map((eleve)=>{(eleve.deja_saisi==-1)? nonSaisi++ : (eleve.note>=10)? supA10++ : infA10++});
+        setSuperieurA10(supA10); setInferieureA10(infA10); setNotesNonSaisie(nonSaisi);
     }
 
-    function updateNotesResults(e){
-        var note = e.target.value;
-        var suivant = e.target.id+1;
-        if(note >=props.noteMax/2) {
-            setSuperieurA10(superieurA10+1);
-            document.getElementById(suivant).focus();
-        }else{
-            setInferieureA10(inferieureA10+1);
-            document.getElementById(suivant).focus();
-        }
-    }
+  
 
     /*************************** DataGrid Declaration ***************************/    
     const columns = [
@@ -495,6 +510,15 @@ function SaveNotes(props) {
         },
 
         {
+            field: 'deja_saisi',
+            headerName: '',
+            width: 200,
+            hide:true,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'note',
             headerName: t('note_M')+'/'+props.noteMax,
             width: 80,
@@ -502,14 +526,49 @@ function SaveNotes(props) {
             headerClassName: classes.GridColumnStyle,  
            renderCell: (params)=>{
             return(
-                <div style={{display:"flex", flexDirection:"row",  justifyContent:"center", alignItems:'center', width:"60vw", height:"2vw", borderRadius:'3px', borderStyle:"solid", borderWidth:"1px", marginTop:"1vh", marginBottom:'1vh', borderColor:'#065386'}}>
-                    <input type='text' id={params.row.id} onChange={updateNoteColor} /*onBlur={updateNotesResults}*/  defaultValue={params.row.note} style={{textAlign:'center', fontSize:'0.9vw', color:params.row.note >10? 'black':'red'}}/>
+                <div id={"div"+params.row.id} style={{display:"flex", flexDirection:"row",  justifyContent:"center", alignItems:'center', width:"60vw", height:"2vw", borderRadius:'3px', borderStyle:"solid", borderWidth:"1px", marginTop:"1vh", marginBottom:'1vh', borderColor:'#065386', backgroundColor:params.row.deja_saisi==-1 ? "#ec151080" : params.row.deja_saisi==0 ? "#dcd05c94":null}}>
+                    <input type='text' id={params.row.id} onChange={updateNoteColor}   defaultValue={params.row.note} style={{textAlign:'center', fontSize:'0.9vw', color:params.row.note >=10? 'black':'red'}}/>
                 </div>
             )}                     
         },
             
     ];
-    
+
+    const closePreview =()=>{
+        setIsValid(false);                 
+        setModalOpen(0);
+    }
+
+    const printStudentNotesList=()=>{
+        if(CURRENT_CLASSE_ID != undefined){
+            var PRINTING_DATA ={
+                dateText:'Yaounde, le 14/03/2023',
+                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+                pageImages:["images/collegeVogt.png"],
+                pageTitle: "Notes du cours " + CURRENT_COURS_LABEL,
+                tableHeaderModel:["N°","Matricule", "Nom et prenom(s)", "Note"],
+                tableData :[...gridRows],
+                numberEltPerPage:ROWS_PER_PAGE  
+            };
+            printedETFileName = 'Notes_' + CURRENT_COURS_LABEL +'('+ CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(5);
+            ElevePageSet=[];
+            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
+            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            console.log("ici la",ElevePageSet,gridRows);                    
+        } else{
+            chosenMsgBox = MSG_WARNING_NOTES;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "warning", 
+                msgTitle : t("warning_M"), 
+                message  : t("must_select_class")
+            })            
+        }      
+    }
+  
 
     /********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
@@ -568,6 +627,22 @@ function SaveNotes(props) {
                     buttonRejectHandler = {rejectHandler}            
                 />                 
             }
+
+            
+            {(modalOpen==5) && <BackDrop/>}
+            {(modalOpen==5) &&              
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    {isMobile?
+                        <PDFDownloadLink  document ={<ListNotesEleves pageSet={ElevePageSet}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            <ListNotesEleves pageSet={ElevePageSet}/>
+                        </PDFViewer>
+                    }
+                </PDFTemplate>
+            } 
             
            
             {(modalOpen==4) && <BackDrop/>}
@@ -681,7 +756,7 @@ function SaveNotes(props) {
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
+                            btnClickHandler={printStudentNotesList}
                             disable={(modalOpen==1||modalOpen==2)}   
                         />
 
@@ -736,12 +811,17 @@ function SaveNotes(props) {
             { 
                 <div className={classes.infoPresence}>
                     <div className={classes.presentZone}>
-                        <div> ({t('Notes >= 10')}) : </div>
+                        <div> ({t('notes')+' >= 10'}) : </div>
                         <div> {superieurA10} </div>
                     </div>
 
                     <div className={classes.absentZone}>
-                        <div> ({t('Notes < 10')}) : </div>
+                        <div> ({t('notes')+' < 10'}) : </div>
+                        <div> {inferieureA10} </div>
+                    </div>
+
+                    <div className={classes.nonSaisiZone}>
+                        <div> ({t('non_saisi')}) : </div>
                         <div> {inferieureA10} </div>
                     </div>
                 </div>

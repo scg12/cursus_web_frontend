@@ -1,4 +1,7 @@
-{   "traitement":"Processing",
+{   "notes":"Marks",
+    "non_saisi":"No marks",
+    "paid_fees":"Students with paid tuition fees only ",
+    "traitement":"Processing",
     "print_report":"Print student's reports",
     "generate_report":"Generate student's reports",
     "loading":"Loading",

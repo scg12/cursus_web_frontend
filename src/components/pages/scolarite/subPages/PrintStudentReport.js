@@ -238,12 +238,20 @@ function PrintStudentReport(props) {
     function dropDownPeriodHandler(e){
         if(e.target.value != optPeriode[0].value){
             CURRENT_PERIOD_ID = e.target.value; 
-            if(CURRENT_CLASSE_ID == undefined) setOpenCheck(false);
-            else setOpenCheck(true);
+            if(props.formMode =="impression"){
+                if(CURRENT_CLASSE_ID == undefined) setOpenCheck(false);
+                else setOpenCheck(true);
+            } else {
+                if(!isValid)  setIsValid(true);
+            }
+            
                   
         }else{
             CURRENT_PERIOD_ID = undefined;
-            setOpenCheck(false);
+            setOpenCheck(false);            
+            if(props.formMode == "generation"){
+                if(isValid)  setIsValid(false);
+            } 
         }
     }
  
@@ -781,16 +789,17 @@ const columnsFr = [
            
             formData.append('id_classe',CURRENT_CLASSE_ID);
             formData.append('id_sequence',CURRENT_PERIOD_ID);
+            formData.append('id_eleves',selectedElevesIds[0].join('_'));
 
             const config = {headers:{'Content-Type':'multipart/form-data'}};
             axiosInstance
             .post(`imprimer-bulletin-classe/`,formData,config)
             .then((response) => {  
-                setModalOpen(0);              
+               // setModalOpen(0);              
                 ElevePageSet={};
-                ElevePageSet.eleveNotes = {... response.data.eleve_results};
-                ElevePageSet.noteRecaps = {... response.data.note_recap_results};
-                ElevePageSet.groupeRecaps = {... response.data.groupe_recap_results};
+                ElevePageSet.eleveNotes = [... response.data.eleve_results];
+                ElevePageSet.noteRecaps = [... response.data.note_recap_results];
+                ElevePageSet.groupeRecaps = [... response.data.groupe_recap_results];
                 ElevePageSet.entete_fr ={... response.data.entete_fr};
                 ElevePageSet.entete_en ={... response.data.entete_en};
                 ElevePageSet.titreBulletin ={... response.data.titre_bulletin};
@@ -916,7 +925,7 @@ const columnsFr = [
             <div className={classes.formGridContent}>
               
                 <div className={classes.gridTitleRow}> 
-                    <div className={classes.gridTitle}>                  
+                    <div className={classes.gridTitle} style={{width:"77vw"}}>                  
                         <div className={classes.gridTitleText}>
                             {t('class_M')} :
                         </div>
@@ -944,6 +953,13 @@ const columnsFr = [
                                 })}
                             </select>                          
                         </div>
+                        {(props.formMode =="impression") &&
+                            <div style={{display:"flex", flexDirection:"row", marginLeft:"2vw" }}>
+                                <input type="checkbox"/> 
+                                <div style={{marginLeft:"0.3vw"}}>{t('paid_fees')}</div>
+
+                            </div>
+                        }
                     </div>
                     
                                 
@@ -997,13 +1013,13 @@ const columnsFr = [
                             rows={gridRows}
                             columns={(i18n=='fr') ? columnsFr : columnsEn}
 
-                            checkboxSelection ={(openCheck==true) ? true : false}
+                            checkboxSelection ={(props.formMode =="impression" && openCheck) ? true : false}
                                 
                             onSelectionModelChange={(id)=>{
                                 selectedElevesIds = new Array(id);
                                 if(selectedElevesIds[0].length>0) setIsValid(true);
                                 else setIsValid(false);
-                                console.log(selectedElevesIds);
+                                console.log("selections",selectedElevesIds);
                             }}
 
 

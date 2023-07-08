@@ -810,7 +810,6 @@ const columnsFr = [
 
     const printStudentList=()=>{
         
-        
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
                 dateText:'Yaounde, le 14/03/2023',
@@ -989,51 +988,48 @@ const columnsFr = [
                         />
                     </div>
                         
-                    </div>
+                </div>
                     
                 
 
-                {/*(modalOpen==0) ?*/
-                    <div className={classes.gridDisplay} >
-                        <StripedDataGrid
-                            rows={gridRows}
-                            columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
-                           // onCellClick={handleDeleteRow}
-                            onRowClick={(params,event)=>{
-                                if(event.ignore) {
-                                    //console.log(params.row);
-                                    handleEditRow(params.row)
-                                }
-                            }}  
-                            
-                            onRowDoubleClick ={(params, event) => {
-                                event.defaultMuiPrevented = true;
-                                consultRowData(params.row)
-                            }}
-                            
-                            //loading={loading}
-                            //{...data}
-                            sx={{
-                                //boxShadow: 2,
-                                //border: 2,
-                                //borderColor: 'primary.light',
-                                '& .MuiDataGrid-cell:hover': {
-                                  color: 'primary.main',
-                                  border:0,
-                                  borderColor:'none'
-                                },
-                              
-                            }}
-                            getRowClassName={(params) =>
-                                params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+             
+                <div className={classes.gridDisplay} >
+                    <StripedDataGrid
+                        
+                        rows={gridRows}
+                        columns={(i18n.language =='fr') ? columnsFr : columnsEn}
+                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        // onCellClick={handleDeleteRow}
+                        onRowClick={(params,event)=>{
+                            if(event.ignore) {
+                                //console.log(params.row);
+                                handleEditRow(params.row)
                             }
-                        />
-                    </div>
-                  /*  :
-                    null
-                        */}
-            
+                        }}  
+                        
+                        onRowDoubleClick ={(params, event) => {
+                            event.defaultMuiPrevented = true;
+                            consultRowData(params.row)
+                        }}
+                        
+                        //loading={loading}
+                        //{...data}
+                        sx={{
+                            //boxShadow: 2,
+                            //border: 2,
+                            //borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                                color: 'primary.main',
+                                border:0,
+                                borderColor:'none'
+                            },
+                            
+                        }}
+                        getRowClassName={(params) =>
+                            params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+                        }
+                    />
+                </div>
             </div>
         </div>
         

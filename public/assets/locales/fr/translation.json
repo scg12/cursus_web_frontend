@@ -1,4 +1,7 @@
-{   "traitement":"Traitement",
+{  "notes":"Notes",
+    "non_saisi":"Notes non saisie",
+    "paid_fees":"Elèves en règle uniquement",
+    "traitement":"Traitement",
     "print_report":"Imprimer les Bulletins",
     "generate_report":"Générer les Bulletins",
     "loading":"Chargement",

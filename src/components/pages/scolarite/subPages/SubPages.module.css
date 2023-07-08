@@ -287,7 +287,7 @@ padding-bottom: 0.7vh !important;
 }
 
 .infoPresence{
-width: 20vw;
+width: 33vw;
 display:flex;
 flex-direction: row;
 justify-content: space-around;
@@ -295,25 +295,37 @@ align-items:flex-end;
 
 }
 .presentZone{
-display:flex;
-flex-direction: row;
-justify-content: center;
-align-items: center;
-font-size: 1vw;
-font-weight: 700;
-color:green;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1vw;
+    font-weight: 700;
+    color:green;
 }
 
 .absentZone{
-display:flex;
-flex-direction: row;
-justify-content: center;
-align-items: center;
-font-size: 1vw;
-font-weight: 700;
-margin-left: 0.5vw;
-color: red;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1vw;
+    font-weight: 700;
+    margin-left: 0.5vw;
+    color: red;
 }
+
+.nonSaisiZone{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1vw;
+    font-weight: 700;
+    margin-left: 0.5vw;
+    color: rgb(34, 5, 122);
+}
+
 .formErrorMsg {
 min-width: 80%;
 width:fit-content;

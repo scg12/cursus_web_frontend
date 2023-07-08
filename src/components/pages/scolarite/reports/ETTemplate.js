@@ -402,9 +402,9 @@ const styles = StyleSheet.create({
         height:"4vh",
         color:'black',
         width:'100%',
-        borderBottom: "1px solid black",      
-
+        borderBottom: "1px solid black",     
     },
+
 
     dateContainer:{
         display: "flex",

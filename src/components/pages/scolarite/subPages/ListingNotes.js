@@ -5,10 +5,15 @@ import UiContext from "../../../../store/UiContext";
 import AppContext from '../../../../store/AppContext';
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
-import AddStudent from "../modals/AddStudent";
 import BackDrop from "../../../backDrop/BackDrop";
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import ListingNotesTemplate from '../reports/ListingNotesTemplate';
+import PDFTemplate from '../reports/PDFTemplate';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
+import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import {createPrintingPages} from '../reports/PrintingModule';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
@@ -16,11 +21,16 @@ import { useTranslation } from "react-i18next";
 let CURRENT_CLASSE_ID;
 let CURRRENT_COURS_ID;
 let CURRENT_SEQUENCE_ID;
+var CURRENT_CLASSE_LABEL;
+var CURRENT_SEQUENCE_LABEL;
+var printedETFileName='';
 
 
 var listEleves;
 var listNotes;
 var listCours;
+var listCoursTitle;
+var coursIdTab=[];
 
 var chosenMsgBox;
 const MSG_SUCCESS_NOTES =11;
@@ -40,6 +50,8 @@ var listElt ={
     id:1,
 }
 
+const ROWS_PER_PAGE= 40;
+var ElevePageSet=[];
 
 function ListingNotes(props) {
 
@@ -73,7 +85,7 @@ function ListingNotes(props) {
     const columns = [
         {
             field: 'id',
-            headerName: 'N°',
+            headerName: 'id',
             width: 33,
             editable: false,
             hide:true,
@@ -145,7 +157,6 @@ function ListingNotes(props) {
             updateGridCols(listCours);
             updateStudentsNote(listNotes);
         })
-
     }
 
     function updateStudentsNote(notes){
@@ -212,6 +223,8 @@ function ListingNotes(props) {
     function classeChangeHandler(e){       
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value;
+            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
+
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
             console.log("cours ici:",listCours)
             updateGridCols(listCours);
@@ -231,6 +244,7 @@ function ListingNotes(props) {
     function evaluationChangeHandler(e){
         if(e.target.value != optPeriode[0].value){
             CURRENT_SEQUENCE_ID = e.target.value;
+            CURRENT_SEQUENCE_LABEL = optPeriode[optPeriode.findIndex((period)=>(period.value == CURRENT_SEQUENCE_ID))].label;
             getStudentsNotes(CURRENT_CLASSE_ID, CURRENT_SEQUENCE_ID);            
         } else {
             CURRENT_SEQUENCE_ID = undefined;
@@ -270,20 +284,25 @@ function ListingNotes(props) {
     function updateGridCols(listCours){
         var gridCols =[...columns];
         var column ={};
+        listCoursTitle=[];
+
         if(listCours.length>0){
             listCours.map((crs, index)=>{
                 column = {
                     field: 'note_'+ (crs.value),
                     headerName: crs.label,
-                    width: 80,
+                    width: 97,
                     editable: false,
                     headerClassName: classes.GridColumnStyle,
                 }
 
                 gridCols.push(column);
+                coursIdTab.push(crs.value);
             });
            
         }
+       
+        gridCols.map((elt, index)=>{if(index!=0) listCoursTitle.push(elt.headerName+'*'+elt.field)});
         setGrdCols(gridCols);
     }
 
@@ -326,6 +345,36 @@ function ListingNotes(props) {
         if( document.getElementById('optPeriode').options[0]!= undefined)
             document.getElementById('optPeriode').options[0].selected=true;
     }
+
+
+    const printStudentListingNotes=()=>{
+        if(CURRENT_CLASSE_ID != undefined){
+            var PRINTING_DATA ={
+                dateText:'Yaounde, le 14/03/2023',
+                leftHeaders:  ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                rightHeaders: ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+                pageImages:   ["images/collegeVogt.png"],
+                pageTitle: "Recapitulatif des note pour la periode "+ CURRENT_SEQUENCE_LABEL+" classe " + CURRENT_CLASSE_LABEL,
+                tableHeaderModel:[...listCoursTitle],
+                tableData :[...gridRows],
+                numberEltPerPage:ROWS_PER_PAGE 
+            };
+            printedETFileName = 'ListingNotes_' +'('+ CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(4);
+            ElevePageSet=[];           
+            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            console.log("ici la",ElevePageSet);                    
+        } else{
+            chosenMsgBox = MSG_WARNING_NOTES;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "warning", 
+                msgTitle : t("warning_M"), 
+                message  : t("must_select_class")
+            })            
+        }      
+    }
   
 
     /*************************** Theme Functions ***************************/
@@ -345,9 +394,14 @@ function ListingNotes(props) {
         setModalOpen(0)
     }
 
+    const closePreview =()=>{
+        setIsValid(false);                 
+        setModalOpen(0);
+    }
+
     
    
-    /********************************** JSX Code **********************************/   
+/********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
     
     const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
@@ -382,18 +436,31 @@ function ListingNotes(props) {
         },
       },
     }));
-
+    
     return (
         <div className={classes.formStyleP}>
-             {(modalOpen==3) && <BackDrop/>}
-             {(modalOpen==3) && <AddStudent formMode='consult' cancelHandler={quitForm} />}
+            {(modalOpen==4) && <BackDrop/>}
+            {(modalOpen==4) &&              
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    {isMobile?
+                        <PDFDownloadLink  document ={<ListingNotesTemplate pageSet={ElevePageSet}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            {<ListingNotesTemplate pageSet={ElevePageSet}/>}
+                        </PDFViewer>
+                    }
+                </PDFTemplate>
+            } 
+
             <div className={classes.inputRow}>  
                 <div className={classes.formTitle}>
                     {t('look_note_eval_M')}  
                 </div>      
             </div>
-            <div className={classes.formGridContent}>
-              
+
+            <div className={classes.formGridContent}>              
                 <div className={classes.gridTitleRow}> 
                     <div className={classes.gridTitle}>                  
                         <div className={classes.gridTitleText}>
@@ -451,7 +518,7 @@ function ListingNotes(props) {
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
+                            btnClickHandler={printStudentListingNotes}
                             disable={(modalOpen==1||modalOpen==2)}   
                         />
 
@@ -505,17 +572,7 @@ function ListingNotes(props) {
                 }
             
             </div>
-           {/* <div className={classes.infoPresence}>
-                <div className={classes.presentZone}>
-                    <div> {t('present')}(s) :</div>
-                    <div> {present} </div>
-                </div>
-
-                <div className={classes.absentZone}>
-                    <div> {t('absent')}(s) :</div>
-                    <div> {absent} </div>
-                </div>
-            </div>*/}
+          
         </div>
         
     );

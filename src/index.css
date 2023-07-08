@@ -10,6 +10,8 @@ button.react-calendar__tile.react-calendar__tile--now.react-calendar__tile--acti
   color:white
 }
 
+
+
   
 /*------------------------------SIDENAV ------------------------*/ 
 /* ----------- Non-Retina Screens ----------- */
@@ -607,3 +609,14 @@ select{
  
 
  }
+
+ /*-----------------PAGINATION DES GRIDS ------------------------*/
+ button svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.css-i4bv87-MuiSvgIcon-root{
+  display: inline-block !important;
+  color: white !important;
+
+}
+
+
+
+
