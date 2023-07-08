@@ -56,7 +56,7 @@ function TableOfContents(props){
             console.log("cts: ",cts);
             console.log("mods: ",mods);
             console.log("chaps: ",chaps);
-            createCTStructure(coursId,cts,mods,chaps);   
+            createCTStructure(coursId,cts);   
             /*currentAppContext.setEtatLesson(TAB_ETATLESSONS)
             console.log('etats', currentAppContext.etatLesson)*/                     
         }) 
