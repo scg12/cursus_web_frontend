@@ -166,6 +166,7 @@ function Sheet(props){
         var errorCode = checkData();
         var errorDiv = document.getElementById('errMsgPlaceHolder');
         if(errorCode==0){
+          
             var devoirs = createString(lesson.devoirs);
             var resumes = createString(lesson.resumes);
             axiosInstance.post(`update-lesson/`, {
@@ -260,6 +261,11 @@ function Sheet(props){
     }
 
     function getLessonBeginDate(e){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        if(errorDiv.textContent.length!=0){
+            errorDiv.className = null;
+            errorDiv.textContent = '';
+        }  
         lesson_begining_date = e.target.value;
 
     }
