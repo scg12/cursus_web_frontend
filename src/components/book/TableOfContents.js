@@ -25,6 +25,8 @@ function TableOfContents(props){
     const [CHAPITRES, setChapitres]= useState([]);
     const [LESSONS, setLessons]= useState([]);
 
+    const selectedTheme = currentUiContext.theme;
+
     useEffect(()=> {
 
         setModules([]);
@@ -37,8 +39,6 @@ function TableOfContents(props){
        
     },[CURRENT_SELECTED_COURS_ID]);
  
-
-    
 
     const createFicheProgression=(coursId)=>{  
         let cts = [];
@@ -60,8 +60,67 @@ function TableOfContents(props){
             /*currentAppContext.setEtatLesson(TAB_ETATLESSONS)
             console.log('etats', currentAppContext.etatLesson)*/                     
         }) 
+    }    
+
+    const getLessonData=(id_lesson)=>{  
+        var devoirs='', resumes='';
+        var devoirEtDate=[];
+        var resumeEtDate=[];
+        var tabDevoirs =[];
+        var tabResumes=[];
+        var tempLesson={}
+
+        console.log('id',id_lesson)
+        
+        axiosInstance.post(`get-lesson-data/`, {
+            id_lesson: id_lesson,
+        }).then((res)=>{
+            console.log('contenu de la lesson', res.data);
+            tempLesson.id = id_lesson;
+            tempLesson.date = res.data.date;
+            tempLesson.jour = res.data.jour;
+            tempLesson.heure_deb = res.data.heure_deb;
+            tempLesson.heure_fin = res.data.heure_fin;
+            tempLesson.module = res.data.module;
+            tempLesson.chapitre = res.data.chapitre;
+            tempLesson.mot_cles = res.data.mot_cles;
+            tempLesson.etat = res.data.is_complete;
+           
+            devoirs = res.data.devoirs;
+            resumes = res.data.resumes;
+
+    
+            if(devoirs.length>0){
+                devoirEtDate = [...devoirs.split("²²")];
+                devoirEtDate.map((devDt)=>{
+                    tabDevoirs.push({
+                        date   : devDt.split('&&')[0],
+                        libelle: devDt.split('&&')[1]
+                    })
+                })
+
+                tempLesson.devoirs =[...tabDevoirs];
+
+            } else tempLesson.devoirs = [];
+    
+            if(resumes.length>0){
+                resumeEtDate = [...resumes.split("²²")];
+                resumeEtDate.map((resElt)=>{
+                    tabResumes.push({
+                        date   : resElt.split('&&')[0],
+                        libelle: resElt.split('&&')[1]
+                    })
+                })
+
+                tempLesson.resumes = [...tabResumes];
+            }else  tempLesson.resumes = [];
+
+            currentAppContext.setCurrentLesson(tempLesson)
+            
+        }) 
     }
-    const selectedTheme = currentUiContext.theme;
+
+    /*-------------------------------- Theming function -----------------------------*/
   
     function getPuceByTheme()
     { // Choix du theme courant
@@ -97,6 +156,8 @@ function TableOfContents(props){
         default: return classes.Theme1_mainContentPosition ;
       }
     }
+
+    /*------------------------------------- JSX Code ------------------------------------*/
     
     return(     
         <div id={props.id} className={classes.preface}>
@@ -120,7 +181,7 @@ function TableOfContents(props){
                                     {(LESSONS[chapitre.chapitreId]||[]).map((lesson,index)=>{
                                         if(lesson.etat==1){ //lecon en cours
                                             return (
-                                                <div id={lesson.lessonId+'_li'} style={{display:'flex', flexDirection:'row', marginLeft:'2vw', cursor:'pointer'}} onClick={()=>gotoLesson(lesson.lessonId, props.id)}>
+                                                <div id={lesson.lessonId+'_li'} style={{display:'flex', flexDirection:'row', marginLeft:'2vw', cursor:'pointer'}} onClick={()=>{ getLessonData(lesson.id); gotoLesson(lesson.lessonId, props.id)}}>
                                                     <img id={lesson.lessonId+'_img'} src ='images/pending_trans.png' style={{width:'0.8vw', height:'0.8vw', alignSelf:'center', marginRight:'0.67vw'}}/>
                                                     <div id={lesson.lessonId+'_libelle'} style={{fontSize:'0.9vw', color:'#dc900b'}}>{lesson.libelleLesson}</div>
                                                 </div>                                                
@@ -128,7 +189,7 @@ function TableOfContents(props){
 
                                         } else if(lesson.etat==2){  //lecon cloturee
                                             return (
-                                                <div id={lesson.lessonId+'_li'} style={{display:'flex', flexDirection:'row', marginLeft:'2vw', cursor:'pointer'}} onClick={()=>gotoLesson(lesson.lessonId, props.id)}>
+                                                <div id={lesson.lessonId+'_li'} style={{display:'flex', flexDirection:'row', marginLeft:'2vw', cursor:'pointer'}} onClick={()=>{ getLessonData(lesson.id); gotoLesson(lesson.lessonId, props.id)}}>
                                                     <img id={lesson.lessonId+'_img'} src ='images/check_trans.png' style={{width:'0.8vw', height:'0.8vw', marginRight:'0.67vw'}}/>
                                                     <div id={lesson.lessonId+'_libelle'} style={{fontSize:'0.9vw',color:'rgb(167 164 164)'}}>{lesson.libelleLesson}</div>
                                                 </div>      
@@ -136,7 +197,7 @@ function TableOfContents(props){
 
                                         } else {
                                             return (  //lecon non debutee
-                                                <div id={lesson.lessonId+'_li'} style={{display:'flex', flexDirection:'row', marginLeft:'2vw', cursor:'pointer'}} onClick={()=>gotoLesson(lesson.lessonId, props.id)}>
+                                                <div id={lesson.lessonId+'_li'} style={{display:'flex', flexDirection:'row', marginLeft:'2vw', cursor:'pointer'}} onClick={()=>{ getLessonData(lesson.id); gotoLesson(lesson.lessonId, props.id)}}>
                                                     <img id={lesson.lessonId+'_img'} src='images/puceCarreau.png' alt='.' style={{width:'0.3vw', height:'0.3vw', marginRight:'0.67vw', marginTop:'1vh'}}/>
                                                     <div id={lesson.lessonId+'_libelle'} style={{fontSize:'0.9vw'}}>{lesson.libelleLesson}</div>
                                                 </div> 

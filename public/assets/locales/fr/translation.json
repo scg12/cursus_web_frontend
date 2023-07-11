@@ -1,4 +1,7 @@
-{  "notes":"Notes",
+{  "valider":"Valder",
+    "criteres":"Critères",
+    "lesson_empty_error":"La lesson doit avoir au moins un résumé ou un devoir!",
+    "notes":"Notes",
     "non_saisi":"Notes non saisie",
     "paid_fees":"Elèves en règle uniquement",
     "traitement":"Traitement",

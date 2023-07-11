@@ -21,7 +21,11 @@ const AppContext = createContext({
     infoClasses : {},
     infoMatieres: {},
     infoCours: {},
+   
+    /*---------- Gestion des lecons -----------*/
     etatLesson:0,
+    currentLesson:{},
+    
 
 
 
@@ -45,7 +49,10 @@ const AppContext = createContext({
     setInfoMatieres:(infoMatiere) => {},
     setInfoCours:(infoCours) => {},
 
-    setEtatLesson:(etat) => {}
+    /*---------- Gestion des lecons -----------*/
+    setEtatLesson:(etat) => {},
+    setCurrentLesson:(lecon)=>{},
+    
 });
 
 export function AppContextProvider(props)
@@ -69,7 +76,10 @@ export function AppContextProvider(props)
     const [infoMatieres, setInfoMatieres] = useState([]);
     const [infoCours, setInfoCours] = useState([]);
 
+    /*---------- Gestion des lecons -----------*/
     const [etatLesson, setEtatLesson] = useState(0);
+    const [currentLesson, setCurrentLesson] = useState({});
+  
     
     function connectHandler(givenLogin, givenProfile){
         setConnected(true);
@@ -139,9 +149,17 @@ export function AppContextProvider(props)
         setInfoCours(infoCours)
     }
 
+
+    /*---------- Gestion des lecons -----------*/
     function setEtatLessonHandler(tabEtat){
         setEtatLesson(tabEtat)
     }
+
+    function setCurrentLessonHandler(lecon){
+        setCurrentLesson(lecon)
+    }
+
+   
 
     
     const APP_Ctx = {
@@ -163,7 +181,11 @@ export function AppContextProvider(props)
         infoClasses: infoClasses,
         infoMatieres: infoMatieres,
         infoCours: infoCours,
+        
+        /*---------- Gestion des Lesons -----------*/
         etatLesson:etatLesson,
+        currentLesson:currentLesson,
+        
        
         setUsrConnected: connectHandler,
         setUsrLogin : connectedUserHandler,
@@ -184,7 +206,10 @@ export function AppContextProvider(props)
         setInfoClasses: setInfoClassesHandler,
         setInfoMatieres: setInfoMatieresHandler,
         setInfoCours: setInfoCoursHandler,
-        setEtatLesson:setEtatLessonHandler
+
+        /*---------- Gestion des lecons -----------*/
+        setEtatLesson:setEtatLessonHandler,
+        setCurrentLesson:setCurrentLessonHandler      
     };
 
 

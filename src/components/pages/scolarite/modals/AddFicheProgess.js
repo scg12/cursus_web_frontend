@@ -315,9 +315,7 @@ function AddFicheProgess(props) {
 
 
     function storeFicheProgress(coursId){
-
         //currentUiContext.setIsParentMsgBox(false);
-
         axiosInstance.post(`sauvegarder-fiche-progression/`, {
             id_cours : coursId,
             id_sousetab : currentAppContext.idEtabInit,
@@ -377,8 +375,7 @@ function AddFicheProgess(props) {
     }
 
 
-    function saveOrUploadFP(e){
-       
+    function saveOrUploadFP(e){       
         if(isDownload) props.cancelHandler();
         else  uploadFile(cur_fileToUpload);
     }

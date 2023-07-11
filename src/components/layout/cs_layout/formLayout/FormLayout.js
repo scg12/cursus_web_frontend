@@ -179,7 +179,7 @@ function FormLayout(props){
 
             case '120':  return  'images/SaveNotesP.png';
             case '121':  return  'images/LookNotes.png';
-            case '122':  return  'images/genBulletins.png';
+            case '122':  return  'images/genBulletinsP.png';
             case '123':  return  'images/printReport.png';
             
             case '124':  return  'images/NewEvaluation.png';

@@ -28,7 +28,7 @@ let CURRENT_COURS_COEF;
 let CURRENT_COURS_GROUPE;
 var CURRENT_CLASSE_LABEL;
 var CURRENT_COURS_LABEL;
-var NOTES_CHANGED_IDS;
+var NOTES_CHANGED_IDS =[];
 var NOTES_CHANGES;
 var printedETFileName='';
 
@@ -148,38 +148,27 @@ function SaveNotes(props) {
         }).then((res)=>{
             listNotes = [...res.data];
             console.log("LES NOTES",listNotes);
-            updateStudentsNote(listNotes);          
-            calculTendance();  
+            updateStudentsNote(listNotes);         
         })  
     }
 
     function updateStudentsNote(notes){
-        var notesElev;
-        if(notes.length>0){
-            if(listEleves.length>0){
-                listEleves.map((elev)=>{
-                    notesElev = notes.find((elv)=>elv.eleves[0]==elev.id);
-                    if(notesElev!=-1||notesElev!=undefined){
-                        elev.note = notesElev.score;
-                        elev.deja_saisi = notesElev.deja_saisi
-                        ;
-                    } else {
-                        elev.deja_saisi = -1;
-                        document.getElementById("div"+elev.id).style.backgroundColor="#ecc010cf";
-                    }
-                })
-                setGridRows(listEleves);
-            }
+        if(listEleves.length>0){
+            listEleves.map((elev)=>{
+                elev.note = '00';
+                elev.deja_saisi = -1
+            });          
+        }  else {setGridRows([]); return 0;}
 
-        } else{
-            if(listEleves.length>0){
-                listEleves.map((elev)=>{
-                    elev.note = '00';
-                });
-                setGridRows(listEleves);
-            } 
-            else setGridRows([]);
-        }
+        if(notes.length>0){
+            notes.map((ntElv)=>{
+               var currentElev = listEleves.find((elev)=>elev.id == ntElv.eleves[0]);
+               currentElev.note = ntElv.score;
+               currentElev.deja_saisi = 1;
+            })        
+        } 
+        calculTendance();  
+        setGridRows(listEleves);
     }
 
     function getNotesCoursSequence(coursId, sequenceId){
@@ -418,7 +407,7 @@ function SaveNotes(props) {
             if(NOTES_CHANGED_IDS.includes(eleve.id)) {
                 notes.push(eleve.note);
             }
-            
+            console.log("notes et ids",notes, NOTES_CHANGED_IDS);
         });
         axiosInstance.post(`save-classe-note/`, {
             id_classe : CURRENT_CLASSE_ID,
@@ -428,6 +417,7 @@ function SaveNotes(props) {
             coef   : CURRENT_COURS_COEF,
             notes  :  notes.join('_'),
             elevesIds: NOTES_CHANGED_IDS.join('_')
+
         }).then((res)=>{
             NOTES_CHANGED_IDS=[];
             getClassStudentListWithNotes(CURRENT_COURS_ID,CURRENT_SEQUENCE_ID);
@@ -452,20 +442,21 @@ function SaveNotes(props) {
         var idnote = e.target.id;
         var NoteDiv = "div"+e.target.id;
         var index = listEleves.findIndex((eleve)=>eleve.id==idnote)
-        if(note < props.noteMax || note > props.noteMax || isNaN(note)){
+        if(note < 0 || note > props.noteMax || isNaN(note)){
             document.getElementById(NoteDiv).style.backgroundColor='red';
-            document.getElementById(idnote).value = 'ERR';
+            //document.getElementById(idnote).value = 'ERR';
             document.getElementById(idnote).style.color='white';
             listEleves[index].note = 0;
             
         } else {
+            
             listEleves[index].deja_saisi = 0;
             document.getElementById(NoteDiv).style.backgroundColor='#dcd05c94';
             
             
             var id_note = NOTES_CHANGED_IDS.find((noteId)=>noteId==listEleves[index].id)
 
-            if(id_note != -1 || id_note == undefined){
+            if(id_note == -1 || id_note == undefined){
                 NOTES_CHANGED_IDS.push(listEleves[index].id);
             }
             
@@ -477,9 +468,12 @@ function SaveNotes(props) {
 
     function calculTendance(){
         var supA10, infA10, nonSaisi;
-        supA10 = 0; infA10 = 0; nonSaisi=0;
-        listEleves.map((eleve)=>{(eleve.deja_saisi==-1)? nonSaisi++ : (eleve.note>=10)? supA10++ : infA10++});
+        supA10 = 0; infA10 = 0; nonSaisi = 0;
+        listEleves.map((eleve)=>{
+            (eleve.deja_saisi<=0) ? nonSaisi++ : (eleve.note>=10) ? supA10++:infA10++
+        })          
         setSuperieurA10(supA10); setInferieureA10(infA10); setNotesNonSaisie(nonSaisi);
+        console.log("Apres calcul",listEleves)
     }
 
   
@@ -822,7 +816,7 @@ function SaveNotes(props) {
 
                     <div className={classes.nonSaisiZone}>
                         <div> ({t('non_saisi')}) : </div>
-                        <div> {inferieureA10} </div>
+                        <div> {notesNonSaisie} </div>
                     </div>
                 </div>
             }

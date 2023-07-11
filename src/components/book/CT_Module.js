@@ -358,11 +358,13 @@ export const gotoPreface=()=>{
 }
 
 
+
 //--- Table Of Content
 export const gotoLesson=(lessonId, prefaceId)=> {
     var sheetToDisplay = document.getElementById(lessonId);
     var preface = document.getElementById(prefaceId);
     var sheetIndex, sheet;
+
 
     if(TO_RIGHT_SHEETS.length ==1){
         for(var i=0; i<LISTE_LECONS.length; i++){

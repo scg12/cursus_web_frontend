@@ -77,6 +77,7 @@ function Book(props){
 
       //createModule();
       //currentAppContext.setEtatLesson(TAB_ETATLESSONS);
+      currentUiContext.setIsParentMsgBox(false);
       setBookOpen(true);
      
       console.log('Etats des lecon',TAB_ETATLESSONS);
@@ -106,6 +107,7 @@ function Book(props){
     } else {
       if(!currentUiContext.bookInActivity){
         setBookOpen(false);
+        currentUiContext.setIsParentMsgBox(true);
       
         if(preface.classList.contains('moveToRight1')){
           preface.classList.remove('moveToRight1');

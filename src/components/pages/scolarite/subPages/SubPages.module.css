@@ -917,18 +917,30 @@ margin-right: 5px;
 }
 
 .grdBtnImgStyle{
-position: relative;
-z-index: 100;
-width: 2vw;
-height: 2vw;
-margin-right: 1px;
+    position: relative;
+    z-index: 100;
+    width: 2vw;
+    height: 2vw;
+    margin-right: 1px;
 }
 
 .grdBtnImgStyleP{
-position: relative;
+   /* position: relative;
+    z-index: 100;*/
+    width: 1.3vw;
+    height: 1.3vw;
+    margin-right: 1px;
+
+}
+
+
+
+
+.grdBtnImgStyleP{
+/*position: relative;*/
 background-color: white;
 border-radius:3px;
-z-index: 100;
+/*z-index: 100;*/
 width: 1.5vw;
 height: 1.5vw;
 margin-right: 1px;

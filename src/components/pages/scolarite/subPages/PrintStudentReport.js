@@ -13,7 +13,7 @@ import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions
 
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
-import StudentList from '../reports/StudentList';
+import CriteresGeneration from '../modals/CriteresGeneration';
 import BulletinSequence from '../reports/BulletinSequence';
 import {useTranslation} from "react-i18next";
 
@@ -79,6 +79,7 @@ function PrintStudentReport(props) {
     const [defaultSelect1, setDefaultSelect1] = useState( (i18n.language=='fr') ? 'Choisir une classe' :'Select Class');
     const [defaultSelect2, setDefaultSelect2] = useState( (i18n.language=='fr') ? '  Choisir une periode ' :' Select period ');
     const [isValid, setIsValid] = useState(false);
+    const [canGenerate, setCanGenerate] = useState(false);
     const [openCheck, setOpenCheck] = useState(false);
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
@@ -253,6 +254,10 @@ function PrintStudentReport(props) {
                 if(isValid)  setIsValid(false);
             } 
         }
+    }
+
+    function openCriterModal(){
+        setModalOpen(3);
     }
  
     
@@ -636,6 +641,16 @@ const columnsFr = [
             default: return classes.Theme1_gridBtnstyle + ' '+ classes.margRight5P;
         }
     }
+
+    function getNotifButtonStyle()
+    { // Choix du theme courant
+        switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P ;
+            case 'Theme2': return classes.Theme2_notifButtonStyle + ' '+ classes.margRight5P;
+            case 'Theme3': return classes.Theme3_notifButtonStyle + ' '+ classes.margRight5P;
+            default: return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P;
+        }
+    }   
     
 /*************************** Handler functions ***************************/
     
@@ -964,6 +979,18 @@ const columnsFr = [
                     
                                 
                     <div className={classes.gridAction}> 
+                        {(props.formMode =="generation") &&
+                            <CustomButton
+                                btnText={t('criteres')}
+                                hasIconImg= {true}
+                                imgSrc='images/checkCriteres.png'
+                                imgStyle = {classes.grdBtnImgStyleP}  
+                                buttonStyle={getGridButtonStyle()}
+                                btnTextStyle = {classes.gridBtnTextStyle}
+                                btnClickHandler={openCriterModal}
+                                disable={(isValid==false)}   
+                            />
+                        }
                       
                         {(props.formMode =="generation") &&                      
                             <CustomButton
@@ -974,7 +1001,7 @@ const columnsFr = [
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyle}
                                 btnClickHandler={generateBulletinHandler}
-                                disable={(isValid==false)}   
+                                disable={(canGenerate==false)}   
                             />
                         }
                       
@@ -1009,6 +1036,8 @@ const columnsFr = [
 
                 {/*(modalOpen==0) ?*/
                     <div className={classes.gridDisplay} >
+                        {(modalOpen!=0) && <BackDrop/>}
+                        {(modalOpen==3) &&  <CriteresGeneration cancelHandler={()=>setModalOpen(0)}/>} 
                         <StripedDataGrid
                             rows={gridRows}
                             columns={(i18n=='fr') ? columnsFr : columnsEn}
