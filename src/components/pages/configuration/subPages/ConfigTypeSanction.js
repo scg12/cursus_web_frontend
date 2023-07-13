@@ -13,7 +13,7 @@ import { DataGrid, gridClasses } from '@mui/x-data-grid';
 
 var sanctions = [];  
 
-function CconfigTypeSanction(props) {
+function ConfigTypeSanction(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -381,4 +381,4 @@ function CconfigTypeSanction(props) {
         
     );
 } 
-export default CconfigTypeSanction;
+export default ConfigTypeSanction;
