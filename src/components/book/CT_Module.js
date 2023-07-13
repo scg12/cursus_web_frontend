@@ -2,6 +2,7 @@
 
 export let LESSON ={
     id:'',
+    date_debut:'',
     lessonId:'',
     date:'',
     libelleLesson :'',
@@ -74,11 +75,11 @@ export function createCTStructure(coursId,cahierDeTexte){
     for(let i=0;i<size;i++){
         // console.log(i+" "+cahierDeTexte[i].lecon)
         if(addLecon){
-            lessons = 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id+'_'+cahierDeTexte[i].resumes+'_'+cahierDeTexte[i].devoirs;
+            lessons = 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id+'_'+cahierDeTexte[i].resumes+'_'+cahierDeTexte[i].devoirs+'_'+cahierDeTexte[i].date_debut;
             addLecon = false;
         }
         else
-            lessons = lessons +'*'+ 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id+'_'+cahierDeTexte[i].resumes+'_'+cahierDeTexte[i].devoirs;
+            lessons = lessons +'*'+ 'lesson'+(i+1)+'_'+cahierDeTexte[i].lecon+'_'+cahierDeTexte[i].status+'_'+cahierDeTexte[i].id+'_'+cahierDeTexte[i].resumes+'_'+cahierDeTexte[i].devoirs+'_'+cahierDeTexte[i].date_debut;
         
         if(i+1<size){
             if(current_chap !== cahierDeTexte[i+1].chapitre)
@@ -216,6 +217,7 @@ export const createModule=()=>{
         for(var k = 0; k <lessonTab.length; k++){
           lesson = lessonTab[k].split('_');
           LESSON={};
+          LESSON.date_debut = lesson[6];
           LESSON.id = lesson[3];
           LESSON.previousId = previousLesson;
           LESSON.lessonId = lesson[0];
