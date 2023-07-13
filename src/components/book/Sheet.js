@@ -142,6 +142,7 @@ function Sheet(props){
         console.log("devoirs", devoirTab);
         var errorCode = checkData();
         var errorDiv = document.getElementById('errMsgPlaceHolder');
+        
         if(errorCode==0){
             var devoirs = createString(devoirTab);
             var resumes = createString(resumeTab);
@@ -150,7 +151,8 @@ function Sheet(props){
                 id_lesson : id_lesson,
                 status  : status, 
                 devoirs : devoirs,
-                resumes : resumes
+                resumes : resumes,
+                date    : document.getElementById('date').value
             }).then((res)=>{
                 updateTableOfContent(props.id, status);
                 setEtaLesson(status)
@@ -174,10 +176,10 @@ function Sheet(props){
    
     function checkData(){
         var errorCode = 0
-        if(!((isNaN(lesson_begining_date) && (!isNaN(Date.parse(lesson_begining_date)))))){
-            errorCode=1;  ///code 1 => erreur au niveau de la date
-            return errorCode;
-        }
+        // if(!((isNaN(lesson_begining_date) && (!isNaN(Date.parse(lesson_begining_date)))))){
+        //     errorCode=1;  ///code 1 => erreur au niveau de la date
+        //     return errorCode;
+        // }
 
         if(resumeTab.length==0 && devoirTab==0){
             errorCode=2;  ///code 2 => erreur de type contenu vide 
@@ -231,12 +233,12 @@ function Sheet(props){
              <div id='errMsgPlaceHolder'/> 
             <div className={classes.dateZone}>
                 <div className={classes.inputRow}>
-                    <div style={{marginRight:'-1vw', fontWeight:'700', fontSize:'1vw', width:'4vw'}}>
-                        {t("date")} :                
+                    <div style={{marginRight:'-1vw', fontWeight:'700', fontSize:'1vw', width:'7vw'}}>
+                        {t("date_deb")} :                
                     </div>
                         
                     <div style={{marginTop:isMobile&&window.matchMedia("screen and (max-height: 420px)").matches ? '-2vh':null}}> 
-                        <input id="date" type="text" onChange={getLessonBeginDate}   defaultValue={props.contenu.date} style={{fontSize:'1vw', height: isMobile? '0.7vw':'1.3vw', width:'5.3vw', borderBottom:'1px dotted rgb(195 189 189)'}}/>
+                        <input id="date" type="text" onChange={getLessonBeginDate}  disabled={true}  value={(props.contenu.date_debut == undefined || props.contenu.date_debut == "") ? new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() : props.contenu.date_debut} style={{fontSize:'1vw', height: isMobile? '0.7vw':'1.3vw', width:'5.3vw', borderBottom:'1px dotted rgb(195 189 189)'}}/>
                     </div>
                 </div>
             </div>
@@ -321,11 +323,13 @@ function Sheet(props){
                             return(  
                                 <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
                                     <div style={{width:'80%', borderBottom:"1px solid black"}}>
+                                        <div className={classes.textStyleP}> {devoir.libelle}</div>
+                                    </div>
+
+                                    <div style={{width:'20%', borderBottom:"1px solid black"}}>
                                         <div className={classes.textStyleP}> {devoir.date}</div>
                                     </div> 
-                                    <div style={{width:'20%', borderBottom:"1px solid black"}}>
-                                        <div className={classes.textStyleP}> {devoir.libelle}</div>
-                                    </div>                                        
+                                                                          
                                 </div>                     
                             );
                         })
@@ -334,12 +338,13 @@ function Sheet(props){
                             resumeTab.map((resume)=>{
                                 return(  
                                     <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
-                                        <div style={{width:'80%', borderBottom:"1px solid black"}}>
+                                        <div style={{width:'80%',borderBottom:"1px solid black"}}>
+                                            <div className={classes.textStyleP}> {resume.libelle}</div>
+                                        </div>
+                                        <div style={{width:'20%', borderBottom:"1px solid black"}}>
                                             <div className={classes.textStyleP}> {resume.date}</div>
                                         </div>
-                                        <div style={{width:'20%',borderBottom:"1px solid black"}}>
-                                            <div className={classes.textStyleP}> {resume.libelle}</div>
-                                        </div>                                        
+                                                                                
                                     </div>                     
                                 );
                             }) 
