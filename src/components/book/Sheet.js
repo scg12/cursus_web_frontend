@@ -11,7 +11,7 @@ import {isMobile} from 'react-device-detect';
 import { useTranslation } from "react-i18next";
 import '../../translation/i18n';
 import BackDrop from '../backDrop/BackDrop';
-import MsgBox from '../msgBox/MsgBox'
+import MsgBox from '../msgBox/MsgBox';
 import AddLessonNote from './modals/AddLessonNote';
 import axiosInstance from '../../axios';
 
@@ -24,7 +24,6 @@ const MSG_SUCCESS_CT =11;
 const MSG_WARNING_CT =12;
 const MSG_ERROR_CT   =13;
 
-
 function Sheet(props){
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -35,243 +34,20 @@ function Sheet(props){
     const [bookOpen, setBookOpen] = useState(false);
     const [devoirOpen, setDevoirOpen] = useState(1); //0->Ferme, 1->Devoir ouvert, 2-> Resumer ouvert
     const [modalOpen, setModalOpen] = useState(false);
-    const [resumeOpen, setResumeOpen] = useState(false);
-    // const [devoirTab, setDevoirTab]= useState([]);
-    // const [resumeTab, setResumeTab]= useState([]);
-    //const [etatLesson, setEtaLesson] = useState(0);
+    //const [modalResumeOpen, setModalResumeOpen] = useState(false);
+    const [devoirTab, setDevoirTab]= useState(createCTDataTable(props.contenu.tabDevoirs));
+    const [resumeTab, setResumeTab]= useState(createCTDataTable(props.contenu.tabResumes));
+    const [etatLesson, setEtaLesson] = useState(0);
 
-    
+    const [resumeOpen, setResumeOpen] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
-        //setEtaLesson(props.etat);
-        //getLessonData(props.bd_id);
-       
+        setEtaLesson(props.etat);
         console.log("props.contenu.tabDevoirs: ",props.contenu.tabDevoirs)       
     },[CURRENT_SELECTED_COURS_ID]);
 
     
-
-
-    function attachFileHandler(){
-       
-    }
-
-
-    function updateTableOfContent(ligneId,status){
-        switch(status){
-            case 1: {
-                document.getElementById(ligneId+'_img').setAttribute('src',"images/pending_trans.png");
-                document.getElementById(ligneId+'_img').style.width = '0.8vw' ;
-                document.getElementById(ligneId+'_img').style.height = '0.8vw' ;
-                document.getElementById(ligneId+'_img').style.marginRight = '0.67vw' ;
-                document.getElementById(ligneId+'_libelle').style.color="#dc900b";   
-                return 1;            
-            };
-           
-
-            case 2: {
-                document.getElementById(ligneId+'_img').setAttribute('src',"images/check_trans.png");
-                document.getElementById(ligneId+'_libelle').style.color="rgb(167 164 164)";   
-                return 1;       
-            } ;
-            
-        }
-    }
-
-    const acceptHandler=()=>{
-        
-        switch(chosenMsgBox){
-
-            case MSG_SUCCESS_CT: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
-                //currentUiContext.setIsParentMsgBox(true);
-                return 1;
-                
-            }
-
-            case MSG_WARNING_CT: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-                //currentUiContext.setIsParentMsgBox(true);               
-                return 1;
-            }
-            
-           
-            default: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-               // currentUiContext.setIsParentMsgBox(true);
-            }
-        }        
-    }
-
-    const rejectHandler=()=>{
-        
-        switch(chosenMsgBox){
-
-            case MSG_SUCCESS_CT: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
-               // currentUiContext.setIsParentMsgBox(true);
-                return 1;
-            }
-
-            case MSG_WARNING_CT :{
-                    currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-               // currentUiContext.setIsParentMsgBox(true);
-                return 1;
-            }
-            
-           
-            default: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-               // currentUiContext.setIsParentMsgBox(true);
-            }
-        }
-        
-    }
-
-
-
-    function updateLesson(status){
-        var lesson = {...currentAppContext.currentLesson};
-        var errorCode = checkData();
-        var errorDiv = document.getElementById('errMsgPlaceHolder');
-        if(errorCode==0){
-          
-            var devoirs = createString(lesson.devoirs);
-            var resumes = createString(lesson.resumes);
-            axiosInstance.post(`update-lesson/`, {
-                id_lesson : lesson.id,
-                status  : status, 
-                devoirs : devoirs,
-                resumes : resumes
-            }).then((res)=>{
-                lesson.etat = status;
-                updateTableOfContent(props.id, status);
-                currentAppContext.setCurrentLesson(lesson);
-               
-                chosenMsgBox = MSG_SUCCESS_CT;
-                currentUiContext.showMsgBox({
-                    visible:true, 
-                    msgType:"info", 
-                    msgTitle:t("success_operation_M"), 
-                    message:t("success_operation")
-                })              
-                
-            })
-
-        } else{
-            if(errorCode==1){              
-                errorDiv.className = classes.formErrorMsg;
-                errorDiv.textContent = t("enter_meeting_date");               
-            }
-            
-            if(errorCode==2){
-                errorDiv.className = classes.formErrorMsg;
-                errorDiv.textContent = t("lesson_empty_error");
-            }
-        }      
-
-    }
-
-    function checkData(){
-        var errorCode = 0
-        if(!((isNaN(lesson_begining_date) && (!isNaN(Date.parse(lesson_begining_date)))))){
-            errorCode=1;  ///code 1 => erreur au niveau de la date
-            return errorCode;
-        }
-
-        if(currentAppContext.currentResumeTab.length==0 && currentAppContext.currentDevoirTab==0){
-            errorCode=2;  ///code 2 => erreur de type contenu vide 
-            return errorCode;
-        }
-
-        return errorCode;
-    }
-
-    function createString(tab){
-        var chaine = ''
-        tab.map((elt, index)=>{
-            if(index==0) chaine = elt.date+"&&"+elt.libelle;
-            else chaine = chaine + "²²" + elt.date+"&&"+elt.libelle;
-        })
-        return chaine;
-    }
-
-  
-
-    function addDevoir(devoir){        
-        var lesson = {...currentAppContext.currentLesson};
-       
-        if(devoir.length >0){
-            lesson.devoirs.push({
-                libelle :devoir,
-                date : new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear()
-            });
-
-            currentAppContext.setCurrentLesson(lesson);
-            setModalOpen(false);      
-            currentUiContext.setBookInActivity(false);      
-        }
-    }
-
-
-    function addResumer(resumer){
-        var lesson = {...currentAppContext.currentLesson};
-        if(resumer.length >0){
-            lesson.resumes.push({
-                libelle :resumer,
-                date : new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear()
-            });
-
-            currentAppContext.setCurrentLesson(lesson);
-            setModalOpen(false);  
-            currentUiContext.setBookInActivity(false);     
-        }
-
-    }
-
-    function getLessonBeginDate(e){
-        var errorDiv = document.getElementById('errMsgPlaceHolder');
-        if(errorDiv.textContent.length!=0){
-            errorDiv.className = null;
-            errorDiv.textContent = '';
-        }  
-        lesson_begining_date = e.target.value;
-
-    }
-
-/*--------------------------------- Theming functions ---------------------------------*/
-
     
     function getButtonStyle()
     { // Choix du theme courant
@@ -313,10 +89,146 @@ function Sheet(props){
       }
     }
 
-/*--------------------------------- JSX Code  ---------------------------------*/    
+
+    function attachFileHandler(){
+       
+    }
+
+    function createString(tab){
+        var chaine = ''
+        tab.map((elt, index)=>{
+            if(index==0) chaine = elt.date+"&&"+elt.libelle;
+            else chaine = chaine + "²²" + elt.date+"&&"+elt.libelle;
+        })
+        return chaine;
+    }
+
+    function createCTDataTable(tab){
+        console.log("table",tab);
+        var ctDataTab = [];
+        if (tab.length>0) {
+            tab.map((elt)=>{ 
+                if(elt.split("&&")[0].length>0){
+                    ctDataTab.push({date:elt.split("&&")[0], libelle:elt.split("&&")[1]});
+                }                
+            })
+        }      
+        return ctDataTab;
+    }
+
+    function updateTableOfContent(ligneId,status){
+        switch(status){
+            case 1: {
+                document.getElementById(ligneId+'_img').setAttribute('src',"images/pending_trans.png");
+                document.getElementById(ligneId+'_img').style.width = '0.8vw' ;
+                document.getElementById(ligneId+'_img').style.height = '0.8vw' ;
+                document.getElementById(ligneId+'_img').style.marginRight = '0.67vw' ;
+                document.getElementById(ligneId+'_libelle').style.color="#dc900b";   
+                return 1;            
+            };
+           
+
+            case 2: {
+                document.getElementById(ligneId+'_img').setAttribute('src',"images/check_trans.png");
+                document.getElementById(ligneId+'_libelle').style.color="rgb(167 164 164)";   
+                return 1;       
+            } ;
+            
+        }
+    }
+
+
+    function updateLesson(id_lesson, status){
+        console.log("devoirs", devoirTab);
+        var errorCode = checkData();
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        if(errorCode==0){
+            var devoirs = createString(devoirTab);
+            var resumes = createString(resumeTab);
+
+            axiosInstance.post(`update-lesson/`, {
+                id_lesson : id_lesson,
+                status  : status, 
+                devoirs : devoirs,
+                resumes : resumes
+            }).then((res)=>{
+                updateTableOfContent(props.id, status);
+                setEtaLesson(status)
+                var errorDiv = document.getElementById('errMsgPlaceHolder');
+                errorDiv.className = classes.formSuccessMsg;
+                errorDiv.textContent = t("success_operation");             
+            })
+        } else {
+            if(errorCode==1){              
+                errorDiv.className = classes.formErrorMsg;
+                errorDiv.textContent = t("enter_meeting_date");               
+            }
+            
+            if(errorCode==2){
+                errorDiv.className = classes.formErrorMsg;
+                errorDiv.textContent = t("lesson_empty_error");
+            }
+        }      
+    }
+
+   
+    function checkData(){
+        var errorCode = 0
+        if(!((isNaN(lesson_begining_date) && (!isNaN(Date.parse(lesson_begining_date)))))){
+            errorCode=1;  ///code 1 => erreur au niveau de la date
+            return errorCode;
+        }
+
+        if(resumeTab.length==0 && devoirTab==0){
+            errorCode=2;  ///code 2 => erreur de type contenu vide 
+            return errorCode;
+        }
+        return errorCode;
+    }
+   
+    function addDevoir(devoir){
+        if(devoir.length >0){
+            devoirTab.push({
+                libelle :devoir,
+                date : new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear()
+            });
+            setModalOpen(false);      
+            currentUiContext.setBookInActivity(false);      
+        }
+    }
+
+    function addResumer(resumer){
+        if(resumer.length >0){
+            resumeTab.push({
+                libelle :resumer,
+                date : new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear()
+            });
+            setModalOpen(false);  
+            currentUiContext.setBookInActivity(false);     
+        }
+
+    }
+
+    function getLessonBeginDate(e){
+        initDialogBox();
+        lesson_begining_date = e.target.value;
+    }
+
+    function initDialogBox(){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        if(errorDiv.textContent.length!=0){
+            errorDiv.className = null;
+            errorDiv.textContent = '';
+        }   
+    }
+
+
+   
+   
+        
     return(        
         <div id={props.id} className={classes.page}>
-            <div id='errMsgPlaceHolder'/> 
+             <div id='errMsgPlaceHolder'/> 
             <div className={classes.dateZone}>
                 <div className={classes.inputRow}>
                     <div style={{marginRight:'-1vw', fontWeight:'700', fontSize:'1vw', width:'4vw'}}>
@@ -324,7 +236,7 @@ function Sheet(props){
                     </div>
                         
                     <div style={{marginTop:isMobile&&window.matchMedia("screen and (max-height: 420px)").matches ? '-2vh':null}}> 
-                        <input id="date" type="text" onChange={getLessonBeginDate}  defaultValue={currentAppContext.currentLesson.date} style={{fontSize:'1vw', height: isMobile? '0.7vw':'1.3vw', width:'5.3vw', borderBottom:'1px dotted rgb(195 189 189)'}}/>
+                        <input id="date" type="text" onChange={getLessonBeginDate}   defaultValue={props.contenu.date} style={{fontSize:'1vw', height: isMobile? '0.7vw':'1.3vw', width:'5.3vw', borderBottom:'1px dotted rgb(195 189 189)'}}/>
                     </div>
                 </div>
             </div>
@@ -352,23 +264,7 @@ function Sheet(props){
                 
             </div>
 
-            {(currentUiContext.msgBox.visible == true) && <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
-                <MsgBox 
-                    msgTitle = {currentUiContext.msgBox.msgTitle} 
-                    msgType  = {currentUiContext.msgBox.msgType} 
-                    message  = {currentUiContext.msgBox.message} 
-                    customImg ={true}
-                    customStyle={true}
-                    contentStyle={classes.msgContent}
-                    imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {currentUiContext.msgBox.msgType == "question" ? t('yes'):t('ok')}
-                    buttonRejectText = {t('no')}  
-                    buttonAcceptHandler = {acceptHandler}  
-                    buttonRejectHandler = {rejectHandler}            
-                />                 
-            }
-
+          
             <div className={classes.inputRow} style={{marginBottom:'2.3vh', marginTop:'1.3vh'}}>
                 
                 <div className={classes.inputRow}>
@@ -398,8 +294,8 @@ function Sheet(props){
                         buttonStyle={classes.btnAdd}
                         btnTextStyle = {classes.btnTextStyle}
                         hasIconImg= {false}
-                        btnClickHandler={()=>{currentUiContext.setBookInActivity(true); setModalOpen(true); console.log('activite',currentUiContext.bookInActivity)}}
-                        disable={(currentAppContext.currentLesson.etat==CLOTURE)}
+                        btnClickHandler={()=>{initDialogBox(); currentUiContext.setBookInActivity(true); setModalOpen(true); console.log('activite',currentUiContext.bookInActivity)}}
+                        disable={(etatLesson==CLOTURE)}
                     /> 
                 </div>           
             </div>
@@ -421,7 +317,7 @@ function Sheet(props){
                     </div>
                                         
                     {(devoirOpen==1) ? 
-                        (currentAppContext.currentLesson.devoirs||[]).map((devoir)=>{
+                        devoirTab.map((devoir)=>{
                             return(  
                                 <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
                                     <div style={{width:'80%', borderBottom:"1px solid black"}}>
@@ -435,7 +331,7 @@ function Sheet(props){
                         })
                         :
                         (devoirOpen==2) ?
-                        (currentAppContext.currentLesson.resumes||[]).map((resume)=>{
+                            resumeTab.map((resume)=>{
                                 return(  
                                     <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
                                         <div style={{width:'80%', borderBottom:"1px solid black"}}>
@@ -448,7 +344,8 @@ function Sheet(props){
                                 );
                             }) 
                         :
-                        null                      
+                        null                        
+                                    
                     }
                     
                 </div>
@@ -465,15 +362,24 @@ function Sheet(props){
                     imgStyle = {classes.imgStyleP}
                     btnClickHandler={attachFileHandler}
                     style={{paddingRight:'3px',width: isMobile? '8vw':'7vw'}}
-                    disable={(currentAppContext.currentLesson.etat==CLOTURE)}
+                    disable={(etatLesson==CLOTURE)}
                 />
+
+
+               {/*<CustomButton
+                    btnText={t("save")}  
+                    buttonStyle={getButtonStyle()}
+                    btnTextStyle = {classes.btnTextStyle}
+                    btnClickHandler={()=>getPreviousHandler(props.id,props.contenu)}
+                />*/}
+
                 <CustomButton
                     btnText={t("save")} 
                     buttonStyle={getSmallButtonStyle()}
                     style={{width:'7vw'}}
                     btnTextStyle = {classes.btnSmallTextStyle}
-                    btnClickHandler={()=>{updateLesson(EN_COURS)}}
-                    disable={(currentAppContext.currentLesson.etat==CLOTURE)}
+                    btnClickHandler={()=>{initDialogBox(); updateLesson(props.bd_id,EN_COURS)}}
+                    disable={(etatLesson==CLOTURE)}
                 /> 
 
 
@@ -482,11 +388,17 @@ function Sheet(props){
                     buttonStyle={getSmallButtonStyle()}
                     style={{width:'7vw'}}
                     btnTextStyle = {classes.btnSmallTextStyle}
-                    btnClickHandler={()=>{updateLesson(CLOTURE)}}
-                    disable={(currentAppContext.currentLesson.etat==CLOTURE)}
+                    btnClickHandler={()=>{initDialogBox(); updateLesson(props.bd_id,CLOTURE)}}
+                    disable={(etatLesson==CLOTURE)}
                 /> 
 
-                       
+                {/*<CustomButton
+                    btnText= {t("close")}
+                    buttonStyle={getButtonStyle()}
+                    btnTextStyle = {classes.btnTextStyle}
+                    btnClickHandler={()=>getPreviousHandler(props.id,props.contenu)}
+                    disable={(isValid == false)}
+                />*/}                
             </div>
 
             <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', alignSelf:'center', width:'97%' }}>
@@ -495,7 +407,7 @@ function Sheet(props){
                     buttonStyle={getSmallButtonStyle()}
                     btnTextStyle = {classes.btnSmallTextStyle}
                     style={{width:isMobile? '6vw':'5vw'}}
-                    btnClickHandler={()=>getPreviousHandler(props.id,props.contenu)}
+                    btnClickHandler={()=>{initDialogBox(); getPreviousHandler(props.id,props.contenu)}}
 
                 />
 
@@ -504,7 +416,7 @@ function Sheet(props){
                     buttonStyle={getSmallButtonStyle()}
                     btnTextStyle = {classes.btnSmallTextStyle}
                     style={{width:isMobile? '7vw':'6.3vw'}}
-                    btnClickHandler={()=>{gotoPreface();}}
+                    btnClickHandler={()=>{initDialogBox(); gotoPreface();}}
                 />
 
 
@@ -514,7 +426,7 @@ function Sheet(props){
                         buttonStyle={getSmallButtonStyle()}
                         btnTextStyle = {classes.btnSmallTextStyle}
                         style={{width:'5vw'}}
-                        btnClickHandler={()=>getNextHandler(props.id)}
+                        btnClickHandler={()=>{initDialogBox(); getNextHandler(props.id)}}
                         //disable={(isValid == false)}
                     />  
                     :

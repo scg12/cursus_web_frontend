@@ -32,6 +32,31 @@
     top:10.7vh;
     z-index: 3;
     }
+
+    .formSuccessMsg {
+        min-width: 80%;
+        width:fit-content;
+        height: fit-content;
+        border-radius: 5px;
+        border-style: solid;
+        border-width: 2.3px;
+        border-color: #6cb072;
+        background-color: #31d528cc;
+        /*color: rgb(243, 163, 72);*/
+        color:white;
+        font-size: 0.9vw;
+        font-weight: 600;
+        font-style: italic;
+        margin-bottom: 3px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        /*overflow-wrap: break-word;*/
+        align-self: center;
+        position:absolute;
+        top:10.7vh;
+        z-index: 3;
+        }
     
 
 .formHeader{
