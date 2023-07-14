@@ -1173,7 +1173,7 @@ function AddClassMeeting(props) {
                                     <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                                 </div>
                             </div>
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+                            {/*<div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                                 <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                                     {t("presi_conseil")}:  
@@ -1195,7 +1195,7 @@ function AddClassMeeting(props) {
                                         </select> 
                                     </div>
                                 }
-                            </div>
+                            </div>*/}
 
                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
@@ -1275,15 +1275,40 @@ function AddClassMeeting(props) {
                                     </select>
                                 }
 
-                                {(seeDetail==true) ?
+                                {/*(seeDetail==true) ?
                                     <div> 
                                         <input id="autre_conseilC" type="text" className={classes.inputRowControl } Placeholder={'  precider les details '} defaultValue={currentUiContext.formInputs[3]} style={{marginLeft:'1.3vw', height:'1.7rem', width:'13vw', fontSize:'1.13vw'}}/>
                                     </div>
                                     :
                                     null
-                                }
+                            */}
                                
                             </div>
+
+                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                                    {t("periode_associee")}:  
+                                </div>
+
+                                {(props.formMode =='consult') ?
+                                    <div> 
+                                        <input id="responsableLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="responsableId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                    </div>  
+                                    :
+                                    <div>                                     
+                                        <select id='responsable' defaultValue={MEETING.responsableId} onChange={responsableChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                            {(optResponsable||[]).map((option)=> {
+                                                return(
+                                                    <option  value={option.value}>{option.label}</option>
+                                                );
+                                            })}
+                                        </select> 
+                                    </div>
+                                }
+                            </div>
+
                             
                            
                             <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'33vh', marginLeft:'-2vw'}}>
