@@ -47,6 +47,7 @@ import ConfigAppreciationNote from "./subPages/ConfigAppreciationNote";
 import ConfigCausesConvocationCD from "./subPages/ConfigCausesConvocationCD";
 import ConfigConditionRedoublementExclusion from "./subPages/ConfigConditionRedoublementExclusion";
 import ConfigTypeSanction from "./subPages/ConfigTypeSanction";
+import ConfigClassesPassages from "./subPages/ConfigClassesPassages";
 
 
 
@@ -233,6 +234,7 @@ function ConfigPage(props) {
                                 {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Causes de Convocation au Conseil de Discipline"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(23):(section2SelectedItem == 23) ? setSection2SelectedItem(0):setSection2SelectedItem(23)}}></MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Condition de Reoublement et d'exclusion"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(24):(section2SelectedItem == 24) ? setSection2SelectedItem(0):setSection2SelectedItem(24)}}></MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Types de Sanctions"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(25):(section2SelectedItem == 25) ? setSection2SelectedItem(0):setSection2SelectedItem(25)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Classes de passage possibles pour l'année prochaine"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(26):(section2SelectedItem == 26) ? setSection2SelectedItem(0):setSection2SelectedItem(26)}}></MenuItem> : null}
 
                             </div>
                             
@@ -344,6 +346,10 @@ function ConfigPage(props) {
                                 }
                                 {(section2SelectedItem==25) ?
                                     <ConfigTypeSanction/>
+                                    : null
+                                }
+                                {(section2SelectedItem==26) ?
+                                    <ConfigClassesPassages/>
                                     : null
                                 }
                                 
