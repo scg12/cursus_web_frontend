@@ -25,6 +25,7 @@ var CURRENT_RESPONSABLE_ID= undefined;
 var CURRENT_RESPONSABLE_LABEL = undefined;
 var MEETING_OBJET_ID = undefined;
 var MEETING_OBJET_LABEL = undefined;
+var periodeId = undefined;
 
 var eleves_data=[];
 
@@ -80,6 +81,7 @@ function AddDisciplinMeeting(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
     const [isValid, setIsValid] = useState(false);
+    const [optObjet, setOptObjet] = useState(getListObjets());
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const selectedTheme = currentUiContext.theme;
     const [etape,setEtape] = useState(1);
@@ -95,6 +97,7 @@ function AddDisciplinMeeting(props) {
     const [optResponsable, setOptResponsable] = useState(getListResponsables());
     const [optRole, setOptRole]= useState(getListRoles());
     const [optConvoques, setOptConvoques] = useState([]);
+    const [optPeriode, setOptPeriode] = useState([]);
     const [isBilan, setIsBilan] = useState(false);
     const [notifVisible, setNotifVisible]= useState(false);
     const [isButtonClicked, setIsButtonClicked] = useState(false);
@@ -106,6 +109,7 @@ function AddDisciplinMeeting(props) {
     useEffect(()=> {
 
         getClassStudentList(props.currentClasseId);
+        setOptPeriode(nonDefini);
         /*setOptResponsable(tabResponsables);
         setOptRole(tabRoles);
         setOptObjet(tabObjets);*/
@@ -210,6 +214,48 @@ function AddDisciplinMeeting(props) {
         return tabEleves;
     }
 
+    function periodeChangeHandler(e){
+        if(e.target.value > 0){
+            periodeId = e.target.value;
+        } else periodeId = undefined;
+    }
+
+   
+    function objetChangeHandler(e){
+        var typeConseil = e.target.value;
+        var tabPeriode=nonDefini;
+        
+       if(typeConseil != "null"){       
+            switch(typeConseil){
+                case 'sequentiel': {tabPeriode = [...props.sequencesDispo]; break;}
+                case 'trimestriel': {tabPeriode = [...props.trimestresDispo]; break;}
+                default:tabPeriode = nonDefini;
+            }
+            console.log("periode choisie",tabPeriode, typeConseil)
+            setOptPeriode(tabPeriode);
+            var meeting = tabObjets.find((meetg)=>meetg.value==e.target.value);
+
+            MEETING_OBJET_ID = meeting.value;
+            MEETING_OBJET_LABEL = meeting.label;
+
+            if(MEETING_OBJET_ID == tabObjets[3].value) setIsBilan(true);
+            else setIsBilan(false);
+
+            // if(MEETING_OBJET_ID == tabObjets[4].value) setSeeDetail(true);
+            // else setSeeDetail(false);
+        }else{
+            // setSeeDetail(false);
+            setIsBilan(false);
+            MEETING_OBJET_ID = undefined;
+            MEETING_OBJET_LABEL = undefined;
+        }
+    }
+
+    const nonDefini=[        
+        {value: -1,   label:'-----'+ t('non defini') +'-----' },
+    ];
+
+
     function getListParticipants(){
         return([
             {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0, present:true, etat:1},
@@ -270,11 +316,9 @@ function AddDisciplinMeeting(props) {
 
     function getListObjets(){
         return[
-            {value:0, label:'---'+ t('choisir') +'---'},
-            {value:1, label:"Conseil bilan sequentiel"    },
-            {value:2, label:"Conseil bilan trimestriel"   },
-            {value:3, label:"Conseil bilan annuel"        },
-            {value:4, label:"Autre conseil"               },
+            {value:"null", label:'-----'+ t('choisir') +'-----'    },
+            {value:"sequentiel",  label:"Conseil bilan sequentiel" },
+            {value:"trimestriel", label:"Conseil bilan trimestriel"},
         ];    
     }
 
@@ -1327,16 +1371,10 @@ function AddDisciplinMeeting(props) {
                             </div>
                         }
                         
-                        {
+                        {/*
                             notifVisible &&
                             <div style={{position:'absolute', right:0, top:'-0.7vh' }}>
-                               {/* <CustomButton
-                                    btnText='Notifier les concernes' 
-                                    buttonStyle={getNotifButtonStyle()}
-                                    btnTextStyle = {classes.notifBtnTextStyle}
-                                    btnClickHandler={props.cancelHandler}
-                                    />*/}
-
+                              
 
                                 <CustomButton
                                     btnText={t('alert_profs')}
@@ -1346,10 +1384,10 @@ function AddDisciplinMeeting(props) {
                                     buttonStyle={getNotifButtonStyle()}
                                     btnTextStyle = {classes.notifBtnTextStyle}
                                     btnClickHandler={props.cancelHandler}
-                                    /*disable={(isValid==false)}   */
+                                    
                                 />
                             </div>
-                        }
+                        */}
 
                     </div>
                     <div style={{fontSize:'1vw', fontWeight:'bold', marginBottom:'2vh', marginLeft:'0vw'}}>
@@ -1382,7 +1420,7 @@ function AddDisciplinMeeting(props) {
                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                                 <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("presi_conseil")}:
+                                    {t("convoque_par")}:
                                 </div>
 
                                 {(props.formMode =='consult') ?
@@ -1403,17 +1441,6 @@ function AddDisciplinMeeting(props) {
                                 }
                             </div>
 
-                            {/*<div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    Professeur Principal:  
-                                </div>
-                                    
-                                <div> 
-                                    <input id="profPrincipalLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-2vw', height:'1rem', width:'15vw', fontSize:'1.13vw'}}/>
-                                    <input id="profPrincipalId" type="hidden"  defaultValue={props.currentPpId}/>
-                                </div>
-                            </div>*/}
-                    
                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                                     {t("date_conseil")}:
@@ -1460,6 +1487,73 @@ function AddDisciplinMeeting(props) {
 
                             </div>
 
+                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                                    {t("meeting_purpose")}:
+                                </div>
+
+                                {(props.formMode =='consult') ?
+                                    <div> 
+                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[11]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="objetId" type="hidden"    className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[4]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                    </div>  
+                                    :
+
+                                    <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                        {(optObjet||[]).map((option)=> {
+                                            return(
+                                                <option  value={option.value}>{option.label}</option>
+                                            );
+                                        })}
+                                    </select>
+                                }
+
+                                {/*(seeDetail==true) ?
+                                    <div> 
+                                        <input id="autre_conseilC" type="text" className={classes.inputRowControl } Placeholder={'  precider les details '} defaultValue={currentUiContext.formInputs[3]} style={{marginLeft:'1.3vw', height:'1.7rem', width:'13vw', fontSize:'1.13vw'}}/>
+                                    </div>
+                                    :
+                                    null
+                            */}
+                               
+                            </div>
+
+                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                                    {t("periode_associee")}:  
+                                </div>
+
+                                {(props.formMode =='consult') ?
+                                    <div> 
+                                        <input id="periodeLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="periodeId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                    </div>  
+                                    :
+                                    <div>                                     
+                                        <select id='periode' defaultValue={MEETING.responsableId} onChange={periodeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                            {(optPeriode||[]).map((option)=> {
+                                                return(
+                                                    <option  value={option.value}>{option.label}</option>
+                                                );
+                                            })}
+                                        </select> 
+                                    </div>
+                                }
+                            </div>
+
+                            {/*<div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                                    Professeur Principal:  
+                                </div>
+                                    
+                                <div> 
+                                    <input id="profPrincipalLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-2vw', height:'1rem', width:'15vw', fontSize:'1.13vw'}}/>
+                                    <input id="profPrincipalId" type="hidden"  defaultValue={props.currentPpId}/>
+                                </div>
+                            </div>*/}
+                    
+                           
                             
                            
                             <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'19.3vh', marginLeft:'-2vw'}}>
@@ -1554,12 +1648,14 @@ function AddDisciplinMeeting(props) {
                                 btnClickHandler={saveMeetingHandler}
                             />
 
-                            <CustomButton
-                                btnText={t("etape")+' 2 >'}
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.btnTextStyle}
-                                btnClickHandler={gotoStep2Handler}
-                            />
+                            {(props.formMode == 'modif') &&
+                                <CustomButton
+                                    btnText={t("etape")+' 2 >'} 
+                                    buttonStyle={getGridButtonStyle()}
+                                    btnTextStyle = {classes.btnTextStyle}
+                                    btnClickHandler={gotoStep2Handler}
+                                />
+                            }
                         </div>
                     }                    
                 </div>

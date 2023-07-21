@@ -26,8 +26,15 @@ var CURRENT_MEETING={};
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
 let CURRENT_PROF_PP_ID;
+let CURRENT_PROF_PP_USERID;
 let CURRENT_PROF_PP_LABEL;
 var printedETFileName='';
+var SEQUENCES_DISPO = [];
+var TRIMESTRES_DISPO  = [];
+var ANNEE_DISPO = [];
+var DEFAULT_MEMBERS = []; 
+var OTHER_MEMBERS = [];
+var PRESENTS_MEMBERS = [];
 
 var listElt ={
     rang:1, 
@@ -148,6 +155,17 @@ function ConseilClasse(props) {
             id_sousetab: sousEtabId
         }).then((res)=>{
             console.log("donnees",res.data);
+            CURRENT_PROF_PP_ID      = res.data.prof_principal.id;
+            CURRENT_PROF_PP_USERID = res.data.prof_principal.user_id;
+            CURRENT_PROF_PP_LABEL   =  res.data.prof_principal.nom;
+
+            SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs_dispo);
+            TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
+            DEFAULT_MEMBERS   =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres) : [];
+            OTHER_MEMBERS     =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_a_ajouter) : [];
+            PRESENTS_MEMBERS  =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_presents)  : [];
+            ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}]
+
             var listConseils = [...formatList(res.data.conseil_classes, res.data.prof_principal, res.seqs_dispo, res.trims_dispo)]
             console.log(listConseils);
             setGridMeeting(listConseils);
@@ -156,6 +174,26 @@ function ConseilClasse(props) {
         //setGridMeeting(conseil_data);
     }
 
+
+    function createLabelValueTable(tab){
+        var resultTab = [];
+        if(tab.length>0){
+            tab.map((elt)=>{
+                resultTab.push({value:elt.id, label:elt.libelle});
+            })
+        }
+        return resultTab;
+    }
+
+    function createLabelValueTableWithUserS(tab){
+        var resultTab = [];
+        if(tab.length>0){
+            tab.map((elt)=>{
+                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type});
+            })
+        }
+        return resultTab;
+    }
 
     function formatList(listConseil,ProfInfo,seqInfos,trimInfos){
         var rang = 1;
@@ -195,28 +233,6 @@ function ConseilClasse(props) {
     }
 
 
-   
-
-    // const getProfPrincipal=(classeId, setabId)=>{
-    //     /*axiosInstance.post(`get-profPrincipal/`, {
-    //         id_classe : classeId,
-    //         id_sousetab:setabId,
-                        
-    //     }).then((res)=>{
-    //         console.log(res.data);
-
-    //         CURRENT_PROF_PP_ID = res.data.id ;
-    //         CURRENT_PROF_PP_LABEL = res.data.label
-            
-    //     })*/     
-
-    //     CURRENT_PROF_PP_ID = 12 ;
-    //     CURRENT_PROF_PP_LABEL = 'MBAMI Thomas'
-    // }
-
-   
-
-   
     function dropDownHandler(e){
         //console.log(e.target.value)
         var grdRows;
@@ -697,47 +713,61 @@ const columnsFr = [
 
     }
 
+    function getTypeConseil(code){
+        switch(code){
+            case '1': return "sequentiel" ;
+            case '2': return "trimestriel" ;
+            case '3': return "annuel";
+        }
+    }
 
+    function getMembresId(tab){
+        var tabResults = [];
+        tab.map((elt)=>{
+            tabResults.push(elt.value);
+        })
+
+        return tabResults.join("²²")
+    }
+
+    function getMembreRoles(tab){
+        var tabResults = [];
+        tab.map((elt)=>{
+            tabResults.push(elt.role);
+        })
+        return tabResults.join("²²")
+    }
+
+    function createGridData(){
+
+    }
   
 
     function addClassMeeting(meeting) {       
         console.log('Ajout',meeting);
-        conseil_data.push(meeting);
-        setGridMeeting(conseil_data);
+        //conseil_data.push(meeting);
+        //setGridMeeting(conseil_data);
         CURRENT_MEETING = meeting;
-        chosenMsgBox = MSG_SUCCESS;
-        currentUiContext.showMsgBox({
-            visible:true, 
-            msgType:"question", 
-            msgTitle:t("success_add_M"), 
-            message:t("success_add")+"\n"+t("print_pv_question")
-        })
            
-        /*axiosInstance.post(`create-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id_sousetab:currentAppContext.currentEtab,
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance,            
+        axiosInstance.post(`create-conseil-classe/`, {
+            id_sousetab     : meeting.id_sousetab,
+            id_classe       : meeting.classeId,
+            id_pp           : meeting.profPrincipalId,
+            id_pp_user      : meeting.currentPpUserId,
+            type_conseil    : getTypeConseil(meeting.objetId),
+            date_prevue     : meeting.date,
+            heure_prevue    : meeting.heure,
+            id_periode      : meeting.periodeId,
+            id_periode      : meeting.periodeId,
+            alerter_membres : meeting.alerter_membres,
+            id_membres      : getMembresId(meeting.listParticipants),
+            roles_membres   : getMembreRoles(meeting.listParticipants)
+           
+           // MEETING.listParticipants  = [...tabParticipant];
+            
         }).then((res)=>{
+           var gridData = createGridData(res.data.conseil_classes)
+            setGridMeeting(gridData);
             console.log(res.data);
 
             setModalOpen(0);
@@ -746,9 +776,9 @@ const columnsFr = [
                 visible:true, 
                 msgType:"question", 
                 msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("print_pv_question")
+                message:t("success_add")
             })
-        })  */    
+        })    
     }
     
     function modifyClassMeeting(meeting) {
@@ -1000,7 +1030,7 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen >0 && modalOpen<4) && <AddClassMeeting currentPpId={CURRENT_PROF_PP_ID} currentPpLabel={CURRENT_PROF_PP_LABEL} currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm} />}
+            {(modalOpen >0 && modalOpen<4) && <AddClassMeeting defaultMembrers={DEFAULT_MEMBERS} otherMembers={OTHER_MEMBERS} presentsMembers={PRESENTS_MEMBERS} sequencesDispo={SEQUENCES_DISPO} trimestresDispo={TRIMESTRES_DISPO} anneDispo={ANNEE_DISPO} currentPpUserId = {CURRENT_PROF_PP_USERID} currentPpId={CURRENT_PROF_PP_ID} currentPpLabel={CURRENT_PROF_PP_LABEL} currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm}/>}
             {(modalOpen==4) && 
                 <PDFTemplate previewCloseHandler={closePreview}>
                     { isMobile?
@@ -1092,7 +1122,7 @@ const columnsFr = [
                        
                     </div>
                         
-                    </div>
+                </div>
                     
                 
 

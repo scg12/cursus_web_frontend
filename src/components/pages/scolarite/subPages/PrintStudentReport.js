@@ -56,6 +56,8 @@ var listElt ={
    
 }
 
+var listEleves = [];
+
 
 var pageSet = [];
 
@@ -121,13 +123,21 @@ function PrintStudentReport(props) {
         }) 
     }
 
+    function getTodayDate(){
+        var annee = new Date().getFullYear();
+        var mm  = (new Date().getMonth()+1).length==1 ? '0'+(new Date().getMonth()+1) : (new Date().getMonth()+1);
+        var jj = (new Date().getDate()).length==1 ? '0'+(new Date().getDate()) : (new Date().getDate())
+        return annee+'-'+ mm+'-'+jj;
+    }
+
     const  getClassStudentList=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
+        listEleves = []
+        axiosInstance.post(`eleves-situation-financiere/`, {
             id_classe: classId,
+            date_limite:getTodayDate()
         }).then((res)=>{
             console.log(res.data);
-            listEleves = [...formatList(res.data)]
+            listEleves = [...formatList(res.data.eleves)]
             console.log(listEleves);
             setGridRows(listEleves);
             console.log(gridRows);
@@ -135,40 +145,36 @@ function PrintStudentReport(props) {
         return listEleves;     
     }
 
+
     const formatList=(list) =>{
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
             listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
             listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
             listElt.rang = rang; 
-            listElt.presence = 1; 
             listElt.matricule = elt.matricule;
             listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
             listElt.lieu_naissance = elt.lieu_naissance;
             listElt.date_entree = elt.date_entree;
             listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
-            listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant";
-
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
-
-            
+            listElt.nom_pere = elt.nom_mere;           
+            listElt.en_regle = elt.en_regle ;
+            listElt.en_regle_Header = (elt.en_regle == true) ? t("yes") : t("no");
+            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;           
             formattedList.push(listElt);
             rang ++;
         })
         return formattedList;
+    }
+
+    function filterEleves(e){
+        var list =[]
+        var enRegle = e.target.checked;
+      
+        console.log("check", enRegle);
+        setGridRows(listEleves.filter((elt)=>elt.en_regle==enRegle));         
     }
 
 
@@ -245,7 +251,6 @@ function PrintStudentReport(props) {
             } else {
                 if(!isValid)  setIsValid(true);
             }
-            
                   
         }else{
             CURRENT_PERIOD_ID = undefined;
@@ -272,28 +277,10 @@ const columnsFr = [
         headerClassName:classes.GridColumnStyle
     },
     {
-        field: 'displayedName',
+        field: 'nom',
         headerName: 'NOM ET PRENOM(S)',
         width: 200,
         editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'nom',
-        headerName: 'NOM',
-        width: 200,
-        editable: false,
-        hide:true,
-        headerClassName:classes.GridColumnStyle
-    },
-   
-    {
-        field: 'prenom',
-        headerName: 'PRENOM',
-        width: 200,
-        editable: false,
-        hide:true,
         headerClassName:classes.GridColumnStyle
     },
 
@@ -329,91 +316,8 @@ const columnsFr = [
     },
     
     {
-        field: 'tel_parent',
-        headerName: 'TEL. PARENT',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'email_parent',
-        headerName: 'EMAIL PARENT',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'nom_pere',
-        headerName: 'NOM PERE',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    
-    {
-        field: 'tel_pere',
-        headerName: 'TEL. PERE',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'email_pere',
-        headerName: 'EMAIL PERE',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'nom_mere',
-        headerName: 'NOM MERE',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    
-    {
-        field: 'tel_mere',
-        headerName: 'TEL. MERE',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'email_mere',
-        headerName: 'EMAIL MERE',
-        width: 200,
-        hide:true,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-
-    {
-        field: 'redouble',
-        headerName: 'SITUATION',
-        width: 110,
-        editable: false,
-        headerClassName:classes.GridColumnStyle,
-            
-    },
-
-    {
-        field: 'sexe',
-        headerName: 'SEXE',
-        hide:true,
+        field: 'en_regle_Header',
+        headerName: 'EN REGLES ?',
         width: 110,
         editable: false,
         headerClassName:classes.GridColumnStyle,
@@ -457,28 +361,10 @@ const columnsFr = [
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'displayedName',
+            field: 'nom',
             headerName: 'NAME AND SURNAME',
             width: 200,
             editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-        {
-            field: 'nom',
-            headerName: (i18n.lng=='fr')?'NOM':'NAME',
-            width: 200,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },
-       
-        {
-            field: 'prenom',
-            headerName: 'SURNAME',
-            width: 200,
-            editable: false,
-            hide:true,
             headerClassName:classes.GridColumnStyle
         },
     
@@ -512,93 +398,10 @@ const columnsFr = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-        
+      
         {
-            field: 'tel_parent',
-            headerName:'PARENT TEL.',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-        {
-            field: 'email_parent',
-            headerName:'PARENT EMAIL',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-        {
-            field: 'nom_pere',
-            headerName:'FATHER NAME',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-        
-        {
-            field: 'tel_pere',
-            headerName:'FATHER TEL.',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-        {
-            field: 'email_pere',
-            headerName:'FATHER EMAIL',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-        {
-            field: 'nom_mere',
-            headerName:'MOTHER NAME',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-        
-        {
-            field: 'tel_mere',
-            headerName: 'MOTHER TEL.',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-        {
-            field: 'email_mere',
-            headerName:'MOTHER EMAIL',
-            width: 200,
-            hide:true,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-    
-        {
-            field: 'redouble',
-            headerName:'SITUATION',
-            width: 110,
-            editable: false,
-            headerClassName:classes.GridColumnStyle,
-                
-        },
-    
-        {
-            field: 'sexe',
-            headerName:'SEX',
-            hide:true,
+            field: 'en_regle_Header',
+            headerName:'FEES PAID ?',
             width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle,
@@ -812,6 +615,7 @@ const columnsFr = [
             .then((response) => {  
                // setModalOpen(0);              
                 ElevePageSet={};
+                ElevePageSet.effectif = listEleves.length;
                 ElevePageSet.eleveNotes = [... response.data.eleve_results];
                 ElevePageSet.noteRecaps = [... response.data.note_recap_results];
                 ElevePageSet.groupeRecaps = [... response.data.groupe_recap_results];
@@ -970,7 +774,7 @@ const columnsFr = [
                         </div>
                         {(props.formMode =="impression") &&
                             <div style={{display:"flex", flexDirection:"row", marginLeft:"2vw" }}>
-                                <input type="checkbox"/> 
+                                <input type="checkbox" onClick={filterEleves}/> 
                                 <div style={{marginLeft:"0.3vw"}}>{t('paid_fees')}</div>
 
                             </div>
@@ -1037,10 +841,10 @@ const columnsFr = [
                 {/*(modalOpen==0) ?*/
                     <div className={classes.gridDisplay} >
                         {(modalOpen!=0) && <BackDrop/>}
-                        {(modalOpen==3) &&  <CriteresGeneration cancelHandler={()=>setModalOpen(0)}/>} 
+                        {(modalOpen==3) &&  <CriteresGeneration classeId={CURRENT_CLASSE_ID}  cancelHandler={()=>setModalOpen(0)}/>} 
                         <StripedDataGrid
                             rows={gridRows}
-                            columns={(i18n=='fr') ? columnsFr : columnsEn}
+                            columns={(i18n.language == 'fr') ? columnsFr : columnsEn}
 
                             checkboxSelection ={(props.formMode =="impression" && openCheck) ? true : false}
                                 
@@ -1061,10 +865,10 @@ const columnsFr = [
                                 }
                             }}*/  
                             
-                            onRowDoubleClick ={(params, event) => {
-                                event.defaultMuiPrevented = true;
-                                consultRowData(params.row)
-                            }}
+                            // onRowDoubleClick ={(params, event) => {
+                            //     event.defaultMuiPrevented = true;
+                            //     consultRowData(params.row)
+                            // }}
                             
                             //loading={loading}
                             //{...data}

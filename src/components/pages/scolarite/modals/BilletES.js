@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useFilePicker } from 'use-file-picker';
-import classes from "../subPages/SubPages.module.css";
 import {isMobile} from 'react-device-detect';
+import classes from "../subPages/SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import  FormNumero from "../../../formPuce/FormNumero";
 import FormPuce from '../../../formPuce/FormPuce';
@@ -59,13 +59,16 @@ var MEETING = {
 
     note_exclusion:0,
     //---participants
-    listParticipants : [],  
-   
-    //---prof presents
-    listPresents : [],
+    listParticipants : [], 
+    
+    //----Eleves convoques
+    listConvoques:[],
 
     //---decisions cas par cas
     listCaspasCas : [],
+   
+    //---prof presents
+    listPresents : [],
 };
 
 var chosenMsgBox;
@@ -73,11 +76,12 @@ const MSG_SUCCESS =1;
 const MSG_WARNING =2;
 
 
-function AddClassMeeting(props) {
+function BilletES(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
     const [isValid, setIsValid] = useState(false);
+    const [optObjet, setOptObjet] = useState(getListObjets());
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const selectedTheme = currentUiContext.theme;
     const [etape,setEtape] = useState(1);
@@ -85,19 +89,22 @@ function AddClassMeeting(props) {
     const [etape2InActiv, setEtape2InActiv] = useState(setButtonDisable(2));
     const [tabParticipant, setTabParticipant] = useState([]);
     const [tabEleves, setTabEleves]= useState([]);
+    const [tabElevesDecisions, setTabElevesDecisions]= useState([]);
    
    // const [tabPresents, setTabPresents] = useState([]);
     const [optOK, setOptOK] = useState([]);
     
-    const [optResponsable, setOptResponsable] = useState(props.otherMembers);
+    const [optResponsable, setOptResponsable] = useState(getListResponsables());
     const [optRole, setOptRole]= useState(getListRoles());
-    const [optObjet, setOptObjet] = useState(getListObjets());
+    const [optConvoques, setOptConvoques] = useState([]);
     const [optPeriode, setOptPeriode] = useState([]);
     const [isBilan, setIsBilan] = useState(false);
     const [notifVisible, setNotifVisible]= useState(false);
     const [isButtonClicked, setIsButtonClicked] = useState(false);
     const [currentDecision, setCurrentDecision]=useState(0);
+    const [currentMotif, setCurrentMotif]=useState(0);
     const [presents, setPresents]= useState([]);
+    const [sanctions, setSanctions] = useState([]);
   
     useEffect(()=> {
 
@@ -107,75 +114,77 @@ function AddClassMeeting(props) {
         setOptRole(tabRoles);
         setOptObjet(tabObjets);*/
        
-        MEETING = {
-            classeId : props.currentClasseId,
-            classeLabel:props.currentClasseLabel,
-            profPrincipalId : props.currentPpId,
-            profPrincipalLabel : props.currentPpLabel,
+        // MEETING = {
+        //     classeId : props.currentClasseId,
+        //     classeLabel:props.currentClasseLabel,
+        //     profPrincipalId : props.currentPpId,
+        //     profPrincipalLabel : props.currentPpLabel,
 
-            id : putToEmptyStringIfUndefined(currentUiContext.formInputs[0]),
+        //     id : putToEmptyStringIfUndefined(currentUiContext.formInputs[0]),
 
-            responsableId:putToEmptyStringIfUndefined(currentUiContext.formInputs[1]),
-            responsableLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[10]),
+        //     responsableId:putToEmptyStringIfUndefined(currentUiContext.formInputs[1]),
+        //     responsableLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[10]),
 
-            date:putToEmptyStringIfUndefined(currentUiContext.formInputs[2]),
-            heure:putToEmptyStringIfUndefined(currentUiContext.formInputs[3]),
+        //     date:putToEmptyStringIfUndefined(currentUiContext.formInputs[2]),
+        //     heure:putToEmptyStringIfUndefined(currentUiContext.formInputs[3]),
 
-            objetId:putToEmptyStringIfUndefined(currentUiContext.formInputs[4]),
-            objetLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[11]),
+        //     objetId:putToEmptyStringIfUndefined(currentUiContext.formInputs[4]),
+        //     objetLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[11]),
 
-            autreObjet:putToEmptyStringIfUndefined(currentUiContext.formInputs[5]),
+        //     autreObjet:putToEmptyStringIfUndefined(currentUiContext.formInputs[5]),
 
-            decision:putToEmptyStringIfUndefined(currentUiContext.formInputs[6]),
+        //     decision:putToEmptyStringIfUndefined(currentUiContext.formInputs[6]),
 
-            note_passage:putToEmptyStringIfUndefined(currentUiContext.formInputs[7]),
-            note_exclusion:putToEmptyStringIfUndefined(currentUiContext.formInputs[8]),
+        //     note_passage:putToEmptyStringIfUndefined(currentUiContext.formInputs[7]),
+        //     note_exclusion:putToEmptyStringIfUndefined(currentUiContext.formInputs[8]),
 
-            etat : putToEmptyStringIfUndefined(currentUiContext.formInputs[9]),
+        //     etat : putToEmptyStringIfUndefined(currentUiContext.formInputs[9]),
            
-            //---participants
-            listParticipants :[...props.defaultMembrers],  
+        //     //---participants
+        //     listParticipants : [...getListParticipants()],  
             
-            //---prof presents
-            listPresents : [...props.presentsMembers],
+        //     //---prof presents
+        //     listPresents : [...getListPresents()],
         
-            //---decisions cas par cas
-            listCaspasCas :  [...getListCasParCas()],
+        //     //---decisions cas par cas
+        //     listCaspasCas :  [...getListEleveConvoques()],
+
+        //     //---Eleves convoques
+        //     listConvoques: [...getListEleveConvoques()],
                         
-        };    
+        // };    
 
         
-        setTabParticipant([...props.defaultMembrers]);
-      
+        // setTabParticipant([...getListParticipants()]);
+        // setTabEleves([...getListEleveConvoques()]);
         
 
-        if (props.formMode == 'modif'){
-            console.log('responsable:',MEETING.responsableId);
-            setTabEleves([...getListCasParCas()]);
-            tabResponsables.splice(0,1);
-            var responsable = tabResponsables.find((resp)=>resp.value == MEETING.responsableId);
-            var index = tabResponsables.findIndex((resp)=>resp.value == MEETING.responsableId);
-            tabResponsables.splice(index,1);
-            tabResponsables.unshift(responsable);
-            setOptResponsable(tabResponsables);
+        // if (props.formMode == 'modif'){
+        //     console.log('responsable:',MEETING.responsableId)
+        //     tabResponsables.splice(0,1);
+        //     var responsable = tabResponsables.find((resp)=>resp.value == MEETING.responsableId);
+        //     var index = tabResponsables.findIndex((resp)=>resp.value == MEETING.responsableId);
+        //     tabResponsables.splice(index,1);
+        //     tabResponsables.unshift(responsable);
+        //     setOptResponsable(tabResponsables);
 
-            CURRENT_RESPONSABLE_ID =  MEETING.responsableId;
-            CURRENT_RESPONSABLE_LABEL = MEETING.responsableLabel;
+        //     CURRENT_RESPONSABLE_ID =  MEETING.responsableId;
+        //     CURRENT_RESPONSABLE_LABEL = MEETING.responsableLabel;
 
-            tabObjets.splice(0,1);
-            var objet = tabObjets.find((obj)=>obj.value == MEETING.objetId);
-            index = tabObjets.findIndex((obj)=>obj.value == MEETING.objetId);
-            tabObjets.splice(index,1);
-            tabObjets.unshift(objet);
-            setOptObjet(tabObjets);
+        //     /*tabObjets.splice(0,1);
+        //     var objet = tabObjets.find((obj)=>obj.value == MEETING.objetId);
+        //     index = tabObjets.findIndex((obj)=>obj.value == MEETING.objetId);
+        //     tabObjets.splice(index,1);
+        //     tabObjets.unshift(objet);
+        //     //setOptObjet(tabObjets);
 
-            MEETING_OBJET_ID = MEETING.objetId;
-            MEETING_OBJET_LABEL =  MEETING.objetLabel;
+        //     MEETING_OBJET_ID = MEETING.objetId;
+        //     MEETING_OBJET_LABEL =  MEETING.objetLabel;*/
 
-            if(MEETING.etat==0) setNotifVisible(true);
-        } 
+        //     if(MEETING.etat==0) setNotifVisible(true);
+        // } 
 
-        console.log(currentUiContext.formInputs);        
+        // console.log(currentUiContext.formInputs);        
 
     },[]);
 
@@ -194,7 +203,7 @@ function AddClassMeeting(props) {
     }
 
     function getElevesTab(elevesTab){
-        var tabEleves = [{value:0,label:"- Choisir un eleve -"}]
+        var tabEleves = [{value:0,label:"- "+t('choisir')+" -"}]
         var new_eleve;
         elevesTab.map((eleve)=>{
             new_eleve = {};
@@ -205,6 +214,48 @@ function AddClassMeeting(props) {
         return tabEleves;
     }
 
+    function periodeChangeHandler(e){
+        if(e.target.value > 0){
+            periodeId = e.target.value;
+        } else periodeId = undefined;
+    }
+
+   
+    function objetChangeHandler(e){
+        var typeConseil = e.target.value;
+        var tabPeriode=nonDefini;
+        
+       if(typeConseil != "null"){       
+            switch(typeConseil){
+                case 'sequentiel': {tabPeriode = [...props.sequencesDispo]; break;}
+                case 'trimestriel': {tabPeriode = [...props.trimestresDispo]; break;}
+                default:tabPeriode = nonDefini;
+            }
+            console.log("periode choisie",tabPeriode, typeConseil)
+            setOptPeriode(tabPeriode);
+            var meeting = tabObjets.find((meetg)=>meetg.value==e.target.value);
+
+            MEETING_OBJET_ID = meeting.value;
+            MEETING_OBJET_LABEL = meeting.label;
+
+            if(MEETING_OBJET_ID == tabObjets[3].value) setIsBilan(true);
+            else setIsBilan(false);
+
+            // if(MEETING_OBJET_ID == tabObjets[4].value) setSeeDetail(true);
+            // else setSeeDetail(false);
+        }else{
+            // setSeeDetail(false);
+            setIsBilan(false);
+            MEETING_OBJET_ID = undefined;
+            MEETING_OBJET_LABEL = undefined;
+        }
+    }
+
+    const nonDefini=[        
+        {value: -1,   label:'-----'+ t('non defini') +'-----' },
+    ];
+
+
     function getListParticipants(){
         return([
             {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0, present:true, etat:1},
@@ -213,7 +264,25 @@ function AddClassMeeting(props) {
         ]);
     }
 
-    function getListCasParCas(){
+    function getListEleveConvoques(){
+        if(props.formMode == 'creation') return [];
+        
+        if(props.formMode == 'modif')
+        return([
+            {id:21, nom:'TINA Thomas',         motifId:0,  decisionLabel:'Absence',    decisions:[0,1,2,3,4], etat:0},
+            {id:22, nom:'BOMBA NKODO Luc',     motifId:1,  decisionLabel:'Conduite',   decisions:[0,1,2,3.4], etat:0},
+            {id:23, nom:'MOULIOM Hubert',      motifId:2,  decisionLabel:'Autre',      decisions:[0,1,2,3,4], etat:0},
+        ]);
+
+        if(props.formMode == 'consult')
+        return([
+            {id:21, nom:'TINA Thomas',         motifId:0,  decisionLabel:'Absence',    decisions:[0,1,2,3,4], etat:1},
+            {id:22, nom:'BOMBA NKODO Luc',     motifId:1,  decisionLabel:'Conduite',   decisions:[0,1,2,3.4], etat:1},
+            {id:23, nom:'MOULIOM Hubert',      motifId:2,  decisionLabel:'Autre',      decisions:[0,1,2,3,4], etat:1},
+        ]);
+    }
+
+   /* function getListCasParCas(){
         if(props.formMode == 'creation') return [];
         else
         return([
@@ -221,7 +290,7 @@ function AddClassMeeting(props) {
             {id:2, nom:'ANABA Luc',    decisionId:1,  decisionLabel:'Admis',   decisions:[0,1,2,3,4], etat:1},
             {id:3, nom:'TALLA Hubert', decisionId:2,  decisionLabel:'Traduit', decisions:[0,1,2,3,4], etat:1},
         ]);
-    }
+    }*/
 
     function getListPresents(){
         if(props.formMode != 'consult') return [];
@@ -235,13 +304,13 @@ function AddClassMeeting(props) {
 
     function getListResponsables(){
         return [        
-            {value: 0,  label:'-----'+t('choisir')+'-----' },
-            {value: 11,  label:'Mr MBANBILI Hubert'        },
-            {value: 12,  label:'Mme TIEFONG Huguette'      },
-            {value: 13,  label:'Mme HEMLE MArthe'          },
-            {value: 14,  label:'Mme EMORO MArthe'          },
-            {value: 15,  label:'Mme TALLA Isabelle'        },
-        ];    
+            {value: 0,   label:'-----'+ t('choisir') +'-----'},
+            {value: 11,  label:'Mr MBANBILI Hubert'          },
+            {value: 12,  label:'Mme TIEFONG Huguette'        },
+            {value: 13,  label:'Mme HEMLE MArthe'            },
+            {value: 14,  label:'Mme EMORO MArthe'            },
+            {value: 15,  label:'Mme TALLA Isabelle'          },
+        ];
     }
     
 
@@ -250,7 +319,6 @@ function AddClassMeeting(props) {
             {value:"null", label:'-----'+ t('choisir') +'-----'    },
             {value:"sequentiel",  label:"Conseil bilan sequentiel" },
             {value:"trimestriel", label:"Conseil bilan trimestriel"},
-            {value:"annuel",      label:"Conseil bilan annuel"},
         ];    
     }
 
@@ -263,21 +331,17 @@ function AddClassMeeting(props) {
         ];
     }
 
-    const nonDefini=[        
-        {value: -1,   label:'-----'+ t('non defini') +'-----' },
-    ];
-
     const tabResponsables=[        
-        {value: 0,   Slabel:'-----'+ t('choisir') +'-----' },
-        {value: 11,  label:'Mr MBANBILI Hubert'            },
-        {value: 12,  label:'Mme TIEFONG Huguette'          },
-        {value: 13,  label:'Mme HEMLE MArthe'              },
-        {value: 14,  label:'Mme EMORO MArthe'              },
-        {value: 15,  label:'Mme TALLA Isabelle'            },
+        {value: 0,   label:'----'+ t('choisir') +'----'},
+        {value: 11,  label:'Mr MBANBILI Hubert'        },
+        {value: 12,  label:'Mme TIEFONG Huguette'      },
+        {value: 13,  label:'Mme HEMLE MArthe'          },
+        {value: 14,  label:'Mme EMORO MArthe'          },
+        {value: 15,  label:'Mme TALLA Isabelle'        },
     ];
 
     const tabObjets=[
-        {value:0, label:'--- '+ t('choisir') +'---'},
+        {value:0, label:'----'+ t('choisir') +'----'},
         {value:1, label:"Conseil bilan sequentiel" },
         {value:2, label:"Conseil bilan trimestriel"},
         {value:3, label:"Conseil bilan annuel"     },
@@ -285,17 +349,17 @@ function AddClassMeeting(props) {
     ];
 
     const tabParticipants=[
-        {value:-1,label:'--- '+ t('choisir') +'---'},
-        {value:1, label:'MBARGA Alfred'},
-        {value:2, label:'MOUDIO Luc'},
-        {value:3, label:'DEMBA BA Lucas'}
+        {value:-1, label:'---'+ t('choisir') +'---'},
+        {value:1,  label:'MBARGA Alfred'           },
+        {value:2,  label:'MOUDIO Luc'              },
+        {value:3,  label:'DEMBA BA Lucas'          }
     ];
 
     const tabRoles=[
-        {value:-1,label:t('choisir')},
-        {value:0, label:'President'},
-        {value:1, label:'Prof Principal'},
-        {value:2, label:'Enseignant'}
+        {value:-1, label:t('choisir')    },
+        {value:0,  label:'President'     },
+        {value:1,  label:'Prof Principal'},
+        {value:2,  label:'Enseignant'    }
     ];
 
     var participant_data = [
@@ -387,19 +451,6 @@ function AddClassMeeting(props) {
     }
    
     /************************************ Handlers ************************************/    
-    function getNonSelectedMembers(){
-        var tabOthers = [...props.otherMembers];
-        var members = [... props.defaultMembrers];
-        var tabNonSelectedElt =[]
-        
-        tabOthers.map((elt)=>{
-            if(!members.includes(elt)){
-                tabNonSelectedElt.push(elt);
-            }
-        })
-
-        return tabNonSelectedElt;
-    }
   
     function saveMeetingHandler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
@@ -413,9 +464,9 @@ function AddClassMeeting(props) {
             MEETING.etatLabel = 'En cours' ;
                       
             props.actionHandler(MEETING);
-           //setNotifVisible(true);
+            setNotifVisible(true);
            
-            /*chosenMsgBox = MSG_SUCCESS;
+           /* chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"question", 
@@ -468,10 +519,21 @@ function AddClassMeeting(props) {
            if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
-            }  
+            }
+              
             MEETING.etat = 1 ;
             MEETING.etatLabel = 'Cloture' ;       
             props.actionHandler(MEETING);
+
+            /*chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")+"\n"+t("print_pv_question") 
+            })*/
+            
+
         } else {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck2();
@@ -482,72 +544,90 @@ function AddClassMeeting(props) {
         if (chaine==undefined) return '';
         else return chaine;
     }
-    
+
 
     function getFormData1(){
-
+        
         MEETING.id      = -1;
-        MEETING.id_sousetab        = currentAppContext.currentEtab
-        MEETING.classeId           =  props.currentClasseId; 
-        MEETING.classeLabel        =  props.currentClasseLabel;
-       
-        MEETING.alerter_membres    = true;
+        MEETING.classeId = props.currentClasseId; 
+        MEETING.classeLabel  =  props.currentClasseLabel;
 
-        MEETING.responsableId      = CURRENT_RESPONSABLE_ID; 
-        MEETING.responsableLabel   = CURRENT_RESPONSABLE_LABEL;
+        MEETING.responsableId = CURRENT_RESPONSABLE_ID; 
+        MEETING.responsableLabel  =  CURRENT_RESPONSABLE_LABEL;
 
-        MEETING.currentPpUserId    = props.currentPpUserId;
-        MEETING.profPrincipalId    = props.currentPpId; 
-        MEETING.profPrincipalLabel = props.currentPpLabel;
+        MEETING.profPrincipalId = props.currentPpId; 
+        MEETING.profPrincipalLabel  =  props.currentPpLabel;
 
-        MEETING.date  = document.getElementById('anne').value+'-'+ document.getElementById('mois').value + '-' + document.getElementById('jour').value;
+        MEETING.date = document.getElementById('anne').value+'-'+ document.getElementById('mois').value + '-' + document.getElementById('jour').value;
         MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
         
-        MEETING.objetId    = MEETING_OBJET_ID;
-        MEETING.objetLabel = MEETING_OBJET_LABEL;
-        MEETING.periodeId = periodeId;
-        
+        //MEETING.objetId = MEETING_OBJET_ID;
+        //MEETING.objetLabel = MEETING_OBJET_LABEL;
+
+        //MEETING.autreObjet = (document.getElementById('autre_conseilC')!= null)? document.getElementById('autre_conseilC').value : '';
         MEETING.listParticipants  = [...tabParticipant];
+
+        MEETING.listConvoques = [...tabEleves];
        
         console.log(MEETING);
     }
 
     function getFormData2(){
+        
         MEETING.decision = document.getElementById('bilan').value;
-        MEETING.note_passage = (document.getElementById('note_passage')==null||document.getElementById('note_passage')==undefined) ? -1 : document.getElementById('note_passage').value;
-        MEETING.note_exclusion = (document.getElementById('note_exclusion')==null||document.getElementById('note_exclusion')==undefined) ? -1 : document.getElementById('note_exclusion').value;
+        //MEETING.note_passage = (document.getElementById('note_passage')==null||document.getElementById('note_passage')==undefined) ? -1 : document.getElementById('note_passage').value;
+        //MEETING.note_exclusion = (document.getElementById('note_exclusion')==null||document.getElementById('note_exclusion')==undefined) ? -1 : document.getElementById('note_exclusion').value;
         MEETING.listParticipants = [...tabParticipant];
         MEETING.listPresents = [...tabParticipant.filter((participant)=>participant.present == true)];
-        MEETING.listCaspasCas = [...tabEleves];
+        MEETING.listCaspasCas = [...optConvoques];
         console.log(MEETING);        
     }
 
     function setFormData1(){
         var tabEleve=[];        
         tabEleve[1]  =  MEETING.responsableId; 
+        tabEleve[10]  =  MEETING.responsableLabel; 
         tabEleve[2]  =  convertDateToUsualDate(MEETING.date);
         tabEleve[3]  =  MEETING.heure; 
-        tabEleve[4]  =  MEETING.objetId;
         tabEleve[9]  =  MEETING.etat;
+        //tabEleve[4]  =  MEETING.objetId;
         currentUiContext.setFormInputs(tabEleve);
         console.log(MEETING.date);
     }
   
     function setFormData2(){
-        var tabEleve=[];       
-        
+        var tabEleve=[];  
+        var tabConvoques = [];
+        var elvConvoque = {};
+        console.log("eleves convoques",tabEleves);
+      
         var profPresent =[];
         tabParticipant.map((elt, index)=>{profPresent[index]=true});
         setPresents(profPresent);
-       
 
-        tabEleve[6] =  MEETING.decision;
-        tabEleve[7] =  MEETING.note_passage ==-1 ? 0 : MEETING.note_passage;
-        tabEleve[8] =  MEETING.note_exclusion == -1 ? 0 : MEETING.note_exclusion;
-        tabEleve[9] =  MEETING.etat;
+        tabEleves.map((elt,index)=>{
+            elvConvoque={};
+            elvConvoque.id = elt.id;
+            elvConvoque.nom = elt.nom;
+            elvConvoque.etat = elt.etat;
+            elvConvoque.decisionId = 0;
+            elvConvoque.decisionLabel ="";
+            elvConvoque.decisions =[0,1,2,3,4];
+            tabConvoques.push(elvConvoque)
+        });
+
+        setOptConvoques(tabConvoques);
+
+        var tabSanctions=[];
+        tabEleves.map((elt,index)=>{tabSanctions[index]=0});
+        setSanctions(tabSanctions);
+
+        tabEleve[6] = MEETING.decision;
+        tabEleve[9]  =  MEETING.etat;
+        //tabEleve[7] = MEETING.note_passage ==-1 ? 0 : MEETING.note_passage;
+        //tabEleve[8] = MEETING.note_exclusion == -1 ? 0 : MEETING.note_exclusion;
         currentUiContext.setFormInputs(tabEleve);
-
-        console.log('ici',currentUiContext.formInputs, profPresent);
+        console.log('convoques',currentUiContext.formInputs, optConvoques);
     }
 
    
@@ -565,7 +645,7 @@ function AddClassMeeting(props) {
         }
 
         if(MEETING.date.length == 0) {
-            errorMsg=t("enter_meeting_date");
+            errorMsg= t("enter_meeting_date");
             return errorMsg;
         } 
 
@@ -585,49 +665,49 @@ function AddClassMeeting(props) {
         }
 
         if((eval(meeting_hour)>22 || eval(meeting_hour)< 7)  || (eval(meeting_min)>59 || eval(meeting_min)<0)){
-            errorMsg=t("enter_good_meeting_hour");
+            errorMsg= t("enter_good_meeting_hour");
             return errorMsg;
         }
 
-        if( MEETING.objetId == undefined ){
-            errorMsg=t("selecte_meeting_purpose");
+        /*if( MEETING.objetId == undefined ){
+            errorMsg="Veuillez selectionner l'objet du conseil  !";
             return errorMsg;
-        }    
+        }*/    
         return errorMsg;  
     }
     
     function formDataCheck2(){       
         var errorMsg='';
         
-        if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
-            errorMsg=t("enter_success_mark");
+        /*if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
+            errorMsg="Veuillez saisir la note de passage arretee !";
             return errorMsg;
         }
 
         if(MEETING.note_passage != -1 && isNaN(MEETING.note_passage)){
-            errorMsg=t("enter_valid_success_mark");
+            errorMsg="Veuillez saisir la note de passage valide !";
             return errorMsg;
         }
 
         if(MEETING.note_passage != -1 && (MEETING.note_passage > 20 || MEETING.note_passage < 0)){
-            errorMsg=t("enter_valid_success_mark");
+            errorMsg="Veuillez saisir la note de passage valide !";
             return errorMsg;
         }
 
         if(MEETING.note_exclusion != -1 && MEETING.note_exclusion.length == 0 ){
-            errorMsg=t("enter_elim_mark");
+            errorMsg="Veuillez saisir la note eliminatoire arretee !";
             return errorMsg;
         }
 
         if(MEETING.note_exclusion != -1 && isNaN(MEETING.note_exclusion)){
-            errorMsg= t("enter_valid_elim_mark");
+            errorMsg="Veuillez saisir la note eliminatoire valide !";
             return errorMsg;
         }
 
         if(MEETING.note_exclusion != -1 && (MEETING.note_exclusion > 20 || MEETING.note_exclusion < 0)){
-            errorMsg= t("enter_valid_elim_mark");
+            errorMsg="Veuillez saisir la note eliminatoire valide !";
             return errorMsg;
-        }
+        }*/
 
         if(MEETING.decision.length == 0 ){
             errorMsg=t("type_meeting_decision");
@@ -664,38 +744,22 @@ function AddClassMeeting(props) {
 
     }
 
-    function periodeChangeHandler(e){
+
+    function responsableChangeHandler(e){
         if(e.target.value > 0){
-            periodeId = e.target.value;
-        } else periodeId = undefined;
+            var responsable = tabResponsables.find((resp)=>resp.value == e.target.value);
+            
+            CURRENT_RESPONSABLE_ID = responsable.value;
+            CURRENT_RESPONSABLE_LABEL = responsable.label;
+
+        } else{
+            CURRENT_RESPONSABLE_ID = undefined;
+            CURRENT_RESPONSABLE_LABEL = undefined;
+        }
     }
 
-    // function responsableChangeHandler(e){
-    //     if(e.target.value > 0){
-    //         var responsable = tabResponsables.find((resp)=>resp.value == e.target.value);
-            
-    //         CURRENT_RESPONSABLE_ID = responsable.value;
-    //         CURRENT_RESPONSABLE_LABEL = responsable.label;
-
-    //     } else{
-    //         CURRENT_RESPONSABLE_ID = undefined;
-    //         CURRENT_RESPONSABLE_LABEL = undefined;
-    //     }
-    // }
-
-    function objetChangeHandler(e){
-        var typeConseil = e.target.value;
-        var tabPeriode=nonDefini;
-        
-       if(typeConseil != "null"){       
-            switch(typeConseil){
-                case 'sequentiel': {tabPeriode = [...props.sequencesDispo]; break;}
-                case 'trimestriel': {tabPeriode = [...props.trimestresDispo]; break;}
-                case 'annuel': {tabPeriode = [...props.anneDispo]; break;}                
-                default:tabPeriode = nonDefini;
-            }
-            console.log("periode choisie",tabPeriode, typeConseil)
-            setOptPeriode(tabPeriode);
+    /*function objetChangeHandler(e){
+       if(e.target.value > 0){
             var meeting = tabObjets.find((meetg)=>meetg.value==e.target.value);
 
             MEETING_OBJET_ID = meeting.value;
@@ -704,15 +768,15 @@ function AddClassMeeting(props) {
             if(MEETING_OBJET_ID == tabObjets[3].value) setIsBilan(true);
             else setIsBilan(false);
 
-            // if(MEETING_OBJET_ID == tabObjets[4].value) setSeeDetail(true);
-            // else setSeeDetail(false);
+            if(MEETING_OBJET_ID == tabObjets[4].value) setSeeDetail(true);
+            else setSeeDetail(false);
         }else{
-            // setSeeDetail(false);
+            setSeeDetail(false);
             setIsBilan(false);
             MEETING_OBJET_ID = undefined;
             MEETING_OBJET_LABEL = undefined;
         }
-    }
+    }*/
 
 
     function cancelHandler(){
@@ -727,7 +791,7 @@ function AddClassMeeting(props) {
 
     /************************************ JSX Code ************************************/
 
-    //----------------- PARTICIPANT-----------------
+    //----------------- PARTICIPANT------------
 
     function participantChangeHandler(e){
         console.log(e, e.target.value);
@@ -757,7 +821,6 @@ function AddClassMeeting(props) {
     }
 
     function addParticipantRow(){
-        setOptResponsable(getNonSelectedMembers());
         participant_data = [...tabParticipant];
         var index = participant_data.findIndex((elt)=>elt.id==0);
         if (index <0){
@@ -771,15 +834,15 @@ function AddClassMeeting(props) {
     function addParticipant(){
         participant_data =[...tabParticipant];
         if(SELECTED_PARTICIPANT==undefined){
-            document.getElementById('participantId').style.borderRadius = '1vh';
-            document.getElementById('participantId').style.border = '0.47vh solid red';
-            return -1;
+        document.getElementById('participantId').style.borderRadius = '1vh';
+        document.getElementById('participantId').style.border = '0.47vh solid red';
+        return -1;
         }
 
         if(SELECTED_ROLE==undefined){
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid red';
-            return -1
+        document.getElementById('roleId').style.borderRadius = '1vh';
+        document.getElementById('roleId').style.border = '0.47vh solid red';
+        return -1
         }
         
         var index = participant_data.findIndex((elt)=>elt.id==0);
@@ -791,6 +854,7 @@ function AddClassMeeting(props) {
         setTabParticipant(participant_data);
         SELECTED_PARTICIPANT=undefined;
         SELECTED_ROLE = undefined
+
     }
 
     function deleteParticipant(e){
@@ -852,8 +916,8 @@ function AddClassMeeting(props) {
                     {(props.etat<=0)&&
                         <img src="images/cancel_trans.png"  
                             id={props.participantId}
-                            width={ isMobile? '10vw':25} 
-                            height={isMobile? '13.7vw':33} 
+                            width={25} 
+                            height={33} 
                             className={classes.cellPointer} 
                             onClick={deleteParticipant}                         
                             alt=''
@@ -861,12 +925,12 @@ function AddClassMeeting(props) {
                     }
                     {(props.etat<0)&&
                         <img src="images/checkp_trans.png"  
-                            width={ isMobile? '7.7vw':19} 
-                            height={isMobile? '7.7vw':19} 
+                            width={19} 
+                            height={19} 
                             className={classes.cellPointer} 
                             onClick={addParticipant}                         
                             alt=''
-                            style={{marginLeft:'1vw', marginTop:isMobile? '0.97vh':'1.2vh'}}
+                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
                         />
                     }
                 </div>
@@ -875,7 +939,7 @@ function AddClassMeeting(props) {
         );
     }
 
-    //----------------- ELEVE (cas par cas)------------
+    //----------------- ELEVE CONVOQUES------------
 
     function eleveChangeHandler(e){
         if(e.target.value != LIST_ELEVES[0].value){
@@ -895,7 +959,7 @@ function AddClassMeeting(props) {
         eleves_data = [...tabEleves];
         var index = eleves_data.findIndex((elt)=>elt.id==0);
         if (index <0){
-            eleves_data.push({id:0, nom:'', decisions:[0,1,2,3,4], decisionsId:0, decisionsLabel:'', etat:0});
+            eleves_data.push({id:0, nom:'', decisions:[0,1,2,3,4], decisionsId:0, decisionsLabel:'', etat:-1});
             setTabEleves(eleves_data);
         } else {alert("ici")}
 
@@ -913,19 +977,29 @@ function AddClassMeeting(props) {
         if (index >= 0)  eleves_data.splice(index,1);
         
         var eleveNom = LIST_ELEVES.find((eleve)=>eleve.value==SELECTED_ELEVE).label;
-        eleves_data.push({id:SELECTED_ELEVE, nom:eleveNom, decisionsId:currentDecision, decisionLabel:getDecision(currentDecision), decisions:[0,0,0,0,0], etat:1})
+        eleves_data.push({id:SELECTED_ELEVE, nom:eleveNom, decisionId:currentMotif, decisionLabel:getMotif(currentMotif), decisions:[0,1,2,3,4], etat:0})
         setTabEleves(eleves_data);
         
         SELECTED_ELEVE=undefined;
     }
 
+    function getMotif(motifId){
+        switch(motifId){
+            case 0: return  t('absence');
+            case 1: return  t('conduite');
+            case 2: return  t('autre');
+            default: return t('absence');
+        }
+   
+    }
+
     function getDecision(decisionId){
         switch(decisionId){
-            case 0:  return t('recale');
-            case 1:  return t('admis');
-            case 2:  return t('traduit');
-            case 3:  return t('blame')
-            default: return t("autre");
+            case 0: return  t('Recale');
+            case 1: return  t('Admis');
+            case 2: return  t('Traduit');
+            case 3: return  t('Blame');
+            default: return t('autre');
         }
    
     }
@@ -945,7 +1019,7 @@ function AddClassMeeting(props) {
         return(
             <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
                 <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'30vw'}}>{t("decision")}</div>
+                <div style={{width:'30vw'}}>{t("motif")}</div>
                 <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
             </div>
         );
@@ -955,7 +1029,7 @@ function AddClassMeeting(props) {
         return(
             <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
                 <div style={{width:'17vw'}}>
-                    {(props.etat == 1) ? 
+                    {(props.etat >= 0) ? 
                         props.nom
                       
                      :
@@ -970,51 +1044,48 @@ function AddClassMeeting(props) {
                 </div>
 
 
-                {(props.etat == 1) ?
-                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.decision} </div>
+                {(props.etat >= 0) ?
+                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.motif} </div>
                    
                    :
                         <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
-                            <input type='radio' id='recale' style={{width:'1vw', height:'2vh'}} checked={props.recale == currentDecision}  value={0} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(0)}}/>
-                            <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("recale")} </label>
+                            <input type='radio' id='absence' style={{width:'1vw', height:'2vh'}} checked={props.absence == currentMotif}  value={0} name={'eleveConv'+props.rowIndex} onClick={()=>{setCurrentMotif(0)}}/>
+                            <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("absences")} </label>
                                             
-                            <input type='radio'  id='admis' style={{width:'1vw', height:'2vh'}} checked={props.admis== currentDecision}  value={1} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(1)}}/>
-                            <label style={{ width:'2vw', color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"1vw", marginLeft:"0.3vw"}}>{t("admis")} </label>
+                            <input type='radio'  id='conduite' style={{width:'1vw', height:'2vh'}} checked={props.conduite== currentMotif}  value={1} name={'eleveConv'+props.rowIndex} onClick={()=>{setCurrentMotif(1)}}/>
+                            <label style={{ width:'2vw', color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"2vw", marginLeft:"0.3vw"}}>{t("conduite")}</label>
 
-                            <input type='radio' id='traduit'  style={{width:'1vw', height:'2vh'}} checked={props.traduit== currentDecision}  value={2} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(2)}}/>
-                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("traduit")}</label>
+                            <input type='radio' id='autre'  style={{width:'1vw', height:'2vh'}} checked={props.autre== currentMotif}  value={2} name={'eleveConv'+props.rowIndex} onClick={()=>{setCurrentMotif(2)}}/>
+                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("autre")}</label>
 
-                            <input type='radio' id='blame' style={{width:'1vw', height:'2vh'}} checked={props.blame== currentDecision}  value={3} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(3)}}/>
-                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("blame")} </label>
+                            {/*<input type='radio' id='blame' style={{width:'1vw', height:'2vh'}} checked={props.blame== currentDecision}  value={3} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(3)}}/>
+                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>Blame </label>
                                             
                             <input type='radio' id='autre' style={{width:'1vw', height:'2vh'}} checked={props.autre== currentDecision}  value={4} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(4)}}/>
-                            <label style={{color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"0.3vw", marginLeft:"0.3vw"}}>{t("autre")} </label>
-            
+                            <label style={{color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"0.3vw", marginLeft:"0.3vw"}}>Autre </label>*/}
                         </div>
                     }
               
                 <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {(props.formMode!='consult')&&
+                    {(props.etat<=0)&&
                         <img src="images/cancel_trans.png"
                             id={props.eleveId}  
                             width={ isMobile? '10vw':25} 
-                            height={isMobile? '13.7vw':33} 
+                            height={isMobile? '13.7vw':33}
                             className={classes.cellPointer} 
                             onClick={deleteEleve}                         
                             alt=''
                         />
                     }
                   
-                    {(props.etat!=1)&&
+                    {(props.etat==-1)&&
                         <img src="images/checkp_trans.png"  
-                           // width={19} 
-                           // height={19} 
                             width={ isMobile? '7.7vw':19} 
                             height={isMobile? '7.7vw':19} 
                             className={classes.cellPointer} 
                             onClick={addEleve}                         
                             alt=''
-                            style={{marginLeft:'1vw', marginTop:isMobile? '0.97vh':'1.2vh'}}
+                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
                         />
                     }
                 </div>
@@ -1023,7 +1094,155 @@ function AddClassMeeting(props) {
         );
     }
 
-    //----------------- ENSEIGNANTS PRESENTS ------------
+    //----------------- DECISION AU CAS PAR CAS ------------
+
+    function eleveDecisionChangeHandler(e){
+        if(e.target.value != tabEleves[0].value){
+            document.getElementById('eleveId').style.borderRadius = '1vh';
+            document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
+        
+            SELECTED_ELEVE = e.target.value;
+        
+        }else{
+            document.getElementById('eleveId').style.borderRadius = '1vh';
+            document.getElementById('eleveId').style.border = '0.47vh solid red';
+            SELECTED_ELEVE=undefined
+        }
+    }
+
+   /* function addEleveRow(){
+        eleves_data = [...tabEleves];
+        var index = eleves_data.findIndex((elt)=>elt.id==0);
+        if (index <0){
+            eleves_data.push({id:0, nom:'', decisions:[0,1,2], decisionsId:0, decisionsLabel:'', etat:0});
+            setTabEleves(eleves_data);
+        } else {alert("ici")}
+
+    }*/
+
+    function updateEleve(e,rowIndex){
+        eleves_data = [...optConvoques];
+       
+        var cur_eleveId= e.target.id;
+       
+        var index = eleves_data.findIndex((eleve)=>eleve.id == cur_eleveId);
+        var cur_eleve = eleves_data.find((eleve)=>eleve.id == cur_eleveId);
+
+        cur_eleve.etat=1;
+        cur_eleve.decisionsId=sanctions[index];
+        cur_eleve.decisionLabel = getDecision(sanctions[index]);
+
+        console.log('curentEleve', cur_eleve);
+
+        eleves_data.splice(index,1,cur_eleve);
+       
+        setOptConvoques(eleves_data);     
+
+        console.log(optConvoques,tabEleves);  
+        
+    }
+
+    
+    function getDecision(decisionId){
+        switch(decisionId){
+            case 0: return t('aucune');
+            case 1: return t('consigne');
+            case 2: return t('excl_temp');
+            case 3: return t('excl_def');
+            default: return t('autre');
+        }
+   
+    }
+
+    function deleteEleve(e){
+        var eleveId = e.target.id;
+        eleves_data = [...tabEleves];
+        var index = eleves_data.findIndex((eleve)=>eleve.id==eleveId);
+        if (index >= 0) {
+            eleves_data.splice(index,1);
+            setTabEleves(eleves_data);
+        }
+        SELECTED_ELEVE=undefined;
+    }
+
+    function updateSanction(value, rowIndex){
+        var tab=[...sanctions];
+        tab[rowIndex]= value;
+        setSanctions(tab);
+        //setCurrentDecision(value);
+       
+    }
+
+    const LigneEleveDecisionHeader=(props)=>{
+        return(
+            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+                <div style={{width:'17vw'}}>{t("nom")}</div>
+                <div style={{width:'30vw'}}>{t("decision")}</div>
+                <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
+            </div>
+        );
+    }
+
+    const LigneEleveDecision=(props)=>{
+        return(
+            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+                <div style={{width:'17vw'}}>
+                    {props.nom}
+                </div>
+
+
+                {(props.etat == 1) ?
+                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.decision} </div>
+                   
+                   :
+                        <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
+                            <input type='radio' id='aucune' style={{width:'1vw', height:'2vh'}} checked={props.aucune == sanctions[props.rowIndex]}  value={0} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(0,props.rowIndex)}}/>
+                            <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}> {t("aucune")}</label>
+                                            
+                            <input type='radio'  id='consigne' style={{width:'1vw', height:'2vh'}} checked={props.consigne== sanctions[props.rowIndex]}  value={1} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(1,props.rowIndex)}}/>
+                            <label style={{ width:'2vw', color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"2vw", marginLeft:"0.3vw"}}> {t("consigne")} </label>
+
+                            <input type='radio' id='exclusion_temp'  style={{width:'1vw', height:'2vh'}} checked={props.excluTemp == sanctions[props.rowIndex]}  value={2} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(2,props.rowIndex)}}/>
+                            <label style={{width:'3.3vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw" }}>{ t('excl_temp')}</label>
+
+                            <input type='radio' id='exclusion_def' style={{width:'1vw', height:'2vh'}} checked={props.excluDef== sanctions[props.rowIndex]}  value={3} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(3,props.rowIndex)}}/>
+                            <label style={{width:'3.3vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{ t('excl_def')} </label>
+                                            
+                            <input type='radio' id='autre' style={{width:'1vw', height:'2vh'}} checked={props.autre== sanctions[props.rowIndex]}  value={4} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(4,props.rowIndex)}}/>
+                            <label style={{color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"0.3vw", marginLeft:"0.3vw"}}>{t("autre")} </label>
+                        </div>
+                    }
+              
+                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
+                    {/*(props.formMode!='consult')&&
+                        <img src="images/cancel_trans.png"
+                            id={props.eleveId}  
+                            width={25} 
+                            height={33} 
+                            className={classes.cellPointer} 
+                            onClick={deleteEleve}                         
+                            alt=''
+                        />*/
+                    }
+                   
+                {(props.etat!=1)&&
+                    <img src="images/checkp_trans.png"  
+                        width={ isMobile? '7.7vw':19} 
+                        height={isMobile? '7.7vw':19} 
+                        id={props.eleveId}
+                        className={classes.cellPointer} 
+                        onClick={updateEleve}                         
+                        alt=''
+                        style={{marginLeft:'1vw', marginTop:'0.3vh'}}
+                    />
+                }
+                   
+                </div>
+
+            </div>
+        );
+    }
+
 
     function addPresent(id){
       /*  var presents=[];
@@ -1101,23 +1320,23 @@ function AddClassMeeting(props) {
 
 
     return (
-        <div className={'card '+ classes.formContainerP}>
+        <div className={'card '+ classes.formContainerP5}>
            
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
-                    <img alt='add student' className={classes.formHeaderImg} src='images/ConseilClasse.png'/>
+                    <img alt='add student' className={classes.formHeaderImg} src='images/BilletEntreeSortie.png'/>
                 </div>
                 {(props.formMode == 'creation')  ?                
                     <div className={classes.formMainTitle} >
-                        {t("enreg_conseil_c")}
+                        {t("enreg_conseil_d")}
                     </div>
                 : (props.formMode == 'modif') ?
                     <div className={classes.formMainTitle} >
-                        {t("modif_conseil_c")}
+                        {t("modif_conseil_d")}
                     </div>
                 :
                     <div className={classes.formMainTitle} >
-                        {t("consult_conseil_c")}
+                       {t("consult_conseil_d")}
                     </div>
                 
                 }
@@ -1129,12 +1348,12 @@ function AddClassMeeting(props) {
             {(etape == 1) &&
                 <div id='etape1' className={classes.etapeP} onLoad={()=>{moveToLeft()}}>
                     <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
-                        {t("etape")+' 1'}: {t("conseil_class_prepa")}
+                    {t("etape")+' 1'}: {t("conseil_class_prepa")}
                         {(props.formMode=='consult')&&
                             <div style={{display:'flex', flexDirection:'row', position:'absolute', right:0, top:'-0.7vh' }}>
                                 {(currentUiContext.formInputs[9]==1) ?  //conseil cloture
                                     <CustomButton
-                                        btnText={t("print_pv")} 
+                                        btnText= {t("print_pv")} 
                                         buttonStyle={getSmallButtonStyle()}
                                         style={{marginBottom:'-0.3vh', marginRight:'1vw'}}
                                         btnTextStyle = {classes.btnSmallTextStyle}
@@ -1155,7 +1374,8 @@ function AddClassMeeting(props) {
                         {/*
                             notifVisible &&
                             <div style={{position:'absolute', right:0, top:'-0.7vh' }}>
-                             
+                              
+
                                 <CustomButton
                                     btnText={t('alert_profs')}
                                     hasIconImg= {true}
@@ -1177,8 +1397,10 @@ function AddClassMeeting(props) {
                             imgSource={'images/' + getPuceByTheme()} 
                             withCustomImage={true} 
                             imageStyle={classes.PuceStyle}    
-                            libelle = {t("meeting_gen_info")}   
+                            libelle = {t("meeting_gen_info")}
                             itemSelected={null}
+                            style={{marginBottom:'-1vh'}}
+                            puceImgStyle={{marginRight:'-0.3vw'}}
                         />
                         
                        
@@ -1187,28 +1409,50 @@ function AddClassMeeting(props) {
                     <div className={classes.inputRowLeft}>
                         <div className={classes.groupInfo} style={{fontSize:'1vw'}}>
                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
-                                    {t("classe_cible")}: 
-                                </div>                    
-                                <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
-                                    <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'4vw', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw'}} disabled={true}/>
-                                    <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
+                                    <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                                        {t("eleves")}:
+                                    </div>
+
+                                    {(props.formMode =='consult') ?
+                                        <div> 
+                                            <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[11]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                            <input id="objetId" type="hidden"    className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[4]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        </div>  
+                                        :
+
+                                        <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                            {(optObjet||[]).map((option)=> {
+                                                return(
+                                                    <option  value={option.value}>{option.label}</option>
+                                                );
+                                            })}
+                                        </select>
+                                    }
+
+                                    {/*(seeDetail==true) ?
+                                        <div> 
+                                            <input id="autre_conseilC" type="text" className={classes.inputRowControl } Placeholder={'  precider les details '} defaultValue={currentUiContext.formInputs[3]} style={{marginLeft:'1.3vw', height:'1.7rem', width:'13vw', fontSize:'1.13vw'}}/>
+                                        </div>
+                                        :
+                                        null
+                                */}
+                                
                                 </div>
-                            </div>
-                            {/*<div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+
+                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                                 <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("presi_conseil")}:  
+                                    {t("Type duree")}:
                                 </div>
 
                                 {(props.formMode =='consult') ?
                                     <div> 
                                         <input id="responsableLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        <input id="responsableId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="responsableId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw',  height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>  
                                     :
                                     <div>                                     
-                                        <select id='responsable' defaultValue={MEETING.responsableId} onChange={responsableChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                        <select id='responsable' defaultValue={MEETING.responsableId} onChange={responsableChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw', fontSize:'1vw',width:'7vw'}}>
                                             {(optResponsable||[]).map((option)=> {
                                                 return(
                                                     <option  value={option.value}>{option.label}</option>
@@ -1217,22 +1461,11 @@ function AddClassMeeting(props) {
                                         </select> 
                                     </div>
                                 }
-                            </div>*/}
+                            </div>
 
                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("prof_principal")}:
-                                </div>
-                                    
-                                <div> 
-                                    <input id="profPrincipalLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-2vw', height:'1rem', width:'15vw', fontSize:'1.13vw'}}/>
-                                    <input id="profPrincipalId" type="hidden"  defaultValue={props.currentPpId}/>
-                                </div>
-                            </div>
-                    
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("date_conseil")} :  
+                                    {t("date_conseil")}:
                                 </div>
                                 {(props.formMode =='consult') ?
                                     <div> 
@@ -1241,20 +1474,20 @@ function AddClassMeeting(props) {
                                     :
                                     (currentUiContext.formInputs[2].length == 0) ?
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw'}} />/
-                                        <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}  />/
-                                        <input id="anne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}  />
+                                        <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} />/
+                                        <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />/
+                                        <input id="anne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />
                                     </div>
                                     :
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="jour"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw'}}  defaultValue={currentUiContext.formInputs[2].split("/")[0]} />/
-                                        <input id="mois"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[1]} />/
-                                        <input id="anne" type="text"  maxLength={4}   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     className={classes.inputRowControl}  style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[2]} />
+                                        <input id="jour"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}  defaultValue={currentUiContext.formInputs[2].split("/")[0]} />/
+                                        <input id="mois"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[1]} />/
+                                        <input id="anne" type="text"  maxLength={4}   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     className={classes.inputRowControl}  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[2]} />
                                     </div>
                                 }
 
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570, marginLeft:'2vw'}}>
-                                    {t("heure_conseil")} :  
+                                    {t("heure_conseil")}:
                                 </div>
 
                                 {(props.formMode =='consult') ?
@@ -1265,12 +1498,12 @@ function AddClassMeeting(props) {
                                     (currentUiContext.formInputs[3].length == 0) ?
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
                                         <input id="heure"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} /><b>h</b>
-                                        <input id="min"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), document.getElementById("objet"))}}    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  /><b>min</b>
+                                        <input id="min"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), null)}}                                maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  /><b>min</b>
                                     </div>
                                     :
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
                                         <input id="heure"  type="text" maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}  defaultValue={currentUiContext.formInputs[3].split(":")[0]} /><b>h</b>
-                                        <input id="min"  type="text"   maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), document.getElementById("objet"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[3].split(":")[1]} /><b>min</b>
+                                        <input id="min"  type="text"   maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), null)}}                                  className={classes.inputRowControl}  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[3].split(":")[1]} /><b>min</b>
                                     </div>
                                 }
 
@@ -1331,9 +1564,11 @@ function AddClassMeeting(props) {
                                 }
                             </div>
 
+                         
+                           
                             
                            
-                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'33vh', marginLeft:'-2vw'}}>
+                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'19.3vh', marginLeft:'-2vw'}}>
                                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
                                     <FormPuce menuItemId ='1' 
                                         isSimple={true} 
@@ -1341,32 +1576,68 @@ function AddClassMeeting(props) {
                                         imgSource={'images/' + getPuceByTheme()} 
                                         withCustomImage={true} 
                                         imageStyle={classes.PuceStyle}    
-                                        libelle = {t("profs_convoques")}   
+                                        libelle = {t("eleves_convoques")} 
                                         itemSelected={null}
                                         style={{marginBottom:'-1vh'}}
-                                        puceImgStyle={{marginRight:'-0.3vw', marginTop:'1vh'}}
-                                    />  
-
-                                    {(props.formMode!='consult')&&
+                                        puceImgStyle={{marginRight:'-0.3vw', marginTop:props.formMode!='consult'? '1vh':'0vh'}} 
+                                    />
+                                    {(props.formMode!='consult')&&  
                                         <CustomButton
-                                            btnText={t("add")} 
+                                            btnText={t("add")}
                                             buttonStyle={getSmallButtonStyle()}
                                             style={{marginBottom:'-0.3vh', marginRight:'0.8vw'}}
                                             btnTextStyle = {classes.btnSmallTextStyle}
-                                            btnClickHandler={()=>{addParticipantRow()}}
-                                        />    
-                                    }               
+                                            btnClickHandler={addEleveRow}
+                                        />   
+                                    }                
                                 </div>
 
-                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'30vh',overflowY:'scroll', justifyContent:'flex-start'}}>
-                                    <LigneProfParticipantHeader date={'Date'} nbreJours={'Nbre Jours'} etat={'Etat'}/>
-                                    {(tabParticipant||[]).map((prof)=>{
-                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.nom} role={prof.role} etat={prof.etat}/>
+                               
+
+                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'19.3vh',overflowY:'scroll', justifyContent:'flex-start'}}>
+                                    <LigneEleveHeader/>
+                                    {(tabEleves||[]).map((eleve, index)=>{
+                                        return <LigneEleve  eleveId ={eleve.id} rowIndex={index} nom={eleve.nom} motif={eleve.decisionLabel} absence={eleve.decisions[0]} conduite={eleve.decisions[1]} autre={eleve.decisions[2]} etat={eleve.etat}/>
                                         })
                                     }
                                 </div>
 
                             </div>
+
+                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'23vh', marginLeft:'-2vw'}}>
+                                <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
+                                    <FormPuce menuItemId ='1' 
+                                        isSimple={true} 
+                                        noSelect={true} 
+                                        imgSource={'images/' + getPuceByTheme()} 
+                                        withCustomImage={true} 
+                                        imageStyle={classes.PuceStyle}    
+                                        libelle = {t("profs_convoques")} 
+                                        itemSelected={null}
+                                        style={{marginBottom:'-1vh'}}
+                                        puceImgStyle={{marginRight:'-0.3vw', marginTop:props.formMode!='consult'? '1vh':'0vh'}}
+                                    />  
+                                    {(props.formMode!='consult')&&
+                                        <CustomButton
+                                            btnText={t("add")}
+                                            buttonStyle={getSmallButtonStyle()}
+                                            style={{marginBottom:'-0.3vh', marginRight:'0.8vw'}}
+                                            btnTextStyle = {classes.btnSmallTextStyle}
+                                            btnClickHandler={addParticipantRow}
+                                        />  
+                                    }                 
+                                </div>
+
+                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh',overflowY:'scroll', justifyContent:'flex-start'}}>
+                                    <LigneProfParticipantHeader date={'Date'} nbreJours={t('nbre_jours')} etat={'Etat'}/>
+                                    {(tabParticipant||[]).map((prof)=>{
+                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.nom} role={prof.role} etat={prof.etat}/>
+                                        })
+                                    }
+                                </div>                                    
+
+                            </div>
+                                
                             
                         </div>
                        
@@ -1376,257 +1647,30 @@ function AddClassMeeting(props) {
                     {(props.formMode != 'consult') &&
                         <div className={classes.inputRowRight} style={{position:'absolute', bottom:'0', marginBottom: isMobile ? '-1vh':'-3vh'}}>
                             <CustomButton
-                                btnText={t("cancel")} 
+                                btnText={t("cancel")}
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={cancelHandler}
                             />
-                            
-                           
+
                             <CustomButton
-                                btnText={t("save")} 
+                                btnText={t("save")}
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={saveMeetingHandler}
                             />
-                            
-                            {(props.formMode == 'modif') &&
-                                <CustomButton
-                                    btnText={t("etape")+' 2 >'} 
-                                    buttonStyle={getGridButtonStyle()}
-                                    btnTextStyle = {classes.btnTextStyle}
-                                    btnClickHandler={gotoStep2Handler}
-                                />
-                            }
+
                         </div>
                     }                    
                 </div>
             }
 
-            {(etape > 1) &&
-                <div id ='etape2' className={classes.etapeP} onLoad={()=>{document.getElementById("etape2").classList.add('gotoLeft');}} >
-                    <div className={classes.inputRowLeft} style={{color:'rgb(185, 131, 14)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(185, 131, 14)', borderBottomWidth:1.97, marginBottom:'3vh'}}> 
-                        {t("etape")+' 2'}: {t("closing_meeting")}
-                        {(props.formMode=='consult')&&
-                            <div style={{display:'flex', flexDirection:'row', position:'absolute', right:0, top:'-0.7vh' }}>
-                                {(currentUiContext.formInputs[9]==1) ?  //conseil cloture
-                                    <CustomButton
-                                        btnText={t("print_pv")} 
-                                        buttonStyle={getSmallButtonStyle()}
-                                        style={{marginBottom:'-0.3vh', marginRight:'1vw'}}
-                                        btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler={props.cancelHandler}
-                                    />
-                                    :null
-                                }
-                                <CustomButton
-                                    btnText={t("quitter")} 
-                                    buttonStyle={getSmallButtonStyle()}
-                                    style={{marginBottom:'-0.3vh', marginRight:'0.8vw'}}
-                                    btnTextStyle = {classes.btnSmallTextStyle}
-                                    btnClickHandler={props.cancelHandler}
-                                />
-                            </div>
-                        }
-                        
-                        {/*
-                            notifVisible &&
-                            <div style={{position:'absolute', right:0, top:'-0.7vh' }}>
-                             
-
-                                <CustomButton
-                                    btnText={t('alert_profs')}
-                                    hasIconImg= {true}
-                                    imgSrc='images/alarme.png'
-                                    imgStyle = {classes.grdBtnImgStyle}  
-                                    buttonStyle={getNotifButtonStyle()}
-                                    btnTextStyle = {classes.notifBtnTextStyle}
-                                    btnClickHandler={props.cancelHandler}
-                                    
-                                />
-                            </div>*/
-                        }
-
-                    </div>
-
-                    <div className={classes.groupInfo}>
-                        <div className={classes.inputRowLeft}> 
-                            <div style={{fontSize:'1vw', fontWeight:'bold', marginBottom:'0.7vh', marginLeft:'-2vw'}}>
-                                <FormPuce menuItemId ='1' 
-                                    isSimple={true} 
-                                    noSelect={true} 
-                                    imgSource={'images/' + getPuceByTheme()} 
-                                    withCustomImage={true} 
-                                    imageStyle={classes.PuceStyle}    
-                                    libelle = {t("general_decisions")}   
-                                    itemSelected={null}
-                                />
-                                
-                            </div>
-
-                        </div>
-                            {(isBilan==true)&&
-                                <div className={classes.inputRowLeft} style={{height:'3.7vh'}}> 
-                                    <div style={{display:'flex', flexDirection:'row', marginLeft:'0vw'}}>
-                                        <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                            {t("moy_passage")}:  
-                                        </div>
-                                            
-                                        <div> 
-                                            <input id="note_passage" type="number" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[7]} style={{marginLeft:'-3vw', height:'1rem', width:'3.7vw', fontSize:'1.13vw'}} />
-                                        </div>
-                                    </div>
-
-                                    <div style={{display:'flex', flexDirection:'row', marginLeft:'2vw', marginRight:'2vw'}}>
-                                        <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                            {t("moy_exclusion")}:  
-                                        </div>
-                                            
-                                        <div> 
-                                            <input id="note_exclusion" type='number' className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[8]} style={{marginLeft:'-3vw', height:'1rem', width:'3.7vw', fontSize:'1.13vw'}}/>
-                                                
-                                        </div>
-                                    </div>
-
-                                    <CustomButton
-                                        btnText={t("voir_stats")} 
-                                        buttonStyle={getSmallButtonStyle()}
-                                        style={{marginBottom:'2.3vh', marginRight:'4.3vw'}}
-                                        btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {addEleveRow()}}
-                                    />     
-                               
-                                </div>
-                          
-                            }
-
-                            <div className={classes.inputRowLeft} style={{height:'11.7vh'}}> 
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("dicision_resume")}:  
-                                </div>
-                                    
-                                <div> 
-                                    <textarea id='bilan' rows={50}  className={classes.comboBoxStyle} defaultValue={currentUiContext.formInputs[6]} style={{marginLeft:'-2vw', height:'12vh',width:'27vw', fontSize:'0.77vw'}}/>
-                                </div>
-                            </div>
-
-                            <div className={classes.inputRowLeft}> 
-                                <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'23vh', marginLeft:'-2vw'}}>
-                                    <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
-                                        <FormPuce menuItemId ='1' 
-                                            isSimple={true} 
-                                            noSelect={true} 
-                                            imgSource={'images/' + getPuceByTheme()} 
-                                            withCustomImage={true} 
-                                            imageStyle={classes.PuceStyle}    
-                                            libelle = {t("decision_cas_par_cas")} 
-                                            itemSelected={null}
-                                            style={{marginBottom:'-1vh'}}
-                                            puceImgStyle={{marginRight:'-0.3vw', marginTop:'1vh'}}
-                                        />
-                                        {(props.formMode!='consult')&&  
-                                            <CustomButton
-                                                btnText={t("add")} 
-                                                buttonStyle={getSmallButtonStyle()}
-                                                style={{marginBottom:'-0.3vh', marginRight:'0.3vw'}}
-                                                btnTextStyle = {classes.btnSmallTextStyle}
-                                                btnClickHandler = {() => {addEleveRow()}}
-                                            />  
-                                        }                    
-                                    </div>
-
-                                    <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh',overflowY:'scroll', justifyContent:'flex-start'}}>
-                                        <LigneEleveHeader/>
-                                        {(tabEleves||[]).map((eleve, index)=>{
-                                            return <LigneEleve  eleveId ={eleve.id} rowIndex={index} nom={eleve.nom} decision={eleve.decisionLabel} recale={eleve.decisions[0]} admis={eleve.decisions[1]} traduit={eleve.decisions[2]} blame={eleve.decisions[3]} autre={eleve.decisions[4]} etat={eleve.etat}/>
-                                            })
-                                        }
-                                    </div>
-
-                                </div>
-                            </div>
-
-
-                        <div className={classes.inputRowLeft}> 
-
-                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'20vh', marginLeft:'-2vw'}}>
-                                <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
-                                    <FormPuce menuItemId ='1' 
-                                        isSimple={true} 
-                                        noSelect={true} 
-                                        imgSource={'images/' + getPuceByTheme()} 
-                                        withCustomImage={true} 
-                                        imageStyle={classes.PuceStyle}    
-                                        libelle = {t("presence_effective")} 
-                                        itemSelected={null}
-                                        style={{marginBottom:'-1vh'}}
-                                        puceImgStyle={{marginRight:'-0.3vw', marginTop:'1vh'}}
-                                    />  
-                                                   
-                                </div>
-
-                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh',overflowY:'scroll', justifyContent:'flex-start'}}>
-                                    <LignePresentsHeader/>
-                                    {(tabParticipant||[]).map((participant, index)=>{
-                                        return <LignePresent id={participant.id} rowIndex={index} nom={participant.nom}/>
-                                        })
-                                    }
-                                </div>
-
-                            </div>
-                           
-                        </div>
-                       
-                    </div>
-
-                    {(props.formMode != 'consult') &&
-                        <div className={classes.inputRowRight} style={{position:'absolute', bottom:'0vh', marginBottom: isMobile ? '-1vh':'-3vh'}}>
-                            <CustomButton
-                                btnText={'< '+t("etape")+' 1'}
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.btnTextStyle}
-                                btnClickHandler={backToStep1Handler}
-                            />
-                            <CustomButton
-                                btnText={t("terminer")} 
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.btnTextStyle}
-                                btnClickHandler={finishAllSteps}
-                            />
-                        </div>                        
-                    }                    
-                    
-                </div>
-            }
+           
             
-            <div className={classes.formButtonRow}>
-                <CustomButton
-                    btnText={t("info_prelim")}
-                    hasIconImg= {true}
-                    imgSrc='images/etape1.png'
-                    imgStyle = {classes.frmBtnImgStyle1}   
-                    buttonStyle={classes.buttonEtape1}
-                    btnTextStyle = {classes.btnEtapeTextStyle}
-                    btnClickHandler={()=>{showStep1();}}
-                    disable={etape1InActiv}
-                />
-               
-                <CustomButton
-                    btnText={t("decision_conseil")}
-                    hasIconImg= {true}
-                    imgSrc='images/etape2.png'
-                    imgStyle = {classes.frmBtnImgStyle1} 
-                    buttonStyle={classes.buttonEtape3}
-                    btnTextStyle = {classes.btnEtapeTextStyle}
-                    btnClickHandler={(etape2InActiv) ? null:()=>{showStep2();}}
-                    disable={etape2InActiv} 
-                />
-                
-            </div>
-
+           
         </div>
        
     );
  }
- export default AddClassMeeting;
+ export default BilletES;
  

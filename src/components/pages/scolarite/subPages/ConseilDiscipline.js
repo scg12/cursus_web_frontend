@@ -25,8 +25,17 @@ import { useTranslation } from "react-i18next";
 var CURRENT_MEETING={};
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
-let CURRENT_PROF_PP_ID;
-let CURRENT_PROF_PP_LABEL;
+let CONVOQUE_PAR ={};
+
+var CURRENT_MEETING={};
+var printedETFileName='';
+var SEQUENCES_DISPO = [];
+var TRIMESTRES_DISPO  = [];
+var ANNEE_DISPO = [];
+var DEFAULT_MEMBERS = []; 
+var OTHER_MEMBERS = [];
+var PRESENTS_MEMBERS = [];
+
 var printedETFileName='';
 
 var listElt ={
@@ -145,19 +154,57 @@ function ConseilDiscipline(props) {
         }) 
     }
 
-   
     const getListConseilDiscipline =(classeId,sousEtabId)=>{
         axiosInstance.post(`list-conseil-disciplines/`, {
             id_classe: classeId,
             id_sousetab: sousEtabId
         }).then((res)=>{
             console.log("donnees",res.data);
-            var listConseils = [...formatList(res.data.conseil_disciplines, res.data.convoque_par, res.seqs, res.trims)]
+            CONVOQUE_PAR.USERID = res.data.convoque_par.id_user;
+            CONVOQUE_PAR.ROLE   = res.data.convoque_par.type;
+            CONVOQUE_PAR.NOM    =  res.data.convoque_par.nom;
+
+            SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs_dispo);
+            TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
+            DEFAULT_MEMBERS   =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres) : [];
+            OTHER_MEMBERS     =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_a_ajouter) : [];
+            PRESENTS_MEMBERS  =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_presents)  : [];
+            ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}]
+
+            var listConseils = [...formatList(res.data.conseil_classes, res.data.prof_principal, res.seqs_dispo, res.trims_dispo)]
             console.log(listConseils);
             setGridMeeting(listConseils);
             console.log(gridMeeting);
         })  
+        
     }
+    
+    
+    function createLabelValueTable(tab){
+        var resultTab = [];
+        if(tab.length>0){
+            tab.map((elt)=>{
+                resultTab.push({value:elt.id, label:elt.libelle});
+            })
+        }
+        return resultTab;
+    }
+
+    function createLabelValueTableWithUserS(tab){
+        var resultTab = [];
+        if(tab.length>0){
+            tab.map((elt)=>{
+                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type});
+            })
+        }
+        return resultTab;
+    }
+
+
+
+
+   
+   
 
     function formatList(listConseil,ConvoquePar,seqInfos,trimInfos){
         var rang = 1;
@@ -963,7 +1010,7 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen >0 && modalOpen<4) && <AddDisciplinMeeting currentPpId={CURRENT_PROF_PP_ID} currentPpLabel={CURRENT_PROF_PP_LABEL} currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode={(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm} />}
+            {(modalOpen >0 && modalOpen<4) && <AddDisciplinMeeting convoquePar={CONVOQUE_PAR}  currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode={(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm} />}
             {(modalOpen==4) &&
                 <PDFTemplate previewCloseHandler={closePreview}>
                     { isMobile?

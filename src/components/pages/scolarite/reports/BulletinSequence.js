@@ -25,74 +25,84 @@ function BulletinSequence(props) {
         {Array.from(props.data.eleveNotes ,
         (el, index) => (
             <Page size="A4"  style={styles.page} key={index}>
-                <View style={styles.header}>
+              <View style={styles.header}>
                 <View style={styles.header1}>
-                    <View style={styles.header1_1}>
-                        <View style={[styles.header1_ligne,{}]}><Text style={{fontSize:"10px"}}>{props.data.entete_fr.pays}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"8px",fontWeight:"900"}]}><Text>{props.data.entete_fr.ministere}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"10px"}]}><Text>{props.data.entete_fr.etab}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>{props.data.entete_fr.devise}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>BP:{props.data.entete_fr.bp} Tel:{props.data.entete_fr.tel}</Text></View> 
-                    </View>
-                    <View style={styles.header1_2}><Image src={props.data.etabLogo} /></View>
-                    <View style={styles.header1_3}>
+                  <View style={styles.header1_1}>
+                    <View style={[styles.header1_ligne,{}]}><Text style={{fontSize:"10px"}}>{props.data.entete_fr.pays}</Text></View>
+                    <View style={[styles.header1_ligne,{fontSize:"8px",fontWeight:"900"}]}><Text>{props.data.entete_fr.ministere}</Text></View>
+                    <View style={[styles.header1_ligne,{fontSize:"10px"}]}><Text>{props.data.entete_fr.etab}</Text></View>
+                    <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>{props.data.entete_fr.devise}</Text></View>
+                    <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>BP:{props.data.entete_fr.bp} Tel:{props.data.entete_fr.tel}</Text></View> 
+                  </View>
+                  
+                  <View style={styles.header1_2}><Image src={props.data.etabLogo} style={{width:"16.3vw", height:"38.3vw"}}/></View>
+                  
+                  <View style={styles.header1_3}>
                     <View style={[styles.header1_ligne,{}]}><Text style={{fontSize:"10px"}}>{props.data.entete_en.pays}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"8px",fontWeight:"900"}]}><Text>{props.data.entete_en.ministere}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"10px"}]}><Text>{props.data.entete_en.etab}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>{props.data.entete_en.devise}</Text></View>
-                        <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>POBOX:{props.data.entete_en.bp} Tel:{props.data.entete_en.tel}</Text></View> 
+                      <View style={[styles.header1_ligne,{fontSize:"8px",fontWeight:"900"}]}><Text>{props.data.entete_en.ministere}</Text></View>
+                      <View style={[styles.header1_ligne,{fontSize:"10px"}]}><Text>{props.data.entete_en.etab}</Text></View>
+                      <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>{props.data.entete_en.devise}</Text></View>
+                      <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>POBOX:{props.data.entete_en.bp} Tel:{props.data.entete_en.tel}</Text></View> 
                     </View>
-                </View>
+                  </View>
                 
                 <View style={styles.header2}>
-                    <View style={styles.header2_cadre}>
-                        <Text>{props.data.titreBulletin.titre}</Text>
-                    </View>             
+                  <View style={styles.header2_cadre}>
+                    <Text>{props.data.titreBulletin.titre}</Text>
+                  </View>             
                 </View>
 
                 <View style={styles.header3}>
-                    {/* {el.resultat.split("~~~").filter((item,id)=> id==1).map((it,k)=>(<View key={k} break><Text>{it}</Text></View>))} */}
-                    <View style={styles.header3_1}>
+                  <View style={styles.header3_3}>
+                    <Text>Photo</Text>
+                  </View>
+                 
+                  <View style={styles.header3_1}>
                     {el.resultat.split("~~~").filter((item,id)=> id===1).map((it,k)=>(
-                    it.split("²²").map((elem,i)=>(
-                        ((i===0)&&
-                        <View style={{textAlign:"left",marginLeft:"5px"}} key={i}>
-                        <Text>Nom et Prénom: {elem} {el.resultat.split("²²")[1]}</Text>
+                      it.split("²²").map((elem,i)=>(
+                      ((i===0)&&
+                      <View style={{textAlign:"left",marginLeft:"5px"}} key={i}>
+                        {/*<Text>Nom et Prénom: {elem} {el.resultat.split("²²")[1]}</Text>*/}
+                        <Text style={{fontFamily:"MyBold"}}>{elem} {el.resultat.split("²²")[1]}</Text>
+                        
                         <Text>Sexe: {el.resultat.split("²²")[3]}</Text>
                         <Text>Né(e) le: {el.resultat.split("²²")[5]} A: {el.resultat.split("²²")[6].split("~~~")[0]}</Text>
                         <Text>Matricule: {el.resultat.split("²²")[2]} Redoublant:{el.resultat.split("²²")[4]} </Text>
-                        </View>
-                        )
+                      </View>
+                      )
                     //  ||(i===3&&<View key={i} break><Text>Sexe: {elem} </Text></View>)
                     //  ||(i===5&&<View key={i} break><Text>Né(e) le: {elem}</Text><Text> A: {el.resultat.split("²²")[6].split("~~~")[0]} </Text></View>)
                     //  ||(i===2&&<View key={i} break><Text>Matricule: {elem} Redoublant:{el.resultat.split("²²")[4]} </Text></View>)
 
 
                     ))))}
-                    </View>
-                    <View style={[styles.header3_2,{textAlign:"right"}]}>
-                    <Text>Classe: {props.data.classeLabel}</Text>
-                    <Text>Effectif: {props.data.eleveNotes.length}</Text>
+                  </View>
+                  
+                  
+                  <View style={[styles.header3_2,{textAlign:"left"}]}>
+                    {/*<Text>Classe: {props.data.classeLabel}</Text>*/}
+                    <Text style={{fontFamily:"MyBold"}}>{props.data.classeLabel}</Text>
+                    <Text>Effectif: {props.data.effectif}</Text>
                     <Text>Année Scolaire: {props.data.entete_fr.annee_scolaire}</Text>
                     <Text>Prof Principal: {props.data.profPrincipal}</Text>
-                    </View>
-                    <View style={[styles.header3_3,{margin:"2px"}]}>
-                        <Text>Photo</Text>
-                    </View>
-                    {/* <Image src={Lebron} /> */}
+                  </View>
+                 
+                  {/* <Image src={Lebron} /> */}
                 </View>
-                </View>
-                <View style={styles.main}>
+              </View>
+
+              <View style={styles.main}>
                 <View style={styles.ligne_entete_note}>
-                        <View style={styles.ligne_entete_note__matiere}><Text>MATIERE</Text></View>
-                        <View style={styles.ligne_entete_note__competence}><Text>COMPETENCE VISEE</Text></View>
-                        <View style={styles.ligne_entete_note__moy}><Text>MOY</Text></View>
-                        <View style={styles.ligne_entete_note__coef}><Text>COEF</Text></View>
-                        <View style={styles.ligne_entete_note__nxc}><Text>NXC</Text></View>
-                        <View style={styles.ligne_entete_note__rang}><Text>RANG</Text></View>
-                        <View style={styles.ligne_entete_note__borne}><Text>BORNES</Text></View>
-                        <View style={styles.ligne_entete_note__appreciation}><Text>APPRECIATION</Text></View>
+                  <View style={styles.ligne_entete_note__matiere}><Text>MATIERE</Text></View>
+                  <View style={styles.ligne_entete_note__competence}><Text>COMPETENCE VISEE</Text></View>
+                  <View style={styles.ligne_entete_note__moy}><Text>MOY</Text></View>
+                  <View style={styles.ligne_entete_note__coef}><Text>COEF</Text></View>
+                  <View style={styles.ligne_entete_note__nxc}><Text>NxC</Text></View>
+                  <View style={styles.ligne_entete_note__rang}><Text>RANG</Text></View>
+                  <View style={styles.ligne_entete_note__borne}><Text>BORNES</Text></View>
+                  <View style={styles.ligne_entete_note__appreciation}><Text>APPRECIATION</Text></View>
                 </View>
+
                 {
                     el.resultat.split("~~~").map( 
                     (notes,id) =>  
@@ -101,41 +111,41 @@ function BulletinSequence(props) {
                         (id>1&&id_note===notes.split("~~").length-1&&
                         <View style={styles.ligne_groupe} key={id_note+20000}>
                             <View key={id_note+30000} style={styles.ligne_entete_groupe__libelle}>
-                            {
-                            props.data.groupeRecaps.map((group,id_group)=> (
-                                group.resultat.split("~~").map((item_group,id_item)=>
-                                (
-                                id_item===id-1&&<Text style={{fontFamily:"MyBold"}} key={id_item}>Groupe: {item_group.split("²²")[3]}</Text>))
-                                )
-                            )
-                            }
+                              {
+                              props.data.groupeRecaps.map((group,id_group)=> (
+                                  group.resultat.split("~~").map((item_group,id_item)=>
+                                  (
+                                  id_item===id-1&&<Text style={{fontFamily:"MyBold"}} key={id_item}>Groupe: {item_group.split("²²")[3]}</Text>))
+                                  )
+                              )
+                              }
                             </View>
                             <View key={id_note+40000} style={[styles.ligne_entete_groupe__moy,{fontFamily:"MyBold"}]}>
-                            <Text>{note.split("²²")[4]}</Text>
+                              <Text>{note.split("²²")[4]}</Text>
                             </View>
                             <View key={id_note+50000} style={[styles.ligne_entete_groupe__coef,{fontFamily:"MyBold"}]}>
-                            <Text>{note.split("²²")[0]}</Text>
+                              <Text>{note.split("²²")[0]}</Text>
                             </View>
                             <View key={id_note+60000} style={[styles.ligne_entete_groupe__nxc,{fontFamily:"MyBold"}]}>
-                            <Text>{note.split("²²")[2]}</Text>
+                              <Text>{note.split("²²")[2]}</Text>
                             </View>
                             <View key={id_note+70000} style={[styles.ligne_entete_groupe__rang,{fontFamily:"MyBold"}]}>
-                            <Text>{note.split("²²")[3]}</Text>
+                              <Text>{note.split("²²")[3]}</Text>
                             </View>
                             <View key={id_note+80000} style={[styles.ligne_entete_groupe__borne,{fontFamily:"MyBold"}]}>
 
-                            {
-                            props.data.groupeRecaps.map((group,id_group)=> (
-                                group.resultat.split("~~").map((item_group,id_item)=>
-                                (
-                                id_item===id-1&&<Text key={id_item}>[{item_group.split("²²")[0]},
-                                {item_group.split("²²")[1]}]</Text>))
-                                )
-                            )
-                            }
+                              {
+                              props.data.groupeRecaps.map((group,id_group)=> (
+                                  group.resultat.split("~~").map((item_group,id_item)=>
+                                  (
+                                  id_item===id-1&&<Text key={id_item}>[{item_group.split("²²")[0]},
+                                  {item_group.split("²²")[1]}]</Text>))
+                                  )
+                              )
+                              }
                             </View>
                             <View key={id_note+90000} style={styles.ligne_entete_groupe__appreciation}>
-                            <Text>{note.split("²²")[5]}</Text>
+                              <Text>{note.split("²²")[5]}</Text>
                             </View>
                             {/* <View key={id_note} break><Text>{note}</Text><Text> </Text></View> */}
                         </View>
@@ -153,8 +163,8 @@ function BulletinSequence(props) {
                                 id_recap===parseInt(note.split("²²")[4])&&
                                     (
                                         <View key={id_note} style={styles.ligne_entete_note__matiere2}>
-                                        <Text style={{fontFamily:"MyBold"}} >{truncate(item_recap.split("²²")[4],35)}</Text>
-                                        <Text style={{fontFamily:"MyItalic"}} >MBALLA Serge</Text>
+                                          <Text style={{fontFamily:"MyBold"}} >{truncate(item_recap.split("²²")[4],35)}</Text>
+                                          <Text style={{fontFamily:"MyItalic"}} >MBALLA Serge</Text>
                                         </View>
                                     )
                                 ))
@@ -163,10 +173,10 @@ function BulletinSequence(props) {
                             }
                             
                             <View key={id_note+2000} style={styles.ligne_entete_note__competence}>
-                            <Text>Calculer rapidement</Text>
+                              <Text>Calculer rapidement</Text>
                             </View>
                             <View key={id_note+3000} style={styles.ligne_entete_note__moy}>
-                            <Text>{mark}</Text>
+                              <Text>{mark}</Text>
                             </View>
                             <View key={id_note+4000} style={styles.ligne_entete_note__coef}>
                             {
@@ -179,10 +189,10 @@ function BulletinSequence(props) {
                             }
                             </View>
                             <View key={id_note+5000} style={styles.ligne_entete_note__nxc}>
-                            <Text>{note.split("²²")[1]}</Text>
+                              <Text>{note.split("²²")[1]}</Text>
                             </View>
                             <View key={id_note+6000} style={styles.ligne_entete_note__rang}>
-                            <Text>{note.split("²²")[3]}</Text>
+                              <Text>{note.split("²²")[3]}</Text>
                             </View>
                             <View key={id_note+7000} style={styles.ligne_entete_note__borne}>
 
@@ -223,20 +233,20 @@ function BulletinSequence(props) {
                         i===0&&
                         <View key={i} style={styles.box_corps}>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold"}}>Total Points:  </Text>
-                            <Text style={[styles.special_text,{fontFamily:"MyBold"}]}>{it.split("²²")[3]}</Text>
+                            <Text style={{fontFamily:"MyBold", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Points:  </Text>
+                            <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{it.split("²²")[3]}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold"}}>Total Coefs:  </Text>
-                            <Text style={[styles.special_text,{fontFamily:"MyBold"}]}>{it.split("²²")[1]}</Text>
+                            <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Coefs:  </Text>
+                            <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{it.split("²²")[1]}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold"}}>Moyenne:  </Text>
-                            <Text style={[styles.special_text,{fontFamily:"MyBold"}]}>{it.split("²²")[2]}</Text>
+                            <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Moyenne:  </Text>
+                            <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{it.split("²²")[2]}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold"}}>Rang:  </Text>
-                            <Text style={[styles.special_text,{fontFamily:"MyBold"}]}>{it.split("²²")[5]}</Text>
+                            <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Rang:  </Text>
+                            <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{it.split("²²")[5]}</Text>
                             </View>
                         </View>
                         )
@@ -312,34 +322,34 @@ const styles = StyleSheet.create({
       fontFamily: "Times-Roman",
       display: "flex",
       flexDirection: "column",
-      width: "100 vw",
-      height: "100 vh",
-      justifyContent:"space-between",
+      width: "100vw",
+      height: "100vh",
+      justifyContent:"flex-start",
       fontSize:"12px",
   
     },
     header: {
       boxSizing:"border-box",
-      height: "20%",
-      minHeight:"10%",
+      height: "50vh",
       width: "100%",
-  
       display: "flex",
-      justifyContent:"space-between",
+      justifyContent:'flex-start',
     },
+
     header1: {
       boxSizing: "border-box",
       margin: 0,
-      marginTop:"5px",
+      marginTop:"7px",
+      // marginB:"7px",
       textAlign: "center",
-      height:"50%",
+      height:"17%",
       minHeight:"30px",
       width: "100%",
-      // border: "1px 1px solid black",
       display: "flex",
       flexDirection:"row",
-      justifyContent:"space-between",
+      justifyContent:"space-evenly",
     },
+
     header1_1:{
       width:"37%",
       display: "flex",
@@ -347,7 +357,12 @@ const styles = StyleSheet.create({
       justifyContent:"space-between",
     },
     header1_2:{
-      width:"25%",
+      width:"26%",
+      display: "flex",
+      flexDirection:"column",
+      justifyContent:"center",
+      alignItems:"center"
+
       // border: "1px 1px solid black",
     },
     header1_3:{
@@ -363,66 +378,81 @@ const styles = StyleSheet.create({
       color:"black",
       // border: "1px 1px solid black",
     },
+
     header2: {
       textAlign: "center",
       height:"8%",
       minHeight:"20px",
       width: "100%",
       fontFamily:"MyBold",
-      // border: "1px 1px solid black",
       display:"flex",
       justifyContent:"center",
       alignItems:"center",
+      marginBottom:"3vh"
     },
     header2_cadre:{
       border: "2px 2px solid black",
       borderRadius:"5px",
       backgroundColor:"#ebebe0",
       width:"50%",
-      height:"90%",
+      height:"77%",
       display:"flex",
       justifyContent:"center",
       alignItems:"center",
     },
+
     header3: {
       textAlign: "center",
       height:"40%",
       minHeight:"30px",
-      width: "97%",
+      width: "93%",
       paddingLeft:"3%",
       // border: "1px 1px solid black",
       display: "flex",
       flexDirection:"row",
-      justifyContent:"space-between",
+      justifyContent:"center",
+      alignItems:'center',
       boxSizing: "border-box",
       margin: 0,
+      marginBottom:"2vh"
     },
+
     header3_1:{
       width:"50%",
       height:"100%",
+      // marginLeft:"3vw",
       // border: "1px 1px solid black",
     },
+
     header3_2:{
       width:"30%",
       height:"100%",
+      display:"flex",
+      flexDirection:"column",
+      justifyContent:"flex-start",
+      alignItems:"flex-start",
+      marginLeft:"4vw",
       // border: "1px 1px solid black",
     },
+
     header3_3:{
-      width:"18%",
-      height:"85%",
-      marginBottom:"15%",
-      marginLeft:"10%",
+      width:"13vw",
+      height:"12vw",
+      marginTop:"-2vh",
+      marginLeft:"5vw",
       display:"flex",
-      justifyContent:"center",
+      justifyContent:'center',
       alignItems:"center",
+      alignSelf:"flex-start",
       border: "1px 1px solid black",
     },
+
     main: {
       boxSizing:"border-box",
       textAlign: "center",
       backgroundColor: "white",
       color: "black",
-      height: "55%",
+      height: "60vh",
       width: "97%",
       paddingLeft:"3%",
       // border: "1px 1px solid black",
@@ -430,15 +460,16 @@ const styles = StyleSheet.create({
       flexDirection:"column",
       justifyContent:"flex-start",
       alignItems:"center",
+      marginTop:"-23vh"
     },
     ligne_entete_note:{
       boxSizing:"border-box",
       width: "100%",
       height:"4%",
-      color: "black",
+      color: "white",
       fontSize:"10px",
       backgroundColor:"#40689c",
-      borderRadius:"5px",
+      //borderRadius:"5px",
       // #dfede3,#bedbfa
       border: "2px 2px solid black",
       display:"flex",
@@ -527,35 +558,42 @@ const styles = StyleSheet.create({
     ligne_entete_groupe__libelle:{
       // border: "1px 1px solid black",
       width:"45%",
+     
     },
     ligne_entete_groupe__moy:{
       width:"6%",
+     
       // borderLeft:"1px",
       // border: "1px 1px solid black",
     },
     ligne_entete_groupe__coef:{
       width:"6%",
+     
       // borderLeft:"1px",
       // border: "1px 1px solid black",
     },
     ligne_entete_groupe__nxc:{
       width:"6%",
+     
       // borderLeft:"1px",
       // border: "1px 1px solid black",
     },
     ligne_entete_groupe__rang:{
       width:"6%",
+     
       // borderLeft:"1px",
       // border: "1px 1px solid black",
     },
     ligne_entete_groupe__borne:{
       width:"10%",
+     
       // borderLeft:"1px",
       // border: "1px 1px solid black",
     },
     ligne_entete_groupe__appreciation:{
       // border: "1px 1px solid black",
       width:"21%",
+     
       // borderLeft:"1px",
     },
   
@@ -583,8 +621,9 @@ const styles = StyleSheet.create({
       alignItems:"center",
     },
     footer: {
+      marginTop:"-17.7vh",
       textAlign: "center",
-      height: "25%",
+      height: "30vh",
       minHeight:"20%",
       width: "100%",
       display:"flex",
@@ -592,6 +631,7 @@ const styles = StyleSheet.create({
       justifyContent:"space-between",
       alignItems:"center",
     },
+
     footer_ligne2: {
       textAlign: "center",
       height: "59.8%",
@@ -688,6 +728,11 @@ const styles = StyleSheet.create({
     special_text:{
       backgroundColor:"#66b3ff",
       borderRadius:"2px",
+    },
+    special_textP:{
+      backgroundColor:"#e15c2ade",
+      borderRadius:"2px",
+      //color:"white"
     },
     title: {
       fontSize: 14,
