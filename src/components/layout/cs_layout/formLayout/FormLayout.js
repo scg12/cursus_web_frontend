@@ -91,7 +91,7 @@ function FormLayout(props){
             case '113':  return   t('look_students_presence_M');
             case '114':  return   t('conseil_discipline');
             case '115':  return   t('acad_profile');
-            case '116':  return   t("entry_ticket");
+            case '116':  return   t("exit_entry_ticket");
             case '117':  return   t('exit_ticket');
 
             
@@ -174,7 +174,7 @@ function FormLayout(props){
             case '113':  return  'images/lookPresence.png';
             case '114':  return  'images/ConseilDiscipline.png';
             case '115':  return  'images/Studentprofile.png';
-            case '116':  return  'images/BilletEntree.png';
+            case '116':  return  'images/BilletEntreeSortie.png';
             case '117':  return  'images/BilletSortie.png';
 
             case '120':  return  'images/SaveNotesP.png';

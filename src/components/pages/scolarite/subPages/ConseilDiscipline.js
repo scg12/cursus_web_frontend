@@ -25,8 +25,17 @@ import { useTranslation } from "react-i18next";
 var CURRENT_MEETING={};
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
-let CURRENT_PROF_PP_ID;
-let CURRENT_PROF_PP_LABEL;
+let CONVOQUE_PAR ={};
+
+var CURRENT_MEETING={};
+var printedETFileName='';
+var SEQUENCES_DISPO = [];
+var TRIMESTRES_DISPO  = [];
+var ANNEE_DISPO = [];
+var DEFAULT_MEMBERS = []; 
+var OTHER_MEMBERS = [];
+var PRESENTS_MEMBERS = [];
+
 var printedETFileName='';
 
 var listElt ={
@@ -145,39 +154,93 @@ function ConseilDiscipline(props) {
         }) 
     }
 
-    const getListConseilClasse =(classeId)=>{
-        /*axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
+    const getListConseilDiscipline =(classeId,sousEtabId)=>{
+        axiosInstance.post(`list-conseil-disciplines/`, {
+            id_classe: classeId,
+            id_sousetab: sousEtabId
         }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data)]
-            console.log(listEleves);
-            setGridRows(listEleves);
-            console.log(gridRows);
-        })*/  
-        setGridMeeting(conseil_data);
+            console.log("donnees",res.data);
+            CONVOQUE_PAR.USERID = res.data.convoque_par.id_user;
+            CONVOQUE_PAR.ROLE   = res.data.convoque_par.type;
+            CONVOQUE_PAR.NOM    =  res.data.convoque_par.nom;
+
+            SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs_dispo);
+            TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
+            DEFAULT_MEMBERS   =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres) : [];
+            OTHER_MEMBERS     =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_a_ajouter) : [];
+            PRESENTS_MEMBERS  =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_presents)  : [];
+            ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}]
+
+            var listConseils = [...formatList(res.data.conseil_classes, res.data.prof_principal, res.seqs_dispo, res.trims_dispo)]
+            console.log(listConseils);
+            setGridMeeting(listConseils);
+            console.log(gridMeeting);
+        })  
+        
+    }
+    
+    
+    function createLabelValueTable(tab){
+        var resultTab = [];
+        if(tab.length>0){
+            tab.map((elt)=>{
+                resultTab.push({value:elt.id, label:elt.libelle});
+            })
+        }
+        return resultTab;
     }
 
-   
-
-    const getProfPrincipal=(classeId, setabId)=>{
-        /*axiosInstance.post(`get-profPrincipal/`, {
-            id_classe : classeId,
-            id_sousetab:setabId,
-                        
-        }).then((res)=>{
-            console.log(res.data);
-
-            CURRENT_PROF_PP_ID = res.data.id ;
-            CURRENT_PROF_PP_LABEL = res.data.label
-            
-        })*/     
-
-        CURRENT_PROF_PP_ID = 12 ;
-        CURRENT_PROF_PP_LABEL = 'MBAMI Thomas'
+    function createLabelValueTableWithUserS(tab){
+        var resultTab = [];
+        if(tab.length>0){
+            tab.map((elt)=>{
+                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type});
+            })
+        }
+        return resultTab;
     }
 
+
+
+
    
+   
+
+    function formatList(listConseil,ConvoquePar,seqInfos,trimInfos){
+        var rang = 1;
+        var formattedList =[]
+        listConseil.map((elt)=>{
+            listElt={};
+            listElt.id = elt.id;
+            listElt.date_prevue  = elt.date_prevue;
+            listElt.heure_prevue = elt.heure_prevue;
+            listElt.type_conseil = elt.type_conseil;
+            listElt.id_type_conseil = elt.id_type_conseil;
+            listElt.nom = ConvoquePar.nom;
+            listElt.user_id = ConvoquePar.id_user;
+            listElt.rang = rang; 
+            listElt.status = elt.status; 
+            listElt.periodeId = elt.status;
+            listElt.periode = getPeriodeLabel(listElt.id_type_conseil,seqInfos, trimInfos);
+            listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
+            listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
+            formattedList.push(listElt);
+            rang ++;
+        })
+        return formattedList;
+    }
+
+    function getPeriodeLabel(idPeriode, listSequence, listTrimestres){
+        var foundedPeriode={};        
+        foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
+        if (foundedPeriode==-1){
+            foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
+            if (foundedPeriode==-1){
+                foundedPeriode = {id:-1, libelle:t('conseil_anuuel')};
+            }
+        }
+        return foundedPeriode.libelle;
+    }
 
    
     function dropDownHandler(e){
@@ -190,10 +253,8 @@ function ConseilDiscipline(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
-            getListConseilClasse(CURRENT_CLASSE_ID);  
-            
-            getProfPrincipal(currentAppContext.currentEtab, CURRENT_CLASSE_ID); 
-            console.log(CURRENT_CLASSE_ID,CURRENT_CLASSE_LABEL)          
+            getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
+               
         }else{
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
@@ -212,7 +273,6 @@ const conseil_data =[
     {id:5, date:'03/05/2023', heure:'10:20', objetId:1, objetLabel:'Bilan sequentiel', responsableId:15, responsableLabel:'Mr TCHIALEU Hugues', profPrincipalLabel:'Mr MBARGA Alphonse',  etat:1,  etatLabel:  'Cloture' , decision:'blallalalalal' }
 ];
 const columnsFr = [
-
     {
         field: 'id',
         headerName: 'ID',
@@ -221,33 +281,40 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
+
+    {
+        field: 'rang',
+        headerName: 'N°',
+        width: 70,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
        
     {
-        field: 'date',
-        headerName: 'DATE CONSEIL',
+        field: 'date_prevue',
+        headerName: 'DATE PREVUE',
         width: 100,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'heure',
-        headerName: 'HEURE',
-        width: 80,
+        field: 'heure_prevue',
+        headerName: 'HEURE PREVUE',
+        width: 100,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'objetLabel',
-        headerName: 'OBJET DU CONSEIL',
+        field: 'type_conseil',
+        headerName: 'TYPE DE CONSEIL',
         width: 120,
         editable: false,
-        hide:true,
         headerClassName:classes.GridColumnStyle
     },
     {
-        field: 'objetId',
+        field: 'id_type_conseil',
         headerName: 'OBJET DU CONSEIL',
         width: 50,
         editable: false,
@@ -256,49 +323,58 @@ const columnsFr = [
     },
 
     {
+        field: 'periode',
+        headerName: 'PERIODE',
+        width: 100,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    
+   /* {
         field: 'responsableId',
         headerName: 'CHEF DE CONSEIL',
         width: 50,
         editable: false,
         hide:true,
         headerClassName:classes.GridColumnStyle
-    },
+    },*/
 
-    {
+    /*{
         field: 'responsableLabel',
         headerName: 'CHEF DE CONSEIL',
         width: 180,
         editable: false,
         headerClassName:classes.GridColumnStyle
-    },
+    },*/
 
     {
-        field: 'profPrincipalLabel',
-        headerName: 'PROF PRINCIPAL',
+        field: 'nom',
+        headerName: 'CONVOQUE PAR',
         width: 180,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'profPrincipalId',
-        headerName: 'PROF PRINCIPAL',
+        field: 'user_id',
+        headerName: 'CONVOQUE PAR',
         width: 50,
         editable: false,
         hide:true,
         headerClassName:classes.GridColumnStyle
     },
 
-    {
+    /*{
         field: 'decision',
         headerName: 'DECISION DU CONSEIL',
         width: 200,
         editable: false,
         headerClassName:classes.GridColumnStyle
-    },
+    },*/
 
     {
-        field: 'etat',
+        field: 'status',
         headerName: 'ETAT',
         width: 70,
         editable: false,
@@ -315,7 +391,23 @@ const columnsFr = [
     },
 
     {
-        field: '',
+        field: 'date_effective',
+        headerName: 'DATE EFFECTIVE',
+        width: 120,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    /*{
+        field: 'heure_effective',
+        headerName: 'DATE EFFECTIVE',
+        width: 100,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },*/
+
+    {
+        field: 'Action',
         headerName: '',
         width: 80,
         editable: false,
@@ -324,7 +416,7 @@ const columnsFr = [
         renderCell: (params)=>{
             
             return(
-                (params.row.etat==0)?
+                (params.row.status==0)?
                 <div className={classes.inputRow}>
                     <img src="icons/baseline_edit.png"  
                         width={17} 
@@ -361,8 +453,17 @@ const columnsFr = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+    
         {
-            field: 'date',
+            field: 'rang',
+            headerName: 'N°',
+            width: 70,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+           
+        {
+            field: 'date_prevue',
             headerName: 'MEETING DATE',
             width: 100,
             editable: false,
@@ -370,25 +471,23 @@ const columnsFr = [
         },
     
         {
-            field: 'heure',
-            headerName: 'HOUR',
-            width: 80,
+            field: 'heure_prevue',
+            headerName: 'MEETING HOUR',
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'objetLabel',
-            headerName: 'MEETING PURPOSE',
+            field: 'type_conseil',
+            headerName: 'TYPE OF CONSEIL',
             width: 120,
             editable: false,
-            hide:true,
             headerClassName:classes.GridColumnStyle
         },
-
         {
-            field: 'objetId',
-            headerName: 'MEETING PURPOSE',
+            field: 'id_type_conseil',
+            headerName: 'OBJET DU CONSEIL',
             width: 50,
             editable: false,
             hide:true,
@@ -396,101 +495,123 @@ const columnsFr = [
         },
         
         {
-            field: 'responsableLabel',
-            headerName: 'HEAD OF MEETING',
-            width: 180,
+            field: 'periode',
+            headerName: 'PERIODE',
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-
-        {
+    
+       /* {
             field: 'responsableId',
-            headerName: 'HEAD OF MEETING',
+            headerName: 'CHEF DE CONSEIL',
             width: 50,
             editable: false,
             hide:true,
             headerClassName:classes.GridColumnStyle
-        },
-
+        },*/
+    
+        /*{
+            field: 'responsableLabel',
+            headerName: 'CHEF DE CONSEIL',
+            width: 180,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },*/
     
         {
-            field: 'profPrincipalLabel',
-            headerName: 'HEAD TEACHER',
+            field: 'nom',
+            headerName: 'INITIATED BY',
             width: 180,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-
+    
         {
-            field: 'profPrincipalId',
-            headerName: 'HEAD TEACHER',
+            field: 'user_id',
+            headerName: 'INITIATED BY',
             width: 50,
             editable: false,
             hide:true,
             headerClassName:classes.GridColumnStyle
         },
-
-        {
+    
+        /*{
             field: 'decision',
             headerName: 'DECISION DU CONSEIL',
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
-        },
+        },*/
     
         {
-            field: 'etat',
-            headerName: 'STATE',
+            field: 'status',
+            headerName: 'STATUS',
             width: 70,
             editable: false,
             hide:true,
             headerClassName:classes.GridColumnStyle
         },
-
+    
         {
             field: 'etatLabel',
-            headerName: 'STATE',
+            headerName: 'STATUS',
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: '',
+            field: 'date_effective',
+            headerName: 'EFFECTIVE DATE',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        /*{
+            field: 'heure_effective',
+            headerName: 'DATE EFFECTIVE',
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },*/
+    
+        {
+            field: 'Action',
             headerName: '',
             width: 80,
             editable: false,
             hide:(props.formMode=='ajout')? false : true,
             headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{                
-            return(
-                (params.row.etat==0)?
-                <div className={classes.inputRow}>
-                    <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            event.ignore = true;
-                        }}
-                        alt=''
-                    />
-                    <img src="icons/baseline_delete.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            event.ignore = true;
-                        }}
-                        alt=''
-                    />
-                </div>
-                :null
+            renderCell: (params)=>{
                 
-            )}           
+                return(
+                    (params.row.status==0)?
+                    <div className={classes.inputRow}>
+                        <img src="icons/baseline_edit.png"  
+                            width={17} 
+                            height={17} 
+                            className={classes.cellPointer} 
+                            onClick={(event)=> {
+                                event.ignore = true;
+                            }}
+                            alt=''
+                        />
+                        <img src="icons/baseline_delete.png"  
+                            width={17} 
+                            height={17} 
+                            className={classes.cellPointer} 
+                            onClick={(event)=> {
+                                event.ignore = true;
+                            }}
+                            alt=''
+                        />
+                    </div>
+                    :null
+                )}           
                 
-        },
-    
+            },    
        
     ];
 
@@ -889,7 +1010,7 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen >0 && modalOpen<4) && <AddDisciplinMeeting currentPpId={CURRENT_PROF_PP_ID} currentPpLabel={CURRENT_PROF_PP_LABEL} currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode={(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm} />}
+            {(modalOpen >0 && modalOpen<4) && <AddDisciplinMeeting convoquePar={CONVOQUE_PAR}  currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode={(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm} />}
             {(modalOpen==4) &&
                 <PDFTemplate previewCloseHandler={closePreview}>
                     { isMobile?

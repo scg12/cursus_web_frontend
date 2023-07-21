@@ -536,7 +536,7 @@ function SearchAcademicHistory(props) {
                     <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={!isActualStudent}  value={'presents'} name='ficheProg' onClick={()=>{isActualStudent? setIsActualStudent(false):setIsActualStudent(true); setEleves([])}}/>
                     <label style={{color:'black', fontWeight:"bold", fontSize:"1vw", marginLeft:'0.13vw', marginRight:"1vw",marginTop:"0vw" }}>{t("L'Elève n'est plus scolarisé")}</label>
                 </div> 
-                <div className={classes.legend} style={{ marginRight:"0.3vw", top:'17vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("choisissez un ou plusieurs critères de recherche")}</i></label></div>                    
+                <div className={classes.legend} style={{ marginRight:"0.3vw", top:'17vh'}}> <label style={{color:'#e0e06c',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("choisissez un ou plusieurs critères de recherche")}</i></label></div>                    
                 <div className={classes.container} style={{marginBottom:'2vw', borderRadius:'7px', marginLeft:"-0.77vw", border:"solid 1.87px gray", justifyContent:'center', alignItems:'center', width:'95%', height:'20vh', paddingLeft:"1vw"}}> 
                     {isActualStudent ?
                         <div className={classes.container} style={{marginBottom:'3.7vh', marginTop:'4.3vh',width:'100%'}}>
