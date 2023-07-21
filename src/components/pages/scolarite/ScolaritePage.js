@@ -142,7 +142,7 @@ function ScolaritePage(){
 
     const menus = document.querySelectorAll('.side-menu');
     M.Sidenav.init(menus, {edge: 'right'});
-
+    console.log("SCOLARITE GET EMP")
     axiosInstance.post(`get-current-emploi-de-temps/`, {
               id_sousetab: currentAppContext.currentEtab
           }).then((res)=>{
