@@ -82,7 +82,7 @@
 .Theme1_MenuItemSectionDetails {
     display:flex;
     flex-direction:column;
-    justify-content:center;
+    justify-content:flex-start;
     align-items: center;
     border-radius: 5px;
     border-style: solid;

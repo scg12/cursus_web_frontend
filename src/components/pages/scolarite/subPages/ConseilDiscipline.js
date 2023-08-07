@@ -32,81 +32,25 @@ var printedETFileName='';
 var SEQUENCES_DISPO = [];
 var TRIMESTRES_DISPO  = [];
 var ANNEE_DISPO = [];
+
 var DEFAULT_MEMBERS = []; 
-var OTHER_MEMBERS = [];
 var PRESENTS_MEMBERS = [];
+var OTHER_MEMBERS = [];
+
+var DEFAULT_MEMBERS_ADD = []; 
+var PRESENTS_MEMBERS_ADD = [];
+var OTHER_MEMBERS_ADD = [];
+
+var ELEVES_SANCTIONS = [];
+var ELEVES_MOTIFS = [];
+
+var LIST_CONSEILS_INFOS =[];
 
 var printedETFileName='';
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"",
-    displayedName:'',
-    nom: '',
-    prenom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    nom_mere : '',
-    tel_pere : '',
-    tel_mere : '',
-    email_pere : '',
-    email_mere : '',
-    etab_provenance:'',
-    id:1,
-    redouble: '',
-    sexe:'M', 
-    
-    nom_parent      : '', 
-    tel_parent      : '', 
-    email_parent    : '',
-   
-}
+var listElt ={}
 
-var MEETING = {
-    //---Infos Generales 
-    id:-1,
-    classId : 0,
-    classeLabel:'',
-
-    responsableId:0,
-    responsableLabel:'',
-
-    profPrincipalId :0,
-    profPrincipalLabel : '',
-
-    date:'',
-    heure:'',
-
-    objetId:0,
-    objetLabel:'',
-
-    autreObjet:'',
-
-    etat:0,
-    etatLabel:'En cours',
-
-    decision:'',
-    note_passage:0,
-
-    note_exclusion:0,
-    //---participants
-    listParticipants : [],  
-   
-    //---prof presents
-    listPresents : [],
-
-    //---decisions cas par cas
-    listCaspasCas : [],
-
-    //---Eleves convoques
-    listConvoques: [],
-};
-
-
-
+var MEETING = {}
 
 var pageSet = [];
 
@@ -155,24 +99,28 @@ function ConseilDiscipline(props) {
     }
 
     const getListConseilDiscipline =(classeId,sousEtabId)=>{
+        var listConseils = [];
         axiosInstance.post(`list-conseil-disciplines/`, {
             id_classe: classeId,
             id_sousetab: sousEtabId
         }).then((res)=>{
             console.log("donnees",res.data);
-            CONVOQUE_PAR.USERID = res.data.convoque_par.id_user;
-            CONVOQUE_PAR.ROLE   = res.data.convoque_par.type;
-            CONVOQUE_PAR.NOM    =  res.data.convoque_par.nom;
 
-            SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs_dispo);
-            TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
-            DEFAULT_MEMBERS   =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres) : [];
-            OTHER_MEMBERS     =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_a_ajouter) : [];
-            PRESENTS_MEMBERS  =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_presents)  : [];
-            ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}]
+            if(res.data!= undefined && res.data!=null){
+                LIST_CONSEILS_INFOS = [...res.data.conseil_disciplines];
+                
+                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_conv];
+                OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
+                PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
 
-            var listConseils = [...formatList(res.data.conseil_classes, res.data.prof_principal, res.seqs_dispo, res.trims_dispo)]
-            console.log(listConseils);
+                SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs);
+                TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims);
+                ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
+
+                listConseils = [...formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims)]
+                console.log(listConseils);                
+            }
+
             setGridMeeting(listConseils);
             console.log(gridMeeting);
         })  
@@ -190,34 +138,48 @@ function ConseilDiscipline(props) {
         return resultTab;
     }
 
-    function createLabelValueTableWithUserS(tab){
+    
+    function createLabelValueTableWithUserS(tab, present, etat){
         var resultTab = [];
         if(tab.length>0){
             tab.map((elt)=>{
-                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type});
+                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type, present:present, etat:etat});
             })
         }
         return resultTab;
     }
 
+    function createListElevesSanctions(sanctionsList, etat){
+        var ElevesList = [];
+        (sanctionsList||[]).map((elt) => {
+            ElevesList.push({id:elt.id_eleve, nom:elt.nom, decisionsId:elt.id, decisionsLabel:elt.libelle, etat:etat})
+        })
+        return ElevesList;
+    }
 
 
+    function createListElevesMoifs(motifsList, etat){
+        var ElevesList = [];
+        (motifsList||[]).map((elt) => {
+            ElevesList.push({id:elt.id_eleve, nom:elt.nom, motifId:elt.id, motifLabel:elt.libelle, etat:etat})
+        })
+        return ElevesList;
+    }
 
-   
-   
 
-    function formatList(listConseil,ConvoquePar,seqInfos,trimInfos){
+    function formatList(listConseil,seqInfos,trimInfos){
         var rang = 1;
-        var formattedList =[]
-        listConseil.map((elt)=>{
+        var formattedList=[]
+        (listConseil||[]).map((elt)=>{
             listElt={};
             listElt.id = elt.id;
             listElt.date_prevue  = elt.date_prevue;
             listElt.heure_prevue = elt.heure_prevue;
             listElt.type_conseil = elt.type_conseil;
             listElt.id_type_conseil = elt.id_type_conseil;
-            listElt.nom = ConvoquePar.nom;
-            listElt.user_id = ConvoquePar.id_user;
+            listElt.resume_general_decisions = elt.resume_general_decisions;
+            listElt.nom = elt.convoque_par.nom;
+            listElt.user_id = elt.convoque_par.id_user;
             listElt.rang = rang; 
             listElt.status = elt.status; 
             listElt.periodeId = elt.status;
@@ -247,9 +209,9 @@ function ConseilDiscipline(props) {
         //console.log(e.target.value)
         var grdRows;
         if(e.target.value != optClasse[0].value){
+             //----ici je dois charger les membres(enseignants, responsables...)
             
-            setIsValid(true);
-            
+            setIsValid(true);            
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
@@ -265,13 +227,7 @@ function ConseilDiscipline(props) {
 
 /*************************** DataGrid Declaration ***************************/ 
 
-const conseil_data =[
-    {id:1, date:'12/05/2023', heure:'12:45', objetId:1, objetLabel:'Bilan sequentiel', responsableId:11, responsableLabel:'Mr MBALLA Alfred',   profPrincipalLabel:'Mr MBARGA Alphonse',  etat:0,  etatLabel:  'En cours', decision:'blallalalalal' },
-    {id:2, date:'18/05/2023', heure:'08:45', objetId:1, objetLabel:'Bilan sequentiel', responsableId:12, responsableLabel:'Mr TOWA Luc',        profPrincipalLabel:'Mr MBARGA Alphonse',  etat:0,  etatLabel:  'En cours', decision:'blallalalalal' },
-    {id:3, date:'02/05/2023', heure:'09:30', objetId:1, objetLabel:'Bilan sequentiel', responsableId:13, responsableLabel:'Mr OBATE Simplice',  profPrincipalLabel:'Mr MBARGA Alphonse',  etat:0,  etatLabel:  'En cours', decision:'blallalalalal' },
-    {id:4, date:'17/05/2023', heure:'15:45', objetId:1, objetLabel:'Bilan sequentiel', responsableId:14, responsableLabel:'Mr TSALA Pascal',    profPrincipalLabel:'Mr MBARGA Alphonse',  etat:1,  etatLabel:  'Cloture' , decision:'blallalalalal' },
-    {id:5, date:'03/05/2023', heure:'10:20', objetId:1, objetLabel:'Bilan sequentiel', responsableId:15, responsableLabel:'Mr TCHIALEU Hugues', profPrincipalLabel:'Mr MBARGA Alphonse',  etat:1,  etatLabel:  'Cloture' , decision:'blallalalalal' }
-];
+
 const columnsFr = [
     {
         field: 'id',
@@ -281,15 +237,13 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
     {
         field: 'rang',
         headerName: 'N°',
         width: 70,
         editable: false,
         headerClassName:classes.GridColumnStyle
-    },
-       
+    },       
     {
         field: 'date_prevue',
         headerName: 'DATE PREVUE',
@@ -297,7 +251,6 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
     {
         field: 'heure_prevue',
         headerName: 'HEURE PREVUE',
@@ -305,7 +258,6 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
     {
         field: 'type_conseil',
         headerName: 'TYPE DE CONSEIL',
@@ -329,25 +281,6 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
-    
-   /* {
-        field: 'responsableId',
-        headerName: 'CHEF DE CONSEIL',
-        width: 50,
-        editable: false,
-        hide:true,
-        headerClassName:classes.GridColumnStyle
-    },*/
-
-    /*{
-        field: 'responsableLabel',
-        headerName: 'CHEF DE CONSEIL',
-        width: 180,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },*/
-
     {
         field: 'nom',
         headerName: 'CONVOQUE PAR',
@@ -364,15 +297,6 @@ const columnsFr = [
         hide:true,
         headerClassName:classes.GridColumnStyle
     },
-
-    /*{
-        field: 'decision',
-        headerName: 'DECISION DU CONSEIL',
-        width: 200,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },*/
-
     {
         field: 'status',
         headerName: 'ETAT',
@@ -381,7 +305,6 @@ const columnsFr = [
         hide:true,
         headerClassName:classes.GridColumnStyle
     },
-
     {
         field: 'etatLabel',
         headerName: 'ETAT',
@@ -389,7 +312,6 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
     {
         field: 'date_effective',
         headerName: 'DATE EFFECTIVE',
@@ -398,13 +320,23 @@ const columnsFr = [
         headerClassName:classes.GridColumnStyle
     },
 
-    /*{
-        field: 'heure_effective',
-        headerName: 'DATE EFFECTIVE',
-        width: 100,
+    {
+        field: 'resume_general_decisions',
+        headerName: 'DECISION',
+        width: 120,
+        editable: false,
+        hide : true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'is_all_class_convoke',
+        headerName: 'Toute la classe',
+        width: 120,
+        hide:true,
         editable: false,
         headerClassName:classes.GridColumnStyle
-    },*/
+    },
 
     {
         field: 'Action',
@@ -502,23 +434,6 @@ const columnsFr = [
             headerClassName:classes.GridColumnStyle
         },
     
-       /* {
-            field: 'responsableId',
-            headerName: 'CHEF DE CONSEIL',
-            width: 50,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },*/
-    
-        /*{
-            field: 'responsableLabel',
-            headerName: 'CHEF DE CONSEIL',
-            width: 180,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },*/
-    
         {
             field: 'nom',
             headerName: 'INITIATED BY',
@@ -535,15 +450,6 @@ const columnsFr = [
             hide:true,
             headerClassName:classes.GridColumnStyle
         },
-    
-        /*{
-            field: 'decision',
-            headerName: 'DECISION DU CONSEIL',
-            width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },*/
-    
         {
             field: 'status',
             headerName: 'STATUS',
@@ -568,15 +474,22 @@ const columnsFr = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-    
-        /*{
-            field: 'heure_effective',
-            headerName: 'DATE EFFECTIVE',
-            width: 100,
+        {
+            field: 'resume_general_decisions',
+            headerName: 'DECISION',
+            width: 120,
+            editable: false,
+            hide : true,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'is_all_class_convoke',
+            headerName: 'All the class',
+            width: 120,
+            hide:true,
             editable: false,
             headerClassName:classes.GridColumnStyle
-        },*/
-    
+        },
         {
             field: 'Action',
             headerName: '',
@@ -615,9 +528,6 @@ const columnsFr = [
        
     ];
 
-        
-
-     
 /*************************** Theme Functions ***************************/
     function getGridButtonStyle()
     { // Choix du theme courant
@@ -661,23 +571,35 @@ const columnsFr = [
     
 
     function handleEditRow(row){       
-        var inputs=[];
-        
-        inputs[0]= row.id;
-        inputs[1]= row.responsableId;
-        inputs[2]= row.date;
-        inputs[3]= row.heure;
-        //inputs[4]= row.objetId;
-        
-        inputs[5]= row.autreObjet;
-        inputs[6]= row.decision;
-        inputs[7]= row.note_passage;
+        var inputs=[];   
+        var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+      
+        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
+        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
+        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 0);
+        ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,0);
+        ELEVES_MOTIFS     =  createListElevesMoifs(CURRENT_CD.motif_cas_par_cas,0);
+        // ELEVES_MOTIFS=[];
 
-        inputs[8] = row.note_exclusion;
-        inputs[9] = row.etat;
+       
+        inputs[0] = row.id;
+        inputs[1] = row.date_prevue;
+        inputs[2] = row.heure_prevue;
+        inputs[3] = row.type_conseil;
+        inputs[4] = row.id_type_conseil;
+        
+        inputs[5] = row.periode;
+        inputs[6] = row.nom;
+        inputs[7] = row.user_id;
 
-        inputs[10]= row.responsableLabel;
-        //inputs[11]= row.objetLabel;
+        inputs[8] = row.status;
+        inputs[9] = row.statusLabel;
+
+        inputs[10] = [...ELEVES_MOTIFS];
+        inputs[11] = [...ELEVES_SANCTIONS];
+       
+        inputs[12] = row.is_all_class_convoke;
+        inputs[13] = row.resume_general_decisions;      
         
         currentUiContext.setFormInputs(inputs);
         console.log("laligne",row, currentUiContext.formInputs);
@@ -686,129 +608,154 @@ const columnsFr = [
 
     function consultRowData(row){
         var inputs=[];
+        var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+
+        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
+        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
+        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 1);
+        ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,1);
+        ELEVES_MOTIFS     =  createListElevesMoifs(CURRENT_CD.motif_cas_par_cas,0);
+        // ELEVES_MOTIFS=[];
 
         inputs[0]= row.id;
-        inputs[1]= row.responsableId;
-        inputs[2]= row.date;
-        inputs[3]= row.heure;
-        //inputs[4]= row.objetId;
+        inputs[1]= row.date_prevue;
+        inputs[2]= row.heure_prevue;
+        inputs[3]= row.type_conseil;
+        inputs[4]= row.id_type_conseil;
         
-        inputs[5]= row.autreObjet;
-        inputs[6]= row.decision;
-        inputs[7]= row.note_passage;
+        inputs[5]= row.periode;
+        inputs[6]= row.nom;
+        inputs[7]= row.user_id;
 
-        inputs[8] = row.note_exclusion;
-        inputs[9] = row.etat;
+        inputs[8] = row.status;
+        inputs[9] = row.statusLabel;
 
-        inputs[10]= row.responsableLabel;
-        //inputs[11]= row.objetLabel;
-       
+        inputs[10]= [...ELEVES_MOTIFS];
+        inputs[11]= [...ELEVES_SANCTIONS];
+
+        inputs[12]= row.is_all_class_convoke;
+        inputs[13]= row.resume_general_decisions;
+        
         currentUiContext.setFormInputs(inputs)
         setModalOpen(3);
     }
 
-  
-    function addClassMeeting(meeting) {       
-        console.log('Ajout',meeting);
-        conseil_data.push(meeting);
-        setGridMeeting(conseil_data);
-        CURRENT_MEETING = meeting;
-        chosenMsgBox = MSG_SUCCESS;
-        currentUiContext.showMsgBox({
-            visible:true, 
-            msgType:"question", 
-            msgTitle:t("success_add_M"), 
-            message:t("success_add")+"\n"+t("print_pv_question") 
-        })
-           
-        /*axiosInstance.post(`create-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id_sousetab:currentAppContext.currentEtab,
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance,            
-        }).then((res)=>{
-            console.log(res.data);
-
-            setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"question", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("print_pv_question") 
-            })
-        })  */    
+    function getTypeConseil(code){
+        switch(code){
+            case '1': return "sequentiel" ;
+            case '2': return "trimestriel" ;
+            case '3': return "annuel";
+        }
     }
-    
-    function modifyClassMeeting(meeting) {
-        console.log('update',meeting);
-        conseil_data.push(meeting);
-        setGridMeeting(conseil_data);
-        CURRENT_MEETING = meeting;
-        chosenMsgBox = MSG_SUCCESS;
-        currentUiContext.showMsgBox({
-            visible:true, 
-            msgType:"question", 
-            msgTitle:t("success_add_M"), 
-            message:t("success_add")+"\n"+t("notify_prof")
-        })
-     
-        /*axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id : eleve.id, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance, 
 
+    function getMembresId(tab){
+        var tabResults = [];
+        tab.map((elt)=>{
+            tabResults.push(elt.value);
+        })
+
+        return tabResults.join("²²")
+    }
+
+    function getMembreRoles(tab){
+        var tabResults = [];
+        tab.map((elt)=>{
+            tabResults.push(elt.role);
+        })
+        return tabResults.join("²²")
+    }
+
+    function createGridData(){}
+   
+   
+
+
+    function addMeeting(meeting) {       
+        console.log('Ajout',meeting);
+        CURRENT_MEETING = meeting;
+           
+        axiosInstance.post(`create-conseil-discipline/`, {
+            id_sousetab     : meeting.id_sousetab,
+            id_classe       : meeting.classeId,
+            id_convocateur            : meeting.convoque_par.id_user,
+            is_all_class_convoke      : meeting.is_all_class_convoke,
+            id_eleves       : meeting.id_eleves,
+            type_conseil    : getTypeConseil(meeting.objetId),
+            date_prevue     : meeting.date,
+            heure_prevue    : meeting.heure,
+            id_periode      : meeting.periodeId,
+            alerter_membres : meeting.alerter_membres,
+            id_membres      : getMembresId(meeting.listParticipants),
+            roles_membres   : getMembreRoles(meeting.listParticipants)
+            
         }).then((res)=>{
+           var gridData = createGridData(res.data.conseil_classes)
+            setGridMeeting(gridData);
             console.log(res.data);
+
             setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"question", 
                 msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("notify_prof")
+                message:t("success_add")
             })
+        })    
+    }
+
+  
+    
+    function modifyMeeting(meeting) {
+        console.log('Ajout',meeting);
+        CURRENT_MEETING = meeting;
            
+        axiosInstance.post(`update-conseil-discipline/`, {
+            id_conseil_discipline : meeting.id,
+            id_sousetab     : meeting.id_sousetab,
+            id_classe       : meeting.classeId,
+            convoque_par    : meeting.convoque_par.id_user,
+            is_all_class_convoke : meeting.is_all_class_convoke,
+            id_eleves       : meeting.id_eleves,
+            type_conseil    : getTypeConseil(meeting.objetId),
+            date_prevue     : meeting.date,
+            heure_prevue    : meeting.heure,
+            id_periode      : meeting.periodeId,
+            alerter_membres : meeting.alerter_membres,
+            id_membres      : meeting.id_membres,
+            roles_membres   : meeting.roles_membres,
+            resume_general_decisions : meeting.resume_general_decisions,
+            to_close : meeting.to_close,
+            membre_presents : meeting.membre_presents,
+            id_eleves : meeting.id_eleves,
+            list_decisions_conseil_eleves : meeting.list_decisions_conseil_eleves,
+            id_type_sanction_generale_classe : meeting.id_type_sanction_generale_classe
+
             
-        })*/
+    
+            // # peut etre admis, redouble, exclu, admis_sdc, redouble_sdc, exclu_sdc .sdc : sous decision du conseil
+            // # admis²²...
+            // list_decisions_conseil_eleves = request.data['list_decisions_conseil_eleves'].split("²²")
+            
+           
+           
+            // id_type_sanction_generale_classe = request.data['id_type_sanction_generale_classe']
+
+            
+        }).then((res)=>{
+           var gridData = createGridData(res.data.conseil_classes)
+            setGridMeeting(gridData);
+            console.log(res.data);
+
+            setModalOpen(0);
+            chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")
+            })
+        })
     }
 
     function deleteRow(rowId) {
@@ -833,7 +780,12 @@ const columnsFr = [
     }
    
     function AddNewMeetingHandler(e){
-        if(CURRENT_CLASSE_ID != undefined){
+        if(CURRENT_CLASSE_ID != undefined){        
+            CONVOQUE_PAR     =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD, true,   1);
+            OTHER_MEMBERS    =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,   false, -1);
+            DEFAULT_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD, true,  0);
+            ELEVES_SANCTIONS =  [];
+            ELEVES_MOTIFS    =  [];
             setModalOpen(1); 
             initFormInputs();
         } else{
@@ -858,7 +810,8 @@ const columnsFr = [
                     msgTitle:"", 
                     message:""
                 }) 
-                printMeetingReport();
+                
+                if(CURRENT_MEETING.status==1) printMeetingReport();                
                 return 1;
             }
 
@@ -1010,7 +963,23 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen >0 && modalOpen<4) && <AddDisciplinMeeting convoquePar={CONVOQUE_PAR}  currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode={(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm} />}
+
+            {(modalOpen>0 && modalOpen<4) && 
+                <AddDisciplinMeeting
+                    currentClasseLabel={CURRENT_CLASSE_LABEL} 
+                    currentClasseId={CURRENT_CLASSE_ID}     
+                    defaultMembres={PRESENTS_MEMBERS} 
+                    othersMembres={OTHER_MEMBERS} 
+                    convoquePar={DEFAULT_MEMBERS} 
+                    sequencesDispo  = {SEQUENCES_DISPO}
+                    trimestresDispo = {TRIMESTRES_DISPO}
+                    formMode={(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}
+                    addMeetingHandler    = {addMeeting}  
+                    modifyMeetingHandler = {modifyMeeting}
+                    cancelHandler={quitForm} 
+                />
+            }
+
             {(modalOpen==4) &&
                 <PDFTemplate previewCloseHandler={closePreview}>
                     { isMobile?

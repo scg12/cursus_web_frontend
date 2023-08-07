@@ -636,19 +636,19 @@ bottom:0;
 }
 
 .formButtonRowP{
-display: flex;
-flex-direction: row;
-align-items: center;
-width: 100%;
-margin-top: 7px;
-margin-bottom: 7px;
-align-self: center;
-border-top-style: solid;
-border-top-width: 2px;
-padding-top: 4px;
-position: absolute;
-bottom: 0;
-justify-content: flex-end;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    align-self: center;
+    border-top-style: solid;
+    border-top-width: 2px;
+    padding-top: 4px;
+    position: absolute;
+    bottom: 0;
+    justify-content: flex-end;
 }
 
 .formButtonRowPP{
@@ -807,6 +807,27 @@ border-width: 0.5px;
 border-style: solid;
 font-size: 1.07vw;
 font-weight: 474;
+}
+
+.formContainerP6{
+    z-index: 1200;
+    align-self: center;
+    padding-top: 3vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 37vw;   
+    height: 46.7vh;
+    background-color: rgb(255, 255, 255);
+    position: fixed;
+    top: 13vh;
+    left: 25vw;
+    border-radius: 7px;
+    border-color: rgb(218, 214, 214);
+    border-width: 0.5px;
+    border-style: solid;
+    font-size: 1.07vw;
+    font-weight: 474;
 }
 
 

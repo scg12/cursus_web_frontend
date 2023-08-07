@@ -28,45 +28,7 @@ var MEETING_OBJET_LABEL = undefined;
 var periodeId = undefined;
 
 var eleves_data=[];
-
-
-
-var MEETING = {
-    //---Infos Generales 
-    id:-1,
-    classeId : 0,
-    classeLabel:'',
-
-    responsableId:0,
-    responsableLabel:'',
-
-    profPrincipalId :0,
-    profPrincipalLabel : '',
-
-    date:'',
-    heure:'',
-
-    objetId:0,
-    objetLabel:'',
-
-    autreObjet:'',
-
-    etat:0,
-    etatLabel:'En cours',
-
-    decision:'',
-    note_passage:0,
-
-    note_exclusion:0,
-    //---participants
-    listParticipants : [],  
-   
-    //---prof presents
-    listPresents : [],
-
-    //---decisions cas par cas
-    listCaspasCas : [],
-};
+var MEETING = {};
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -103,76 +65,81 @@ function AddClassMeeting(props) {
 
         getClassStudentList(props.currentClasseId);
         setOptPeriode(nonDefini);
-        /*setOptResponsable(tabResponsables);
-        setOptRole(tabRoles);
-        setOptObjet(tabObjets);*/
-       
-        MEETING = {
-            classeId : props.currentClasseId,
-            classeLabel:props.currentClasseLabel,
-            profPrincipalId : props.currentPpId,
-            profPrincipalLabel : props.currentPpLabel,
-
-            id : putToEmptyStringIfUndefined(currentUiContext.formInputs[0]),
-
-            responsableId:putToEmptyStringIfUndefined(currentUiContext.formInputs[1]),
-            responsableLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[10]),
-
-            date:putToEmptyStringIfUndefined(currentUiContext.formInputs[2]),
-            heure:putToEmptyStringIfUndefined(currentUiContext.formInputs[3]),
-
-            objetId:putToEmptyStringIfUndefined(currentUiContext.formInputs[4]),
-            objetLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[11]),
-
-            autreObjet:putToEmptyStringIfUndefined(currentUiContext.formInputs[5]),
-
-            decision:putToEmptyStringIfUndefined(currentUiContext.formInputs[6]),
-
-            note_passage:putToEmptyStringIfUndefined(currentUiContext.formInputs[7]),
-            note_exclusion:putToEmptyStringIfUndefined(currentUiContext.formInputs[8]),
-
-            etat : putToEmptyStringIfUndefined(currentUiContext.formInputs[9]),
-           
-            //---participants
-            listParticipants :[...props.defaultMembrers],  
-            
-            //---prof presents
-            listPresents : [...props.presentsMembers],
-        
-            //---decisions cas par cas
-            listCaspasCas :  [...getListCasParCas()],
-                        
-        };    
-
-        
         setTabParticipant([...props.defaultMembrers]);
-      
-        
 
-        if (props.formMode == 'modif'){
-            console.log('responsable:',MEETING.responsableId);
+        if (props.formMode != 'creation'){
+
+            MEETING = {
+                classeId : props.currentClasseId,
+                classeLabel:props.currentClasseLabel,
+                profPrincipalId : props.currentPpId,
+                profPrincipalLabel : props.currentPpLabel,
+
+              
+                id : putToEmptyStringIfUndefined(currentUiContext.formInputs[0]),
+    
+                date:putToEmptyStringIfUndefined(currentUiContext.formInputs[2]),
+                heure:putToEmptyStringIfUndefined(currentUiContext.formInputs[3]),
+    
+                type_conseil:putToEmptyStringIfUndefined(currentUiContext.formInputs[4]),
+               
+                periodeId:putToEmptyStringIfUndefined(currentUiContext.formInputs[5]),
+    
+                decision:putToEmptyStringIfUndefined(currentUiContext.formInputs[6]),
+    
+                note_passage:putToEmptyStringIfUndefined(currentUiContext.formInputs[7]),
+                note_exclusion:putToEmptyStringIfUndefined(currentUiContext.formInputs[8]),
+    
+                etat : putToEmptyStringIfUndefined(currentUiContext.formInputs[9]),
+               
+                //---participants
+                listParticipants :[...props.defaultMembrers],  
+                
+                //---prof presents
+                listPresents : [...props.presentsMembers],
+            
+                //---decisions cas par cas
+                listCaspasCas :  [...getListCasParCas()],
+                            
+            };    
+    
+           
             setTabEleves([...getListCasParCas()]);
-            tabResponsables.splice(0,1);
-            var responsable = tabResponsables.find((resp)=>resp.value == MEETING.responsableId);
-            var index = tabResponsables.findIndex((resp)=>resp.value == MEETING.responsableId);
-            tabResponsables.splice(index,1);
-            tabResponsables.unshift(responsable);
-            setOptResponsable(tabResponsables);
+            
+            // tabResponsables.splice(0,1);
+            // var responsable = tabResponsables.find((resp)=>resp.value == MEETING.responsableId);
+            // var index = tabResponsables.findIndex((resp)=>resp.value == MEETING.responsableId);
+            // tabResponsables.splice(index,1);
+            // tabResponsables.unshift(responsable);
+            // setOptResponsable(tabResponsables);
 
-            CURRENT_RESPONSABLE_ID =  MEETING.responsableId;
-            CURRENT_RESPONSABLE_LABEL = MEETING.responsableLabel;
+            // CURRENT_RESPONSABLE_ID =  MEETING.responsableId;
+            // CURRENT_RESPONSABLE_LABEL = MEETING.responsableLabel;
 
             tabObjets.splice(0,1);
-            var objet = tabObjets.find((obj)=>obj.value == MEETING.objetId);
-            index = tabObjets.findIndex((obj)=>obj.value == MEETING.objetId);
+            var objet = tabObjets.find((obj)=>obj.value == MEETING.type_conseil);
+            var index = tabObjets.findIndex((obj)=>obj.value == MEETING.type_conseil);
             tabObjets.splice(index,1);
             tabObjets.unshift(objet);
             setOptObjet(tabObjets);
 
-            MEETING_OBJET_ID = MEETING.objetId;
-            MEETING_OBJET_LABEL =  MEETING.objetLabel;
+            MEETING_OBJET_ID = MEETING.type_conseil;
+            MEETING_OBJET_LABEL =  objet.label;
 
-            if(MEETING.etat==0) setNotifVisible(true);
+            var tabPeriode=[];
+            var typeConseil = currentUiContext.formInputs[10];
+            if(typeConseil=="sequentiel")  tabPeriode = [...props.sequencesDispo];
+            else{
+                if(typeConseil=="trimestriel") tabPeriode= [...props.trimestresDispo];
+                else{/*on va gerer*/}
+            }
+
+            var periodeCC = tabPeriode.find((obj)=>obj.value == MEETING.periodeId);
+            var index = tabPeriode.findIndex((obj)=>obj.value == MEETING.periodeId);
+            tabPeriode.splice(index,1);
+            tabPeriode.unshift(periodeCC);
+            setOptPeriode(tabPeriode);        
+
         } 
 
         console.log(currentUiContext.formInputs);        
@@ -281,7 +248,6 @@ function AddClassMeeting(props) {
         {value:1, label:"Conseil bilan sequentiel" },
         {value:2, label:"Conseil bilan trimestriel"},
         {value:3, label:"Conseil bilan annuel"     },
-        {value:4, label:"Autre conseil"            },
     ];
 
     const tabParticipants=[
@@ -413,15 +379,6 @@ function AddClassMeeting(props) {
             MEETING.etatLabel = 'En cours' ;
                       
             props.actionHandler(MEETING);
-           //setNotifVisible(true);
-           
-            /*chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"question", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("notify_prof")
-            })*/
          
         } else {
             errorDiv.className = classes.formErrorMsg;
@@ -493,14 +450,14 @@ function AddClassMeeting(props) {
        
         MEETING.alerter_membres    = true;
 
-        MEETING.responsableId      = CURRENT_RESPONSABLE_ID; 
-        MEETING.responsableLabel   = CURRENT_RESPONSABLE_LABEL;
+        // MEETING.responsableId      = CURRENT_RESPONSABLE_ID; 
+        // MEETING.responsableLabel   = CURRENT_RESPONSABLE_LABEL;
 
         MEETING.currentPpUserId    = props.currentPpUserId;
         MEETING.profPrincipalId    = props.currentPpId; 
         MEETING.profPrincipalLabel = props.currentPpLabel;
 
-        MEETING.date  = document.getElementById('anne').value+'-'+ document.getElementById('mois').value + '-' + document.getElementById('jour').value;
+        MEETING.date  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
         MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
         
         MEETING.objetId    = MEETING_OBJET_ID;
@@ -559,10 +516,10 @@ function AddClassMeeting(props) {
         if(meeting_min[0]=='0')  meeting_min  = meeting_min[1];
        // console.log('jjjj',eval(meeting_hour),eval(meeting_min));
        
-        if(MEETING.responsableId  == undefined){
-            errorMsg= t("select_meeting_pres");
-            return errorMsg;
-        }
+        // if(MEETING.responsableId  == undefined){
+        //     errorMsg= t("select_meeting_pres");
+        //     return errorMsg;
+        // }
 
         if(MEETING.date.length == 0) {
             errorMsg=t("enter_meeting_date");
@@ -1191,7 +1148,7 @@ function AddClassMeeting(props) {
                                     {t("classe_cible")}: 
                                 </div>                    
                                 <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
-                                    <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'4vw', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw'}} disabled={true}/>
+                                    <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'3vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
                                     <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                                 </div>
                             </div>
@@ -1380,8 +1337,7 @@ function AddClassMeeting(props) {
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={cancelHandler}
-                            />
-                            
+                            />                            
                            
                             <CustomButton
                                 btnText={t("save")} 
@@ -1615,7 +1571,7 @@ function AddClassMeeting(props) {
                     btnText={t("decision_conseil")}
                     hasIconImg= {true}
                     imgSrc='images/etape2.png'
-                    imgStyle = {classes.frmBtnImgStyle1} 
+                    imgStyle = {classes.frmBtnImgStyle2} 
                     buttonStyle={classes.buttonEtape3}
                     btnTextStyle = {classes.btnEtapeTextStyle}
                     btnClickHandler={(etape2InActiv) ? null:()=>{showStep2();}}

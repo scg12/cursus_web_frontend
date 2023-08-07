@@ -618,5 +618,13 @@ select{
 }
 
 
+.activeP{
+  background-color: #7f7471eb;
+  border-radius: 3px 3px 3px 3px;
+  color :white;
+  /*min-width: 20vw;*/
+}
+
+
 
 
