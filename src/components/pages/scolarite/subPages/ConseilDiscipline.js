@@ -182,8 +182,8 @@ function ConseilDiscipline(props) {
             listElt.user_id = elt.convoque_par.id_user;
             listElt.rang = rang; 
             listElt.status = elt.status; 
-            listElt.periodeId = elt.status;
-            listElt.periode = getPeriodeLabel(listElt.id_type_conseil,seqInfos, trimInfos);
+            listElt.periodeId = listElt.id_type_conseil;
+            listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos, trimInfos);
             listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);

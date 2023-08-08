@@ -21,11 +21,16 @@ var SELECTED_ROLE = undefined;
 var SELECTED_PARTICIPANT = undefined;
 var SELECTED_DECISION = 0 //0-> Recale, 1-> Admis, 2-> Traduit, 3->Blame, 4->Autre
 var SELECTED_ELEVE = undefined;
-var CURRENT_RESPONSABLE_ID= undefined;
-var CURRENT_RESPONSABLE_LABEL = undefined;
 var MEETING_OBJET_ID = undefined;
 var MEETING_OBJET_LABEL = undefined;
-var periodeId = undefined;
+
+
+var PERIODE_ID = undefined;
+var PERIODE_LABEL = "";
+var MEETING_GEN_DECISION = undefined
+
+
+var participant_data = [];
 
 var eleves_data=[];
 var MEETING = {};
@@ -38,114 +43,124 @@ const MSG_WARNING =2;
 function AddClassMeeting(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
-    const currentAppContext = useContext(AppContext)
-    const [isValid, setIsValid] = useState(false);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
+    const currentAppContext = useContext(AppContext);
     const selectedTheme = currentUiContext.theme;
+
+    const [isValid, setIsValid] = useState(false);
+    
     const [etape,setEtape] = useState(1);
     const [etape1InActiv, setEtape1InActiv] = useState(setButtonDisable(1));
     const [etape2InActiv, setEtape2InActiv] = useState(setButtonDisable(2));
     const [tabParticipant, setTabParticipant] = useState([]);
     const [tabEleves, setTabEleves]= useState([]);
    
-   // const [tabPresents, setTabPresents] = useState([]);
-    const [optOK, setOptOK] = useState([]);
     
     const [optResponsable, setOptResponsable] = useState(props.otherMembers);
-    const [optRole, setOptRole]= useState(getListRoles());
-    const [optObjet, setOptObjet] = useState(getListObjets());
-    const [optPeriode, setOptPeriode] = useState([]);
+    // const [optRole, setOptRole]= useState(getListRoles());
+    const [optObjet, setOptObjet] = useState([]);
+    
     const [isBilan, setIsBilan] = useState(false);
     const [notifVisible, setNotifVisible]= useState(false);
     const [isButtonClicked, setIsButtonClicked] = useState(false);
     const [currentDecision, setCurrentDecision]=useState(0);
+    
+
+    const [optMembres, setOptMembres] = useState([]);
+    const [optAutresMembres, setOptAutresMembres] = useState([]);
+    const [tabProfsPresents, setTabProfsPresents] = useState([]);
+   
+    const [optPeriode, setOptPeriode] = useState([]);
     const [presents, setPresents]= useState([]);
+
+    var firstSelectItem = {
+        value: 0,   
+        label:'-----'+ t('choisir') +'-----'
+    }
+
+    const nonDefini=[        
+        {value: -1,   label:'-----'+ t('non defini') +'-----' },
+    ];
+
   
     useEffect(()=> {
 
         getClassStudentList(props.currentClasseId);
         setOptPeriode(nonDefini);
-        setTabParticipant([...props.defaultMembrers]);
-
+       
         if (props.formMode != 'creation'){
 
-            MEETING = {
-                classeId : props.currentClasseId,
-                classeLabel:props.currentClasseLabel,
-                profPrincipalId : props.currentPpId,
-                profPrincipalLabel : props.currentPpLabel,
+            var tempTab = [...tabObjets];
+            tempTab.unshift(firstSelectItem);
+            setOptObjet(tempTab);
 
-              
-                id : putToEmptyStringIfUndefined(currentUiContext.formInputs[0]),
+            tempTab = [...props.defaultMembres];
+            tempTab.unshift(firstSelectItem);
+            setOptMembres(tempTab);
     
-                date:putToEmptyStringIfUndefined(currentUiContext.formInputs[2]),
-                heure:putToEmptyStringIfUndefined(currentUiContext.formInputs[3]),
+            tempTab = [...props.othersMembres];
+            tempTab.unshift(firstSelectItem);
+            setOptAutresMembres(tempTab);
+
+            console.log("les tableaux", optMembres,optAutresMembres);
+
+        } else {
+ 
+            var tempTab = [...props.defaultMembres];
+            tempTab.unshift(firstSelectItem);
+            setOptMembres(tempTab);
     
-                type_conseil:putToEmptyStringIfUndefined(currentUiContext.formInputs[4]),
-               
-                periodeId:putToEmptyStringIfUndefined(currentUiContext.formInputs[5]),
-    
-                decision:putToEmptyStringIfUndefined(currentUiContext.formInputs[6]),
-    
-                note_passage:putToEmptyStringIfUndefined(currentUiContext.formInputs[7]),
-                note_exclusion:putToEmptyStringIfUndefined(currentUiContext.formInputs[8]),
-    
-                etat : putToEmptyStringIfUndefined(currentUiContext.formInputs[9]),
-               
-                //---participants
-                listParticipants :[...props.defaultMembrers],  
-                
-                //---prof presents
-                listPresents : [...props.presentsMembers],
+            tempTab = [...props.othersMembres];
+            tempTab.unshift(firstSelectItem);
+            setOptAutresMembres(tempTab);
+
+            console.log("les tableaux",optMembres,optAutresMembres);
+
+            MEETING = {};
+        
+            MEETING.id                 = putToEmptyStringIfUndefined(currentUiContext.formInputs[0]);
+            MEETING.classeId           = props.currentClasseId; 
+            MEETING.classeLabel        = props.currentClasseLabel;
             
-                //---decisions cas par cas
-                listCaspasCas :  [...getListCasParCas()],
-                            
-            };    
-    
+            MEETING.currentPpUserId    = props.currentPpUserId;
+            MEETING.profPrincipalId    = props.currentPpId; 
+            MEETING.profPrincipalLabel = props.currentPpLabel;
            
-            setTabEleves([...getListCasParCas()]);
             
-            // tabResponsables.splice(0,1);
-            // var responsable = tabResponsables.find((resp)=>resp.value == MEETING.responsableId);
-            // var index = tabResponsables.findIndex((resp)=>resp.value == MEETING.responsableId);
-            // tabResponsables.splice(index,1);
-            // tabResponsables.unshift(responsable);
-            // setOptResponsable(tabResponsables);
+            MEETING.date         = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
+            MEETING.heure        = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
+            MEETING.periode      = putToEmptyStringIfUndefined(currentUiContext.formInputs[5]); //Mettre la periode 
+            MEETING.id_periode   = putToEmptyStringIfUndefined(currentUiContext.formInputs[4]); //Mettre la periode              
 
-            // CURRENT_RESPONSABLE_ID =  MEETING.responsableId;
-            // CURRENT_RESPONSABLE_LABEL = MEETING.responsableLabel;
+            
+            MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
+            MEETING.alerter_membres = true;
+            
+            //----- 2ieme partie du formulaire1 ----- 
+            MEETING.resume_general_decisions = putToEmptyStringIfUndefined(currentUiContext.formInputs[13]); 
+            MEETING.etat = putToEmptyStringIfUndefined(currentUiContext.formInputs[8]);
 
-            tabObjets.splice(0,1);
-            var objet = tabObjets.find((obj)=>obj.value == MEETING.type_conseil);
-            var index = tabObjets.findIndex((obj)=>obj.value == MEETING.type_conseil);
-            tabObjets.splice(index,1);
-            tabObjets.unshift(objet);
-            setOptObjet(tabObjets);
+            if (props.formMode == 'modif') {
+            
+                //initialisation du select objet du conseil
+                var index2  = optObjet.findIndex((elt)=>elt.value ==  MEETING.id_periode);
+                var objet   = optObjet.find((elt)=>elt.value ==  MEETING.id_periode);
+                var tabObjets = [...optObjet];
+                tabObjets.splice(index2,1);
+                tabObjets.unshift(objet);
 
-            MEETING_OBJET_ID = MEETING.type_conseil;
-            MEETING_OBJET_LABEL =  objet.label;
+                
+                //initialisation du select periode associee
+                var index3  = optPeriode.findIndex((elt)=>elt.label ==  MEETING.type_conseil);
+                var periode = optPeriode.find((elt)=>elt.label ==  MEETING.type_conseil);
+                var tabPeriode = [...optPeriode];
+                tabPeriode.splice(index3,1);
+                tabPeriode.unshift(periode);
 
-            var tabPeriode=[];
-            var typeConseil = currentUiContext.formInputs[10];
-            if(typeConseil=="sequentiel")  tabPeriode = [...props.sequencesDispo];
-            else{
-                if(typeConseil=="trimestriel") tabPeriode= [...props.trimestresDispo];
-                else{/*on va gerer*/}
             }
-
-            var periodeCC = tabPeriode.find((obj)=>obj.value == MEETING.periodeId);
-            var index = tabPeriode.findIndex((obj)=>obj.value == MEETING.periodeId);
-            tabPeriode.splice(index,1);
-            tabPeriode.unshift(periodeCC);
-            setOptPeriode(tabPeriode);        
-
-        } 
-
-        console.log(currentUiContext.formInputs);        
+            console.log(currentUiContext.formInputs);
+        }      
 
     },[]);
-
     
     const  getClassStudentList=(classId)=>{
         var listEleves = []
@@ -172,104 +187,14 @@ function AddClassMeeting(props) {
         return tabEleves;
     }
 
-    function getListParticipants(){
-        return([
-            {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0, present:true, etat:1},
-            {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1, present:true, etat:1},
-            {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2, present:true, etat:1},            
-        ]);
-    }
-
-    function getListCasParCas(){
-        if(props.formMode == 'creation') return [];
-        else
-        return([
-            {id:1, nom:'TABI Thomas',  decisionId:0,  decisionLabel:'Recale',  decisions:[0,1,2,3,4], etat:1},
-            {id:2, nom:'ANABA Luc',    decisionId:1,  decisionLabel:'Admis',   decisions:[0,1,2,3,4], etat:1},
-            {id:3, nom:'TALLA Hubert', decisionId:2,  decisionLabel:'Traduit', decisions:[0,1,2,3,4], etat:1},
-        ]);
-    }
-
-    function getListPresents(){
-        if(props.formMode != 'consult') return [];
-        else
-        return([
-            {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0,  etat:1},
-            {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1,  etat:1},
-            {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2,  etat:1},            
-        ]);
-    }
-
-    function getListResponsables(){
-        return [        
-            {value: 0,  label:'-----'+t('choisir')+'-----' },
-            {value: 11,  label:'Mr MBANBILI Hubert'        },
-            {value: 12,  label:'Mme TIEFONG Huguette'      },
-            {value: 13,  label:'Mme HEMLE MArthe'          },
-            {value: 14,  label:'Mme EMORO MArthe'          },
-            {value: 15,  label:'Mme TALLA Isabelle'        },
-        ];    
-    }
-    
-
-    function getListObjets(){
-        return[
-            {value:"null", label:'-----'+ t('choisir') +'-----'    },
-            {value:"sequentiel",  label:"Conseil bilan sequentiel" },
-            {value:"trimestriel", label:"Conseil bilan trimestriel"},
-            {value:"annuel",      label:"Conseil bilan annuel"},
-        ];    
-    }
-
-    function getListRoles(){
-        return [
-            {value:-1,label:t('choisir')},
-            {value:0, label:'President'},
-            {value:1, label:'Prof Principal'},
-            {value:2, label:'Enseignant'}
-        ];
-    }
-
-    const nonDefini=[        
-        {value: -1,   label:'-----'+ t('non defini') +'-----' },
-    ];
-
-    const tabResponsables=[        
-        {value: 0,   Slabel:'-----'+ t('choisir') +'-----' },
-        {value: 11,  label:'Mr MBANBILI Hubert'            },
-        {value: 12,  label:'Mme TIEFONG Huguette'          },
-        {value: 13,  label:'Mme HEMLE MArthe'              },
-        {value: 14,  label:'Mme EMORO MArthe'              },
-        {value: 15,  label:'Mme TALLA Isabelle'            },
-    ];
-
+   
     const tabObjets=[
-        {value:0, label:'--- '+ t('choisir') +'---'},
         {value:1, label:"Conseil bilan sequentiel" },
         {value:2, label:"Conseil bilan trimestriel"},
         {value:3, label:"Conseil bilan annuel"     },
     ];
-
-    const tabParticipants=[
-        {value:-1,label:'--- '+ t('choisir') +'---'},
-        {value:1, label:'MBARGA Alfred'},
-        {value:2, label:'MOUDIO Luc'},
-        {value:3, label:'DEMBA BA Lucas'}
-    ];
-
-    const tabRoles=[
-        {value:-1,label:t('choisir')},
-        {value:0, label:'President'},
-        {value:1, label:'Prof Principal'},
-        {value:2, label:'Enseignant'}
-    ];
-
-    var participant_data = [
-        {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0,  present:true, etat:1},
-        {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1,  present:true, etat:1},
-        {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2,  present:true, etat:1},            
-
-    ];
+    
+    
    
     function setButtonDisable(etape){
         switch(props.formMode){  
@@ -302,26 +227,6 @@ function AddClassMeeting(props) {
         }
     }
 
-    function getNotifButtonStyle()
-    { // Choix du theme courant
-        switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P ;
-            case 'Theme2': return classes.Theme2_notifButtonStyle + ' '+ classes.margRight5P;
-            case 'Theme3': return classes.Theme3_notifButtonStyle + ' '+ classes.margRight5P;
-            default: return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P;
-        }
-    }   
-  
-    function getButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_Btnstyle ;
-        case 'Theme2': return classes.Theme2_Btnstyle ;
-        case 'Theme3': return classes.Theme3_Btnstyle ;
-        default: return classes.Theme1_Btnstyle ;
-      }
-    }
-
     function getSmallButtonStyle()
     { // Choix du theme courant
       switch(selectedTheme){
@@ -352,7 +257,23 @@ function AddClassMeeting(props) {
         }
     }
    
-    /************************************ Handlers ************************************/    
+    /************************************ Handlers ************************************/  
+    function getDecisionGeneraleHandler(e){
+        MEETING_GEN_DECISION = e.taget.value;
+    }
+
+
+    function periodeChangeHandler(e){
+        if(e.target.value > 0){
+            PERIODE_ID    = e.target.value;
+            PERIODE_LABEL = e.target.label;
+        } else {
+            PERIODE_ID = undefined;
+            PERIODE_LABEL = "";
+        }
+    }
+
+
     function getNonSelectedMembers(){
         var tabOthers = [...props.otherMembers];
         var members = [... props.defaultMembrers];
@@ -369,17 +290,21 @@ function AddClassMeeting(props) {
   
     function saveMeetingHandler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        getFormData1();
+        getFormData();
+      
         if(formDataCheck1().length==0){
+
             if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
-            }       
-            MEETING.etat = 0 ;
-            MEETING.etatLabel = 'En cours' ;
-                      
-            props.actionHandler(MEETING);
-         
+            } 
+
+            MEETING.status = 0 ;
+            MEETING.statusLabel = 'En cours' ;
+            
+            if(props.formMode=="creation")  props.addMeetingHandler(MEETING);
+            else props.modifyMeetingHandler(MEETING);
+           
         } else {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck1();
@@ -389,7 +314,7 @@ function AddClassMeeting(props) {
 
     function gotoStep2Handler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        getFormData1();
+        getFormData();
         if(formDataCheck1().length==0){
             if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
@@ -404,31 +329,34 @@ function AddClassMeeting(props) {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck1();
         }
+        
     }
 
     function backToStep1Handler(){
-        getFormData2();
+        getFormData();
         setEtape2InActiv(true);
         setEtape(1);
         setFormData1();
     }
-
-   
-
     
     function finishAllSteps(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
         console.log('avant:',MEETING);
-        getFormData2();
+        getFormData();
         console.log('apres:',MEETING);
+        
         if(formDataCheck2().length==0){
-           if(errorDiv.textContent.length!=0){
+           
+            if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
-            }  
-            MEETING.etat = 1 ;
-            MEETING.etatLabel = 'Cloture' ;       
-            props.actionHandler(MEETING);
+            }
+              
+            MEETING.status = 1 ;
+            MEETING.statLabel = t('cloture') ; 
+            MEETING.to_close = true;      
+            props.modifyMeetingHandler(MEETING);
+
         } else {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck2();
@@ -439,53 +367,75 @@ function AddClassMeeting(props) {
         if (chaine==undefined) return '';
         else return chaine;
     }
+
+    function getListElementByFields(tabEleves, fields){
+        var tab = [] ;
+        (tabEleves||[]).map((elev,index)=>{tab.push(elev[index][fields])});
+
+        if (tab.length==0) return '';
+        else return tab.join('²²');
+    }
     
 
-    function getFormData1(){
+    function getFormData(){
+        
+        MEETING = {};
+        
+        //----- 1ere partie du formulaire1 ----- 
+        if(props.formMode == "creation") MEETING.id = -1;             
+        else MEETING.id = currentUiContext.formInputs[0];           
 
-        MEETING.id      = -1;
-        MEETING.id_sousetab        = currentAppContext.currentEtab
-        MEETING.classeId           =  props.currentClasseId; 
-        MEETING.classeLabel        =  props.currentClasseLabel;
-       
-        MEETING.alerter_membres    = true;
-
-        // MEETING.responsableId      = CURRENT_RESPONSABLE_ID; 
-        // MEETING.responsableLabel   = CURRENT_RESPONSABLE_LABEL;
+        MEETING.classeId       = props.currentClasseId; 
+        MEETING.classeLabel    =  props.currentClasseLabel;
 
         MEETING.currentPpUserId    = props.currentPpUserId;
         MEETING.profPrincipalId    = props.currentPpId; 
         MEETING.profPrincipalLabel = props.currentPpLabel;
-
+        
+        
+        MEETING.type_conseil    = MEETING_OBJET_LABEL;  //Mettre le type de conseil
+        MEETING.type_conseilId  = MEETING_OBJET_ID;     //Mettre l'ID type conseil
+        
+        MEETING.id_periode      = PERIODE_ID            //Mettre la periode   
+        MEETING.periode         = PERIODE_LABEL;    
+        
+        MEETING.alerter_membres = true;
         MEETING.date  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
         MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
-        
-        MEETING.objetId    = MEETING_OBJET_ID;
-        MEETING.objetLabel = MEETING_OBJET_LABEL;
-        MEETING.periodeId = periodeId;
-        
-        MEETING.listParticipants  = [...tabParticipant];
+
+        //----- 2ieme partie du formulaire1 ----- 
+        MEETING.id_eleves = getListElementByFields(tabEleves, "value"); //Mettre la chaine des eleves separe par²²
+
+        //----- 3ieme partie du formulaire1 ----- 
+        MEETING.id_membres     = getListElementByFields(optMembres, "value");    //Mettre la liste des membres separe par²²
+        MEETING.roles_membres  = getListElementByFields(optMembres, "role");     //Roles des membres
+
+        //----- 1ere partie du formulaire2 -----
+        MEETING.resume_general_decisions = MEETING_GEN_DECISION;   //Resumer des decisions
+
+        //----- 2ieme partie du formulaire2 -----
+        // MEETING.id_eleves  =  getListElementByFields(tabElevesDecisions, "id");
+        // MEETING.list_decisions_conseil_eleves    = SANCTIONS_PAR_ELEVES.length > 0 ? SANCTIONS_PAR_ELEVES.join("²²") :''; //Liste des decisions pour chaque eleves separe par²²
+        // MEETING.id_type_sanction_generale_classe = SANCTIONS_PAR_ELEVES.length > 0 ? SANCTIONS_PAR_ELEVES[0] : ''; //Sanction generale si toute la classe est convoquee
+
+        //----- 3ieme partie du formulaire2 -----
+        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
+
+        MEETING.to_close = false;
        
         console.log(MEETING);
+       
     }
 
-    function getFormData2(){
-        MEETING.decision = document.getElementById('bilan').value;
-        MEETING.note_passage = (document.getElementById('note_passage')==null||document.getElementById('note_passage')==undefined) ? -1 : document.getElementById('note_passage').value;
-        MEETING.note_exclusion = (document.getElementById('note_exclusion')==null||document.getElementById('note_exclusion')==undefined) ? -1 : document.getElementById('note_exclusion').value;
-        MEETING.listParticipants = [...tabParticipant];
-        MEETING.listPresents = [...tabParticipant.filter((participant)=>participant.present == true)];
-        MEETING.listCaspasCas = [...tabEleves];
-        console.log(MEETING);        
-    }
 
     function setFormData1(){
         var tabEleve=[];        
-        tabEleve[1]  =  MEETING.responsableId; 
-        tabEleve[2]  =  convertDateToUsualDate(MEETING.date);
-        tabEleve[3]  =  MEETING.heure; 
-        tabEleve[4]  =  MEETING.objetId;
-        tabEleve[9]  =  MEETING.etat;
+        tabEleve[1]  =  convertDateToUsualDate(MEETING.date); 
+        tabEleve[2]  =  MEETING.heure;
+        tabEleve[3]  =  MEETING.type_conseil; 
+        tabEleve[4]  =  MEETING.id_type_conseil;
+        tabEleve[8]  =  MEETING.status;
+        tabEleve[9]  =  MEETING.statusLabel;
         currentUiContext.setFormInputs(tabEleve);
         console.log(MEETING.date);
     }
@@ -494,14 +444,19 @@ function AddClassMeeting(props) {
         var tabEleve=[];       
         
         var profPresent =[];
-        tabParticipant.map((elt, index)=>{profPresent[index]=true});
+        optMembres.map((elt, index)=>{profPresent[index]=true});
         setPresents(profPresent);
-       
 
-        tabEleve[6] =  MEETING.decision;
-        tabEleve[7] =  MEETING.note_passage ==-1 ? 0 : MEETING.note_passage;
-        tabEleve[8] =  MEETING.note_exclusion == -1 ? 0 : MEETING.note_exclusion;
-        tabEleve[9] =  MEETING.etat;
+        profPresent = [];
+        optMembres.map((elt)=>{
+            profPresent.push({value:elt.value, label:elt.label, role:elt.role, present:elt.present, etat:0});
+        })
+
+        setTabProfsPresents(profPresent);
+        
+        tabEleve[11] = MEETING.resume_general_decisions;
+        tabEleve[8] =  MEETING.status;
+        tabEleve[9] =  MEETING.statusLabel;
         currentUiContext.setFormInputs(tabEleve);
 
         console.log('ici',currentUiContext.formInputs, profPresent);
@@ -556,7 +511,7 @@ function AddClassMeeting(props) {
     function formDataCheck2(){       
         var errorMsg='';
         
-        if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
+      /*  if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
             errorMsg=t("enter_success_mark");
             return errorMsg;
         }
@@ -584,7 +539,7 @@ function AddClassMeeting(props) {
         if(MEETING.note_exclusion != -1 && (MEETING.note_exclusion > 20 || MEETING.note_exclusion < 0)){
             errorMsg= t("enter_valid_elim_mark");
             return errorMsg;
-        }
+        }*/
 
         if(MEETING.decision.length == 0 ){
             errorMsg=t("type_meeting_decision");
@@ -621,25 +576,7 @@ function AddClassMeeting(props) {
 
     }
 
-    function periodeChangeHandler(e){
-        if(e.target.value > 0){
-            periodeId = e.target.value;
-        } else periodeId = undefined;
-    }
-
-    // function responsableChangeHandler(e){
-    //     if(e.target.value > 0){
-    //         var responsable = tabResponsables.find((resp)=>resp.value == e.target.value);
-            
-    //         CURRENT_RESPONSABLE_ID = responsable.value;
-    //         CURRENT_RESPONSABLE_LABEL = responsable.label;
-
-    //     } else{
-    //         CURRENT_RESPONSABLE_ID = undefined;
-    //         CURRENT_RESPONSABLE_LABEL = undefined;
-    //     }
-    // }
-
+    
     function objetChangeHandler(e){
         var typeConseil = e.target.value;
         var tabPeriode=nonDefini;
@@ -685,48 +622,44 @@ function AddClassMeeting(props) {
     /************************************ JSX Code ************************************/
 
     //----------------- PARTICIPANT-----------------
-
+   
     function participantChangeHandler(e){
         console.log(e, e.target.value);
-        if(e.target.value != optResponsable[0].value){
+        if(e.target.value != optAutresMembres[0].value){
+
+           var selected_memmbre = optAutresMembres.find((elt)=>(elt.value == e.target.value));
+
             document.getElementById('participantId').style.borderRadius = '1vh';
             document.getElementById('participantId').style.border = '0.47vh solid rgb(128, 180, 248)';
             SELECTED_PARTICIPANT = e.target.value;
+            SELECTED_ROLE = selected_memmbre.role;
 
         }else{
             document.getElementById('participantId').style.borderRadius = '1vh';
             document.getElementById('participantId').style.border = '0.47vh solid red';
             SELECTED_PARTICIPANT = undefined;
-        }
-
-    }
-
-    function roleChangeHandler(e){
-        if(e.target.value != optRole[0].value){
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid rgb(128, 180, 248)';
-            SELECTED_ROLE = e.target.value;
-        }else{
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid red';
             SELECTED_ROLE = undefined;
         }
+
     }
+
 
     function addParticipantRow(){
         setOptResponsable(getNonSelectedMembers());
-        participant_data = [...tabParticipant];
+       
+        participant_data = [...optMembres];
         var index = participant_data.findIndex((elt)=>elt.id==0);
         if (index <0){
             
             participant_data.push({id:0, nom:'', role:'', present:true, etat:-1});
             setTabParticipant(participant_data);
             console.log(participant_data);
-        } else {alert("ici")}
+        } 
     }
 
     function addParticipant(){
-        participant_data =[...tabParticipant];
+        participant_data =[...optMembres];
+
         if(SELECTED_PARTICIPANT==undefined){
             document.getElementById('participantId').style.borderRadius = '1vh';
             document.getElementById('participantId').style.border = '0.47vh solid red';
@@ -742,12 +675,13 @@ function AddClassMeeting(props) {
         var index = participant_data.findIndex((elt)=>elt.id==0);
         if (index >=0) participant_data.splice(index,1);
       
-        var nomParticipant = optResponsable.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
-        var roleParticipant = optRole.find((role)=>role.value==SELECTED_ROLE).label
-        participant_data.push({id:SELECTED_PARTICIPANT, nom:nomParticipant, roleId:SELECTED_ROLE, role:roleParticipant, present:true, etat:0});
-        setTabParticipant(participant_data);
+        var nomParticipant  = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
+        
+        participant_data.push({id:SELECTED_PARTICIPANT, nom:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
+        setOptMembres(participant_data);
+        
         SELECTED_PARTICIPANT=undefined;
-        SELECTED_ROLE = undefined
+        SELECTED_ROLE = undefined;        
     }
 
     function deleteParticipant(e){
@@ -781,8 +715,8 @@ function AddClassMeeting(props) {
                     {(props.etat >= 0) ? 
                         props.nom
                      :
-                        <select id='participantId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', marginBottom:1}} onChange={participantChangeHandler} className={classes.comboBoxStyle}>
-                            {(optResponsable||[]).map((option)=> {
+                        <select id='participantId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', borderRadius:'1vh', borderColor:'#80b4f8', borderWidth:'0.47vh'}} onChange={participantChangeHandler} >
+                            {(optAutresMembres||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
                                 );
@@ -791,26 +725,16 @@ function AddClassMeeting(props) {
                     }
                 </div>
                 
-                <div style={{width:'11.3vw'}}> 
-                    {(props.etat >= 0) ? 
-                        props.role
-                        :
-                        <select id='roleId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', marginBottom:1}} onChange={roleChangeHandler} className={classes.comboBoxStyle}>
-                            {(optRole||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    }
+                <div style={{width:'11.3vw'}}>
+                    { props.role}
                 </div>
               
                 <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
                     {(props.etat<=0)&&
                         <img src="images/cancel_trans.png"  
                             id={props.participantId}
-                            width={ isMobile? '10vw':25} 
-                            height={isMobile? '13.7vw':33} 
+                            width={25} 
+                            height={33} 
                             className={classes.cellPointer} 
                             onClick={deleteParticipant}                         
                             alt=''
@@ -818,12 +742,12 @@ function AddClassMeeting(props) {
                     }
                     {(props.etat<0)&&
                         <img src="images/checkp_trans.png"  
-                            width={ isMobile? '7.7vw':19} 
-                            height={isMobile? '7.7vw':19} 
+                            width={19} 
+                            height={19} 
                             className={classes.cellPointer} 
                             onClick={addParticipant}                         
                             alt=''
-                            style={{marginLeft:'1vw', marginTop:isMobile? '0.97vh':'1.2vh'}}
+                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
                         />
                     }
                 </div>
@@ -1008,28 +932,25 @@ function AddClassMeeting(props) {
 
     function managePresent(e){
         e.preventDefault();
-        var participants = [...tabParticipant];
+        var participants = [...optMembres];
         var tabPresent = [...presents];
         var row = e.target.id;
+
         if(e.target.checked){
             tabPresent[row]=true;
             participants[row].present= true;
             e.target.checked = true;
             setPresents(tabPresent);
-            setTabParticipant(participants);
+            setOptMembres(participants);
 
-            //addPresent(idProf)
-        }  
-        else {
+        } else {
            tabPresent[row]=false;
            participants[row].present= false;
            e.target.checked = false;
-
             setPresents(tabPresent);
-            setTabParticipant(participants);
-            //removePresent(idProf)
+            setOptMembres(participants);
         }
-        console.log(tabParticipant);
+
     }
 
     const LignePresentsHeader=(props)=>{
@@ -1240,7 +1161,7 @@ function AddClassMeeting(props) {
 
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[11]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                         <input id="objetId" type="hidden"    className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[4]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>  
                                     :
@@ -1317,7 +1238,7 @@ function AddClassMeeting(props) {
 
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'30vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LigneProfParticipantHeader date={'Date'} nbreJours={'Nbre Jours'} etat={'Etat'}/>
-                                    {(tabParticipant||[]).map((prof)=>{
+                                    {(optMembres||[]).map((prof)=>{
                                         return <LigneProfParticipant  participantId={prof.id} nom={prof.nom} role={prof.role} etat={prof.etat}/>
                                         })
                                     }
@@ -1462,7 +1383,7 @@ function AddClassMeeting(props) {
                                 </div>
                                     
                                 <div> 
-                                    <textarea id='bilan' rows={50}  className={classes.comboBoxStyle} defaultValue={currentUiContext.formInputs[6]} style={{marginLeft:'-2vw', height:'12vh',width:'27vw', fontSize:'0.77vw'}}/>
+                                    <textarea id='bilan' rows={50}  className={classes.comboBoxStyle} onChange={getDecisionGeneraleHandler} defaultValue={currentUiContext.formInputs[6]} style={{marginLeft:'-2vw', height:'12vh',width:'27vw', fontSize:'0.77vw'}}/>
                                 </div>
                             </div>
 
@@ -1523,7 +1444,7 @@ function AddClassMeeting(props) {
 
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LignePresentsHeader/>
-                                    {(tabParticipant||[]).map((participant, index)=>{
+                                    {(tabProfsPresents||[]).map((participant, index)=>{
                                         return <LignePresent id={participant.id} rowIndex={index} nom={participant.nom}/>
                                         })
                                     }

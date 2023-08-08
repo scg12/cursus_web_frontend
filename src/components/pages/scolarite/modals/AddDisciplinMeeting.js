@@ -93,15 +93,13 @@ function AddDisciplinMeeting(props) {
     useEffect(()=> {
 
         getClassStudentList(props.currentClasseId);
-        setOptObjet(tabObjets);
         setOptPeriode(nonDefini);
         getMotifConvocation();
         getTypeSAnction();
-        //initMotifsTab(listMotifs[0].value);
-        //initSanctionTab(listSanctions[0].value);
         
 
         if (props.formMode == 'creation'){
+            setOptObjet(tabObjets);
             setTabElevesMotifs([]);
             setTabElevesDecisions([]);    
             
@@ -153,12 +151,17 @@ function AddDisciplinMeeting(props) {
             MEETING.heure = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
             
             MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
-            MEETING.id_periode      = putToEmptyStringIfUndefined(currentUiContext.formInputs[5]); //Mettre la periode       
+            MEETING.periode         = putToEmptyStringIfUndefined(currentUiContext.formInputs[5]);
+            MEETING.id_periode      = putToEmptyStringIfUndefined(currentUiContext.formInputs[4]); //Mettre la periode       
             MEETING.alerter_membres = true;
             
             //----- 2ieme partie du formulaire1 ----- 
-            MEETING.is_all_class_convoke = putToEmptyStringIfUndefined(currentUiContext.formInputs[12]); //Mettre la bonne valeur
+            MEETING.is_all_class_convoke     = putToEmptyStringIfUndefined(currentUiContext.formInputs[12]); 
+            MEETING.resume_general_decisions = putToEmptyStringIfUndefined(currentUiContext.formInputs[13]); 
+           
             MEETING.etat = putToEmptyStringIfUndefined(currentUiContext.formInputs[8]);
+            MEETING.status = putToEmptyStringIfUndefined(currentUiContext.formInputs[8]);
+            MEETING.statusLabel = putToEmptyStringIfUndefined(currentUiContext.formInputs[9]);
 
             if (props.formMode == 'modif') {
                 //initialisation du select convoque par
@@ -424,7 +427,6 @@ function AddDisciplinMeeting(props) {
         // props.actionHandler(MEETING);
     }
 
-   
 
     
     function finishAllSteps(){
@@ -515,23 +517,13 @@ function AddDisciplinMeeting(props) {
     }
 
     
-    function getFormData2(){
-        
-        MEETING.decision = document.getElementById('bilan').value;
-        //MEETING.note_passage = (document.getElementById('note_passage')==null||document.getElementById('note_passage')==undefined) ? -1 : document.getElementById('note_passage').value;
-        //MEETING.note_exclusion = (document.getElementById('note_exclusion')==null||document.getElementById('note_exclusion')==undefined) ? -1 : document.getElementById('note_exclusion').value;
-        MEETING.listParticipants = [...tabParticipant];
-        MEETING.listPresents = [...tabParticipant.filter((participant)=>participant.present == true)];
-        MEETING.listCaspasCas = [...optConvoques];
-        console.log(MEETING);        
-    }
-
-    
     function setFormData1(){
         var tabEleve  = [];        
-        tabEleve[2]   =  convertDateToUsualDate(MEETING.date);
-        tabEleve[3]   =  MEETING.heure; 
-        tabEleve[9]   =  MEETING.etat;
+        tabEleve[1]   =  convertDateToUsualDate(MEETING.date);
+        tabEleve[2]   =  MEETING.heure; 
+        tabEleve[8]   =  MEETING.status;
+        tabEleve[9]   =  MEETING.statusLabel;
+
         //tabEleve[4]  =  MEETING.objetId;
         currentUiContext.setFormInputs(tabEleve);
         console.log(MEETING.date);
@@ -760,15 +752,14 @@ function AddDisciplinMeeting(props) {
 
     }
 
-    
-
     function addParticipantRow(){
         participant_data = [...optMembres];
         var index = participant_data.findIndex((elt)=>elt.id==0);
         if (index <0){
             
             participant_data.push({id:0, nom:'', role:'', present:true, etat:-1});
-            setTabParticipant(participant_data);
+            //setTabParticipant(participant_data);
+            setOptMembres(participant_data);
             console.log(participant_data);
         } 
     }
@@ -796,7 +787,7 @@ function AddDisciplinMeeting(props) {
         setOptMembres(participant_data);
         
         SELECTED_PARTICIPANT=undefined;
-        SELECTED_ROLE = undefined
+        SELECTED_ROLE = undefined;
 
     }
 
@@ -807,7 +798,7 @@ function AddDisciplinMeeting(props) {
         var index = participant_data.findIndex((elt)=>elt.id==idParticipant);
         if (index >=0){
             participant_data.splice(index,1);
-            setTabParticipant(participant_data);
+            setOptMembres(participant_data);
         }
         SELECTED_PARTICIPANT=undefined;
         SELECTED_ROLE = undefined
@@ -1175,28 +1166,24 @@ function AddDisciplinMeeting(props) {
    
     function managePresent(e){
         e.preventDefault();
-        var participants = [...tabParticipant];
+        var participants = [...optMembres];
         var tabPresent = [...presents];
         var row = e.target.id;
+
         if(e.target.checked){
             tabPresent[row]=true;
             participants[row].present= true;
             e.target.checked = true;
             setPresents(tabPresent);
-            setTabParticipant(participants);
+            setOptMembres(participants);
 
-            //addPresent(idProf)
-        }  
-        else {
-           tabPresent[row]=false;
-           participants[row].present= false;
-           e.target.checked = false;
-
+        } else {
+            tabPresent[row]=false;
+            participants[row].present= false;
+            e.target.checked = false;
             setPresents(tabPresent);
-            setTabParticipant(participants);
-            //removePresent(idProf)
+            setOptMembres(participants);
         }
-        console.log(tabParticipant);
     }
 
     const LignePresentsHeader=(props)=>{
@@ -1383,7 +1370,7 @@ function AddDisciplinMeeting(props) {
 
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[11]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                         <input id="objetId" type="hidden"  className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[4]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>  
                                     :
