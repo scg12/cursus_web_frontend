@@ -61,6 +61,7 @@ function GrilleEmploiTemps(props) {
     const [pausecreated, setPauseCreated] = useState(false);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const { t, i18n } = useTranslation();
+    const [matiereEnable, setMatiereEnable] = useState(true);
     
     
     const changeLanguage = (event) => {
@@ -233,7 +234,7 @@ function GrilleEmploiTemps(props) {
                 CURRENT_DROPPED_MATIERE_LIST = liste_dropped_matiere;
                 currentUiContext.addMatiereToDroppedMatiereList(liste_dropped_matiere,-2);
                 
-                console.log("currentUiContext.CURRENT_DROPPED_MATIERE_LIST: ",currentUiContext.CURRENT_DROPPED_MATIERE_LIST)
+                console.log("profs LIST: ",currentUiContext.CURRENT_DROPPED_PROFS_LIST)
             
             }  
 
@@ -597,8 +598,9 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
 
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
+                        PROF_DATA.sexe       = sexe;
                         // PROF_DATA.NomProf    = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
-                        PROF_DATA.NomProf    = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1];
+                        PROF_DATA.NomProf    = sexe=='M' ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1] : emploiTemps[i].value.split("*")[2+j].split("%")[0].split("Mme.")[1];
                         PROF_DATA.idJour     = jour;
                         PROF_DATA.idMatiere  = idMatiereToDrop;
                         PROF_DATA.heureDeb   = periode.split('_')[0];
@@ -693,6 +695,8 @@ function matiereClickHandler(e){
         }
     }
 }
+
+
 function initProfList(listProfs){
     clearProflist();
     COUNT_SELECTED_PROFS=0;
@@ -701,6 +705,8 @@ function initProfList(listProfs){
     CURRENT_DROPPED_PROFS_LIST=[];
    
 }
+
+
 function clearProflist(){
     let listProfs = currentUiContext.listProfs;
     var draggableSon, draggableSonText, draggableSonImg;
@@ -729,6 +735,8 @@ function clearProflist(){
     } 
     CURRENT_PROFS_LIST = [];
 }
+
+
 function clearGrille(TAB_PERIODES,TAB_JOURS) {
     var DropZoneId;
     var childDivs;
@@ -778,6 +786,7 @@ function clearGrille(TAB_PERIODES,TAB_JOURS) {
     }
 
 }
+
 function clearMatiereList(matieres){
     var parent, enfants, draggableSon;
     //On initialise tout ce aui concerne la matiere.
@@ -1338,7 +1347,84 @@ const closePreview =()=>{
 
 
 /*************************** <JSX Code> ****************************/
-   return (              
+function LigneProfPrincipal(props) {
+  
+    const currentUiContext = useContext(UiContext);
+
+     //Cette constante sera lu lors de la configuration de l'utilisateur.
+    const selectedTheme = currentUiContext.theme;
+    const { t, i18n } = useTranslation();
+    
+    const changeLanguage = (event) => {
+        i18n.changeLanguage(event.target.id);
+    };
+
+  
+    
+    function getCurrentTheme()
+    {  // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_footer;
+            case 'Theme2': return classes.Theme2_footer;
+            case 'Theme3': return classes.Theme3_footer;
+            default: return classes.Theme1_footer;
+        }
+    }
+
+    function getCurrentFooterTheme()
+    {  // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_footer;
+            case 'Theme2': return classes.Theme2_footer;
+            case 'Theme3': return classes.Theme3_footer;
+            default: return classes.Theme1_footer;
+        }
+    }
+
+
+   return (
+        <div style={{display:'flex', flexDirection:'row'}}>
+
+            <div className={classes.profTitle} style={{marginLeft:'-3vw'}}>{t('enseignants')}</div>
+            <div id='profsList' style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw'}}>
+                {/*
+                <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
+                    <div style={{display:'flex', flexDirection:'row'}}> 
+                        <input type='radio' name='ppsList'/>
+                        <img src="images/maleTeacher.png" style={{width:'2vw'}}/>
+                    </div>
+                    
+                    <div style={{display:'flex', flexDirection:'column'}}> 
+                        <div style={{fontSize:'0.9vw'}}>{t('Non defini')}</div>
+                        <div style={{fontSize:'0.79vw', textAlign:'center'}}> </div>
+                    </div>
+                </div>
+            */}
+
+                {currentUiContext.CURRENT_DROPPED_PROFS_LIST.map((prof) => {
+                return (
+                        <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
+                            <div style={{display:'flex', flexDirection:'row'}}> 
+                                <input type='radio' name='ppsList'/>
+                                <img src= {prof.sexe=='M'? "images/maleTeacher.png" : "images/femaleTeacher.png"} style={{width:'2vw'}}/>
+                            </div>
+                            
+                            <div style={{display:'flex', flexDirection:'column'}}> 
+                                <div style={{fontSize:'0.9vw'}}>{prof.NomProf}</div>
+                                <div style={{fontSize:'0.79vw', textAlign:'center'}}>(...)</div>
+                            </div>
+                        </div>
+                    );
+                })} 
+            </div>
+        </div>       
+    );
+}
+
+
+
+
+    return (              
        <DndProvider backend={isMobile? TouchBackend: HTML5Backend} options= {isMobile ? {enableTouchEvents: true, enableMouseEvents: false,  delayTouchStart:5000}:null}>
             {(currentUiContext.TAB_JOURS.length>0) ?
                 <div className={classes.formET} >
@@ -1427,8 +1513,15 @@ const closePreview =()=>{
                         </div>
                         
 
-                       
-                        <div className={classes.matiereTitle}>{t('matieres')}</div>
+                        {/*currentUiContext.isMatiereEnable ?
+                            <div className={classes.matiereTitle}>
+                                {t('matieres')}
+                            </div>
+                            :
+                            <div className={classes.matiereTitle}>
+                                {t('matieres')}
+                            </div>*/
+                        }
                         
 
                         <div style={{display:'flex', flexDirection:'row',justifyContent:'center'}}>
@@ -1480,8 +1573,14 @@ const closePreview =()=>{
                                     })}                         
                             
                                 </div> 
-                               
-                                <LigneMatieres/>
+                                {
+                                    currentUiContext.isMatiereEnable ?
+
+                                    <LigneMatieres/>
+                                    :
+                                    <LigneProfPrincipal/>                               
+                                }
+                                
                                 
                             </div>
 

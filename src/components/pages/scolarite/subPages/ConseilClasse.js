@@ -140,15 +140,16 @@ function ConseilClasse(props) {
         return resultTab;
     }
 
-    function createLabelValueTableWithUserS(tab){
+     function createLabelValueTableWithUserS(tab, present, etat){
         var resultTab = [];
         if(tab.length>0){
             tab.map((elt)=>{
-                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type});
+                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type, present:present, etat:etat});
             })
         }
         return resultTab;
     }
+    
 
     function formatList(listConseil,ProfInfo,seqInfos,trimInfos){
         var rang = 1;
@@ -665,14 +666,13 @@ const columnsFr = [
             id_classe       : meeting.classeId,
             id_pp           : meeting.profPrincipalId,
             id_pp_user      : meeting.currentPpUserId,
-            type_conseil    : getTypeConseil(meeting.objetId),
+            type_conseil    : MEETING.type_conseil,
             date_prevue     : meeting.date,
             heure_prevue    : meeting.heure,
-            id_periode      : meeting.periodeId,
-            id_periode      : meeting.periodeId,
+            id_periode      : meeting.id_periode,
             alerter_membres : meeting.alerter_membres,
-            id_membres      : getMembresId(meeting.listParticipants),
-            roles_membres   : getMembreRoles(meeting.listParticipants)
+            id_membres      : meeting.id_membres,
+            roles_membres   : meeting.roles_membres
             
         }).then((res)=>{
            var gridData = createGridData(res.data.conseil_classes)
@@ -699,15 +699,20 @@ const columnsFr = [
             id_classe       : meeting.classeId,
             id_pp           : meeting.profPrincipalId,
             id_pp_user      : meeting.currentPpUserId,
-            type_conseil    : getTypeConseil(meeting.objetId),
+            type_conseil    : meeting.type_conseil,
             date_prevue     : meeting.date,
             heure_prevue    : meeting.heure,
-            id_periode      : meeting.periodeId,
-            id_periode      : meeting.periodeId,
+            id_periode      : meeting.id_periode,
             alerter_membres : meeting.alerter_membres,
-            id_membres      : getMembresId(meeting.listParticipants),
-            roles_membres   : getMembreRoles(meeting.listParticipants)
+            id_membres      : meeting.id_membres,
+            roles_membres   : meeting.roles_membres,
+            membre_presents : meeting.membre_presents,
             
+            id_eleves       : meeting.id_eleves,
+            list_decisions_conseil_eleves  : meeting.id_eleves,
+            list_classes_promotions_eleves : meeting.id_eleves,
+            resume_general_decisions       : meeting.resume_general_decisions
+
         }).then((res)=>{
            var gridData = createGridData(res.data.conseil_classes)
             setGridMeeting(gridData);
@@ -746,11 +751,13 @@ const columnsFr = [
     }
    
     function AddNewMeetingHandler(e){
-        if(CURRENT_CLASSE_ID != undefined){        
-            DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD, true,   1);
-            OTHER_MEMBERS     =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,   false, -1);
-            PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD, true,  0);
+       
+        if(CURRENT_CLASSE_ID != undefined){         
+            DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,   true,   1);
+            OTHER_MEMBERS     =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,     false, -1);
+            PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD,  true,   0);
             
+          
             setModalOpen(1); 
             initFormInputs();
         } else{
@@ -928,20 +935,20 @@ const columnsFr = [
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddClassMeeting 
-                    defaultMembrers={DEFAULT_MEMBERS}  
-                    otherMembers={OTHER_MEMBERS} 
-                    presentsMembers={PRESENTS_MEMBERS} 
-                    sequencesDispo={SEQUENCES_DISPO} 
-                    trimestresDispo={TRIMESTRES_DISPO} 
-                    anneDispo={ANNEE_DISPO} 
+                    defaultMembres  = {DEFAULT_MEMBERS}  
+                    otherMembres    = {OTHER_MEMBERS} 
+                    presentsMembres = {PRESENTS_MEMBERS} 
+                    sequencesDispo  = {SEQUENCES_DISPO} 
+                    trimestresDispo = {TRIMESTRES_DISPO} 
+                    anneDispo       = {ANNEE_DISPO} 
                     currentPpUserId = {CURRENT_PROF_PP_USERID} 
-                    currentPpId={CURRENT_PROF_PP_ID} 
-                    currentPpLabel={CURRENT_PROF_PP_LABEL} 
-                    currentClasseLabel={CURRENT_CLASSE_LABEL} 
-                    currentClasseId={CURRENT_CLASSE_ID} 
-                    formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
-                    actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
-                    cancelHandler={quitForm}
+                    currentPpId     = {CURRENT_PROF_PP_ID} 
+                    currentPpLabel  = {CURRENT_PROF_PP_LABEL} 
+                    currentClasseLabel = {CURRENT_CLASSE_LABEL} 
+                    currentClasseId    = {CURRENT_CLASSE_ID} 
+                    formMode      = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    actionHandler = {(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
+                    cancelHandler = {quitForm}
                 />
             }
             {(modalOpen==4) && 
@@ -961,11 +968,11 @@ const columnsFr = [
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
                 <MsgBox 
-                    msgTitle = {currentUiContext.msgBox.msgTitle} 
-                    msgType  = {currentUiContext.msgBox.msgType} 
-                    message  = {currentUiContext.msgBox.message} 
-                    customImg ={true}
-                    customStyle={true}
+                    msgTitle    = {currentUiContext.msgBox.msgTitle} 
+                    msgType     = {currentUiContext.msgBox.msgType} 
+                    message     = {currentUiContext.msgBox.message} 
+                    customImg   = {true}
+                    customStyle = {true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
                     buttonAcceptText = {t("yes")}

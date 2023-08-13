@@ -45,195 +45,24 @@ function LigneMatieres(props) {
     }
 
    return (
-        <div id='matieres' className={classes.listeMatieres + ' matieres'}>
-            {currentUiContext.matiereSousEtab.map((matiere) => {
-                return (
-                    <MatiereDiv id={"matiere_"+matiere.id}
-                        title = '' 
-                        dragDivClassName  = {null} 
-                        matiereTitleStyle = {null} 
-                        dropDivClassName  = {null}
-                    />
-                );
-            })} 
-           
-              {/* <MatiereDiv 
-                id='matiere_1'
-                title = '' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            
-            <MatiereDiv 
-                id='matiere_2'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_3'
-                title=' ' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_4'
-                title=' ' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_5'
-                title=' ' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_6'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_7'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}            
-            />
-            <MatiereDiv 
-                id='matiere_8'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_9'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_10'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_11'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_12'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_13'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_14'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_15'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_16'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_17'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_18'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_19'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_20'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_21'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_22'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_23'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_24'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-            />
-            <MatiereDiv 
-                id='matiere_25'
-                title='' 
-                dragDivClassName  = {null} 
-                matiereTitleStyle = {null} 
-                dropDivClassName  = {null}
-        />     */}     
-        </div>       
+        <div style={{display:'flex', flexDirection:'row'}}>
+            <div className={classes.matiereTitle} style={{marginLeft:'-2.7vw'}}>{t('matieres')}</div>
+            <div id='matieres' className={classes.listeMatieres + ' matieres'}>
+                {currentUiContext.matiereSousEtab.map((matiere) => {
+                    return (
+                        <MatiereDiv id={"matiere_"+matiere.id}
+                            title = '' 
+                            dragDivClassName  = {null} 
+                            matiereTitleStyle = {null} 
+                            dropDivClassName  = {null}
+                        />
+                    );
+                })} 
+                  
+            </div>       
+
+        </div>
+        
     );
 }
 

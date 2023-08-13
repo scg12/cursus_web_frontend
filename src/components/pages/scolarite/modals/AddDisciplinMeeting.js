@@ -56,8 +56,7 @@ function AddDisciplinMeeting(props) {
     const [etape,setEtape] = useState(1);
     const [etape1InActiv, setEtape1InActiv] = useState(setButtonDisable(1));
     const [etape2InActiv, setEtape2InActiv] = useState(setButtonDisable(2));
-    const [tabParticipant, setTabParticipant] = useState([]);
-   
+    
 
     const [tabElevesMotifs, setTabElevesMotifs]= useState([]);
     const [tabElevesDecisions, setTabElevesDecisions]= useState([]);
@@ -89,6 +88,13 @@ function AddDisciplinMeeting(props) {
     const nonDefini=[        
         {value: -1,   label:'-----'+ t('non defini') +'-----' },
     ];
+
+    const tabTypeConseil=[
+        {value:"null", label:'-----'+ t('choisir') +'-----'    },
+        {value:1,      label:"Conseil bilan sequentiel" },
+        {value:2,      label:"Conseil bilan trimestriel"},
+    ];
+   
   
     useEffect(()=> {
 
@@ -99,7 +105,7 @@ function AddDisciplinMeeting(props) {
         
 
         if (props.formMode == 'creation'){
-            setOptObjet(tabObjets);
+            setOptObjet(tabTypeConseil);
             setTabElevesMotifs([]);
             setTabElevesDecisions([]);    
             
@@ -175,9 +181,9 @@ function AddDisciplinMeeting(props) {
                 //initialisation du select objet du conseil
                 var index2  = optObjet.findIndex((elt)=>elt.value ==  MEETING.id_periode);
                 var objet   = optObjet.find((elt)=>elt.value ==  MEETING.id_periode);
-                var tabObjets = [...optObjet];
-                tabObjets.splice(index2,1);
-                tabObjets.unshift(objet);
+                var listTypeConseils = [...optObjet];
+                listTypeConseils.splice(index2,1);
+                listTypeConseils.unshift(objet);
 
                 
                 //initialisation du select periode associee
@@ -210,8 +216,8 @@ function AddDisciplinMeeting(props) {
 
     function getElevesTab(elevesTab){
         var tabEleves = [
-                            {value:-1, label:"----- "+t('choisir')+" -----"},
-                            {value: 0, label:"----- "+t('all_students')+" -----"}
+                            {value:-1,     label:"----- "+t('choisir')+" -----"},
+                            {value: 'all', label:"----- "+t('all_students')+" -----"}
                         ]
         var new_eleve;
 
@@ -292,7 +298,7 @@ function AddDisciplinMeeting(props) {
             console.log("periode choisie",tabPeriode, typeConseil, props.sequencesDispo)
             setOptPeriode(tabPeriode);
             
-            var meeting = tabObjets.find((meetg)=>meetg.value==e.target.value);
+            var meeting = tabTypeConseil.find((meetg)=>meetg.value==e.target.value);
 
             MEETING_OBJET_ID    = meeting.value;
             MEETING_OBJET_LABEL = meeting.label;
@@ -307,12 +313,7 @@ function AddDisciplinMeeting(props) {
         MEETING_GEN_DECISION = e.taget.value;
     }
 
-    const tabObjets=[
-        {value:"null", label:'-----'+ t('choisir') +'-----'    },
-        {value:1,      label:"Conseil bilan sequentiel" },
-        {value:2,      label:"Conseil bilan trimestriel"},
-    ];
-   
+  
     function setButtonDisable(etape){
         switch(props.formMode){  
             case 'creation':                     
@@ -493,8 +494,10 @@ function AddDisciplinMeeting(props) {
         MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
 
         //----- 2ieme partie du formulaire1 ----- 
-        MEETING.is_all_class_convoke = ALL_STUDENTS_CONVOCATED; //Mettre la bonne valeur
-        MEETING.id_eleves = getListElementByFields(tabEleves, "value"); //Mettre la chaine des eleves separe par²²
+        MEETING.id_eleves = getListElementByFields(tabEleves, "value");  //Mettre la chaine des eleves separe par²²
+        MEETING.is_all_class_convoke    = ALL_STUDENTS_CONVOCATED;       //Mettre la bonne valeur
+        //MEETING.motif_generale_classe   = MOTIFS_PAR_ELEVES.length > 0 ? MOTIFS_PAR_ELEVES[0] :'';
+        MEETING.list_motifs_covocations = MOTIFS_PAR_ELEVES.length > 0 ? MOTIFS_PAR_ELEVES.join("²²") :'';
 
         //----- 3ieme partie du formulaire1 ----- 
         MEETING.id_membres     = getListElementByFields(optMembres, "value");    //Mettre la liste des membres separe par²²
@@ -772,11 +775,11 @@ function AddDisciplinMeeting(props) {
             return -1;
         }
 
-        if(SELECTED_ROLE==undefined){
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid red';
-            return -1
-        }
+        // if(SELECTED_ROLE==undefined){
+        //     document.getElementById('roleId').style.borderRadius = '1vh';
+        //     document.getElementById('roleId').style.border = '0.47vh solid red';
+        //     return -1
+        // }
         
         var index = participant_data.findIndex((elt)=>elt.id==0);
         if (index >=0) participant_data.splice(index,1);
@@ -870,24 +873,24 @@ function AddDisciplinMeeting(props) {
         var index  = LIST_ELEVES.findIndex((elt)=>elt.value == e.target.value);
         var elvElt = LIST_ELEVES.find((elt)=>elt.value == e.target.value);
 
-        if(e.target.value>0){  // aucune selection
+        if(e.target.value<0){  // aucune selection
            
             document.getElementById('eleveId').style.borderRadius = '1vh';
             document.getElementById('eleveId').style.border = '0.47vh solid red';
-            SELECTED_ELEVE=undefined
+           
 
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
+            // document.getElementById('eleveId').style.borderRadius = '1vh';
+            // document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
         
-            SELECTED_ELEVE = e.target.value;
+            SELECTED_ELEVE=undefined;
             ALL_STUDENTS_CONVOCATED = false;
         
         } else {
 
-            if(e.target.value == 0){  // selection de tous les eleves
+            if(e.target.value == 'all'){  // selection de tous les eleves
                 document.getElementById('eleveId').style.borderRadius = '1vh';
                 document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
-                SELECTED_ELEVE = e.target.value;
+                SELECTED_ELEVE = 'all';
                 ALL_STUDENTS_CONVOCATED = true;
                
             } else {                

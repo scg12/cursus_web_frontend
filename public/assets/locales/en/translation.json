@@ -1,4 +1,6 @@
 {   
+    "heure_deb" :"Start hour",
+    "heure_fin" :"End hour",
     "startHour_greater_than_endHour_error":"Starting hour must be lower than ending hour !!!",
     "startDate_upper_than_endDate_error":"Start date most be lower than end date !!!",
     "dateDeb_lower_than_today_error":"Start date most be upper than today's date !!!",

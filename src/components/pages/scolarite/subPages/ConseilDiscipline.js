@@ -577,8 +577,16 @@ const columnsFr = [
         DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
         OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
         PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 0);
-        ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,0);
-        ELEVES_MOTIFS     =  createListElevesMoifs(CURRENT_CD.motif_cas_par_cas,0);
+       
+        if(CURRENT_CD.is_all_class_convoke){
+            ELEVES_SANCTIONS  = createListElevesSanctions(CURRENT_CD.sanction_generale_classe,0);
+            ELEVES_MOTIFS     = createListElevesMoifs(CURRENT_CD.motif_generale_classe,0);
+        } else {
+            ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,0);
+            ELEVES_MOTIFS     =  createListElevesMoifs(CURRENT_CD.motif_cas_par_cas,0);
+        } 
+
+       
         // ELEVES_MOTIFS=[];
 
        
@@ -680,13 +688,13 @@ const columnsFr = [
             id_convocateur            : meeting.convoque_par.id_user,
             is_all_class_convoke      : meeting.is_all_class_convoke,
             id_eleves       : meeting.id_eleves,
-            type_conseil    : getTypeConseil(meeting.objetId),
+            type_conseil    : meeting.type_conseil,
             date_prevue     : meeting.date,
             heure_prevue    : meeting.heure,
             id_periode      : meeting.periodeId,
             alerter_membres : meeting.alerter_membres,
-            id_membres      : getMembresId(meeting.listParticipants),
-            roles_membres   : getMembreRoles(meeting.listParticipants)
+            id_membres      : meeting.id_membres,
+            roles_membres   : meeting.roles_membres
             
         }).then((res)=>{
            var gridData = createGridData(res.data.conseil_classes)
@@ -717,7 +725,7 @@ const columnsFr = [
             convoque_par    : meeting.convoque_par.id_user,
             is_all_class_convoke : meeting.is_all_class_convoke,
             id_eleves       : meeting.id_eleves,
-            type_conseil    : getTypeConseil(meeting.objetId),
+            type_conseil    : meeting.type_conseil,
             date_prevue     : meeting.date,
             heure_prevue    : meeting.heure,
             id_periode      : meeting.periodeId,
@@ -727,21 +735,12 @@ const columnsFr = [
             resume_general_decisions : meeting.resume_general_decisions,
             to_close : meeting.to_close,
             membre_presents : meeting.membre_presents,
-            id_eleves : meeting.id_eleves,
+            
+            id_eleves                     : meeting.id_eleves,
+            list_motifs_covocations       : meeting.list_motifs_covocations,
             list_decisions_conseil_eleves : meeting.list_decisions_conseil_eleves,
             id_type_sanction_generale_classe : meeting.id_type_sanction_generale_classe
 
-            
-    
-            // # peut etre admis, redouble, exclu, admis_sdc, redouble_sdc, exclu_sdc .sdc : sous decision du conseil
-            // # admis²²...
-            // list_decisions_conseil_eleves = request.data['list_decisions_conseil_eleves'].split("²²")
-            
-           
-           
-            // id_type_sanction_generale_classe = request.data['id_type_sanction_generale_classe']
-
-            
         }).then((res)=>{
            var gridData = createGridData(res.data.conseil_classes)
             setGridMeeting(gridData);

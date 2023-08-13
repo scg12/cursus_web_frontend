@@ -278,6 +278,25 @@ div.MuiDataGrid-footerContainer.css-17jjc08-MuiDataGrid-footerContainer {
 }
 
 
+/******************* Les Buttons Onglets *******************/
+
+/************** THEME 1 **************/
+.Theme1_active{
+  background-color:rgb(14, 94, 199) !important;
+}
+
+/************** THEME 2 **************/
+.Theme2_active{
+  background-color:rgb(60, 160, 21) !important;
+}
+
+/************** THEME 3 **************/
+.Theme3_active{
+  background-color:rgb(64, 49, 165) !important;
+}
+
+
+
 
 /******************** INPUTS **********************/
 .formInput0{
@@ -557,6 +576,9 @@ select{
   background-color:rgb(64, 49, 165);
   min-width: 5vh;
 }
+
+
+
 
 
 

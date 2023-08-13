@@ -1,4 +1,5 @@
-{   
+{   "heure_deb" :"Heure début",
+    "heure_fin" :"Heure fin",
     "startHour_greater_than_endHour_error":"L'heure de début doit être antérieure à l'heure de fin !!!",
     "startDate_greater_than_endDate_error":"La date de début doit etre antérieure à la date de fin !!!",
     "dateDeb_lower_than_today_error":"La date de début doit etre postérieure à la date d'aujourd'hui !!!",

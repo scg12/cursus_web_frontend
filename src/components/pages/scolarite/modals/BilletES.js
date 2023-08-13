@@ -576,7 +576,7 @@ function BilletES(props) {
                                 
 
                                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                        {t("heure debut")}:
+                                        {t("heure_deb")}:
                                     </div>
 
                                     {(props.formMode =='consult') ?
@@ -598,7 +598,7 @@ function BilletES(props) {
                                     }
                                     
                                     <div className={classes.inputRowLabelP} style={{fontWeight:570, marginLeft:'2vw'}}>
-                                        {t("heure fin")}:
+                                        {t("heure_fin")}:
                                     </div>
 
                                     {(props.formMode =='consult') ?
@@ -611,12 +611,12 @@ function BilletES(props) {
 
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
                                                 <input id="heure_fin"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} /><b>h</b>
-                                                <input id="min_fin"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} /><b>min</b>
+                                                <input id="min_fin"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} /><b>min</b>
                                             </div>
                                             :
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
                                                 <input id="heure_fin"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} defaultValue={currentUiContext.formInputs[3].split(":")[0]}/><b>h</b>
-                                                <input id="min_fin"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} defaultValue={currentUiContext.formInputs[3].split(":")[0]}/><b>min</b>
+                                                <input id="min_fin"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} defaultValue={currentUiContext.formInputs[3].split(":")[0]}/><b>min</b>
                                             </div>
                                     }
 
