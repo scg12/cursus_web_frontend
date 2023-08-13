@@ -440,8 +440,81 @@ function Palette(props) {
 
     function enableMatieresList(){
         currentUiContext.setIsMatiereEnable(true);
+        /*indexClasse = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==currentClasseId);
+       
+        clearMatiereList(currentUiContext.matiereSousEtab); 
+        var tabMatieres=[]
+        
+        var listMat = currentUiContext.listMatieres[indexClasse];
+
+        tabMatieres = listMat.split('_');
+        initMatiereList(tabMatieres); */
        
     }
+
+    function initMatiereList(listeMatieres){
+        var CURRENT_MATIERE_LIST=[];
+        console.log("listeMatieres: ",listeMatieres)
+      
+        var MATIERE_DATA ={}
+        var parent, draggableSon;
+        var tabMatiere =[];
+        // var colorIndexes = generateRandomNumbers(listeMatieres.length,0,COLORS.length)
+        
+        for (var i = 0; i < listeMatieres.length; i++) {
+            
+            tabMatiere = listeMatieres[i].split('*');
+            parent =  document.getElementById('matiere_' + tabMatiere[1]);
+            draggableSon = document.getElementById('matiere_' + tabMatiere[1]+'_sub');
+            parent.className = classes.matiereStyle; 
+            
+            // parent.style.backgroundColor=COLORS[colorIndexes[i]];  
+            parent.style.backgroundColor=tabMatiere[2];  
+            parent.title = tabMatiere[0];
+            
+            MATIERE_DATA = {};
+            MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
+            MATIERE_DATA.libelleMatiere = tabMatiere[0];
+            MATIERE_DATA.codeMatiere = tabMatiere[1];
+           
+            MATIERE_DATA.colorCode = tabMatiere[2];
+            
+            CURRENT_MATIERE_LIST[i] = MATIERE_DATA;
+            
+            draggableSon.textContent = tabMatiere[0];
+            draggableSon.className = classes.matiereTitleStyle;                     
+                  
+        }
+        MATIERE_DATA = {};
+        console.log('matieres',CURRENT_MATIERE_LIST);
+        currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
+    }
+    
+
+   /* function clearMatiereList(matieres){
+        var parent, enfants, draggableSon;
+        //On initialise tout ce aui concerne la matiere.
+        COUNT_SELECTED_MATIERES=0;
+        SELECTED_MATIERE_ID='';
+        SELECTED_MATIERE_TAB=[]
+        CURRENT_DROPPED_MATIERE_LIST=[];
+        CURRENT_MATIERE_LIST=[];
+        let MATIERE_MAXSIZE = matieres.length;
+        
+        parent = document.getElementById('matieres');
+        enfants = parent.childNodes;
+        
+        for (var i = 0; i < MATIERE_MAXSIZE; i++) {
+            parent =  document.getElementById('matiere_' + matieres[i].id);
+            draggableSon = document.getElementById('matiere_' + matieres[i].id+'_sub');
+            parent.className = null;
+            parent.title = '';
+            draggableSon.textContent ='';
+            draggableSon.className = null; 
+        }  
+        currentUiContext.setCURRENT_MATIERE_LIST([])  
+    }*/
+    
 
 
     function enableprofsList(){
@@ -456,13 +529,11 @@ function Palette(props) {
                         btnText=''
                         buttonStyle={classes.buttonStyle}
                         //btnTextStyle = {classes.btnTextStyleX}
-                        
                         hasIconImg= {true}
                         imgSrc='images/delete.png'
                         imgStyle = {classes.imgStyle}
                         btnClickHandler={deleteElements}
-                    />             
-                
+                    />           
                 </div>
             </div>
 
@@ -473,10 +544,8 @@ function Palette(props) {
                 buttonStyle={getOngletMatiereStyle()}
                 style={{marginBottom:'1.3vh'}}
                 btnClickHandler={enableMatieresList}
-                btnTextStyle={classes.ongletTexte} 
-                                                  
+                btnTextStyle={classes.ongletTexte}                                                   
             />
-
 
             <CustomButton 
                 id='profPrincipalPalette' 
@@ -485,14 +554,9 @@ function Palette(props) {
                 buttonStyle={getOngletProfStyle()}
                 btnClickHandler={enableprofsList}
                 btnTextStyle={classes.ongletTexte} 
-                disable={(currentUiContext.CURRENT_DROPPED_PROFS_LIST.length == 0)} 
-                                                  
+                disable={(currentUiContext.CURRENT_DROPPED_PROFS_LIST.length == 0)}                                                   
             />  
-
-           
-
-        </div>   
-        
+        </div> 
        
     );
 }

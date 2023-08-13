@@ -1,5 +1,6 @@
 import React from 'react';
 import classes from './EmploiT.module.css';
+import classesPP from '../pages/scolarite/subPages/SubPages.module.css';
 import LigneMatieres from './LigneMatieres';
 import LigneProfs from './LigneProfs'
 import LigneValeur from './LigneValeur';
@@ -268,6 +269,9 @@ function GrilleEmploiTemps(props) {
     }
    
 
+    function validerPP(){
+
+    }
 
     function getMatieres(indexClasse){
       let ligne = "";
@@ -291,7 +295,8 @@ function GrilleEmploiTemps(props) {
        
         currentClasseId = e.target.value;
         currentClasseLabel = optClasse.find((elt)=>elt.value == currentClasseId).label;
-        currentUiContext.setETDataChanged(false)
+        currentUiContext.setETDataChanged(false);
+       // currentUiContext.setIsMatiereEnable(true);
         loadClassesET(currentClasseId)
         
     }
@@ -810,6 +815,7 @@ function clearMatiereList(matieres){
     }  
     currentUiContext.setCURRENT_MATIERE_LIST([])  
 }
+
 function initMatiereList(listeMatieres){
     console.log("listeMatieres: ",listeMatieres)
     //mis en commentaire le 12/04/2023 dans le cadre de l'ajout de couleur a l'ET.
@@ -868,6 +874,7 @@ function initMatiereList(listeMatieres){
     console.log('matieres',CURRENT_MATIERE_LIST);
     currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
 }
+
 function Evaluate(val){
     if(val==''||val==' '|| isNaN(val)) return 0;
     else return eval(val);
@@ -1381,42 +1388,54 @@ function LigneProfPrincipal(props) {
         }
     }
 
+    function getSmallButtonStyle()
+    { // Choix du theme courant
+      switch(selectedTheme){
+        case 'Theme1': return classesPP.Theme1_BtnstyleSmall ;
+        case 'Theme2': return classesPP.Theme2_BtnstyleSmall ;
+        case 'Theme3': return classesPP.Theme3_BtnstyleSmall ;
+        default: return classesPP.Theme1_BtnstyleSmall ;
+      }
+    }
+
 
    return (
         <div style={{display:'flex', flexDirection:'row'}}>
 
             <div className={classes.profTitle} style={{marginLeft:'-3vw'}}>{t('enseignants')}</div>
-            <div id='profsList' style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw'}}>
-                {/*
-                <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
-                    <div style={{display:'flex', flexDirection:'row'}}> 
-                        <input type='radio' name='ppsList'/>
-                        <img src="images/maleTeacher.png" style={{width:'2vw'}}/>
-                    </div>
-                    
-                    <div style={{display:'flex', flexDirection:'column'}}> 
-                        <div style={{fontSize:'0.9vw'}}>{t('Non defini')}</div>
-                        <div style={{fontSize:'0.79vw', textAlign:'center'}}> </div>
-                    </div>
+            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw'}}>
+               
+                <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
+                    {currentUiContext.CURRENT_DROPPED_PROFS_LIST.map((prof) => {
+                        return (
+                                <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
+                                    <div style={{display:'flex', flexDirection:'row'}}> 
+                                        <input type='radio' name='ppsList'/>
+                                        <img src= {prof.sexe=='M'? "images/maleTeacher.png" : "images/femaleTeacher.png"} style={{width:'2vw'}}/>
+                                    </div>
+                                    
+                                    <div style={{display:'flex', flexDirection:'column'}}> 
+                                        <div style={{fontSize:'0.9vw'}}>{prof.NomProf}</div>
+                                        <div style={{fontSize:'0.79vw', textAlign:'center'}}>(...)</div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    }
                 </div>
-            */}
+                 
 
-                {currentUiContext.CURRENT_DROPPED_PROFS_LIST.map((prof) => {
-                return (
-                        <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
-                            <div style={{display:'flex', flexDirection:'row'}}> 
-                                <input type='radio' name='ppsList'/>
-                                <img src= {prof.sexe=='M'? "images/maleTeacher.png" : "images/femaleTeacher.png"} style={{width:'2vw'}}/>
-                            </div>
-                            
-                            <div style={{display:'flex', flexDirection:'column'}}> 
-                                <div style={{fontSize:'0.9vw'}}>{prof.NomProf}</div>
-                                <div style={{fontSize:'0.79vw', textAlign:'center'}}>(...)</div>
-                            </div>
-                        </div>
-                    );
-                })} 
+                <CustomButton
+                    id = {"addEleve"}
+                    btnText={t("valider")}
+                    buttonStyle={getSmallButtonStyle()}
+                    style={{marginBottom:'-0.3vh',position :'relative', right:'-37vw'}}
+                    btnTextStyle = {classesPP.btnSmallTextStyle}
+                    btnClickHandler={validerPP}
+                    //disable = {allStudentsConvocated}
+                />
             </div>
+            
         </div>       
     );
 }
