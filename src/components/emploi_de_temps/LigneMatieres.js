@@ -1,6 +1,6 @@
 import React from 'react';
 import classes from './EmploiT.module.css';
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UiContext from '../../store/UiContext';
 
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,29 @@ function LigneMatieres(props) {
     const changeLanguage = (event) => {
         i18n.changeLanguage(event.target.id);
     };
+
+    useEffect(()=> {
+
+        var CURRENT_MATIERE_LIST =[];
+        var tabMatiere;
+        var MATIERE_DATA = {};
+
+        for (var i = 0; i < props.listeMatieres.length; i++) {
+            tabMatiere = props.listeMatieres[i].split('*');
+            MATIERE_DATA = {};
+            MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
+            MATIERE_DATA.libelleMatiere = tabMatiere[0];
+            MATIERE_DATA.codeMatiere = tabMatiere[1];
+            MATIERE_DATA.colorCode = tabMatiere[2];
+            
+            CURRENT_MATIERE_LIST[i] = MATIERE_DATA;
+          
+        }
+       
+        console.log('matieres',CURRENT_MATIERE_LIST);
+        currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
+
+    },[]);
 
   
     
@@ -48,14 +71,18 @@ function LigneMatieres(props) {
         <div style={{display:'flex', flexDirection:'row'}}>
             <div className={classes.matiereTitle} style={{marginLeft:'-2.7vw'}}>{t('matieres')}</div>
             <div id='matieres' className={classes.listeMatieres + ' matieres'}>
-                {currentUiContext.matiereSousEtab.map((matiere) => {
+                {(props.listeMatieres||[]).map((matiere) => {
                     return (
-                        <MatiereDiv id={"matiere_"+matiere.id}
-                            title = '' 
-                            dragDivClassName  = {null} 
-                            matiereTitleStyle = {null} 
+                        <MatiereDiv id={"matiere_"+matiere.split('*')[1]}
+                            title = {matiere.split('*')[0]}
+                            dragDivClassName  = {classes.matiereStyle} 
+                            matiereTitleStyle = {classes.matiereTitleStyle} 
                             dropDivClassName  = {null}
-                        />
+                            style={{backgroundColor:matiere.split('*')[2]}}
+                           
+                        >
+                            {matiere.split('*')[0]} 
+                        </MatiereDiv>
                     );
                 })} 
                   

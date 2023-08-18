@@ -63,6 +63,7 @@ function GrilleEmploiTemps(props) {
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const { t, i18n } = useTranslation();
     const [matiereEnable, setMatiereEnable] = useState(true);
+    const [listMatieres,setListMatieres] = useState([]);
     
     
     const changeLanguage = (event) => {
@@ -222,7 +223,8 @@ function GrilleEmploiTemps(props) {
                 var listMat = currentUiContext.listMatieres[indexClasse];
 
                 tabMatieres = listMat.split('_');
-                initMatiereList(tabMatieres);             
+                setListMatieres(tabMatieres);
+               // initMatiereList(tabMatieres);             
             
             
                 var ET_data = getSaveEmploiTempsData(currentClasseId);
@@ -314,12 +316,14 @@ function GrilleEmploiTemps(props) {
         initProfList(currentUiContext.listProfs);
 
         //Initialisation de la liste des  matieres 
-        clearMatiereList(currentUiContext.matiereSousEtab); 
+        //clearMatiereList(currentUiContext.matiereSousEtab); 
         let indexClasse = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==classId);
         var listMat = getMatieres(indexClasse);
         console.log("ICI listMat: ",listMat);
         tabMatieres = listMat.split('_');
-        initMatiereList(tabMatieres);
+        setListMatieres(tabMatieres);
+        
+        //initMatiereList(tabMatieres);
         
         //Pre-remplissage de la grille avec les creneau deja configures 
         var ET_data = getSaveEmploiTempsData(currentClasseId);
@@ -802,7 +806,7 @@ function clearMatiereList(matieres){
     CURRENT_MATIERE_LIST=[];
     let MATIERE_MAXSIZE = matieres.length;
     
-    parent = document.getElementById('matieres');
+    /*parent = document.getElementById('matieres');
     enfants = parent.childNodes;
     
     for (var i = 0; i < MATIERE_MAXSIZE; i++) {
@@ -812,7 +816,7 @@ function clearMatiereList(matieres){
         parent.title = '';
         draggableSon.textContent ='';
         draggableSon.className = null; 
-    }  
+    }  */
     currentUiContext.setCURRENT_MATIERE_LIST([])  
 }
 
@@ -1595,7 +1599,7 @@ function LigneProfPrincipal(props) {
                                 {
                                     currentUiContext.isMatiereEnable ?
 
-                                    <LigneMatieres/>
+                                    <LigneMatieres listeMatieres={listMatieres}/>
                                     :
                                     <LigneProfPrincipal/>                               
                                 }

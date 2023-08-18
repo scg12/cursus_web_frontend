@@ -17,12 +17,12 @@ import { useTranslation } from "react-i18next";
 
 
 var LIST_ELEVES = undefined;
-var JOUR_DEB, MOIS_DEB, YEAR_DEB, DATEDEB;
-var JOUR_FIN, MOIS_FIN, YEAR_FIN, DATEFIN;
-var JOUR_SORTIE, MOIS_SORTIE, YEAR_SORTIE, DATESORTIE;
+var JOUR_DEB='', MOIS_DEB='', YEAR_DEB='', DATEDEB='';
+var JOUR_FIN='', MOIS_FIN='', YEAR_FIN='', DATEFIN='';
+var JOUR_SORTIE='', MOIS_SORTIE='', YEAR_SORTIE='', DATESORTIE='';
 
-var HEURE_DEB, MIN_DEB;
-var HEURE_FIN, MIN_FIN;
+var HEURE_DEB='', MIN_DEB='';
+var HEURE_FIN='', MIN_FIN='';
 
 var eleves_data=[];
 
@@ -50,10 +50,40 @@ function BilletES(props) {
    
   
     useEffect(()=> {
-        getClassStudentList(props.currentClasseId);
+       // getClassStudentList(props.currentClasseId);
+        eleves_data = currentUiContext.formInputs[10];
+        setOptEleves(eleves_data);
         currentEleveId = undefined;
         
         if (props.formMode != 'creation'){
+
+            if(props.formMode == 'consult') currentEleveId = document.getElementById("eleveId").value;
+            else {
+                currentEleveId = currentUiContext.formInputs[0];
+                var curEleve = eleves_data.find((elv)=>elv.value == currentEleveId);
+                var index    = eleves_data.findIndex((elv)=>elv.value == currentEleveId);
+               
+                eleves_data.splice(0,1);     
+                eleves_data.splice(index,1);
+                eleves_data.unshift(curEleve);
+               
+                setOptEleves(eleves_data);
+            }
+           
+            
+    
+            DATESORTIE = currentUiContext.formInputs[8];
+            console.log("sortie",DATESORTIE);
+
+            if (DATESORTIE==undefined || DATESORTIE.length<=0){
+                DATEDEB = currentUiContext.formInputs[6];
+                DATEFIN = currentUiContext.formInputs[7];
+
+            } else {
+                DATEDEB = currentUiContext.formInputs[6];
+                DATEFIN = currentUiContext.formInputs[7];
+            }
+           
             BILLET_SORTIE = {
                 id_eleves   : currentUiContext.formInputs[0],
                 id_billet   : currentUiContext.formInputs[1],                
@@ -66,17 +96,7 @@ function BilletES(props) {
                 date_jour   : currentUiContext.formInputs[8],
                 status      : currentUiContext.formInputs[9],
             }
-            
-            var tabEleves = [... optEleves];
-            tabEleves.splice(0,1);
            
-            var curEleve = tabEleves.find((elv)=>elv.value == BILLET_SORTIE.id_eleves);
-            var index    = tabEleves.findIndex((elv)=>elv.value == BILLET_SORTIE.id_eleves);
-           
-            tabEleves.splice(index,1);
-            tabEleves.unshift(curEleve);
-           
-            setOptEleves(tabEleves);
             setIsBilletJustified(BILLET_SORTIE.status);
             
             var estDureeJour = (BILLET_SORTIE.type_duree == "jour") ? true : false;
@@ -113,8 +133,8 @@ function BilletES(props) {
             id_classe: classId,
         }).then((res)=>{
             console.log("eleves", res.data);
-            setOptEleves(getElevesTab(res.data));
-                  
+            eleves_data = getElevesTab(res.data);
+            setOptEleves(eleves_data);                  
         })  
     }
 
@@ -135,16 +155,13 @@ function BilletES(props) {
         if(ch.length==1) ch = '0'+ch;
     }
 
+    
 
     function checkFormData(){
         var errorMsg='';
         var today = complete0(new Date().getDate())+'/'+ complete0(new Date().getMonth()+1)+'/'+new Date().getFullYear();
 
-        console.log(new Date(),new Date(BILLET_SORTIE.date_deb) < new Date());
-
-        
-       
-        console.log("id Eleve",currentEleveId);
+        console.log(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_jour+' 23:59:59')) , new Date(), BILLET_SORTIE.date_jour+' 23:59:59')
 
         if(currentEleveId==undefined || currentEleveId==0){
             errorMsg=t("select_student");
@@ -174,14 +191,16 @@ function BilletES(props) {
                 return errorMsg;
             }
 
+
             //Ajouter les tests de comparaison entre les deux dates et avec la date du jour
             if(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_fin)) < new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_deb))) {
                 errorMsg = t("startDate_greater_than_endDate_error");
                 return errorMsg;
             } 
 
+          
             //Test de posteriorite a la date d'aujourd'hui
-            if(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_deb)) < new Date()) {
+            if(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_deb+' 23:59:59')) < new Date()) {
                 errorMsg = t("dateDeb_lower_than_today_error");
                 return errorMsg;
             }
@@ -199,6 +218,12 @@ function BilletES(props) {
     
             if(!((isNaN(BILLET_SORTIE.date_jour) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_jour))))))){
                 errorMsg=t("enter_good_exitdate");
+                return errorMsg;
+            }
+
+             //Test de posteriorite a la date d'aujourd'hui
+             if(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_jour+' 23:59:59')) < new Date()) {
+                errorMsg = t("exitdate_lower_than_today_error");
                 return errorMsg;
             }
 
@@ -239,9 +264,10 @@ function BilletES(props) {
 
     function getFormData(){
         BILLET_SORTIE = {};
+        BILLET_SORTIE.id_billet   = (props.formMode =='creation')? -1 : currentUiContext.formInputs[1];
         BILLET_SORTIE.id_sousetab = currentAppContext.currentEtab;
         BILLET_SORTIE.id_classe   = props.currentClasseId;
-        BILLET_SORTIE.id_eleves   = currentEleveId;
+        BILLET_SORTIE.id_eleves   = currentEleveId.toString() ;
         BILLET_SORTIE.type_duree  = isDureeJour? "jour" : "heure";
         BILLET_SORTIE.date_deb    = DATEDEB;
         BILLET_SORTIE.date_fin    = DATEFIN;
@@ -253,33 +279,57 @@ function BilletES(props) {
     // ------- Duree en heure
     function  getJourDeb(e){
         JOUR_DEB = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_DEB = MOIS_DEB.length != 0 ? MOIS_DEB : currentUiContext.formInputs[6].split('/')[1];
+            YEAR_DEB = YEAR_DEB.length != 0 ? YEAR_DEB : currentUiContext.formInputs[6].split('/')[2];
+        }
         DATEDEB = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
         
     }
 
     function  getMoisDeb(e){
         MOIS_DEB = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_DEB = JOUR_DEB.length != 0 ? JOUR_DEB : currentUiContext.formInputs[6].split('/')[0];
+            YEAR_DEB = YEAR_DEB.length != 0 ? YEAR_DEB : currentUiContext.formInputs[6].split('/')[2];
+        }
         DATEDEB = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
       
     }
 
     function  getAnneeDeb(e){
         YEAR_DEB = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_DEB = MOIS_DEB.length != 0 ? MOIS_DEB : currentUiContext.formInputs[6].split('/')[1];
+            YEAR_DEB = YEAR_DEB.length != 0 ? YEAR_DEB : currentUiContext.formInputs[6].split('/')[2];
+        }
         DATEDEB = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
     }
 
     function  getJourFin(e){
         JOUR_FIN = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_FIN = MOIS_FIN.length != 0 ? MOIS_FIN : currentUiContext.formInputs[7].split('/')[1];
+            YEAR_FIN = YEAR_FIN.length != 0 ? YEAR_FIN : currentUiContext.formInputs[7].split('/')[2];
+        }
         DATEFIN = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
     }
 
     function  getMoisFin(e){
         MOIS_FIN = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_FIN = JOUR_FIN.length != 0 ? JOUR_FIN : currentUiContext.formInputs[7].split('/')[0];
+            YEAR_FIN = YEAR_FIN.length != 0 ? YEAR_FIN : currentUiContext.formInputs[7].split('/')[2];
+        }
         DATEFIN = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
     }
 
     function  getAnneeFin(e){
         YEAR_FIN = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_FIN = JOUR_FIN.length != 0 ? JOUR_FIN : currentUiContext.formInputs[7].split('/')[0];
+            MOIS_FIN = MOIS_FIN.length != 0 ? MOIS_FIN : currentUiContext.formInputs[7].split('/')[1];
+        }
         DATEFIN = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
     }
 
@@ -287,16 +337,28 @@ function BilletES(props) {
     // ------- Date du jour 
     function  getJourSortie(e){
         JOUR_SORTIE = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_SORTIE = MOIS_SORTIE.length != 0 ? MOIS_SORTIE : currentUiContext.formInputs[8].split('/')[1];
+            YEAR_SORTIE = YEAR_SORTIE.length != 0 ? YEAR_SORTIE : currentUiContext.formInputs[8].split('/')[2];
+        }
         DATESORTIE = JOUR_SORTIE+'/'+MOIS_SORTIE+'/'+YEAR_SORTIE;
     }
 
     function  getMoisSortie(e){
         MOIS_SORTIE = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_SORTIE = JOUR_SORTIE.length != 0 ? JOUR_SORTIE : currentUiContext.formInputs[8].split('/')[0];
+            YEAR_SORTIE = YEAR_SORTIE.length != 0 ? YEAR_SORTIE : currentUiContext.formInputs[8].split('/')[2];
+        }
         DATESORTIE = JOUR_SORTIE+'/'+MOIS_SORTIE+'/'+YEAR_SORTIE;
     }
 
     function  getAnneeSortie(e){
         YEAR_SORTIE = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_SORTIE = JOUR_SORTIE.length != 0 ? JOUR_SORTIE : currentUiContext.formInputs[8].split('/')[0];
+            MOIS_SORTIE = MOIS_SORTIE.length != 0 ? MOIS_SORTIE : currentUiContext.formInputs[8].split('/')[1];
+        }
         DATESORTIE = JOUR_SORTIE+'/'+MOIS_SORTIE+'/'+YEAR_SORTIE;
     }
 
@@ -374,10 +436,6 @@ function BilletES(props) {
 
     }
 
-  
-
-  
-   
     function elevesChangeHandler(e){
         currentEleveId = e.target.value;
     }
@@ -429,7 +487,7 @@ function BilletES(props) {
                         </div>
                     : (props.formMode == 'modif') ?
                         <div className={classes.formMainTitle} >
-                            {t("update_exit_permission_M")}
+                            {t("exit_permission_justification_M")}
                         </div>
                     :
                         <div className={classes.formMainTitle} >
@@ -452,8 +510,8 @@ function BilletES(props) {
 
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="eleve" type="text"        className={classes.inputRowControl}    defaultValue={currentUiContext.formInputs[0]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        <input id="eleveId" type="hidden"    className={classes.inputRowControl}    defaultValue={currentUiContext.formInputs[4]}    style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="eleve" type="text"        className={classes.inputRowControl}    defaultValue={currentUiContext.formInputs[4]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="eleveId" type="hidden"    className={classes.inputRowControl}    defaultValue={currentUiContext.formInputs[0]}    style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>  
                                     :
                                     <select id='elevesSelect' onChange={elevesChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
@@ -467,21 +525,42 @@ function BilletES(props) {
                                 
                             </div>
 
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh', marginTop:"2vh"}}> 
-                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
-                                <div style={{fontWeight:570,  width:"7.77vw"}}>
-                                    {t("duree_in")}:
-                                </div>
-                                <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                                    <input type="radio" name="type_duree" checked={isDureeJour}  onClick={manageDureeHandler}/>
-                                    <div style={{marginLeft:"0.3vw"}}> {t('en_jour')} </div>
+                            {(props.formMode != 'consult') ?
+
+                                <div className={classes.inputRowLeft} style={{height:'4.7vh', marginTop:"2vh"}}> 
+                                    <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                                    <div style={{fontWeight:570,  width:"7.77vw"}}>
+                                        {t("duree_in")}:
+                                    </div>
+                                    <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                                        <input type="radio" name="type_duree" checked={isDureeJour}  onClick={manageDureeHandler}/>
+                                        <div style={{marginLeft:"0.3vw"}}> {t('en_jour')} </div>
+                                    </div>
+
+                                    <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center', marginLeft:'2vw'}}>
+                                        <input type="radio" name="type_duree" checked={!isDureeJour} onClick={manageDureeHandler} />
+                                        <div style={{marginLeft:"0.3vw"}}> {t('en_heure')} </div>
+                                    </div>
                                 </div>
 
-                                <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center', marginLeft:'2vw'}}>
-                                    <input type="radio" name="type_duree"  onClick={manageDureeHandler} />
-                                    <div style={{marginLeft:"0.3vw"}}> {t('en_heure')} </div>
+                            :
+                                <div className={classes.inputRowLeft} style={{height:'4.7vh', marginTop:"2vh"}}> 
+                                    <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                                    <div style={{fontWeight:570,  width:"10vw"}}>
+                                        {t("duree_in")}:
+                                    </div>
+                                    {isDureeJour ?
+                                        <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center', marginLeft:'-2vw'}}>
+                                            <div style={{marginLeft:"0.3vw", fontWeight:'bold', color:'blueviolet'}}> {t('en_jour')} </div>
+                                        </div>
+                                        :
+                                        <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center', marginLeft:'-2vw'}}>
+                                            <div style={{marginLeft:"0.3vw", fontWeight:'bold', color:'blueviolet'}}> {t('en_heure')} </div>
+                                        </div>
+                                    }                             
+
                                 </div>
-                            </div>
+                            }
 
                             {isDureeJour &&
 
@@ -491,7 +570,7 @@ function BilletES(props) {
                                     </div>
                                     {(props.formMode =='consult') ?
                                         <div> 
-                                            <input id="date_deb" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[6]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                            <input id="date_deb" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[6]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw', color:'blueviolet', fontWeight:'bold'}}/>
                                         </div>
                                         :
                                         (props.formMode == 'creation') ?
@@ -499,13 +578,13 @@ function BilletES(props) {
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
                                                 <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}  onChange={getJourDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} />/
                                                 <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}  onChange={getMoisDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />/
-                                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}  onChange={getAnneeDeb}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />
+                                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}  onChange={getAnneeDeb}    maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />
                                             </div>
                                             :
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
-                                                <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}  onChange={getJourDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} defaultValue={currentUiContext.formInputs[6].split(":")[0]} />/
-                                                <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}  onChange={getMoisDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[6].split(":")[1]} />/
-                                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}  onChange={getAnneeDeb}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}} defaultValue={currentUiContext.formInputs[6].split(":")[2]} />
+                                                <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}  onChange={getJourDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} defaultValue={currentUiContext.formInputs[6].split("/")[0]} />/
+                                                <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}  onChange={getMoisDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[6].split("/")[1]} />/
+                                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}  onChange={getAnneeDeb}    maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[6].split("/")[2]} />
                                             </div>
                                     }
 
@@ -515,10 +594,9 @@ function BilletES(props) {
                                     
                                     {(props.formMode =='consult') ?
                                         <div> 
-                                            <input id="date_fin" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[7]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                            <input id="date_fin" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[7]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw', color:'blueviolet', fontWeight:'bold'}}/>
                                         </div>
                                         :
-
                                         (props.formMode == 'creation') ?
 
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
@@ -528,9 +606,9 @@ function BilletES(props) {
                                             </div>
                                             :
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
-                                                <input id="jour_fin"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_fin"), document.getElementById("mois_fin"))}}   onChange={getJourFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} defaultValue={currentUiContext.formInputs[7].split(":")[0]}/>/
-                                                <input id="mois_fin"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_fin"), document.getElementById("anne_fin"))}}   onChange={getMoisFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[7].split(":")[1]}/>/
-                                                <input id="anne_fin"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_fin"), null)}}                                  onChange={getAnneeFin}   maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[7].split(":")[2]}/>
+                                                <input id="jour_fin"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_fin"), document.getElementById("mois_fin"))}}   onChange={getJourFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} defaultValue={currentUiContext.formInputs[7].split("/")[0]}/>/
+                                                <input id="mois_fin"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_fin"), document.getElementById("anne_fin"))}}   onChange={getMoisFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[7].split("/")[1]}/>/
+                                                <input id="anne_fin"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_fin"), null)}}                                  onChange={getAnneeFin}   maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[7].split("/")[2]}/>
                                             </div>
                                     }
 
@@ -545,22 +623,22 @@ function BilletES(props) {
                                     </div>
                                     {(props.formMode =='consult') ?
                                         <div> 
-                                            <input id="date_jour" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[8]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                            <input id="date_jour" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[8]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw', color:'blueviolet', fontWeight:'bold'}}/>
                                         </div>
                                         :
 
                                         (props.formMode == 'creation') ?
                                         
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
-                                                <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} onChange={getJourSortie}/>/
-                                                <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMoisSortie}/>/
-                                                <input id="anne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure_deb"))}}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getAnneeSortie}/>
+                                                <input id="Djour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("Djour"), document.getElementById("Dmois"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} onChange={getJourSortie}/>/
+                                                <input id="Dmois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("Dmois"), document.getElementById("Danne"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMoisSortie}/>/
+                                                <input id="Danne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("Danne"), document.getElementById("heure_deb"))}}      maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getAnneeSortie}/>
                                             </div>
                                             :
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
-                                                <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} onChange={getJourSortie}    defaultValue={currentUiContext.formInputs[8].split(":")[0]} />/
-                                                <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMoisSortie}    defaultValue={currentUiContext.formInputs[8].split(":")[1]}/>/
-                                                <input id="anne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure_deb"))}}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getAnneeSortie}   defaultValue={currentUiContext.formInputs[8].split(":")[2]}  />
+                                                <input id="Djour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} onChange={getJourSortie}    defaultValue={currentUiContext.formInputs[8].split("/")[0]} />/
+                                                <input id="Dmois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMoisSortie}    defaultValue={currentUiContext.formInputs[8].split("/")[1]}/>/
+                                                <input id="Danne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure_deb"))}}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getAnneeSortie}   defaultValue={currentUiContext.formInputs[8].split("/")[2]}  />
                                             </div>
                                     }                                   
 
@@ -573,27 +651,25 @@ function BilletES(props) {
 
                                 <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
 
-                                
-
                                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                                         {t("heure_deb")}:
                                     </div>
 
                                     {(props.formMode =='consult') ?
                                         <div> 
-                                            <input id="heure_deb" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}/>
+                                            <input id="heure_deb" disabled={true} type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[6]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw', color:'blueviolet', fontWeight:'bold'}}/>
                                         </div>
                                         :
                                         (props.formMode == 'creation') ?
                                     
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
                                                 <input id="heure_deb"  type="text"  Placeholder='hh'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_deb"), document.getElementById("min_deb"))}}     maxLength={2}   className={classes.inputRowControl }   style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureDeb} /><b>h</b>
-                                                <input id="min_deb"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_deb"), document.getElementById("heure_fin"))}}    maxLength={2}    className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinDeb}/><b>min</b>
+                                                <input id="min_deb"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_deb"), document.getElementById("heure_fin"))}}    maxLength={2}    className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinDeb}/><b>min</b>
                                             </div>
                                             :
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
-                                                <input id="heure_deb"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_deb"), document.getElementById("min_deb"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureDeb}  defaultValue={currentUiContext.formInputs[3].split(":")[0]} /><b>h</b>
-                                                <input id="min_deb"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_deb"), document.getElementById("heure_fin"))}}   maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinDeb}    defaultValue={currentUiContext.formInputs[3].split(":")[0]} /><b>min</b>
+                                                <input id="heure_deb"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_deb"), document.getElementById("min_deb"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureDeb}  defaultValue={currentUiContext.formInputs[6].split(":")[0]} /><b>h</b>
+                                                <input id="min_deb"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_deb"), document.getElementById("heure_fin"))}}   maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinDeb}     defaultValue={currentUiContext.formInputs[6].split(":")[1]} /><b>min</b>
                                             </div>
                                     }
                                     
@@ -603,37 +679,59 @@ function BilletES(props) {
 
                                     {(props.formMode =='consult') ?
                                         <div> 
-                                            <input id="heure_fin" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}/>
+                                            <input id="heure_fin" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[7]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw', color:'blueviolet', fontWeight:'bold'}}/>
                                         </div>
                                         :
 
                                         (props.formMode == 'creation') ?
 
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
-                                                <input id="heure_fin"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} /><b>h</b>
+                                                <input id="heure_fin"  type="text"    Placeholder='hh'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} /><b>h</b>
                                                 <input id="min_fin"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} /><b>min</b>
                                             </div>
                                             :
                                             <div style ={{display:'flex', flexDirection:'row'}}> 
-                                                <input id="heure_fin"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} defaultValue={currentUiContext.formInputs[3].split(":")[0]}/><b>h</b>
-                                                <input id="min_fin"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} defaultValue={currentUiContext.formInputs[3].split(":")[0]}/><b>min</b>
+                                                <input id="heure_fin"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}       maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} defaultValue={currentUiContext.formInputs[7].split(":")[0]}/><b>h</b>
+                                                <input id="min_fin"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} defaultValue={currentUiContext.formInputs[7].split(":")[1]}/><b>min</b>
                                             </div>
                                     }
 
                                 </div>
                             }
 
-                            {(props.formMode != 'creation') &&
+                            {/*(props.formMode == 'justif') &&
                                 <div className={classes.inputRowLeft} style={{marginLeft:'0vw', marginTop:"1vh"}}>
                                     <div style={{marginTop:'0.23vh'}}>  
                                         <input type='checkbox' checked={isBilletJustified} style={{width:"1.3vw", height:"1.3vw"}} onClick={manageJustifyHandler}/>                             
                                     </div>
 
                                     <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'0.3vw', width:"20vw"}}>
-                                        {t('Justify_permission')}
+                                        {t("justify_permission")}
                                     </div>
                                 </div>
-                            }
+                            */}
+
+                            {(props.formMode == 'consult') &&
+                                <div className={classes.inputRowLeft} style={{marginLeft:'0vw', marginTop:"1vh"}}>
+                                    
+                                    { isBilletJustified ?
+                                        <div> <img src="images/checkImg.png" style ={{width :'1.47vw', height:'1.47vw', marginTop:'-0.1vw'}}/> </div>
+                                        :
+                                        <div> <img src="images/cancel_trans.png" style ={{width :'1.87vw', height:'2.57vw', marginTop:'-0.67vw'}}/> </div>
+                                    }
+                                   
+                                    {isBilletJustified ?
+                                        <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'0.3vw', width:"20vw", color:'green'}}>
+                                            <div> {t("auth_justified")}</div>                                           
+                                        </div>
+                                        :
+                                        <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'0.3vw', width:"20vw", color:'red'}}>
+                                            <div>{t("auth_non_justified")}</div> 
+                                        </div>      
+                                    }
+
+                                </div>
+                            }               
 
                         </div>
                        
@@ -649,9 +747,9 @@ function BilletES(props) {
                                 btnClickHandler={cancelHandler}
                             />
 
-                            {(props.formMode != 'creation') &&
+                            {(props.formMode == 'creation') &&
                                 <CustomButton
-                                    btnText={t("apply")}
+                                    btnText={t("save")}
                                     buttonStyle={getGridButtonStyle()}
                                     btnTextStyle = {classes.btnTextStyle}
                                     btnClickHandler={saveBilletHandler}
@@ -659,10 +757,9 @@ function BilletES(props) {
 
                             }
 
-                            {(props.formMode != 'modif') &&
-
+                            {(props.formMode == 'modif') &&
                                 <CustomButton
-                                    btnText={t("save")}
+                                    btnText={t("modify")}
                                     buttonStyle={getGridButtonStyle()}
                                     btnTextStyle = {classes.btnTextStyle}
                                     btnClickHandler={updateBilletHandler}

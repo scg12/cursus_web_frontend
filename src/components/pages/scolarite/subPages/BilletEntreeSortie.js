@@ -14,11 +14,12 @@ import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions
 import { useTranslation } from "react-i18next";
 
 
-var JOUR_DEB, MOIS_DEB, YEAR_DEB, DATEDEB_VERIF;
-var JOUR_FIN, MOIS_FIN, YEAR_FIN, DATEFIN_VERIF;
+var JOUR_DEB, MOIS_DEB, YEAR_DEB, DATEDEB_VERIF='';
+var JOUR_FIN, MOIS_FIN, YEAR_FIN, DATEFIN_VERIF='';
 let CURRENT_CLASSE_ID;
 let CURRRENT_COURS_ID;
 let SELECTED_DATE;
+var CURRENT_AUTORISATION_ID;
 
 
 
@@ -28,13 +29,15 @@ var listElt ={};
 var JOUR, MOIS, YEAR, DATE_VERIF;
 var tabAbsenceCours;
 var listAutorisations;
+var eleves_data;
 
 var BILLET_SORTIE ={}
 var modalMode = 'creation';
 
 var chosenMsgBox;
-const MSG_SUCCESS_BS =1;
-const MSG_WARNING_BS =2;
+const MSG_SUCCESS_BS  = 1;
+const MSG_WARNING_BS  = 2;
+const MSG_QUESTION_BS = 3;
 
 
 
@@ -82,12 +85,13 @@ function BilletEntreeSortie(props) {
     }
 
     const  getStudentAuthSortie=(classeId)=>{
-        listAutorisations = []
+        listAutorisations = [];
+
         axiosInstance.post(`list-billets-e-s/`, {
             id_classe: classeId,
         }).then((res)=>{
             console.log(res.data);
-            listAutorisations = [...formatList(res.data)]
+            listAutorisations = [...formatList(res.data.res)]
             console.log(listAutorisations);
             setGridRows(listAutorisations);
             console.log(gridRows);
@@ -95,25 +99,59 @@ function BilletEntreeSortie(props) {
           
     }
 
+    const  getClassStudentList=(classId)=>{
+        axiosInstance.post(`list-eleves/`, {
+            id_classe: classId,
+        }).then((res)=>{
+            console.log("eleves", res.data);
+            eleves_data = getElevesTab(res.data);
+        })  
+    }
+
+    function getElevesTab(elevesTab){
+        var tabEleves = [{value:0,label:"---------------- "+t('choose_eleve')+" ---------------"}]
+        var new_eleve;
+        elevesTab.map((eleve)=>{
+            new_eleve = {};
+            new_eleve.value = eleve.id;
+            new_eleve.label = eleve.nom +' '+eleve.prenom;
+            tabEleves.push(new_eleve);       
+        })
+        return tabEleves;
+    }
+
+
+    function changeDateIntoMMJJAAAA(date){
+        var dateTab = date.split('/');
+        return dateTab[1]+'/'+dateTab[0]+'/'+dateTab[2];
+    }
+    
+
     function filterAuthSortie(list, dateDeb, dateFin){
         var resultList = [];
+        console.log('filtre',list, dateDeb);
+       
 
         if(dateDeb != '' && dateFin == ''){
-            resultList = (list||[]).filter((elt)=>new Date(elt.date_deb) >= new Date(dateDeb));
+            resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.dateJour_deb.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)));
+            setGridRows(resultList);
             return resultList;
         }
 
         if(dateDeb == '' && dateFin != ''){
-            resultList = (list||[]).filter((elt)=>new Date(elt.date_fin) <= new Date(dateFin));
+            resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.dateJour_fin.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin)));
+            setGridRows(resultList);
             return resultList;
         }
-
 
         if(dateDeb != '' && dateFin != ''){
-            resultList = (list||[]).filter((elt)=>(new Date(elt.date_deb) >= new Date(dateDeb) && new Date(elt.date_fin) <= new Date(dateFin)));
+            resultList = list.filter((elt)=>(new Date(changeDateIntoMMJJAAAA(elt.dateJour_deb.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)) && new Date(changeDateIntoMMJJAAAA(elt.dateJour_fin.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin))));
+            setGridRows(resultList);
             return resultList;
         }
 
+        setGridRows(list);
+        return list;
 
     }
 
@@ -122,12 +160,16 @@ function BilletEntreeSortie(props) {
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value;
             getStudentAuthSortie(CURRENT_CLASSE_ID);
+            getClassStudentList(CURRENT_CLASSE_ID);
             initDatefields();
             setIsValid(true);
         }else{
             CURRENT_CLASSE_ID = undefined;
+            listAutorisations = [];
             initDatefields();
             setIsValid(false);
+            setGridRows(listAutorisations);
+            eleves_data = [];
         }
     }
 
@@ -155,19 +197,40 @@ function BilletEntreeSortie(props) {
         list.map((elt)=>{
             listElt={};
             listElt.id_billet = elt.id_billet;
-            listElt.id = elt.id;
+            listElt.id = rang; 
+            listElt.idEleve = elt.id;
             listElt.matricule = elt.matricule;
             listElt.nom  = elt.nom;
             listElt.rang = rang; 
+            listElt.type_duree = elt.type_duree;
+            listElt.date_jour =  (listElt.type_duree=='jour') ? '': elt.date_jour;
             listElt.date_deb = elt.date_deb;
             listElt.date_fin = elt.date_fin;
             listElt.status = elt.status;
-            listElt.type_duree = elt.type_duree;
+            
+            if (listElt.type_duree != 'jour'){
+                listElt.dateJour_deb = elt.date_jour+' '+elt.date_deb;
+                listElt.dateJour_fin = elt.date_jour+' '+elt.date_fin;
+            } else {
+                listElt.dateJour_deb = elt.date_deb;
+                listElt.dateJour_fin = elt.date_fin;
+
+            }
+
+            
             listElt.statusLabel = elt.status? t("justified") : t("non_justified");
             formattedList.push(listElt)
             rang ++;
         })
         return formattedList;
+    }
+
+
+    function NonJustifyAuthExist(eleveId){
+        var elevData = listAutorisations.find((elt)=>elt.id == eleveId && elt.status == false);
+        console.log("resultat",listAutorisations,elevData,eleveId);
+        if (elevData == undefined) return false;
+        else return true;        
     }
     
 /*************************** DataGrid Declaration ***************************/    
@@ -195,12 +258,26 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
+    {
+        field: 'dateJour_deb',
+        headerName: 'DATE DEBUT',
+        width: 120,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+    {
+        field: 'dateJour_fin',
+        headerName: 'DATE FIN',
+        width: 120,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
     {
         field: 'date_deb',
         headerName: 'DATE DEBUT',
         width: 120,
         editable: false,
+        hide:true,
         headerClassName:classes.GridColumnStyle
     },
 
@@ -209,13 +286,14 @@ const columnsFr = [
         headerName:'DATE FIN',
         width: 120,
         editable: false,
+        hide:true,
         headerClassName:classes.GridColumnStyle,
             
     },
 
     {
         field: 'type_duree',
-        headerName:'TYPE DUREE',
+        headerName:'DUREE EN',
         width: 200,
         editable: false,
         hide:true,
@@ -251,24 +329,47 @@ const columnsFr = [
 
     
     {
-        field: 'id',
-        headerName: 'ACTION',
+        field: '',
+        headerName: 'ACTIONS',
         width: 80,
         editable: false,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
             return(
-                <div className={classes.inputRow}>
-                    <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            event.ignore = true;
-                        }}
-                        alt=''
-                    />
-                </div>
+               (params.row.status == false) &&
+                    <div className={classes.inputRow}>
+                        <img src="icons/baseline_edit.png"  
+                            width={17} 
+                            height={17} 
+                            className={classes.cellPointer} 
+                            style={{marginRight:'0.5vw'}}
+                            onClick={(event)=> {
+                                event.ignore = true;
+                            }}
+                            alt=''
+                        />
+
+                        |
+                        
+                        <img src="images/validateAuthSortie.png"  
+                            width={17} 
+                            height={17} 
+                            className={classes.cellPointer} 
+                            style={{marginLeft:'0.5vw'}}
+                            onClick={(event)=> {
+                                //event.ignore = true;
+                                CURRENT_AUTORISATION_ID = params.row.id_billet;
+                                chosenMsgBox = MSG_QUESTION_BS;
+                                currentUiContext.showMsgBox({
+                                    visible:true, 
+                                    msgType:"question", 
+                                    msgTitle:t("justyfy_authorization_M"), 
+                                    message:t("justify_authorization")
+                                })
+                            }}
+                            alt=''
+                        />
+                    </div>
             )}           
             
         },
@@ -298,12 +399,27 @@ const columnsFr = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+        {
+            field: 'dateJour_deb',
+            headerName: 'DATE DEBUT',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'dateJour_fin',
+            headerName: 'DATE FIN',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
     
         {
             field: 'date_deb',
             headerName:'START DATE',
             width: 120,
             editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle,
                 
         },
@@ -313,13 +429,14 @@ const columnsFr = [
             headerName:'END DATE',
             width: 120,
             editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle,
                 
         },
     
         {
             field: 'type_duree',
-            headerName:'TYPE DUREE',
+            headerName:'DURATION IN',
             width: 200,
             editable: false,
             hide:true,
@@ -339,7 +456,6 @@ const columnsFr = [
             field: 'statusLabel',
             headerName:'PERMISSION STATUS',
             width: 140,
-            hide:true,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
@@ -355,24 +471,47 @@ const columnsFr = [
     
     
         {
-            field: 'id',
-            headerName: 'ACTION',
+            field: '',
+            headerName: 'ACTIONS',
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
-                    </div>
+                    (params.row.status == false) &&
+                         <div className={classes.inputRow}>
+                            <img src="icons/baseline_edit.png"  
+                                width={17} 
+                                height={17} 
+                                className={classes.cellPointer} 
+                                style={{marginRight:'0.5vw'}}
+                                onClick={(event)=> {
+                                    event.ignore = true;
+                                }}
+                                alt=''
+                            />
+     
+                            |
+                             
+                            <img src="images/validateAuthSortie.png"  
+                                width={17} 
+                                height={17} 
+                                className={classes.cellPointer} 
+                                style={{marginLeft:'0.5vw'}}
+                                onClick={(event)=> {
+                                    //event.ignore = true;
+                                    CURRENT_AUTORISATION_ID = params.row.id_billet;
+                                    chosenMsgBox = MSG_QUESTION_BS;
+                                    currentUiContext.showMsgBox({
+                                        visible:true, 
+                                        msgType:"question", 
+                                        msgTitle:t("justyfy_authorization_M"), 
+                                        message:t("justify_authorization")
+                                    })
+                                }}
+                                alt=''
+                            />
+                         </div>
                 )}           
                 
         },        
@@ -394,7 +533,7 @@ const columnsFr = [
 /*************************** Handler functions ***************************/
     function consultRowData(row){
         var inputs=[];      
-        inputs[0]= row.id;
+        inputs[0]= row.idEleve;
         inputs[1]= row.id_billet;
         inputs[2]= currentAppContext.currentEtab;
         inputs[3]= CURRENT_CLASSE_ID;
@@ -404,6 +543,7 @@ const columnsFr = [
         inputs[7]= row.date_fin;
         inputs[8]= row.date_jour;
         inputs[9]= row.status;
+        inputs[10] = [...eleves_data];
      
         currentUiContext.setFormInputs(inputs);
         setModalMode('consult');
@@ -411,9 +551,10 @@ const columnsFr = [
     }   
 
 
-    function handleEditBS(row){
+    function handleEditBS(row){ 
+        console.log("selected row",row);
         var inputs=[];
-        inputs[0]= row.id;
+        inputs[0]= row.idEleve;
         inputs[1]= row.id_billet;
         inputs[2]= currentAppContext.currentEtab;
         inputs[3]= CURRENT_CLASSE_ID;
@@ -423,6 +564,7 @@ const columnsFr = [
         inputs[7]= row.date_fin;
         inputs[8]= row.date_jour;
         inputs[9]= row.status;
+        inputs[10] = [...eleves_data];
         
         currentUiContext.setFormInputs(inputs);
         console.log("Billes edit",row, currentUiContext.formInputs);
@@ -449,61 +591,60 @@ const columnsFr = [
 
     function getJourDebAndFilter(e){
         setGridRows([]);
-        JOUR = e.target.value;
-        DATEDEB_VERIF = YEAR_DEB+'-'+MOIS_DEB+'-'+JOUR_DEB;
-        if(DATEDEB_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,'');
-        else filterAuthSortie(listAutorisations,'','');
+        JOUR_DEB = e.target.value;
+        DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+        console.log("date verif",listAutorisations);
+        if(DATEDEB_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,DATEFIN_VERIF);
+        else filterAuthSortie(listAutorisations,'',DATEFIN_VERIF);
 
     }
 
     function getJourFinAndFilter(e){
         setGridRows([]);
         JOUR_FIN = e.target.value;
-        DATEFIN_VERIF = YEAR_FIN+'-'+MOIS_FIN+'-'+JOUR_FIN;
-        if(DATEFIN_VERIF.length==10) filterAuthSortie(listAutorisations,'',DATEFIN_VERIF);
-        else filterAuthSortie(listAutorisations, '', '');
+        DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+        if(DATEFIN_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,DATEFIN_VERIF);
+        else filterAuthSortie(listAutorisations, '', DATEDEB_VERIF);
 
     }
 
-
-    function getMoisDebAndFilter(e){
+    function getMoisDebAndFilter(e, dateFin){
         setGridRows([]);
         MOIS_DEB = e.target.value;
-        DATEDEB_VERIF = YEAR_DEB+'-'+MOIS_DEB+'-'+JOUR_DEB;
-        if(DATEDEB_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,'');
-        else filterAuthSortie(listAutorisations, '', '');
+        DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+        console.log("date verif",DATEDEB_VERIF);
+        if(DATEDEB_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,DATEFIN_VERIF);
+        else filterAuthSortie(listAutorisations, '', DATEFIN_VERIF);
     }
 
     function getMoisFinAndFilter(e){
         setGridRows([]);
         MOIS_FIN = e.target.value;
-        DATEFIN_VERIF = YEAR_FIN+'-'+MOIS_FIN+'-'+JOUR_FIN;
-        if(DATEFIN_VERIF.length==10) filterAuthSortie(listAutorisations,'',DATEFIN_VERIF);
-        else filterAuthSortie(listAutorisations, '', '');
+        DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+        if(DATEFIN_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,DATEFIN_VERIF);
+        else filterAuthSortie(listAutorisations, DATEDEB_VERIF, '');
     }
 
 
     function getYearDebAndFilter(e){
         setGridRows([]);
         YEAR_DEB = e.target.value;
-        DATEDEB_VERIF = YEAR_DEB+'-'+MOIS_DEB+'-'+JOUR_DEB;
-        if(DATEDEB_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,'');
-        else filterAuthSortie(listAutorisations, '', '');
+        DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+        console.log("date verif",DATEDEB_VERIF);
+        if(DATEDEB_VERIF.length==10) filterAuthSortie(listAutorisations,DATEDEB_VERIF,DATEFIN_VERIF);
+        else filterAuthSortie(listAutorisations, '', DATEFIN_VERIF);
     }
 
     function getYearFinAndFilter(e){
         setGridRows([]);
         YEAR_FIN = e.target.value;
-        DATEFIN_VERIF = YEAR_FIN+'-'+MOIS_FIN+'-'+JOUR_FIN;
+        DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
         if(DATEFIN_VERIF.length==10) filterAuthSortie(listAutorisations,'',DATEFIN_VERIF);
         else filterAuthSortie(listAutorisations, '', '');
     }
 
-    function filterGridData(date_deb, date_fin){
 
-    }
-
-    
+ 
     const acceptHandler=()=>{
         
         switch(chosenMsgBox){
@@ -530,6 +671,18 @@ const columnsFr = [
                 })  
                
                 return 1;
+            }
+
+            case MSG_QUESTION_BS :{
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                justifyAuthorization();
+                return 1;
+
             }
             
            
@@ -561,7 +714,7 @@ const columnsFr = [
             }
 
             case MSG_WARNING_BS :{
-                    currentUiContext.showMsgBox({
+                currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
@@ -569,6 +722,18 @@ const columnsFr = [
                 })  
                // currentUiContext.setIsParentMsgBox(true);
                 return 1;
+            }
+
+            case MSG_QUESTION_BS :{
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+               //justifyAuthorization();
+                return 1;
+
             }
             
            
@@ -589,27 +754,42 @@ const columnsFr = [
     
     function addNewAutSortie(BilletSortie){        
         console.log("Billet", BilletSortie);
-        axiosInstance.post(`create-billet-sortie/`, {
-            id_sousetab :  BilletSortie.id_sousetab,
-            id_classe   :  BilletSortie.id_classe,
-            id_eleves   :  BilletSortie.id_eleves,
-            type_duree  :  BilletSortie.type_duree,
-            date_deb    :  BilletSortie.date_deb,
-            date_fin    :  BilletSortie.date_fin,
-            date_jour   :  BilletSortie.date_jour
-            
-        }).then((res)=>{   
-            console.log("resultat",res.data);
-            listAutorisations = [...formatList(res.data)]; 
-          
-            chosenMsgBox = MSG_SUCCESS_BS;
+        if(NonJustifyAuthExist(BilletSortie.id_eleves)){
+            chosenMsgBox = MSG_WARNING_BS;
             currentUiContext.showMsgBox({
                 visible  : true, 
-                msgType:"info", 
-                msgTitle:t("success_modif_M"), 
-                message:t("success_modif")
-            })          
-        })
+                msgType  : "danger", 
+                msgTitle:t("error_M"), 
+                message :t("non justify authorization exist for this student!!!")
+            })         
+
+        } else {
+            axiosInstance.post(`create-billet-sortie/`, {
+                id_sousetab :  BilletSortie.id_sousetab,
+                id_classe   :  BilletSortie.id_classe,
+                id_eleves   :  BilletSortie.id_eleves,
+                type_duree  :  BilletSortie.type_duree,
+                date_deb    :  BilletSortie.date_deb,
+                date_fin    :  BilletSortie.date_fin,
+                date_jour   :  BilletSortie.date_jour
+                
+            }).then((res)=>{   
+                console.log("resultat",res.data);
+                listAutorisations = [...formatList(res.data.status)]; 
+                
+                console.log(listAutorisations);
+                
+                chosenMsgBox = MSG_SUCCESS_BS;
+                currentUiContext.showMsgBox({
+                    visible  : true, 
+                    msgType:"info", 
+                    msgTitle:t("success_modif_M"), 
+                    message:t("success_modif")
+                })          
+            })
+
+        }
+        
     }
 
    
@@ -628,7 +808,7 @@ const columnsFr = [
             
         }).then((res)=>{   
             console.log("resultat",res.data); 
-            listAutorisations = [...formatList(res.data)];         
+            listAutorisations = [...formatList(res.data.status)];         
             chosenMsgBox = MSG_SUCCESS_BS;
             currentUiContext.showMsgBox({
                 visible  : true, 
@@ -638,6 +818,28 @@ const columnsFr = [
             })          
           
         })
+    }
+
+    function justifyAuthorization(){
+      
+        axiosInstance.post(`validate-billet-entree/`, {
+            id_billet: CURRENT_AUTORISATION_ID,
+            id_classe: CURRENT_CLASSE_ID,
+            status   : 1
+        }).then((res)=>{
+            console.log(res.data);
+            listAutorisations = [...formatList(res.data.status)];
+           
+            chosenMsgBox = MSG_SUCCESS_BS;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType:"info", 
+                msgTitle:t("success_modif_M"), 
+                message:t("success_modif")
+            });          
+            console.log(listAutorisations);
+        })  
+
     }
 
 
@@ -681,7 +883,8 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             {(modalOpen==3) && <BackDrop/>}
             {(modalOpen==3) && 
-                <BilletES formMode={modalMode} 
+                <BilletES 
+                    formMode={modalMode} 
                     currentClasseId={CURRENT_CLASSE_ID} 
                     cancelHandler={quitForm}  
                     createElthandler={addNewAutSortie}  
@@ -765,11 +968,8 @@ const columnsFr = [
                         </div>
                         
                     </div>
-                 
 
 
-                   
-                                
                     <div className={classes.gridAction}> 
                         
                         <CustomButton
@@ -782,7 +982,6 @@ const columnsFr = [
                             btnClickHandler={AddNewBilletHandler}
                             disable={(isValid==false)}   
                         />
-                        
                        
                     </div>
                         
@@ -795,7 +994,8 @@ const columnsFr = [
                     <StripedDataGrid
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : (params.field==='statusLabel' && params.row.status==true)?  classes.enCoursStyle: (params.field==='statusLabel' && params.row.status==false) ? classes.clotureStyle : classes.gridRowStyle }
+                       
                         
                         onCellClick={(params,event)=>{
                             if(event.ignore) {
