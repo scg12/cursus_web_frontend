@@ -61,14 +61,49 @@ function Palette(props) {
     };
 
 
-/*    const listProfs = [
-        "Mr. ONDOUA p._Mme. MENGUE A._Mr. ABENA T._Mr. HOMBA S._Mr. Talla J._Mlle. ELIMBI_Mr. ETOA_Mr. BASSOGOG",
-        "Mme. Ngo Milend_Mme. Ngo Nouki_Mme. Mendoua_Mme. Mouliom_Mme. Kamga_Mr. Belingua_Mr. Mpenza",
-        "Mr. Evina_Mr. Bassagal_Mr. Tindo_Mr. Ateba_Mr. Kembo Ekoko_Mr. Telep_Mme. Ebana_MrMbazoa_Mr. Elimbi"        
-    ]*/
+
+    function getOngletProfStyle()
+    { // Choix du theme courant
+        if(currentUiContext.isMatiereEnable){
+            switch(selectedTheme){
+                case 'Theme1': return classes.paletteContainerP + ' '+ classes.Theme1_Btnstyle +' buttonDefault ';
+                case 'Theme2': return classes.paletteContainerP + ' '+ classes.Theme2_Btnstyle +' buttonDefault ';
+                case 'Theme3': return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault ';
+                default: return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault ';
+            }
+        } else {
+            switch(selectedTheme){
+                case 'Theme1': return classes.paletteContainerP + ' '+ classes.Theme1_Btnstyle +' buttonDefault Theme1_active';
+                case 'Theme2': return classes.paletteContainerP + ' '+ classes.Theme2_Btnstyle +' buttonDefault Theme2_active';
+                case 'Theme3': return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault Theme3_active';
+                default: return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault Theme1_active';
+            }
+
+        }
+       
+    }
 
 
-    
+    function getOngletMatiereStyle()
+    { // Choix du theme courant
+        if(currentUiContext.isMatiereEnable){
+            switch(selectedTheme){
+                case 'Theme1': return classes.paletteContainerP + ' '+ classes.Theme1_Btnstyle +' buttonDefault Theme1_active';
+                case 'Theme2': return classes.paletteContainerP + ' '+ classes.Theme2_Btnstyle +' buttonDefault Theme2_active';
+                case 'Theme3': return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault Theme3_active';
+                default: return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault Theme1_active';
+            }
+           
+        } else {
+            switch(selectedTheme){
+                case 'Theme1': return classes.paletteContainerP + ' '+ classes.Theme1_Btnstyle +' buttonDefault ';
+                case 'Theme2': return classes.paletteContainerP + ' '+ classes.Theme2_Btnstyle +' buttonDefault ';
+                case 'Theme3': return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault ';
+                default: return classes.paletteContainerP + ' '+ classes.Theme3_Btnstyle +' buttonDefault ';
+            }
+        }       
+    }
+
     function getCurrentButtonTheme()
     {  // Choix du theme courant
        switch(selectedTheme){
@@ -89,27 +124,7 @@ function Palette(props) {
         }
     }
 
-    /*function setMatiereColor(colorString){
-        alert('ici couleeur')
-        var countSelectedMatieres = getCountSelectedDroppedMatieres();
-        for (var i= 0; i< countSelectedMatieres; i++){
-            if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true){
-                //console.log('pepa',CURRENT_DROPPED_MATIERE_LIST[i])
-                document.getElementById(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere).style.backgroundColor = TAB_COLORS[colorString];
-                document.getElementById(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere).style.borderColor = TAB_COLORS[colorString];
-                
-                if (colorString=='Yellow'|| colorString=='YellowGold'){
-                    document.getElementById(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere).style.color = 'black';
-                }
-
-            }
-           
-        }
-
-        updateCountSelectedMatieres(0);
-        AddValueToSelectedMatiereTab('',-1);
-        
-    }*/
+    
 
     function deleteElements(){
         CURRENT_DROPPED_MATIERE_LIST = currentUiContext.CURRENT_DROPPED_MATIERE_LIST;
@@ -423,93 +438,125 @@ function Palette(props) {
      
     }
 
-    /*function initProfList(listeProf){
-        var parent = document.getElementById('profList');
-        var draggableSon, draggableSonText, draggableSonImg;
-
-        clearProflist();
-        //alert(listeProf);
-      
-        for (var i = 0; i < listeProf.length; i++) {
-            PROF_DATA = {};
-            draggableSon =  document.getElementById('prof_' + (i+1));
-            draggableSonText = document.getElementById('prof_' + (i+1)+'_sub');
-            
-            draggableSon.className = classes.profDivStyle;  
-            draggableSon.title = listeProf[i];       
-            
-            draggableSonText.textContent = listeProf[i];
-            draggableSonText.className = classes.profTextSyle;            
-
-            draggableSonImg =  document.getElementById('prof_' + (i+1) + '_img');
-            draggableSonImg.className = classes.profImgStyle;
-
-            draggableSonImg = document.querySelector('#prof_' + (i+1) + '_img > img')
-            if(listeProf[i].includes('Mr.')) {
-                draggableSonImg.setAttribute('src',"images/maleTeacher.png");
-            }else{
-                draggableSonImg.setAttribute('src',"images/femaleTeacher.png");
-            }
-            
-            
-            PROF_DATA.idProf = 'prof_' + (i+1);
-            PROF_DATA.NomProf = listeProf[i];
-            
-            CURRENT_PROFS_LIST.push(PROF_DATA);
-            PROF_DATA = {};                                     
-        }
-     
-    }
-
-    function getProfs(codeMatiere){
+    function enableMatieresList(){
+        currentUiContext.setIsMatiereEnable(true);
+        /*indexClasse = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==currentClasseId);
+       
+        clearMatiereList(currentUiContext.matiereSousEtab); 
+        var tabMatieres=[]
         
-        switch(codeMatiere){
-            case '001': return listProfs[1] ;
-            case '002': return listProfs[2] ;
-            default: return listProfs[0];
-            //case 'matiere_4':   return listProfs[2] ;           
-        }
-      
+        var listMat = currentUiContext.listMatieres[indexClasse];
+
+        tabMatieres = listMat.split('_');
+        initMatiereList(tabMatieres); */
+       
     }
 
-    function getProfsList(periode){
-        var tabProfs,profList;
-        var codeMatiere, countMatieres, indexMatiere;
-        countMatieres = getCountSelectedDroppedMatieres();
-        if(countMatieres == 0) {
-            alert('Vous devez selectionner une matiere!');
-        } else {
-            if(countMatieres > 1) {
-                alert('Vous devez selectionner une seule matiere!');
-            } else {
-                indexMatiere = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected==true);
-                codeMatiere = CURRENT_DROPPED_MATIERE_LIST[indexMatiere]
-                profList = getProfs(codeMatiere)
-                tabProfs = profList.split('_');
-                initProfList(tabProfs);
-            } 
+    function initMatiereList(listeMatieres){
+        var CURRENT_MATIERE_LIST=[];
+        console.log("listeMatieres: ",listeMatieres)
+      
+        var MATIERE_DATA ={}
+        var parent, draggableSon;
+        var tabMatiere =[];
+        // var colorIndexes = generateRandomNumbers(listeMatieres.length,0,COLORS.length)
+        
+        for (var i = 0; i < listeMatieres.length; i++) {
+            
+            tabMatiere = listeMatieres[i].split('*');
+            parent =  document.getElementById('matiere_' + tabMatiere[1]);
+            draggableSon = document.getElementById('matiere_' + tabMatiere[1]+'_sub');
+            parent.className = classes.matiereStyle; 
+            
+            // parent.style.backgroundColor=COLORS[colorIndexes[i]];  
+            parent.style.backgroundColor=tabMatiere[2];  
+            parent.title = tabMatiere[0];
+            
+            MATIERE_DATA = {};
+            MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
+            MATIERE_DATA.libelleMatiere = tabMatiere[0];
+            MATIERE_DATA.codeMatiere = tabMatiere[1];
+           
+            MATIERE_DATA.colorCode = tabMatiere[2];
+            
+            CURRENT_MATIERE_LIST[i] = MATIERE_DATA;
+            
+            draggableSon.textContent = tabMatiere[0];
+            draggableSon.className = classes.matiereTitleStyle;                     
+                  
         }
+        MATIERE_DATA = {};
+        console.log('matieres',CURRENT_MATIERE_LIST);
+        currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
+    }
+    
+
+   /* function clearMatiereList(matieres){
+        var parent, enfants, draggableSon;
+        //On initialise tout ce aui concerne la matiere.
+        COUNT_SELECTED_MATIERES=0;
+        SELECTED_MATIERE_ID='';
+        SELECTED_MATIERE_TAB=[]
+        CURRENT_DROPPED_MATIERE_LIST=[];
+        CURRENT_MATIERE_LIST=[];
+        let MATIERE_MAXSIZE = matieres.length;
+        
+        parent = document.getElementById('matieres');
+        enfants = parent.childNodes;
+        
+        for (var i = 0; i < MATIERE_MAXSIZE; i++) {
+            parent =  document.getElementById('matiere_' + matieres[i].id);
+            draggableSon = document.getElementById('matiere_' + matieres[i].id+'_sub');
+            parent.className = null;
+            parent.title = '';
+            draggableSon.textContent ='';
+            draggableSon.className = null; 
+        }  
+        currentUiContext.setCURRENT_MATIERE_LIST([])  
     }*/
+    
+
+
+    function enableprofsList(){
+        currentUiContext.setIsMatiereEnable(false);
+    }
    
-    return (       
-        <div className={classes.paletteContainer}> 
-            <div className={classes.buttonContainer}>
-                <CustomButton
-                    btnText=''
-                    buttonStyle={classes.buttonStyle}
-                    //btnTextStyle = {classes.btnTextStyleX}
-                    
-                    hasIconImg= {true}
-                    imgSrc='images/delete.png'
-                    imgStyle = {classes.imgStyle}
-                    btnClickHandler={deleteElements}
-                />             
-              
+    return (    
+        <div style={{display:'flex', flexDirection:'column'}}>
+            <div className={classes.paletteContainer} style={{marginBottom:'2vh'}}> 
+                <div className={classes.buttonContainer}>
+                    <CustomButton
+                        btnText=''
+                        buttonStyle={classes.buttonStyle}
+                        //btnTextStyle = {classes.btnTextStyleX}
+                        hasIconImg= {true}
+                        imgSrc='images/delete.png'
+                        imgStyle = {classes.imgStyle}
+                        btnClickHandler={deleteElements}
+                    />           
+                </div>
             </div>
-                        
-            
-            
-        </div>
+
+            <CustomButton  
+                id='matieresPalette'
+                btnText=' Matieres'
+                hasIconImg= {false}
+                buttonStyle={getOngletMatiereStyle()}
+                style={{marginBottom:'1.3vh'}}
+                btnClickHandler={enableMatieresList}
+                btnTextStyle={classes.ongletTexte}                                                   
+            />
+
+            <CustomButton 
+                id='profPrincipalPalette' 
+                btnText=' Principal'
+                hasIconImg= {false}
+                buttonStyle={getOngletProfStyle()}
+                btnClickHandler={enableprofsList}
+                btnTextStyle={classes.ongletTexte} 
+                disable={(currentUiContext.CURRENT_DROPPED_PROFS_LIST.length == 0)}                                                   
+            />  
+        </div> 
        
     );
 }

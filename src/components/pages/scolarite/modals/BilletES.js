@@ -17,59 +17,20 @@ import { useTranslation } from "react-i18next";
 
 
 var LIST_ELEVES = undefined;
-var SELECTED_ROLE = undefined;
-var SELECTED_PARTICIPANT = undefined;
-var SELECTED_DECISION = 0 //0-> Recale, 1-> Admis, 2-> Traduit, 3->Blame, 4->Autre
-var SELECTED_ELEVE = undefined;
-var CURRENT_RESPONSABLE_ID= undefined;
-var CURRENT_RESPONSABLE_LABEL = undefined;
-var MEETING_OBJET_ID = undefined;
-var MEETING_OBJET_LABEL = undefined;
-var periodeId = undefined;
+var JOUR_DEB='', MOIS_DEB='', YEAR_DEB='', DATEDEB='';
+var JOUR_FIN='', MOIS_FIN='', YEAR_FIN='', DATEFIN='';
+var JOUR_SORTIE='', MOIS_SORTIE='', YEAR_SORTIE='', DATESORTIE='';
+
+var HEURE_DEB='', MIN_DEB='';
+var HEURE_FIN='', MIN_FIN='';
 
 var eleves_data=[];
 
+var BILLET_SORTIE ={}
+var currentEleveId = undefined;
 
 
-var MEETING = {
-    //---Infos Generales 
-    id:-1,
-    classeId : 0,
-    classeLabel:'',
 
-    responsableId:0,
-    responsableLabel:'',
-
-    profPrincipalId :0,
-    profPrincipalLabel : '',
-
-    date:'',
-    heure:'',
-
-    objetId:0,
-    objetLabel:'',
-
-    autreObjet:'',
-
-    etat:0,
-    etatLabel:'En cours',
-
-    decision:'',
-    note_passage:0,
-
-    note_exclusion:0,
-    //---participants
-    listParticipants : [], 
-    
-    //----Eleves convoques
-    listConvoques:[],
-
-    //---decisions cas par cas
-    listCaspasCas : [],
-   
-    //---prof presents
-    listPresents : [],
-};
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -81,315 +42,70 @@ function BilletES(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
     const [isValid, setIsValid] = useState(false);
-    const [optObjet, setOptObjet] = useState(getListObjets());
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const selectedTheme = currentUiContext.theme;
-    const [etape,setEtape] = useState(1);
-    const [etape1InActiv, setEtape1InActiv] = useState(setButtonDisable(1));
-    const [etape2InActiv, setEtape2InActiv] = useState(setButtonDisable(2));
-    const [tabParticipant, setTabParticipant] = useState([]);
-    const [tabEleves, setTabEleves]= useState([]);
-    const [tabElevesDecisions, setTabElevesDecisions]= useState([]);
+    const [optEleves, setOptEleves] = useState([]);
+    const [isDureeJour, setIsDureeJour] = useState(true);
+    const [isBilletJustified, setIsBilletJustified] = useState(false);
    
-   // const [tabPresents, setTabPresents] = useState([]);
-    const [optOK, setOptOK] = useState([]);
-    
-    const [optResponsable, setOptResponsable] = useState(getListResponsables());
-    const [optRole, setOptRole]= useState(getListRoles());
-    const [optConvoques, setOptConvoques] = useState([]);
-    const [optPeriode, setOptPeriode] = useState([]);
-    const [isBilan, setIsBilan] = useState(false);
-    const [notifVisible, setNotifVisible]= useState(false);
-    const [isButtonClicked, setIsButtonClicked] = useState(false);
-    const [currentDecision, setCurrentDecision]=useState(0);
-    const [currentMotif, setCurrentMotif]=useState(0);
-    const [presents, setPresents]= useState([]);
-    const [sanctions, setSanctions] = useState([]);
   
     useEffect(()=> {
+       // getClassStudentList(props.currentClasseId);
+        eleves_data = currentUiContext.formInputs[10];
+        setOptEleves(eleves_data);
+        currentEleveId = undefined;
+        
+        if (props.formMode != 'creation'){
 
-        getClassStudentList(props.currentClasseId);
-        setOptPeriode(nonDefini);
-        /*setOptResponsable(tabResponsables);
-        setOptRole(tabRoles);
-        setOptObjet(tabObjets);*/
-       
-        // MEETING = {
-        //     classeId : props.currentClasseId,
-        //     classeLabel:props.currentClasseLabel,
-        //     profPrincipalId : props.currentPpId,
-        //     profPrincipalLabel : props.currentPpLabel,
-
-        //     id : putToEmptyStringIfUndefined(currentUiContext.formInputs[0]),
-
-        //     responsableId:putToEmptyStringIfUndefined(currentUiContext.formInputs[1]),
-        //     responsableLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[10]),
-
-        //     date:putToEmptyStringIfUndefined(currentUiContext.formInputs[2]),
-        //     heure:putToEmptyStringIfUndefined(currentUiContext.formInputs[3]),
-
-        //     objetId:putToEmptyStringIfUndefined(currentUiContext.formInputs[4]),
-        //     objetLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[11]),
-
-        //     autreObjet:putToEmptyStringIfUndefined(currentUiContext.formInputs[5]),
-
-        //     decision:putToEmptyStringIfUndefined(currentUiContext.formInputs[6]),
-
-        //     note_passage:putToEmptyStringIfUndefined(currentUiContext.formInputs[7]),
-        //     note_exclusion:putToEmptyStringIfUndefined(currentUiContext.formInputs[8]),
-
-        //     etat : putToEmptyStringIfUndefined(currentUiContext.formInputs[9]),
+            if(props.formMode == 'consult') currentEleveId = document.getElementById("eleveId").value;
+            else {
+                currentEleveId = currentUiContext.formInputs[0];
+                var curEleve = eleves_data.find((elv)=>elv.value == currentEleveId);
+                var index    = eleves_data.findIndex((elv)=>elv.value == currentEleveId);
+               
+                eleves_data.splice(0,1);     
+                eleves_data.splice(index,1);
+                eleves_data.unshift(curEleve);
+               
+                setOptEleves(eleves_data);
+            }
            
-        //     //---participants
-        //     listParticipants : [...getListParticipants()],  
             
-        //     //---prof presents
-        //     listPresents : [...getListPresents()],
-        
-        //     //---decisions cas par cas
-        //     listCaspasCas :  [...getListEleveConvoques()],
+    
+            DATESORTIE = currentUiContext.formInputs[8];
+            console.log("sortie",DATESORTIE);
 
-        //     //---Eleves convoques
-        //     listConvoques: [...getListEleveConvoques()],
-                        
-        // };    
+            if (DATESORTIE==undefined || DATESORTIE.length<=0){
+                DATEDEB = currentUiContext.formInputs[6];
+                DATEFIN = currentUiContext.formInputs[7];
 
-        
-        // setTabParticipant([...getListParticipants()]);
-        // setTabEleves([...getListEleveConvoques()]);
-        
-
-        // if (props.formMode == 'modif'){
-        //     console.log('responsable:',MEETING.responsableId)
-        //     tabResponsables.splice(0,1);
-        //     var responsable = tabResponsables.find((resp)=>resp.value == MEETING.responsableId);
-        //     var index = tabResponsables.findIndex((resp)=>resp.value == MEETING.responsableId);
-        //     tabResponsables.splice(index,1);
-        //     tabResponsables.unshift(responsable);
-        //     setOptResponsable(tabResponsables);
-
-        //     CURRENT_RESPONSABLE_ID =  MEETING.responsableId;
-        //     CURRENT_RESPONSABLE_LABEL = MEETING.responsableLabel;
-
-        //     /*tabObjets.splice(0,1);
-        //     var objet = tabObjets.find((obj)=>obj.value == MEETING.objetId);
-        //     index = tabObjets.findIndex((obj)=>obj.value == MEETING.objetId);
-        //     tabObjets.splice(index,1);
-        //     tabObjets.unshift(objet);
-        //     //setOptObjet(tabObjets);
-
-        //     MEETING_OBJET_ID = MEETING.objetId;
-        //     MEETING_OBJET_LABEL =  MEETING.objetLabel;*/
-
-        //     if(MEETING.etat==0) setNotifVisible(true);
-        // } 
-
-        // console.log(currentUiContext.formInputs);        
+            } else {
+                DATEDEB = currentUiContext.formInputs[6];
+                DATEFIN = currentUiContext.formInputs[7];
+            }
+           
+            BILLET_SORTIE = {
+                id_eleves   : currentUiContext.formInputs[0],
+                id_billet   : currentUiContext.formInputs[1],                
+                id_sousetab : currentUiContext.formInputs[2],
+                id_classe   : currentUiContext.formInputs[3], 
+                nom         : currentUiContext.formInputs[4],                
+                type_duree  : currentUiContext.formInputs[5],
+                date_deb    : currentUiContext.formInputs[6],
+                date_fin    : currentUiContext.formInputs[7],
+                date_jour   : currentUiContext.formInputs[8],
+                status      : currentUiContext.formInputs[9],
+            }
+           
+            setIsBilletJustified(BILLET_SORTIE.status);
+            
+            var estDureeJour = (BILLET_SORTIE.type_duree == "jour") ? true : false;
+            setIsDureeJour(estDureeJour)
+        }
 
     },[]);
 
-    
-    const  getClassStudentList=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
-        }).then((res)=>{
-            console.log(res.data);
-            console.log(listEleves);
-            LIST_ELEVES= [...getElevesTab(res.data)];
-            console.log(LIST_ELEVES) ;          
-        })  
-        return listEleves;     
-    }
-
-    function getElevesTab(elevesTab){
-        var tabEleves = [{value:0,label:"- "+t('choisir')+" -"}]
-        var new_eleve;
-        elevesTab.map((eleve)=>{
-            new_eleve = {};
-            new_eleve.value = eleve.id;
-            new_eleve.label = eleve.nom +' '+eleve.prenom;
-            tabEleves.push(new_eleve);       
-        })
-        return tabEleves;
-    }
-
-    function periodeChangeHandler(e){
-        if(e.target.value > 0){
-            periodeId = e.target.value;
-        } else periodeId = undefined;
-    }
-
    
-    function objetChangeHandler(e){
-        var typeConseil = e.target.value;
-        var tabPeriode=nonDefini;
-        
-       if(typeConseil != "null"){       
-            switch(typeConseil){
-                case 'sequentiel': {tabPeriode = [...props.sequencesDispo]; break;}
-                case 'trimestriel': {tabPeriode = [...props.trimestresDispo]; break;}
-                default:tabPeriode = nonDefini;
-            }
-            console.log("periode choisie",tabPeriode, typeConseil)
-            setOptPeriode(tabPeriode);
-            var meeting = tabObjets.find((meetg)=>meetg.value==e.target.value);
-
-            MEETING_OBJET_ID = meeting.value;
-            MEETING_OBJET_LABEL = meeting.label;
-
-            if(MEETING_OBJET_ID == tabObjets[3].value) setIsBilan(true);
-            else setIsBilan(false);
-
-            // if(MEETING_OBJET_ID == tabObjets[4].value) setSeeDetail(true);
-            // else setSeeDetail(false);
-        }else{
-            // setSeeDetail(false);
-            setIsBilan(false);
-            MEETING_OBJET_ID = undefined;
-            MEETING_OBJET_LABEL = undefined;
-        }
-    }
-
-    const nonDefini=[        
-        {value: -1,   label:'-----'+ t('non defini') +'-----' },
-    ];
-
-
-    function getListParticipants(){
-        return([
-            {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0, present:true, etat:1},
-            {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1, present:true, etat:1},
-            {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2, present:true, etat:1},            
-        ]);
-    }
-
-    function getListEleveConvoques(){
-        if(props.formMode == 'creation') return [];
-        
-        if(props.formMode == 'modif')
-        return([
-            {id:21, nom:'TINA Thomas',         motifId:0,  decisionLabel:'Absence',    decisions:[0,1,2,3,4], etat:0},
-            {id:22, nom:'BOMBA NKODO Luc',     motifId:1,  decisionLabel:'Conduite',   decisions:[0,1,2,3.4], etat:0},
-            {id:23, nom:'MOULIOM Hubert',      motifId:2,  decisionLabel:'Autre',      decisions:[0,1,2,3,4], etat:0},
-        ]);
-
-        if(props.formMode == 'consult')
-        return([
-            {id:21, nom:'TINA Thomas',         motifId:0,  decisionLabel:'Absence',    decisions:[0,1,2,3,4], etat:1},
-            {id:22, nom:'BOMBA NKODO Luc',     motifId:1,  decisionLabel:'Conduite',   decisions:[0,1,2,3.4], etat:1},
-            {id:23, nom:'MOULIOM Hubert',      motifId:2,  decisionLabel:'Autre',      decisions:[0,1,2,3,4], etat:1},
-        ]);
-    }
-
-   /* function getListCasParCas(){
-        if(props.formMode == 'creation') return [];
-        else
-        return([
-            {id:1, nom:'TABI Thomas',  decisionId:0,  decisionLabel:'Recale',  decisions:[0,1,2,3,4], etat:1},
-            {id:2, nom:'ANABA Luc',    decisionId:1,  decisionLabel:'Admis',   decisions:[0,1,2,3,4], etat:1},
-            {id:3, nom:'TALLA Hubert', decisionId:2,  decisionLabel:'Traduit', decisions:[0,1,2,3,4], etat:1},
-        ]);
-    }*/
-
-    function getListPresents(){
-        if(props.formMode != 'consult') return [];
-        else
-        return([
-            {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0,  etat:1},
-            {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1,  etat:1},
-            {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2,  etat:1},            
-        ]);
-    }
-
-    function getListResponsables(){
-        return [        
-            {value: 0,   label:'-----'+ t('choisir') +'-----'},
-            {value: 11,  label:'Mr MBANBILI Hubert'          },
-            {value: 12,  label:'Mme TIEFONG Huguette'        },
-            {value: 13,  label:'Mme HEMLE MArthe'            },
-            {value: 14,  label:'Mme EMORO MArthe'            },
-            {value: 15,  label:'Mme TALLA Isabelle'          },
-        ];
-    }
-    
-
-    function getListObjets(){
-        return[
-            {value:"null", label:'-----'+ t('choisir') +'-----'    },
-            {value:"sequentiel",  label:"Conseil bilan sequentiel" },
-            {value:"trimestriel", label:"Conseil bilan trimestriel"},
-        ];    
-    }
-
-    function getListRoles(){
-        return [
-            {value:-1,label:t('choisir')},
-            {value:0, label:'President'},
-            {value:1, label:'Prof Principal'},
-            {value:2, label:'Enseignant'}
-        ];
-    }
-
-    const tabResponsables=[        
-        {value: 0,   label:'----'+ t('choisir') +'----'},
-        {value: 11,  label:'Mr MBANBILI Hubert'        },
-        {value: 12,  label:'Mme TIEFONG Huguette'      },
-        {value: 13,  label:'Mme HEMLE MArthe'          },
-        {value: 14,  label:'Mme EMORO MArthe'          },
-        {value: 15,  label:'Mme TALLA Isabelle'        },
-    ];
-
-    const tabObjets=[
-        {value:0, label:'----'+ t('choisir') +'----'},
-        {value:1, label:"Conseil bilan sequentiel" },
-        {value:2, label:"Conseil bilan trimestriel"},
-        {value:3, label:"Conseil bilan annuel"     },
-        {value:4, label:"Autre conseil"            },
-    ];
-
-    const tabParticipants=[
-        {value:-1, label:'---'+ t('choisir') +'---'},
-        {value:1,  label:'MBARGA Alfred'           },
-        {value:2,  label:'MOUDIO Luc'              },
-        {value:3,  label:'DEMBA BA Lucas'          }
-    ];
-
-    const tabRoles=[
-        {value:-1, label:t('choisir')    },
-        {value:0,  label:'President'     },
-        {value:1,  label:'Prof Principal'},
-        {value:2,  label:'Enseignant'    }
-    ];
-
-    var participant_data = [
-        {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0,  present:true, etat:1},
-        {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1,  present:true, etat:1},
-        {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2,  present:true, etat:1},            
-
-    ];
-   
-    function setButtonDisable(etape){
-        switch(props.formMode){  
-            case 'creation':                     
-                switch(etape){
-                    case 1: return false;
-                    case 2: return true;
-                }
-            case 'modif':
-                switch(etape){
-                    case  1: return false;
-                    case  2: return true;
-                }
-            default : 
-                switch(etape){
-                    case  1: return false;
-                    case  2: return false;
-                }
-        }         
-  
-    }
-
     function getGridButtonStyle()
     { // Choix du theme courant
         switch(selectedTheme){
@@ -400,46 +116,7 @@ function BilletES(props) {
         }
     }
 
-    function getNotifButtonStyle()
-    { // Choix du theme courant
-        switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P ;
-            case 'Theme2': return classes.Theme2_notifButtonStyle + ' '+ classes.margRight5P;
-            case 'Theme3': return classes.Theme3_notifButtonStyle + ' '+ classes.margRight5P;
-            default: return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P;
-        }
-    }   
-  
-    function getButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_Btnstyle ;
-        case 'Theme2': return classes.Theme2_Btnstyle ;
-        case 'Theme3': return classes.Theme3_Btnstyle ;
-        default: return classes.Theme1_Btnstyle ;
-      }
-    }
-
-    function getSmallButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_BtnstyleSmall ;
-        case 'Theme2': return classes.Theme2_BtnstyleSmall ;
-        case 'Theme3': return classes.Theme3_BtnstyleSmall ;
-        default: return classes.Theme1_BtnstyleSmall ;
-      }
-    }
-
-    function getPuceByTheme()
-    { // Choix du theme courant
-        switch(selectedTheme){
-            case 'Theme1': return 'puceN1.png' ;
-            case 'Theme2': return 'puceN2.png' ;
-            case 'Theme3': return 'puceN3.png' ;
-            default: return 'puceN1.png' ;
-        }
-    }
-
+    
     function getCurrentHeaderTheme()
     {  // Choix du theme courant
        switch(selectedTheme){
@@ -451,274 +128,324 @@ function BilletES(props) {
     }
    
     /************************************ Handlers ************************************/    
-  
-    function saveMeetingHandler(){
+    const  getClassStudentList=(classId)=>{
+        axiosInstance.post(`list-eleves/`, {
+            id_classe: classId,
+        }).then((res)=>{
+            console.log("eleves", res.data);
+            eleves_data = getElevesTab(res.data);
+            setOptEleves(eleves_data);                  
+        })  
+    }
+
+    function getElevesTab(elevesTab){
+        var tabEleves = [{value:0,label:"---------------- "+t('choose_eleve')+" ---------------"}]
+        var new_eleve;
+        elevesTab.map((eleve)=>{
+            new_eleve = {};
+            new_eleve.value = eleve.id;
+            new_eleve.label = eleve.nom +' '+eleve.prenom;
+            tabEleves.push(new_eleve);       
+        })
+        return tabEleves;
+    }
+
+
+    function complete0(ch){
+        if(ch.length==1) ch = '0'+ch;
+    }
+
+    
+
+    function checkFormData(){
+        var errorMsg='';
+        var today = complete0(new Date().getDate())+'/'+ complete0(new Date().getMonth()+1)+'/'+new Date().getFullYear();
+
+        console.log(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_jour+' 23:59:59')) , new Date(), BILLET_SORTIE.date_jour+' 23:59:59')
+
+        if(currentEleveId==undefined || currentEleveId==0){
+            errorMsg=t("select_student");
+            return errorMsg;
+        }
+
+
+        if(isDureeJour){
+
+            if(BILLET_SORTIE.date_deb == undefined || BILLET_SORTIE.date_deb.length == 0) {
+                errorMsg=t("enter_startdate");
+                return errorMsg;
+            } 
+
+            if(!((isNaN(BILLET_SORTIE.date_deb) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_deb))))))){
+                errorMsg=t("enter_good_startdate");
+                return errorMsg;
+            }
+    
+            if(BILLET_SORTIE.date_fin == undefined || BILLET_SORTIE.date_fin.length == 0) {
+                errorMsg=t("enter_enddate");
+                return errorMsg;
+            } 
+    
+            if(!((isNaN(BILLET_SORTIE.date_fin) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_fin))))))){
+                errorMsg=t("enter_good_enddate");
+                return errorMsg;
+            }
+
+
+            //Ajouter les tests de comparaison entre les deux dates et avec la date du jour
+            if(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_fin)) < new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_deb))) {
+                errorMsg = t("startDate_greater_than_endDate_error");
+                return errorMsg;
+            } 
+
+          
+            //Test de posteriorite a la date d'aujourd'hui
+            if(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_deb+' 23:59:59')) < new Date()) {
+                errorMsg = t("dateDeb_lower_than_today_error");
+                return errorMsg;
+            }
+
+        } else {
+            var BS_hourDeb = BILLET_SORTIE.date_deb.split(':')[0];
+            var BS_minDeb  = BILLET_SORTIE.date_deb.split(':')[1]
+            var BS_hourFin = BILLET_SORTIE.date_fin.split(':')[0];
+            var BS_minFin  = BILLET_SORTIE.date_fin.split(':')[1]
+
+            if(BILLET_SORTIE.date_jour == undefined || BILLET_SORTIE.date_jour.length == 0) {
+                errorMsg=t("enter_exitdate");
+                return errorMsg;
+            } 
+    
+            if(!((isNaN(BILLET_SORTIE.date_jour) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_jour))))))){
+                errorMsg=t("enter_good_exitdate");
+                return errorMsg;
+            }
+
+             //Test de posteriorite a la date d'aujourd'hui
+             if(new Date(changeDateIntoMMJJAAAA(BILLET_SORTIE.date_jour+' 23:59:59')) < new Date()) {
+                errorMsg = t("exitdate_lower_than_today_error");
+                return errorMsg;
+            }
+
+            if(BS_hourDeb.length == 0|| BS_minDeb.length == 0) {
+                errorMsg=t("enter_good_start_hour");
+                return errorMsg;
+            } 
+    
+            if(isNaN(BS_hourDeb)||isNaN(BS_minDeb)){
+                errorMsg=t("enter_good_start_hour");
+                return errorMsg;
+            }
+
+            if(BS_hourFin.length == 0|| BS_minFin.length == 0) {
+                errorMsg=t("enter_good_end_hour");
+                return errorMsg;
+            } 
+    
+            if(isNaN(BS_hourFin)||isNaN(BS_minFin)){
+                errorMsg=t("enter_good_end_hour");
+                return errorMsg;
+            }
+
+            //Ajouter ici le test de coparaison entre les deux heures
+            var dateTimeDeb = '01-01-2023 '+BILLET_SORTIE.date_deb+':00';
+            var dateTimeFin = '01-01-2023 '+BILLET_SORTIE.date_fin+':00';
+            
+            console.log('la date'+dateTimeFin, new Date(dateTimeFin));
+            
+            if(new Date(dateTimeFin) < new Date(dateTimeDeb)) {
+                errorMsg = t("startHour_greater_than_endHour_error");
+                return errorMsg;
+            }
+        }
+               
+        return errorMsg;
+    }
+
+    function getFormData(){
+        BILLET_SORTIE = {};
+        BILLET_SORTIE.id_billet   = (props.formMode =='creation')? -1 : currentUiContext.formInputs[1];
+        BILLET_SORTIE.id_sousetab = currentAppContext.currentEtab;
+        BILLET_SORTIE.id_classe   = props.currentClasseId;
+        BILLET_SORTIE.id_eleves   = currentEleveId.toString() ;
+        BILLET_SORTIE.type_duree  = isDureeJour? "jour" : "heure";
+        BILLET_SORTIE.date_deb    = DATEDEB;
+        BILLET_SORTIE.date_fin    = DATEFIN;
+        BILLET_SORTIE.date_jour   = DATESORTIE;
+        BILLET_SORTIE.status      = isBilletJustified;
+        console.log("Billet",BILLET_SORTIE)
+    }
+
+    // ------- Duree en heure
+    function  getJourDeb(e){
+        JOUR_DEB = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_DEB = MOIS_DEB.length != 0 ? MOIS_DEB : currentUiContext.formInputs[6].split('/')[1];
+            YEAR_DEB = YEAR_DEB.length != 0 ? YEAR_DEB : currentUiContext.formInputs[6].split('/')[2];
+        }
+        DATEDEB = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+        
+    }
+
+    function  getMoisDeb(e){
+        MOIS_DEB = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_DEB = JOUR_DEB.length != 0 ? JOUR_DEB : currentUiContext.formInputs[6].split('/')[0];
+            YEAR_DEB = YEAR_DEB.length != 0 ? YEAR_DEB : currentUiContext.formInputs[6].split('/')[2];
+        }
+        DATEDEB = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+      
+    }
+
+    function  getAnneeDeb(e){
+        YEAR_DEB = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_DEB = MOIS_DEB.length != 0 ? MOIS_DEB : currentUiContext.formInputs[6].split('/')[1];
+            YEAR_DEB = YEAR_DEB.length != 0 ? YEAR_DEB : currentUiContext.formInputs[6].split('/')[2];
+        }
+        DATEDEB = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+    }
+
+    function  getJourFin(e){
+        JOUR_FIN = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_FIN = MOIS_FIN.length != 0 ? MOIS_FIN : currentUiContext.formInputs[7].split('/')[1];
+            YEAR_FIN = YEAR_FIN.length != 0 ? YEAR_FIN : currentUiContext.formInputs[7].split('/')[2];
+        }
+        DATEFIN = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+    }
+
+    function  getMoisFin(e){
+        MOIS_FIN = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_FIN = JOUR_FIN.length != 0 ? JOUR_FIN : currentUiContext.formInputs[7].split('/')[0];
+            YEAR_FIN = YEAR_FIN.length != 0 ? YEAR_FIN : currentUiContext.formInputs[7].split('/')[2];
+        }
+        DATEFIN = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+    }
+
+    function  getAnneeFin(e){
+        YEAR_FIN = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_FIN = JOUR_FIN.length != 0 ? JOUR_FIN : currentUiContext.formInputs[7].split('/')[0];
+            MOIS_FIN = MOIS_FIN.length != 0 ? MOIS_FIN : currentUiContext.formInputs[7].split('/')[1];
+        }
+        DATEFIN = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+    }
+
+
+    // ------- Date du jour 
+    function  getJourSortie(e){
+        JOUR_SORTIE = e.target.value;
+        if(props.formMode=='modif'){
+            MOIS_SORTIE = MOIS_SORTIE.length != 0 ? MOIS_SORTIE : currentUiContext.formInputs[8].split('/')[1];
+            YEAR_SORTIE = YEAR_SORTIE.length != 0 ? YEAR_SORTIE : currentUiContext.formInputs[8].split('/')[2];
+        }
+        DATESORTIE = JOUR_SORTIE+'/'+MOIS_SORTIE+'/'+YEAR_SORTIE;
+    }
+
+    function  getMoisSortie(e){
+        MOIS_SORTIE = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_SORTIE = JOUR_SORTIE.length != 0 ? JOUR_SORTIE : currentUiContext.formInputs[8].split('/')[0];
+            YEAR_SORTIE = YEAR_SORTIE.length != 0 ? YEAR_SORTIE : currentUiContext.formInputs[8].split('/')[2];
+        }
+        DATESORTIE = JOUR_SORTIE+'/'+MOIS_SORTIE+'/'+YEAR_SORTIE;
+    }
+
+    function  getAnneeSortie(e){
+        YEAR_SORTIE = e.target.value;
+        if(props.formMode=='modif'){
+            JOUR_SORTIE = JOUR_SORTIE.length != 0 ? JOUR_SORTIE : currentUiContext.formInputs[8].split('/')[0];
+            MOIS_SORTIE = MOIS_SORTIE.length != 0 ? MOIS_SORTIE : currentUiContext.formInputs[8].split('/')[1];
+        }
+        DATESORTIE = JOUR_SORTIE+'/'+MOIS_SORTIE+'/'+YEAR_SORTIE;
+    }
+
+    // ------- Duree en heure 
+    function getheureDeb(e){
+        HEURE_DEB = e.target.value;
+        DATEDEB = HEURE_DEB+':'+MIN_DEB;
+    }
+
+
+    function getMinDeb(e){
+        MIN_DEB = e.target.value;
+        DATEDEB = HEURE_DEB+':'+MIN_DEB;
+    }
+
+    function getheureFin(e){
+        HEURE_FIN = e.target.value;
+        DATEFIN = HEURE_FIN+':'+MIN_FIN;
+    }
+
+
+    function getMinFin(e){
+        MIN_FIN = e.target.value;
+        DATEFIN = HEURE_FIN+':'+MIN_FIN;
+    }
+
+
+
+    function changeDateIntoMMJJAAAA(date){
+        var dateTab = date.split('/');
+        return dateTab[1]+'/'+dateTab[0]+'/'+dateTab[2];
+    }
+
+
+    function saveBilletHandler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        getFormData1();
-        if(formDataCheck1().length==0){
+        BILLET_SORTIE ={};
+        getFormData();
+        var formErrors = checkFormData();
+        
+        if(formErrors.length==0){
             if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
             }       
-            MEETING.etat = 0 ;
-            MEETING.etatLabel = 'En cours' ;
                       
-            props.actionHandler(MEETING);
-            setNotifVisible(true);
-           
-           /* chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"question", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("notify_prof")
-            })*/
-         
+            props.createElthandler(BILLET_SORTIE);
+
         } else {
             errorDiv.className = classes.formErrorMsg;
-            errorDiv.textContent = formDataCheck1();
+            errorDiv.textContent = formErrors;
         }
-
+        
     }
 
-    function gotoStep2Handler(){
+
+    function updateBilletHandler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        getFormData1();
-        if(formDataCheck1().length==0){
+        BILLET_SORTIE ={};
+        getFormData();
+        var formErrors = checkFormData();
+        
+        if(formErrors.length==0){
             if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
-            }  
-                        
-            setEtape2InActiv(false);
-            setEtape(2);
-            setFormData2();
-            setIsButtonClicked(true);
-        } else {
-            errorDiv.className = classes.formErrorMsg;
-            errorDiv.textContent = formDataCheck1();
-        }
-    }
-
-    function backToStep1Handler(){
-        getFormData2();
-        setEtape2InActiv(true);
-        setEtape(1);
-        setFormData1();
-    }
-
-   
-
-    
-    function finishAllSteps(){
-        var errorDiv = document.getElementById('errMsgPlaceHolder');
-        console.log('avant:',MEETING);
-        getFormData2();
-        console.log('apres:',MEETING);
-        if(formDataCheck2().length==0){
-           if(errorDiv.textContent.length!=0){
-                errorDiv.className = null;
-                errorDiv.textContent = '';
-            }
-              
-            MEETING.etat = 1 ;
-            MEETING.etatLabel = 'Cloture' ;       
-            props.actionHandler(MEETING);
-
-            /*chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"question", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("print_pv_question") 
-            })*/
-            
+            }       
+                      
+            props.ModifyEltHandler(BILLET_SORTIE);
 
         } else {
             errorDiv.className = classes.formErrorMsg;
-            errorDiv.textContent = formDataCheck2();
+            errorDiv.textContent = formErrors;
         }
-    }   
 
-    function putToEmptyStringIfUndefined(chaine){
-        if (chaine==undefined) return '';
-        else return chaine;
     }
 
-
-    function getFormData1(){
-        
-        MEETING.id      = -1;
-        MEETING.classeId = props.currentClasseId; 
-        MEETING.classeLabel  =  props.currentClasseLabel;
-
-        MEETING.responsableId = CURRENT_RESPONSABLE_ID; 
-        MEETING.responsableLabel  =  CURRENT_RESPONSABLE_LABEL;
-
-        MEETING.profPrincipalId = props.currentPpId; 
-        MEETING.profPrincipalLabel  =  props.currentPpLabel;
-
-        MEETING.date = document.getElementById('anne').value+'-'+ document.getElementById('mois').value + '-' + document.getElementById('jour').value;
-        MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
-        
-        //MEETING.objetId = MEETING_OBJET_ID;
-        //MEETING.objetLabel = MEETING_OBJET_LABEL;
-
-        //MEETING.autreObjet = (document.getElementById('autre_conseilC')!= null)? document.getElementById('autre_conseilC').value : '';
-        MEETING.listParticipants  = [...tabParticipant];
-
-        MEETING.listConvoques = [...tabEleves];
-       
-        console.log(MEETING);
+    function elevesChangeHandler(e){
+        currentEleveId = e.target.value;
     }
 
-    function getFormData2(){
-        
-        MEETING.decision = document.getElementById('bilan').value;
-        //MEETING.note_passage = (document.getElementById('note_passage')==null||document.getElementById('note_passage')==undefined) ? -1 : document.getElementById('note_passage').value;
-        //MEETING.note_exclusion = (document.getElementById('note_exclusion')==null||document.getElementById('note_exclusion')==undefined) ? -1 : document.getElementById('note_exclusion').value;
-        MEETING.listParticipants = [...tabParticipant];
-        MEETING.listPresents = [...tabParticipant.filter((participant)=>participant.present == true)];
-        MEETING.listCaspasCas = [...optConvoques];
-        console.log(MEETING);        
+    function cancelHandler(){      
+        props.cancelHandler();
     }
-
-    function setFormData1(){
-        var tabEleve=[];        
-        tabEleve[1]  =  MEETING.responsableId; 
-        tabEleve[10]  =  MEETING.responsableLabel; 
-        tabEleve[2]  =  convertDateToUsualDate(MEETING.date);
-        tabEleve[3]  =  MEETING.heure; 
-        tabEleve[9]  =  MEETING.etat;
-        //tabEleve[4]  =  MEETING.objetId;
-        currentUiContext.setFormInputs(tabEleve);
-        console.log(MEETING.date);
-    }
-  
-    function setFormData2(){
-        var tabEleve=[];  
-        var tabConvoques = [];
-        var elvConvoque = {};
-        console.log("eleves convoques",tabEleves);
-      
-        var profPresent =[];
-        tabParticipant.map((elt, index)=>{profPresent[index]=true});
-        setPresents(profPresent);
-
-        tabEleves.map((elt,index)=>{
-            elvConvoque={};
-            elvConvoque.id = elt.id;
-            elvConvoque.nom = elt.nom;
-            elvConvoque.etat = elt.etat;
-            elvConvoque.decisionId = 0;
-            elvConvoque.decisionLabel ="";
-            elvConvoque.decisions =[0,1,2,3,4];
-            tabConvoques.push(elvConvoque)
-        });
-
-        setOptConvoques(tabConvoques);
-
-        var tabSanctions=[];
-        tabEleves.map((elt,index)=>{tabSanctions[index]=0});
-        setSanctions(tabSanctions);
-
-        tabEleve[6] = MEETING.decision;
-        tabEleve[9]  =  MEETING.etat;
-        //tabEleve[7] = MEETING.note_passage ==-1 ? 0 : MEETING.note_passage;
-        //tabEleve[8] = MEETING.note_exclusion == -1 ? 0 : MEETING.note_exclusion;
-        currentUiContext.setFormInputs(tabEleve);
-        console.log('convoques',currentUiContext.formInputs, optConvoques);
-    }
-
-   
-    function formDataCheck1(){       
-        var errorMsg='';
-        var meeting_hour = MEETING.heure.split(':')[0];
-        var meeting_min = MEETING.heure.split(':')[1]
-        if(meeting_hour[0]=='0') meeting_hour = meeting_hour[1];
-        if(meeting_min[0]=='0')  meeting_min  = meeting_min[1];
-       // console.log('jjjj',eval(meeting_hour),eval(meeting_min));
-       
-        if(MEETING.responsableId  == undefined){
-            errorMsg= t("select_meeting_pres");
-            return errorMsg;
-        }
-
-        if(MEETING.date.length == 0) {
-            errorMsg= t("enter_meeting_date");
-            return errorMsg;
-        } 
-
-        if(!((isNaN(MEETING.date) && (!isNaN(Date.parse(MEETING.date)))))){
-            errorMsg=t("enter_good_meeting_date");
-            return errorMsg;
-        }
-
-        if(meeting_hour.length == 0|| meeting_min.length == 0) {
-            errorMsg=t("enter_good_meeting_hour");
-            return errorMsg;
-        } 
-
-        if(isNaN(meeting_hour)||isNaN(meeting_min)){
-            errorMsg=t("enter_good_meeting_hour");
-            return errorMsg;
-        }
-
-        if((eval(meeting_hour)>22 || eval(meeting_hour)< 7)  || (eval(meeting_min)>59 || eval(meeting_min)<0)){
-            errorMsg= t("enter_good_meeting_hour");
-            return errorMsg;
-        }
-
-        /*if( MEETING.objetId == undefined ){
-            errorMsg="Veuillez selectionner l'objet du conseil  !";
-            return errorMsg;
-        }*/    
-        return errorMsg;  
-    }
-    
-    function formDataCheck2(){       
-        var errorMsg='';
-        
-        /*if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
-            errorMsg="Veuillez saisir la note de passage arretee !";
-            return errorMsg;
-        }
-
-        if(MEETING.note_passage != -1 && isNaN(MEETING.note_passage)){
-            errorMsg="Veuillez saisir la note de passage valide !";
-            return errorMsg;
-        }
-
-        if(MEETING.note_passage != -1 && (MEETING.note_passage > 20 || MEETING.note_passage < 0)){
-            errorMsg="Veuillez saisir la note de passage valide !";
-            return errorMsg;
-        }
-
-        if(MEETING.note_exclusion != -1 && MEETING.note_exclusion.length == 0 ){
-            errorMsg="Veuillez saisir la note eliminatoire arretee !";
-            return errorMsg;
-        }
-
-        if(MEETING.note_exclusion != -1 && isNaN(MEETING.note_exclusion)){
-            errorMsg="Veuillez saisir la note eliminatoire valide !";
-            return errorMsg;
-        }
-
-        if(MEETING.note_exclusion != -1 && (MEETING.note_exclusion > 20 || MEETING.note_exclusion < 0)){
-            errorMsg="Veuillez saisir la note eliminatoire valide !";
-            return errorMsg;
-        }*/
-
-        if(MEETING.decision.length == 0 ){
-            errorMsg=t("type_meeting_decision");
-            return errorMsg;
-        }
-
-        return errorMsg;  
-    }
-
 
     
+
     function moveOnMax(e,currentField, nextField){
         if(nextField!=null){
             e = e || window.event;
@@ -731,921 +458,288 @@ function BilletES(props) {
      
     }
 
-    function showStep1(){
-        if(props.formMode=='consult'){
-            setFormData1(); setEtape(1);
-        }
+    function manageDureeHandler(e){
+        if(isDureeJour) setIsDureeJour(false);
+        else setIsDureeJour(true)
+        DATEDEB = '';
+        DATEFIN = '';
+        DATESORTIE = '';
     }
 
-    function showStep2(){
-        if(props.formMode=='consult'){
-            setFormData2(); setEtape(2);
-        }
-
-    }
-
-
-    function responsableChangeHandler(e){
-        if(e.target.value > 0){
-            var responsable = tabResponsables.find((resp)=>resp.value == e.target.value);
-            
-            CURRENT_RESPONSABLE_ID = responsable.value;
-            CURRENT_RESPONSABLE_LABEL = responsable.label;
-
-        } else{
-            CURRENT_RESPONSABLE_ID = undefined;
-            CURRENT_RESPONSABLE_LABEL = undefined;
-        }
-    }
-
-    /*function objetChangeHandler(e){
-       if(e.target.value > 0){
-            var meeting = tabObjets.find((meetg)=>meetg.value==e.target.value);
-
-            MEETING_OBJET_ID = meeting.value;
-            MEETING_OBJET_LABEL = meeting.label;
-
-            if(MEETING_OBJET_ID == tabObjets[3].value) setIsBilan(true);
-            else setIsBilan(false);
-
-            if(MEETING_OBJET_ID == tabObjets[4].value) setSeeDetail(true);
-            else setSeeDetail(false);
-        }else{
-            setSeeDetail(false);
-            setIsBilan(false);
-            MEETING_OBJET_ID = undefined;
-            MEETING_OBJET_LABEL = undefined;
-        }
-    }*/
-
-
-    function cancelHandler(){
-        MEETING={};
-        props.cancelHandler();
+    function manageJustifyHandler(e){
+        if(isBilletJustified) setIsBilletJustified(false);
+        else setIsBilletJustified(true);
     }
   
-    function moveToLeft(){
-        if(isButtonClicked) 
-        document.getElementById("etape1").classList.add('gotoRight');
-    }
 
     /************************************ JSX Code ************************************/
 
-    //----------------- PARTICIPANT------------
-
-    function participantChangeHandler(e){
-        console.log(e, e.target.value);
-        if(e.target.value != optResponsable[0].value){
-            document.getElementById('participantId').style.borderRadius = '1vh';
-            document.getElementById('participantId').style.border = '0.47vh solid rgb(128, 180, 248)';
-            SELECTED_PARTICIPANT = e.target.value;
-
-        }else{
-            document.getElementById('participantId').style.borderRadius = '1vh';
-            document.getElementById('participantId').style.border = '0.47vh solid red';
-            SELECTED_PARTICIPANT = undefined;
-        }
-
-    }
-
-    function roleChangeHandler(e){
-        if(e.target.value != optRole[0].value){
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid rgb(128, 180, 248)';
-            SELECTED_ROLE = e.target.value;
-        }else{
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid red';
-            SELECTED_ROLE = undefined;
-        }
-    }
-
-    function addParticipantRow(){
-        participant_data = [...tabParticipant];
-        var index = participant_data.findIndex((elt)=>elt.id==0);
-        if (index <0){
-            
-            participant_data.push({id:0, nom:'', role:'', present:true, etat:-1});
-            setTabParticipant(participant_data);
-            console.log(participant_data);
-        } else {alert("ici")}
-    }
-
-    function addParticipant(){
-        participant_data =[...tabParticipant];
-        if(SELECTED_PARTICIPANT==undefined){
-        document.getElementById('participantId').style.borderRadius = '1vh';
-        document.getElementById('participantId').style.border = '0.47vh solid red';
-        return -1;
-        }
-
-        if(SELECTED_ROLE==undefined){
-        document.getElementById('roleId').style.borderRadius = '1vh';
-        document.getElementById('roleId').style.border = '0.47vh solid red';
-        return -1
-        }
-        
-        var index = participant_data.findIndex((elt)=>elt.id==0);
-        if (index >=0) participant_data.splice(index,1);
-      
-        var nomParticipant = optResponsable.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
-        var roleParticipant = optRole.find((role)=>role.value==SELECTED_ROLE).label
-        participant_data.push({id:SELECTED_PARTICIPANT, nom:nomParticipant, roleId:SELECTED_ROLE, role:roleParticipant, present:true, etat:0});
-        setTabParticipant(participant_data);
-        SELECTED_PARTICIPANT=undefined;
-        SELECTED_ROLE = undefined
-
-    }
-
-    function deleteParticipant(e){
-        console.log(e);
-        participant_data =[...tabParticipant];
-        var idParticipant = e.target.id;
-        var index = participant_data.findIndex((elt)=>elt.id==idParticipant);
-        if (index >=0){
-            participant_data.splice(index,1);
-            setTabParticipant(participant_data);
-        }
-        SELECTED_PARTICIPANT=undefined;
-        SELECTED_ROLE = undefined
-
-    }
-
-    const LigneProfParticipantHeader=(props)=>{
-        return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'11.3vw'}}>{t("qualite")}</div>
-                <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
-            </div>
-        );
-    }
-
-    const LigneProfParticipant=(props)=>{
-        return(
-            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>
-                    {(props.etat >= 0) ? 
-                        props.nom
-                     :
-                        <select id='participantId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', marginBottom:1}} onChange={participantChangeHandler} className={classes.comboBoxStyle}>
-                            {(optResponsable||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    }
-                </div>
-                
-                <div style={{width:'11.3vw'}}> 
-                    {(props.etat >= 0) ? 
-                        props.role
-                        :
-                        <select id='roleId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', marginBottom:1}} onChange={roleChangeHandler} className={classes.comboBoxStyle}>
-                            {(optRole||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    }
-                </div>
-              
-                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {(props.etat<=0)&&
-                        <img src="images/cancel_trans.png"  
-                            id={props.participantId}
-                            width={25} 
-                            height={33} 
-                            className={classes.cellPointer} 
-                            onClick={deleteParticipant}                         
-                            alt=''
-                        />
-                    }
-                    {(props.etat<0)&&
-                        <img src="images/checkp_trans.png"  
-                            width={19} 
-                            height={19} 
-                            className={classes.cellPointer} 
-                            onClick={addParticipant}                         
-                            alt=''
-                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
-                        />
-                    }
-                </div>
-
-            </div>
-        );
-    }
-
-    //----------------- ELEVE CONVOQUES------------
-
-    function eleveChangeHandler(e){
-        if(e.target.value != LIST_ELEVES[0].value){
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
-        
-            SELECTED_ELEVE = e.target.value;
-        
-        }else{
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid red';
-            SELECTED_ELEVE=undefined
-        }
-    }
-
-    function addEleveRow(){
-        eleves_data = [...tabEleves];
-        var index = eleves_data.findIndex((elt)=>elt.id==0);
-        if (index <0){
-            eleves_data.push({id:0, nom:'', decisions:[0,1,2,3,4], decisionsId:0, decisionsLabel:'', etat:-1});
-            setTabEleves(eleves_data);
-        } else {alert("ici")}
-
-    }
-
-    function addEleve(){
-        eleves_data = [...tabEleves];
-        if(SELECTED_ELEVE==undefined){
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid red';
-            return -1;
-        }
-        
-        var index = eleves_data.findIndex((eleve)=>eleve.id==0);
-        if (index >= 0)  eleves_data.splice(index,1);
-        
-        var eleveNom = LIST_ELEVES.find((eleve)=>eleve.value==SELECTED_ELEVE).label;
-        eleves_data.push({id:SELECTED_ELEVE, nom:eleveNom, decisionId:currentMotif, decisionLabel:getMotif(currentMotif), decisions:[0,1,2,3,4], etat:0})
-        setTabEleves(eleves_data);
-        
-        SELECTED_ELEVE=undefined;
-    }
-
-    function getMotif(motifId){
-        switch(motifId){
-            case 0: return  t('absence');
-            case 1: return  t('conduite');
-            case 2: return  t('autre');
-            default: return t('absence');
-        }
-   
-    }
-
-    function getDecision(decisionId){
-        switch(decisionId){
-            case 0: return  t('Recale');
-            case 1: return  t('Admis');
-            case 2: return  t('Traduit');
-            case 3: return  t('Blame');
-            default: return t('autre');
-        }
-   
-    }
-
-    function deleteEleve(e){
-        var eleveId = e.target.id;
-        eleves_data = [...tabEleves];
-        var index = eleves_data.findIndex((eleve)=>eleve.id==eleveId);
-        if (index >= 0) {
-            eleves_data.splice(index,1);
-            setTabEleves(eleves_data);
-        }
-        SELECTED_ELEVE=undefined;
-    }
-
-    const LigneEleveHeader=(props)=>{
-        return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'30vw'}}>{t("motif")}</div>
-                <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
-            </div>
-        );
-    }
-
-    const LigneEleve=(props)=>{
-        return(
-            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>
-                    {(props.etat >= 0) ? 
-                        props.nom
-                      
-                     :
-                        <select id='eleveId' style={{height:'3.5vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={eleveChangeHandler}>
-                            {(LIST_ELEVES||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    }                   
-                </div>
-
-
-                {(props.etat >= 0) ?
-                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.motif} </div>
-                   
-                   :
-                        <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
-                            <input type='radio' id='absence' style={{width:'1vw', height:'2vh'}} checked={props.absence == currentMotif}  value={0} name={'eleveConv'+props.rowIndex} onClick={()=>{setCurrentMotif(0)}}/>
-                            <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("absences")} </label>
-                                            
-                            <input type='radio'  id='conduite' style={{width:'1vw', height:'2vh'}} checked={props.conduite== currentMotif}  value={1} name={'eleveConv'+props.rowIndex} onClick={()=>{setCurrentMotif(1)}}/>
-                            <label style={{ width:'2vw', color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"2vw", marginLeft:"0.3vw"}}>{t("conduite")}</label>
-
-                            <input type='radio' id='autre'  style={{width:'1vw', height:'2vh'}} checked={props.autre== currentMotif}  value={2} name={'eleveConv'+props.rowIndex} onClick={()=>{setCurrentMotif(2)}}/>
-                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("autre")}</label>
-
-                            {/*<input type='radio' id='blame' style={{width:'1vw', height:'2vh'}} checked={props.blame== currentDecision}  value={3} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(3)}}/>
-                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>Blame </label>
-                                            
-                            <input type='radio' id='autre' style={{width:'1vw', height:'2vh'}} checked={props.autre== currentDecision}  value={4} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(4)}}/>
-                            <label style={{color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"0.3vw", marginLeft:"0.3vw"}}>Autre </label>*/}
-                        </div>
-                    }
-              
-                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {(props.etat<=0)&&
-                        <img src="images/cancel_trans.png"
-                            id={props.eleveId}  
-                            width={ isMobile? '10vw':25} 
-                            height={isMobile? '13.7vw':33}
-                            className={classes.cellPointer} 
-                            onClick={deleteEleve}                         
-                            alt=''
-                        />
-                    }
-                  
-                    {(props.etat==-1)&&
-                        <img src="images/checkp_trans.png"  
-                            width={ isMobile? '7.7vw':19} 
-                            height={isMobile? '7.7vw':19} 
-                            className={classes.cellPointer} 
-                            onClick={addEleve}                         
-                            alt=''
-                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
-                        />
-                    }
-                </div>
-
-            </div>
-        );
-    }
-
-    //----------------- DECISION AU CAS PAR CAS ------------
-
-    function eleveDecisionChangeHandler(e){
-        if(e.target.value != tabEleves[0].value){
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
-        
-            SELECTED_ELEVE = e.target.value;
-        
-        }else{
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid red';
-            SELECTED_ELEVE=undefined
-        }
-    }
-
-   /* function addEleveRow(){
-        eleves_data = [...tabEleves];
-        var index = eleves_data.findIndex((elt)=>elt.id==0);
-        if (index <0){
-            eleves_data.push({id:0, nom:'', decisions:[0,1,2], decisionsId:0, decisionsLabel:'', etat:0});
-            setTabEleves(eleves_data);
-        } else {alert("ici")}
-
-    }*/
-
-    function updateEleve(e,rowIndex){
-        eleves_data = [...optConvoques];
-       
-        var cur_eleveId= e.target.id;
-       
-        var index = eleves_data.findIndex((eleve)=>eleve.id == cur_eleveId);
-        var cur_eleve = eleves_data.find((eleve)=>eleve.id == cur_eleveId);
-
-        cur_eleve.etat=1;
-        cur_eleve.decisionsId=sanctions[index];
-        cur_eleve.decisionLabel = getDecision(sanctions[index]);
-
-        console.log('curentEleve', cur_eleve);
-
-        eleves_data.splice(index,1,cur_eleve);
-       
-        setOptConvoques(eleves_data);     
-
-        console.log(optConvoques,tabEleves);  
-        
-    }
-
-    
-    function getDecision(decisionId){
-        switch(decisionId){
-            case 0: return t('aucune');
-            case 1: return t('consigne');
-            case 2: return t('excl_temp');
-            case 3: return t('excl_def');
-            default: return t('autre');
-        }
-   
-    }
-
-    function deleteEleve(e){
-        var eleveId = e.target.id;
-        eleves_data = [...tabEleves];
-        var index = eleves_data.findIndex((eleve)=>eleve.id==eleveId);
-        if (index >= 0) {
-            eleves_data.splice(index,1);
-            setTabEleves(eleves_data);
-        }
-        SELECTED_ELEVE=undefined;
-    }
-
-    function updateSanction(value, rowIndex){
-        var tab=[...sanctions];
-        tab[rowIndex]= value;
-        setSanctions(tab);
-        //setCurrentDecision(value);
-       
-    }
-
-    const LigneEleveDecisionHeader=(props)=>{
-        return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'30vw'}}>{t("decision")}</div>
-                <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
-            </div>
-        );
-    }
-
-    const LigneEleveDecision=(props)=>{
-        return(
-            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>
-                    {props.nom}
-                </div>
-
-
-                {(props.etat == 1) ?
-                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.decision} </div>
-                   
-                   :
-                        <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
-                            <input type='radio' id='aucune' style={{width:'1vw', height:'2vh'}} checked={props.aucune == sanctions[props.rowIndex]}  value={0} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(0,props.rowIndex)}}/>
-                            <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}> {t("aucune")}</label>
-                                            
-                            <input type='radio'  id='consigne' style={{width:'1vw', height:'2vh'}} checked={props.consigne== sanctions[props.rowIndex]}  value={1} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(1,props.rowIndex)}}/>
-                            <label style={{ width:'2vw', color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"2vw", marginLeft:"0.3vw"}}> {t("consigne")} </label>
-
-                            <input type='radio' id='exclusion_temp'  style={{width:'1vw', height:'2vh'}} checked={props.excluTemp == sanctions[props.rowIndex]}  value={2} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(2,props.rowIndex)}}/>
-                            <label style={{width:'3.3vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw" }}>{ t('excl_temp')}</label>
-
-                            <input type='radio' id='exclusion_def' style={{width:'1vw', height:'2vh'}} checked={props.excluDef== sanctions[props.rowIndex]}  value={3} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(3,props.rowIndex)}}/>
-                            <label style={{width:'3.3vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{ t('excl_def')} </label>
-                                            
-                            <input type='radio' id='autre' style={{width:'1vw', height:'2vh'}} checked={props.autre== sanctions[props.rowIndex]}  value={4} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(4,props.rowIndex)}}/>
-                            <label style={{color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"0.3vw", marginLeft:"0.3vw"}}>{t("autre")} </label>
-                        </div>
-                    }
-              
-                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {/*(props.formMode!='consult')&&
-                        <img src="images/cancel_trans.png"
-                            id={props.eleveId}  
-                            width={25} 
-                            height={33} 
-                            className={classes.cellPointer} 
-                            onClick={deleteEleve}                         
-                            alt=''
-                        />*/
-                    }
-                   
-                {(props.etat!=1)&&
-                    <img src="images/checkp_trans.png"  
-                        width={ isMobile? '7.7vw':19} 
-                        height={isMobile? '7.7vw':19} 
-                        id={props.eleveId}
-                        className={classes.cellPointer} 
-                        onClick={updateEleve}                         
-                        alt=''
-                        style={{marginLeft:'1vw', marginTop:'0.3vh'}}
-                    />
-                }
-                   
-                </div>
-
-            </div>
-        );
-    }
-
-
-    function addPresent(id){
-      /*  var presents=[];
-        presents = [...tabPresents];
-        var profPresent = tabParticipant.find((prof)=>prof.id==id)
-        var index = presents.findIndex((prof)=>prof.id==id)
-        if(index<0){
-            presents.push(profPresent);
-            setTabPresents(presents);
-        }
-
-        console.log('liste des presents:', tabPresents);*/
-    }
-
-    function removePresent(id){
-      /*  var presents=[];
-        presents = [...tabPresents];
-        var index = presents.findIndex((prof)=>prof.id==id)
-        if(index>=0){
-            presents.splice(index,1);
-            setTabPresents(presents);
-        }*/
-
-    }
-
-    function managePresent(e){
-        e.preventDefault();
-        var participants = [...tabParticipant];
-        var tabPresent = [...presents];
-        var row = e.target.id;
-        if(e.target.checked){
-            tabPresent[row]=true;
-            participants[row].present= true;
-            e.target.checked = true;
-            setPresents(tabPresent);
-            setTabParticipant(participants);
-
-            //addPresent(idProf)
-        }  
-        else {
-           tabPresent[row]=false;
-           participants[row].present= false;
-           e.target.checked = false;
-
-            setPresents(tabPresent);
-            setTabParticipant(participants);
-            //removePresent(idProf)
-        }
-        console.log(tabParticipant);
-    }
-
-    const LignePresentsHeader=(props)=>{
-        return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'10vw'}}>{t("present")}</div>
-            </div>
-        );
-    }
-
-    const LignePresent=(props)=>{
-        return(
-            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>               
-                    {props.nom}                   
-                </div>
-                
-                <div style={{display:'flex',  flexDirection:'row', alignItems:'center'}}> 
-                    <input type='checkbox' style={{width:'1vw', height:'2vh'}} checked={presents[props.rowIndex]}  id={props.rowIndex} name ={'Present'+props.rowIndex} onChange={managePresent}/>                    
-                </div>              
-            </div>
-        );
-    }
-
-
-
-    return (
-        <div className={'card '+ classes.formContainerP5}>
+       return (
+            <div className={'card '+ classes.formContainerP6}>
            
-            <div className={getCurrentHeaderTheme()}>
-                <div className={classes.formImageContainer}>
-                    <img alt='add student' className={classes.formHeaderImg} src='images/BilletEntreeSortie.png'/>
+                <div className={getCurrentHeaderTheme()} style={{marginBottom:"10vh"}}>
+                    <div className={classes.formImageContainer}>
+                        <img alt='add student' className={classes.formHeaderImg} src='images/BilletEntreeSortie.png'/>
+                    </div>
+                    {(props.formMode == 'creation')  ?                
+                        <div className={classes.formMainTitle} >
+                            {t("new_exit_Permission_M")}
+                        </div>
+                    : (props.formMode == 'modif') ?
+                        <div className={classes.formMainTitle} >
+                            {t("exit_permission_justification_M")}
+                        </div>
+                    :
+                        <div className={classes.formMainTitle} >
+                            {t("look_exit_permission_M")}
+                        </div>
+                    }
+                
                 </div>
-                {(props.formMode == 'creation')  ?                
-                    <div className={classes.formMainTitle} >
-                        {t("enreg_conseil_d")}
-                    </div>
-                : (props.formMode == 'modif') ?
-                    <div className={classes.formMainTitle} >
-                        {t("modif_conseil_d")}
-                    </div>
-                :
-                    <div className={classes.formMainTitle} >
-                       {t("consult_conseil_d")}
-                    </div>
                 
-                }
-                
-            </div>
-                
-            <div id='errMsgPlaceHolder'/> 
+                <div id='errMsgPlaceHolder'/> 
 
-            {(etape == 1) &&
-                <div id='etape1' className={classes.etapeP} onLoad={()=>{moveToLeft()}}>
-                    <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
-                    {t("etape")+' 1'}: {t("conseil_class_prepa")}
-                        {(props.formMode=='consult')&&
-                            <div style={{display:'flex', flexDirection:'row', position:'absolute', right:0, top:'-0.7vh' }}>
-                                {(currentUiContext.formInputs[9]==1) ?  //conseil cloture
-                                    <CustomButton
-                                        btnText= {t("print_pv")} 
-                                        buttonStyle={getSmallButtonStyle()}
-                                        style={{marginBottom:'-0.3vh', marginRight:'1vw'}}
-                                        btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler={props.cancelHandler}
-                                    />
-                                    :null
-                                }
-                                <CustomButton
-                                    btnText={t("quitter")} 
-                                    buttonStyle={getSmallButtonStyle()}
-                                    style={{marginBottom:'-0.3vh', marginRight:'0.8vw'}}
-                                    btnTextStyle = {classes.btnSmallTextStyle}
-                                    btnClickHandler={props.cancelHandler}
-                                />
-                            </div>
-                        }
-                        
-                        {/*
-                            notifVisible &&
-                            <div style={{position:'absolute', right:0, top:'-0.7vh' }}>
-                              
-
-                                <CustomButton
-                                    btnText={t('alert_profs')}
-                                    hasIconImg= {true}
-                                    imgSrc='images/alarme.png'
-                                    imgStyle = {classes.grdBtnImgStyle}  
-                                    buttonStyle={getNotifButtonStyle()}
-                                    btnTextStyle = {classes.notifBtnTextStyle}
-                                    btnClickHandler={props.cancelHandler}
-                                    
-                                />
-                            </div>
-                        */}
-
-                    </div>
-                    <div style={{fontSize:'1vw', fontWeight:'bold', marginBottom:'2vh', marginLeft:'0vw'}}>
-                        <FormPuce menuItemId ='1' 
-                            isSimple={true} 
-                            noSelect={true} 
-                            imgSource={'images/' + getPuceByTheme()} 
-                            withCustomImage={true} 
-                            imageStyle={classes.PuceStyle}    
-                            libelle = {t("meeting_gen_info")}
-                            itemSelected={null}
-                            style={{marginBottom:'-1vh'}}
-                            puceImgStyle={{marginRight:'-0.3vw'}}
-                        />
-                        
-                       
-                    </div>
-
+          
+              
                     <div className={classes.inputRowLeft}>
                         <div className={classes.groupInfo} style={{fontSize:'1vw'}}>
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+                            <div className={classes.inputRowLeft} style={{height:'4.7vh', marginTop:"2vh"}}> 
+                                <div style={{fontWeight:570, width:"10vw"}}>
+                                    {t("eleve_nom")}:
+                                </div>
+
+                                {(props.formMode =='consult') ?
+                                    <div> 
+                                        <input id="eleve" type="text"        className={classes.inputRowControl}    defaultValue={currentUiContext.formInputs[4]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="eleveId" type="hidden"    className={classes.inputRowControl}    defaultValue={currentUiContext.formInputs[0]}    style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                    </div>  
+                                    :
+                                    <select id='elevesSelect' onChange={elevesChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
+                                        {(optEleves||[]).map((option)=> {
+                                            return(
+                                                <option  style={{textAlign:"left"}}  value={option.value}>{option.label}</option>
+                                            );
+                                        })}
+                                    </select>
+                                }                                 
+                                
+                            </div>
+
+                            {(props.formMode != 'consult') ?
+
+                                <div className={classes.inputRowLeft} style={{height:'4.7vh', marginTop:"2vh"}}> 
+                                    <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                                    <div style={{fontWeight:570,  width:"7.77vw"}}>
+                                        {t("duree_in")}:
+                                    </div>
+                                    <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                                        <input type="radio" name="type_duree" checked={isDureeJour}  onClick={manageDureeHandler}/>
+                                        <div style={{marginLeft:"0.3vw"}}> {t('en_jour')} </div>
+                                    </div>
+
+                                    <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center', marginLeft:'2vw'}}>
+                                        <input type="radio" name="type_duree" checked={!isDureeJour} onClick={manageDureeHandler} />
+                                        <div style={{marginLeft:"0.3vw"}}> {t('en_heure')} </div>
+                                    </div>
+                                </div>
+
+                            :
+                                <div className={classes.inputRowLeft} style={{height:'4.7vh', marginTop:"2vh"}}> 
+                                    <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                                    <div style={{fontWeight:570,  width:"10vw"}}>
+                                        {t("duree_in")}:
+                                    </div>
+                                    {isDureeJour ?
+                                        <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center', marginLeft:'-2vw'}}>
+                                            <div style={{marginLeft:"0.3vw", fontWeight:'bold', color:'blueviolet'}}> {t('en_jour')} </div>
+                                        </div>
+                                        :
+                                        <div style={{display:'flex',  flexDirection:'row', justifyContent:'center', alignItems:'center', marginLeft:'-2vw'}}>
+                                            <div style={{marginLeft:"0.3vw", fontWeight:'bold', color:'blueviolet'}}> {t('en_heure')} </div>
+                                        </div>
+                                    }                             
+
+                                </div>
+                            }
+
+                            {isDureeJour &&
+
+                                <div className={classes.inputRowLeft} style={{height:'4.7vh', marginTop:"3vh"}}> 
+                                    <div style={{fontWeight:570,  width:"10vw"}}>
+                                        {t("date_deb")}:
+                                    </div>
+                                    {(props.formMode =='consult') ?
+                                        <div> 
+                                            <input id="date_deb" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[6]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw', color:'blueviolet', fontWeight:'bold'}}/>
+                                        </div>
+                                        :
+                                        (props.formMode == 'creation') ?
+
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}  onChange={getJourDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} />/
+                                                <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}  onChange={getMoisDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />/
+                                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}  onChange={getAnneeDeb}    maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />
+                                            </div>
+                                            :
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}  onChange={getJourDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} defaultValue={currentUiContext.formInputs[6].split("/")[0]} />/
+                                                <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}  onChange={getMoisDeb}     maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[6].split("/")[1]} />/
+                                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}  onChange={getAnneeDeb}    maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[6].split("/")[2]} />
+                                            </div>
+                                    }
+
+                                    <div style={{fontWeight:570, marginLeft:"2vw", width:"10vw"}}>
+                                        {t("date_fin")}:
+                                    </div>
+                                    
+                                    {(props.formMode =='consult') ?
+                                        <div> 
+                                            <input id="date_fin" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[7]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw', color:'blueviolet', fontWeight:'bold'}}/>
+                                        </div>
+                                        :
+                                        (props.formMode == 'creation') ?
+
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="jour_fin"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_fin"), document.getElementById("mois_fin"))}}   onChange={getJourFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} />/
+                                                <input id="mois_fin"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_fin"), document.getElementById("anne_fin"))}}   onChange={getMoisFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />/
+                                                <input id="anne_fin"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_fin"), null)}}                                  onChange={getAnneeFin}   maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />
+                                            </div>
+                                            :
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="jour_fin"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_fin"), document.getElementById("mois_fin"))}}   onChange={getJourFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} defaultValue={currentUiContext.formInputs[7].split("/")[0]}/>/
+                                                <input id="mois_fin"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_fin"), document.getElementById("anne_fin"))}}   onChange={getMoisFin}    maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[7].split("/")[1]}/>/
+                                                <input id="anne_fin"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_fin"), null)}}                                  onChange={getAnneeFin}   maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[7].split("/")[2]}/>
+                                            </div>
+                                    }
+
+                                </div>
+
+                            }
+
+                            {!isDureeJour &&                                 
+                                <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"1vh"}}> 
+                                    <div style={{fontWeight:570, width:"10vw"}}>
+                                        {t("date_jour")}:
+                                    </div>
+                                    {(props.formMode =='consult') ?
+                                        <div> 
+                                            <input id="date_jour" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[8]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw', color:'blueviolet', fontWeight:'bold'}}/>
+                                        </div>
+                                        :
+
+                                        (props.formMode == 'creation') ?
+                                        
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="Djour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("Djour"), document.getElementById("Dmois"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} onChange={getJourSortie}/>/
+                                                <input id="Dmois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("Dmois"), document.getElementById("Danne"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMoisSortie}/>/
+                                                <input id="Danne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("Danne"), document.getElementById("heure_deb"))}}      maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getAnneeSortie}/>
+                                            </div>
+                                            :
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="Djour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} onChange={getJourSortie}    defaultValue={currentUiContext.formInputs[8].split("/")[0]} />/
+                                                <input id="Dmois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}          maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMoisSortie}    defaultValue={currentUiContext.formInputs[8].split("/")[1]}/>/
+                                                <input id="Danne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure_deb"))}}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getAnneeSortie}   defaultValue={currentUiContext.formInputs[8].split("/")[2]}  />
+                                            </div>
+                                    }                                   
+
+                                </div>
+                                
+                            }
+
+                            
+                            {!isDureeJour &&
+
+                                <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
+
                                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                        {t("eleves")}:
+                                        {t("heure_deb")}:
                                     </div>
 
                                     {(props.formMode =='consult') ?
                                         <div> 
-                                            <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[11]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                            <input id="objetId" type="hidden"    className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[4]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        </div>  
-                                        :
-
-                                        <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
-                                            {(optObjet||[]).map((option)=> {
-                                                return(
-                                                    <option  value={option.value}>{option.label}</option>
-                                                );
-                                            })}
-                                        </select>
-                                    }
-
-                                    {/*(seeDetail==true) ?
-                                        <div> 
-                                            <input id="autre_conseilC" type="text" className={classes.inputRowControl } Placeholder={'  precider les details '} defaultValue={currentUiContext.formInputs[3]} style={{marginLeft:'1.3vw', height:'1.7rem', width:'13vw', fontSize:'1.13vw'}}/>
+                                            <input id="heure_deb" disabled={true} type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[6]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw', color:'blueviolet', fontWeight:'bold'}}/>
                                         </div>
                                         :
-                                        null
-                                */}
-                                
+                                        (props.formMode == 'creation') ?
+                                    
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="heure_deb"  type="text"  Placeholder='hh'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_deb"), document.getElementById("min_deb"))}}     maxLength={2}   className={classes.inputRowControl }   style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureDeb} /><b>h</b>
+                                                <input id="min_deb"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_deb"), document.getElementById("heure_fin"))}}    maxLength={2}    className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinDeb}/><b>min</b>
+                                            </div>
+                                            :
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="heure_deb"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_deb"), document.getElementById("min_deb"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureDeb}  defaultValue={currentUiContext.formInputs[6].split(":")[0]} /><b>h</b>
+                                                <input id="min_deb"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_deb"), document.getElementById("heure_fin"))}}   maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinDeb}     defaultValue={currentUiContext.formInputs[6].split(":")[1]} /><b>min</b>
+                                            </div>
+                                    }
+                                    
+                                    <div className={classes.inputRowLabelP} style={{fontWeight:570, marginLeft:'2vw'}}>
+                                        {t("heure_fin")}:
+                                    </div>
+
+                                    {(props.formMode =='consult') ?
+                                        <div> 
+                                            <input id="heure_fin" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[7]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw', color:'blueviolet', fontWeight:'bold'}}/>
+                                        </div>
+                                        :
+
+                                        (props.formMode == 'creation') ?
+
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="heure_fin"  type="text"    Placeholder='hh'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} /><b>h</b>
+                                                <input id="min_fin"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} /><b>min</b>
+                                            </div>
+                                            :
+                                            <div style ={{display:'flex', flexDirection:'row'}}> 
+                                                <input id="heure_fin"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure_fin"), document.getElementById("min_fin"))}}       maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} onChange={getheureFin} defaultValue={currentUiContext.formInputs[7].split(":")[0]}/><b>h</b>
+                                                <input id="min_fin"    type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min_fin"), null)}}                                    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  onChange={getMinFin} defaultValue={currentUiContext.formInputs[7].split(":")[1]}/><b>min</b>
+                                            </div>
+                                    }
+
                                 </div>
+                            }
 
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("Type duree")}:
+                            {/*(props.formMode == 'justif') &&
+                                <div className={classes.inputRowLeft} style={{marginLeft:'0vw', marginTop:"1vh"}}>
+                                    <div style={{marginTop:'0.23vh'}}>  
+                                        <input type='checkbox' checked={isBilletJustified} style={{width:"1.3vw", height:"1.3vw"}} onClick={manageJustifyHandler}/>                             
+                                    </div>
+
+                                    <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'0.3vw', width:"20vw"}}>
+                                        {t("justify_permission")}
+                                    </div>
                                 </div>
-
-                                {(props.formMode =='consult') ?
-                                    <div> 
-                                        <input id="responsableLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        <input id="responsableId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw',  height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                    </div>  
-                                    :
-                                    <div>                                     
-                                        <select id='responsable' defaultValue={MEETING.responsableId} onChange={responsableChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw', fontSize:'1vw',width:'7vw'}}>
-                                            {(optResponsable||[]).map((option)=> {
-                                                return(
-                                                    <option  value={option.value}>{option.label}</option>
-                                                );
-                                            })}
-                                        </select> 
-                                    </div>
-                                }
-                            </div>
-
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("date_conseil")}:
-                                </div>
-                                {(props.formMode =='consult') ?
-                                    <div> 
-                                        <input id="date_meeting" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[2]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                    </div>
-                                    :
-                                    (currentUiContext.formInputs[2].length == 0) ?
-                                    <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} />/
-                                        <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />/
-                                        <input id="anne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     maxLength={4}     className={classes.inputRowControl }  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  />
-                                    </div>
-                                    :
-                                    <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="jour"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}  defaultValue={currentUiContext.formInputs[2].split("/")[0]} />/
-                                        <input id="mois"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[1]} />/
-                                        <input id="anne" type="text"  maxLength={4}   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     className={classes.inputRowControl}  style={{width:'2.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[2]} />
-                                    </div>
-                                }
-
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570, marginLeft:'2vw'}}>
-                                    {t("heure_conseil")}:
-                                </div>
-
-                                {(props.formMode =='consult') ?
-                                    <div> 
-                                        <input id="heure" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}/>
-                                    </div>
-                                    :
-                                    (currentUiContext.formInputs[3].length == 0) ?
-                                    <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="heure"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} /><b>h</b>
-                                        <input id="min"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), null)}}                                maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  /><b>min</b>
-                                    </div>
-                                    :
-                                    <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="heure"  type="text" maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}  defaultValue={currentUiContext.formInputs[3].split(":")[0]} /><b>h</b>
-                                        <input id="min"  type="text"   maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), null)}}                                  className={classes.inputRowControl}  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[3].split(":")[1]} /><b>min</b>
-                                    </div>
-                                }
-
-                            </div>
-
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("meeting_purpose")}:
-                                </div>
-
-                                {(props.formMode =='consult') ?
-                                    <div> 
-                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[11]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        <input id="objetId" type="hidden"    className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[4]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                    </div>  
-                                    :
-
-                                    <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
-                                        {(optObjet||[]).map((option)=> {
-                                            return(
-                                                <option  value={option.value}>{option.label}</option>
-                                            );
-                                        })}
-                                    </select>
-                                }
-
-                                {/*(seeDetail==true) ?
-                                    <div> 
-                                        <input id="autre_conseilC" type="text" className={classes.inputRowControl } Placeholder={'  precider les details '} defaultValue={currentUiContext.formInputs[3]} style={{marginLeft:'1.3vw', height:'1.7rem', width:'13vw', fontSize:'1.13vw'}}/>
-                                    </div>
-                                    :
-                                    null
                             */}
-                               
-                            </div>
 
-                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("periode_associee")}:  
-                                </div>
-
-                                {(props.formMode =='consult') ?
-                                    <div> 
-                                        <input id="periodeLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        <input id="periodeId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                    </div>  
-                                    :
-                                    <div>                                     
-                                        <select id='periode' defaultValue={MEETING.responsableId} onChange={periodeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
-                                            {(optPeriode||[]).map((option)=> {
-                                                return(
-                                                    <option  value={option.value}>{option.label}</option>
-                                                );
-                                            })}
-                                        </select> 
-                                    </div>
-                                }
-                            </div>
-
-                         
-                           
-                            
-                           
-                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'19.3vh', marginLeft:'-2vw'}}>
-                                <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
-                                    <FormPuce menuItemId ='1' 
-                                        isSimple={true} 
-                                        noSelect={true} 
-                                        imgSource={'images/' + getPuceByTheme()} 
-                                        withCustomImage={true} 
-                                        imageStyle={classes.PuceStyle}    
-                                        libelle = {t("eleves_convoques")} 
-                                        itemSelected={null}
-                                        style={{marginBottom:'-1vh'}}
-                                        puceImgStyle={{marginRight:'-0.3vw', marginTop:props.formMode!='consult'? '1vh':'0vh'}} 
-                                    />
-                                    {(props.formMode!='consult')&&  
-                                        <CustomButton
-                                            btnText={t("add")}
-                                            buttonStyle={getSmallButtonStyle()}
-                                            style={{marginBottom:'-0.3vh', marginRight:'0.8vw'}}
-                                            btnTextStyle = {classes.btnSmallTextStyle}
-                                            btnClickHandler={addEleveRow}
-                                        />   
-                                    }                
-                                </div>
-
-                               
-
-                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'19.3vh',overflowY:'scroll', justifyContent:'flex-start'}}>
-                                    <LigneEleveHeader/>
-                                    {(tabEleves||[]).map((eleve, index)=>{
-                                        return <LigneEleve  eleveId ={eleve.id} rowIndex={index} nom={eleve.nom} motif={eleve.decisionLabel} absence={eleve.decisions[0]} conduite={eleve.decisions[1]} autre={eleve.decisions[2]} etat={eleve.etat}/>
-                                        })
+                            {(props.formMode == 'consult') &&
+                                <div className={classes.inputRowLeft} style={{marginLeft:'0vw', marginTop:"1vh"}}>
+                                    
+                                    { isBilletJustified ?
+                                        <div> <img src="images/checkImg.png" style ={{width :'1.47vw', height:'1.47vw', marginTop:'-0.1vw'}}/> </div>
+                                        :
+                                        <div> <img src="images/cancel_trans.png" style ={{width :'1.87vw', height:'2.57vw', marginTop:'-0.67vw'}}/> </div>
                                     }
-                                </div>
-
-                            </div>
-
-                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'23vh', marginLeft:'-2vw'}}>
-                                <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
-                                    <FormPuce menuItemId ='1' 
-                                        isSimple={true} 
-                                        noSelect={true} 
-                                        imgSource={'images/' + getPuceByTheme()} 
-                                        withCustomImage={true} 
-                                        imageStyle={classes.PuceStyle}    
-                                        libelle = {t("profs_convoques")} 
-                                        itemSelected={null}
-                                        style={{marginBottom:'-1vh'}}
-                                        puceImgStyle={{marginRight:'-0.3vw', marginTop:props.formMode!='consult'? '1vh':'0vh'}}
-                                    />  
-                                    {(props.formMode!='consult')&&
-                                        <CustomButton
-                                            btnText={t("add")}
-                                            buttonStyle={getSmallButtonStyle()}
-                                            style={{marginBottom:'-0.3vh', marginRight:'0.8vw'}}
-                                            btnTextStyle = {classes.btnSmallTextStyle}
-                                            btnClickHandler={addParticipantRow}
-                                        />  
-                                    }                 
-                                </div>
-
-                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh',overflowY:'scroll', justifyContent:'flex-start'}}>
-                                    <LigneProfParticipantHeader date={'Date'} nbreJours={t('nbre_jours')} etat={'Etat'}/>
-                                    {(tabParticipant||[]).map((prof)=>{
-                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.nom} role={prof.role} etat={prof.etat}/>
-                                        })
+                                   
+                                    {isBilletJustified ?
+                                        <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'0.3vw', width:"20vw", color:'green'}}>
+                                            <div> {t("auth_justified")}</div>                                           
+                                        </div>
+                                        :
+                                        <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'0.3vw', width:"20vw", color:'red'}}>
+                                            <div>{t("auth_non_justified")}</div> 
+                                        </div>      
                                     }
-                                </div>                                    
 
-                            </div>
-                                
-                            
+                                </div>
+                            }               
+
                         </div>
                        
                     </div>
                     
                     
-                    {(props.formMode != 'consult') &&
-                        <div className={classes.inputRowRight} style={{position:'absolute', bottom:'0', marginBottom: isMobile ? '-1vh':'-3vh'}}>
+                    {(props.formMode != 'consult') ?
+                        <div className={classes.inputRowRight} style={{borderTopStyle:'solid', borderTopWidth:"2px", paddingTop:"2vh", position:'absolute', bottom:'0', marginBottom: isMobile ? '-1vh':'2vh'}}>
                             <CustomButton
                                 btnText={t("cancel")}
                                 buttonStyle={getGridButtonStyle()}
@@ -1653,24 +747,43 @@ function BilletES(props) {
                                 btnClickHandler={cancelHandler}
                             />
 
-                            <CustomButton
-                                btnText={t("save")}
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.btnTextStyle}
-                                btnClickHandler={saveMeetingHandler}
-                            />
+                            {(props.formMode == 'creation') &&
+                                <CustomButton
+                                    btnText={t("save")}
+                                    buttonStyle={getGridButtonStyle()}
+                                    btnTextStyle = {classes.btnTextStyle}
+                                    btnClickHandler={saveBilletHandler}
+                                />
+
+                            }
+
+                            {(props.formMode == 'modif') &&
+                                <CustomButton
+                                    btnText={t("modify")}
+                                    buttonStyle={getGridButtonStyle()}
+                                    btnTextStyle = {classes.btnTextStyle}
+                                    btnClickHandler={updateBilletHandler}
+                                />
+                            }
 
                         </div>
-                    }                    
-                </div>
-            }
+                      
+                        :                    
 
+                        <div className={classes.inputRowRight} style={{borderTopStyle:'solid', borderTopWidth:"2px", paddingTop:"2vh", position:'absolute', bottom:'0', marginBottom: isMobile ? '-1vh':'2vh'}}>
+                            <CustomButton
+                                btnText={t("cancel")}
+                                buttonStyle={getGridButtonStyle()}
+                                btnTextStyle = {classes.btnTextStyle}
+                                btnClickHandler={cancelHandler}
+                            />
+                        </div>
+
+                    }                 
+                </div>            
            
-            
-           
-        </div>
        
-    );
- }
+        );
+    }
  export default BilletES;
  

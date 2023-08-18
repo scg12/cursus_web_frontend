@@ -278,6 +278,25 @@ div.MuiDataGrid-footerContainer.css-17jjc08-MuiDataGrid-footerContainer {
 }
 
 
+/******************* Les Buttons Onglets *******************/
+
+/************** THEME 1 **************/
+.Theme1_active{
+  background-color:rgb(14, 94, 199) !important;
+}
+
+/************** THEME 2 **************/
+.Theme2_active{
+  background-color:rgb(60, 160, 21) !important;
+}
+
+/************** THEME 3 **************/
+.Theme3_active{
+  background-color:rgb(64, 49, 165) !important;
+}
+
+
+
 
 /******************** INPUTS **********************/
 .formInput0{
@@ -571,6 +590,9 @@ select{
 
 
 
+
+
+
   div.select__value-container.select__value-container--has-value.css-319lph-ValueContainer{
     margin-top: -17px;
     font-weight: bold;
@@ -615,6 +637,14 @@ select{
   display: inline-block !important;
   color: white !important;
 
+}
+
+
+.activeP{
+  background-color: #7f7471eb;
+  border-radius: 3px 3px 3px 3px;
+  color :white;
+  /*min-width: 20vw;*/
 }
 
 

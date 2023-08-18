@@ -25,83 +25,32 @@ import { useTranslation } from "react-i18next";
 var CURRENT_MEETING={};
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
+
 let CURRENT_PROF_PP_ID;
 let CURRENT_PROF_PP_USERID;
 let CURRENT_PROF_PP_LABEL;
+
 var printedETFileName='';
 var SEQUENCES_DISPO = [];
 var TRIMESTRES_DISPO  = [];
 var ANNEE_DISPO = [];
+
 var DEFAULT_MEMBERS = []; 
 var OTHER_MEMBERS = [];
 var PRESENTS_MEMBERS = [];
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"",
-    displayedName:'',
-    nom: '',
-    prenom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    nom_mere : '',
-    tel_pere : '',
-    tel_mere : '',
-    email_pere : '',
-    email_mere : '',
-    etab_provenance:'',
-    id:1,
-    redouble: '',
-    sexe:'M', 
-    
-    nom_parent      : '', 
-    tel_parent      : '', 
-    email_parent    : '',
-   
-}
+var DEFAULT_MEMBERS_ADD = []; 
+var PRESENTS_MEMBERS_ADD = [];
+var OTHER_MEMBERS_ADD = [];
 
-var MEETING = {
-    //---Infos Generales 
-    id:-1,
-    classId : 0,
-    classeLabel:'',
+var INFO_ELEVES = [];
 
-    responsableId:0,
-    responsableLabel:'',
-
-    profPrincipalId :0,
-    profPrincipalLabel : '',
-
-    date:'',
-    heure:'',
-
-    objetId:0,
-    objetLabel:'',
-
-    autreObjet:'',
-
-    etat:0,
-    etatLabel:'En cours',
-
-    decision:'',
-    note_passage:0,
-
-    note_exclusion:0,
-    //---participants
-    listParticipants : [],  
-   
-    //---prof presents
-    listPresents : [],
-
-     //---decisions cas par cas
-     listCaspasCas : [],
-};
+var LIST_CONSEILS_INFOS =[];
 
 
+var listElt ={};
 
+var MEETING = {};
 
 var pageSet = [];
 
@@ -150,28 +99,34 @@ function ConseilClasse(props) {
     }
 
     const getListConseilClasse =(classeId,sousEtabId)=>{
+        var listConseils = [];
         axiosInstance.post(`list-conseil-classes/`, {
             id_classe: classeId,
             id_sousetab: sousEtabId
         }).then((res)=>{
             console.log("donnees",res.data);
-            CURRENT_PROF_PP_ID      = res.data.prof_principal.id;
-            CURRENT_PROF_PP_USERID = res.data.prof_principal.user_id;
-            CURRENT_PROF_PP_LABEL   =  res.data.prof_principal.nom;
+            if(res.data!= undefined && res.data!=null){
+                LIST_CONSEILS_INFOS = [...res.data.conseil_classes];
 
-            SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs_dispo);
-            TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
-            DEFAULT_MEMBERS   =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres) : [];
-            OTHER_MEMBERS     =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_a_ajouter) : [];
-            PRESENTS_MEMBERS  =  (res.data.conseil_classes.length>0) ?  createLabelValueTableWithUserS(res.data.conseil_classes.membres_presents)  : [];
-            ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}]
+                CURRENT_PROF_PP_ID      = res.data.prof_principal.id;
+                CURRENT_PROF_PP_USERID  = res.data.prof_principal.user_id;
+                CURRENT_PROF_PP_LABEL   = res.data.prof_principal.nom;
+                
+                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_conv];
+                OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
+                PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
 
-            var listConseils = [...formatList(res.data.conseil_classes, res.data.prof_principal, res.seqs_dispo, res.trims_dispo)]
-            console.log(listConseils);
+                SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs);
+                TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims);
+                ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
+
+                listConseils = [...formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims)]
+                console.log(listConseils);                
+            }
+     
             setGridMeeting(listConseils);
             console.log(gridMeeting);
         })  
-        //setGridMeeting(conseil_data);
     }
 
 
@@ -185,15 +140,16 @@ function ConseilClasse(props) {
         return resultTab;
     }
 
-    function createLabelValueTableWithUserS(tab){
+     function createLabelValueTableWithUserS(tab, present, etat){
         var resultTab = [];
         if(tab.length>0){
             tab.map((elt)=>{
-                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type});
+                resultTab.push({value:elt.id_user, label:elt.nom, role:elt.type, present:present, etat:etat});
             })
         }
         return resultTab;
     }
+    
 
     function formatList(listConseil,ProfInfo,seqInfos,trimInfos){
         var rang = 1;
@@ -209,11 +165,12 @@ function ConseilClasse(props) {
             listElt.user_id = ProfInfo.user_id;
             listElt.rang = rang; 
             listElt.status = elt.status; 
-            listElt.periodeId = elt.status;
-            listElt.periode = getPeriodeLabel(listElt.id_type_conseil,seqInfos, trimInfos);
+            listElt.periodeId = elt.id_type_conseil;
+            listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos, trimInfos);
             listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);
+            
             rang ++;
         })
         return formattedList;
@@ -245,9 +202,8 @@ function ConseilClasse(props) {
             
             getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
             
-            // getProfPrincipal(currentAppContext.currentEtab, CURRENT_CLASSE_ID); 
-            // console.log(CURRENT_CLASSE_ID,CURRENT_CLASSE_LABEL)          
-        }else{
+              
+        } else {
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
             setGridMeeting([]);
@@ -256,15 +212,6 @@ function ConseilClasse(props) {
     }
 
 /*************************** DataGrid Declaration ***************************/ 
-
-const conseil_data =[
-    {id:1, date:'12/05/2023', heure:'12:45', objetId:1, objetLabel:'Bilan sequentiel', responsableId:11, responsableLabel:'Mr MBALLA Alfred',   profPrincipalLabel:'Mr MBARGA Alphonse',  etat:0,  etatLabel:  'En cours', decision:'blallalalalal' },
-    {id:2, date:'18/05/2023', heure:'08:45', objetId:1, objetLabel:'Bilan sequentiel', responsableId:12, responsableLabel:'Mr TOWA Luc',        profPrincipalLabel:'Mr MBARGA Alphonse',  etat:0,  etatLabel:  'En cours', decision:'blallalalalal' },
-    {id:3, date:'02/05/2023', heure:'09:30', objetId:1, objetLabel:'Bilan sequentiel', responsableId:13, responsableLabel:'Mr OBATE Simplice',  profPrincipalLabel:'Mr MBARGA Alphonse',  etat:0,  etatLabel:  'En cours', decision:'blallalalalal' },
-    {id:4, date:'17/05/2023', heure:'15:45', objetId:1, objetLabel:'Bilan sequentiel', responsableId:14, responsableLabel:'Mr TSALA Pascal',    profPrincipalLabel:'Mr MBARGA Alphonse',  etat:1,  etatLabel:  'Cloture' , decision:'blallalalalal' },
-    {id:5, date:'03/05/2023', heure:'10:20', objetId:1, objetLabel:'Bilan sequentiel', responsableId:15, responsableLabel:'Mr TCHIALEU Hugues', profPrincipalLabel:'Mr MBARGA Alphonse',  etat:1,  etatLabel:  'Cloture' , decision:'blallalalalal' }
-];
-
 const columnsFr = [
     {
         field: 'id',
@@ -324,22 +271,7 @@ const columnsFr = [
     },
 
     
-   /* {
-        field: 'responsableId',
-        headerName: 'CHEF DE CONSEIL',
-        width: 50,
-        editable: false,
-        hide:true,
-        headerClassName:classes.GridColumnStyle
-    },*/
-
-    /*{
-        field: 'responsableLabel',
-        headerName: 'CHEF DE CONSEIL',
-        width: 180,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },*/
+ 
 
     {
         field: 'nom',
@@ -473,14 +405,15 @@ const columnsFr = [
     
         {
             field: 'type_conseil',
-            headerName: 'TYPE OF CONSEIL',
+            headerName: 'MEETING PURPOSE',
             width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
         {
             field: 'id_type_conseil',
-            headerName: 'OBJET DU CONSEIL',
+            headerName: 'MEETING PURPOSE',
             width: 50,
             editable: false,
             hide:true,
@@ -495,22 +428,7 @@ const columnsFr = [
             headerClassName:classes.GridColumnStyle
         },
     
-       /* {
-            field: 'responsableId',
-            headerName: 'CHEF DE CONSEIL',
-            width: 50,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },*/
-    
-        /*{
-            field: 'responsableLabel',
-            headerName: 'CHEF DE CONSEIL',
-            width: 180,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },*/
+       
     
         {
             field: 'nom',
@@ -653,64 +571,60 @@ const columnsFr = [
     }
 
     function handleEditRow(row){       
-        var inputs=[];
+        var inputs=[];       
+        var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+      
+        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
+        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
+        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CC.membres_presents,true, 0);
+        INFO_ELEVES       =  CURRENT_CC.info_eleves;
         
-        inputs[0]= row.id;
-        inputs[1]= row.responsableId;
-        inputs[2]= row.date;
-        inputs[3]= row.heure;
-        inputs[4]= row.objetId;
+        inputs[0] = row.id;
+        inputs[1] = row.date_prevue;
+        inputs[2] = row.heure_prevue;
+        inputs[3] = row.type_conseil;
+        inputs[4] = row.id_type_conseil;
         
-        inputs[5]= row.autreObjet;
-        inputs[6]= row.decision;
-        inputs[7]= row.note_passage;
+        inputs[5] = row.periode;
+        inputs[6] = row.nom;
+        inputs[7] = row.user_id;
 
-        inputs[8] = row.note_exclusion;
-        inputs[9] = row.etat;
-
-        inputs[10]= row.responsableLabel;
-        inputs[11]= row.objetLabel;
-        /*inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;*/
-
-        
+        inputs[8]  = row.status;
+        inputs[9]  = row.statusLabel;
+        inputs[10] = [...INFO_ELEVES];
+        inputs[11] = row.resume_general_decisions;
+  
         currentUiContext.setFormInputs(inputs);
         console.log("laligne",row, currentUiContext.formInputs);
-        setModalOpen(2);
-       
-       
-        
-
+        setModalOpen(2);       
     }
 
     function consultRowData(row){
         var inputs=[];
-
-        inputs[0]= row.id;
-        inputs[1]= row.responsableId;
-        inputs[2]= row.date;
-        inputs[3]= row.heure;
-        inputs[4]= row.objetId;
+        var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+      
+        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
+        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
+        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CC.membres_presents,true, 0);
+        INFO_ELEVES       =  CURRENT_CC.info_eleves;
         
-        inputs[5]= row.autreObjet;
-        inputs[6]= row.decision;
-        inputs[7]= row.note_passage;
+        inputs[0] = row.id;
+        inputs[1] = row.date_prevue;
+        inputs[2] = row.heure_prevue;
+        inputs[3] = row.type_conseil;
+        inputs[4] = row.id_type_conseil;
+        
+        inputs[5] = row.periode;
+        inputs[6] = row.nom;
+        inputs[7] = row.user_id;
 
-        inputs[8] = row.note_exclusion;
-        inputs[9] = row.etat;
-
-        inputs[10]= row.responsableLabel;
-        inputs[11]= row.objetLabel;
-       
+        inputs[8]  = row.status;
+        inputs[9]  = row.statusLabel;
+        inputs[10] = [...INFO_ELEVES];
+        inputs[11] = row.resume_general_decisions;
+  
         currentUiContext.setFormInputs(inputs)
         setModalOpen(3);
-
     }
 
     function getTypeConseil(code){
@@ -745,8 +659,6 @@ const columnsFr = [
 
     function addClassMeeting(meeting) {       
         console.log('Ajout',meeting);
-        //conseil_data.push(meeting);
-        //setGridMeeting(conseil_data);
         CURRENT_MEETING = meeting;
            
         axiosInstance.post(`create-conseil-classe/`, {
@@ -754,16 +666,13 @@ const columnsFr = [
             id_classe       : meeting.classeId,
             id_pp           : meeting.profPrincipalId,
             id_pp_user      : meeting.currentPpUserId,
-            type_conseil    : getTypeConseil(meeting.objetId),
+            type_conseil    : MEETING.type_conseil,
             date_prevue     : meeting.date,
             heure_prevue    : meeting.heure,
-            id_periode      : meeting.periodeId,
-            id_periode      : meeting.periodeId,
+            id_periode      : meeting.id_periode,
             alerter_membres : meeting.alerter_membres,
-            id_membres      : getMembresId(meeting.listParticipants),
-            roles_membres   : getMembreRoles(meeting.listParticipants)
-           
-           // MEETING.listParticipants  = [...tabParticipant];
+            id_membres      : meeting.id_membres,
+            roles_membres   : meeting.roles_membres
             
         }).then((res)=>{
            var gridData = createGridData(res.data.conseil_classes)
@@ -782,54 +691,42 @@ const columnsFr = [
     }
     
     function modifyClassMeeting(meeting) {
-        console.log('Mise a jour des infos',meeting);
-        conseil_data.push(meeting);
-        setGridMeeting(conseil_data);
+        console.log('Modif',meeting);
         CURRENT_MEETING = meeting;
-        chosenMsgBox = MSG_SUCCESS;
-        currentUiContext.showMsgBox({
-            visible:true, 
-            msgType:"question", 
-            msgTitle:t("success_add_M"), 
-            message:t("success_add")+"\n"+t("notify_prof")
-        })
-     
-        /*axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id : eleve.id, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance, 
+           
+        axiosInstance.post(`update-conseil-classe/`, {
+            id_sousetab     : meeting.id_sousetab,
+            id_classe       : meeting.classeId,
+            id_pp           : meeting.profPrincipalId,
+            id_pp_user      : meeting.currentPpUserId,
+            type_conseil    : meeting.type_conseil,
+            date_prevue     : meeting.date,
+            heure_prevue    : meeting.heure,
+            id_periode      : meeting.id_periode,
+            alerter_membres : meeting.alerter_membres,
+            id_membres      : meeting.id_membres,
+            roles_membres   : meeting.roles_membres,
+            membre_presents : meeting.membre_presents,
+            
+            id_eleves       : meeting.id_eleves,
+            list_decisions_conseil_eleves  : meeting.id_eleves,
+            list_classes_promotions_eleves : meeting.id_eleves,
+            resume_general_decisions       : meeting.resume_general_decisions
 
         }).then((res)=>{
+           var gridData = createGridData(res.data.conseil_classes)
+            setGridMeeting(gridData);
             console.log(res.data);
+
             setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"question", 
                 msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("notify_prof")
-            })           
-            
-        })*/
+                message:t("success_add")
+            })
+        })    
     }
 
     function deleteRow(rowId) {
@@ -854,7 +751,13 @@ const columnsFr = [
     }
    
     function AddNewMeetingHandler(e){
-        if(CURRENT_CLASSE_ID != undefined){
+       
+        if(CURRENT_CLASSE_ID != undefined){         
+            DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,   true,   1);
+            OTHER_MEMBERS     =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,     false, -1);
+            PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD,  true,   0);
+            
+          
             setModalOpen(1); 
             initFormInputs();
         } else{
@@ -1030,7 +933,24 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen >0 && modalOpen<4) && <AddClassMeeting defaultMembrers={DEFAULT_MEMBERS} otherMembers={OTHER_MEMBERS} presentsMembers={PRESENTS_MEMBERS} sequencesDispo={SEQUENCES_DISPO} trimestresDispo={TRIMESTRES_DISPO} anneDispo={ANNEE_DISPO} currentPpUserId = {CURRENT_PROF_PP_USERID} currentPpId={CURRENT_PROF_PP_ID} currentPpLabel={CURRENT_PROF_PP_LABEL} currentClasseLabel={CURRENT_CLASSE_LABEL} currentClasseId={CURRENT_CLASSE_ID} formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm}/>}
+            {(modalOpen >0 && modalOpen<4) && 
+                <AddClassMeeting 
+                    defaultMembres  = {DEFAULT_MEMBERS}  
+                    otherMembres    = {OTHER_MEMBERS} 
+                    presentsMembres = {PRESENTS_MEMBERS} 
+                    sequencesDispo  = {SEQUENCES_DISPO} 
+                    trimestresDispo = {TRIMESTRES_DISPO} 
+                    anneDispo       = {ANNEE_DISPO} 
+                    currentPpUserId = {CURRENT_PROF_PP_USERID} 
+                    currentPpId     = {CURRENT_PROF_PP_ID} 
+                    currentPpLabel  = {CURRENT_PROF_PP_LABEL} 
+                    currentClasseLabel = {CURRENT_CLASSE_LABEL} 
+                    currentClasseId    = {CURRENT_CLASSE_ID} 
+                    formMode      = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    actionHandler = {(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
+                    cancelHandler = {quitForm}
+                />
+            }
             {(modalOpen==4) && 
                 <PDFTemplate previewCloseHandler={closePreview}>
                     { isMobile?
@@ -1048,11 +968,11 @@ const columnsFr = [
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
                 <MsgBox 
-                    msgTitle = {currentUiContext.msgBox.msgTitle} 
-                    msgType  = {currentUiContext.msgBox.msgType} 
-                    message  = {currentUiContext.msgBox.message} 
-                    customImg ={true}
-                    customStyle={true}
+                    msgTitle    = {currentUiContext.msgBox.msgTitle} 
+                    msgType     = {currentUiContext.msgBox.msgType} 
+                    message     = {currentUiContext.msgBox.message} 
+                    customImg   = {true}
+                    customStyle = {true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
                     buttonAcceptText = {t("yes")}

@@ -39,6 +39,8 @@ div .Theme1_menuItemSimple:hover{
     color :white;
     /*min-width: 20vw;*/
 }
+
+
 /**************************************************/
 .Theme1_menuItem{
     display: flex;
@@ -143,6 +145,7 @@ div .Theme3_menuItemSimple:hover{
     color :white;
     /*min-width: 72vw;*/
 }
+
 
 /**************************************************/
 

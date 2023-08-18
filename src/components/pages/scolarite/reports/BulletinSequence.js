@@ -730,9 +730,10 @@ const styles = StyleSheet.create({
       borderRadius:"2px",
     },
     special_textP:{
-      backgroundColor:"#e15c2ade",
+      backgroundColor:"#eb1e1ede",
+      //backgroundColor:"#e15c2ade",
       borderRadius:"2px",
-      //color:"white"
+      color:"white"
     },
     title: {
       fontSize: 14,

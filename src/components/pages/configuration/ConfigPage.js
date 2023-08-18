@@ -61,11 +61,14 @@ function ConfigPage(props) {
     const [curentMenuItemId,setMenuItemId]=useState(0);
     
 
-    const [section1SelectedItem,setSection1SelectedItem]=useState(0);
-    const [section2SelectedItem,setSection2SelectedItem]=useState(0);
-    const [section3SelectedItem,setSection3SelectedItem]=useState(0);
-    const [section4SelectedItem,setSection4SelectedItem]=useState(0);
-    const [section5SelectedItem,setSection5SelectedItem]=useState(0);
+    const [currentActiveMenuID, setCurrentActiveMenuID]  = useState(undefined)
+    const [section1SelectedItem,setSection1SelectedItem] = useState(0);
+    const [section2SelectedItem,setSection2SelectedItem] = useState(0);
+    const [section3SelectedItem,setSection3SelectedItem] = useState(0);
+    const [section4SelectedItem,setSection4SelectedItem] = useState(0);
+    const [section5SelectedItem,setSection5SelectedItem] = useState(0);
+   
+    const [sectionSelectedItem,setSectionSelectedItem] = useState(0);
     
     const selectedTheme = currentUiContext.theme;
     
@@ -134,6 +137,24 @@ function ConfigPage(props) {
         }
         
     }
+
+    function toggleActiveMenu(NewActiveMenuId) {
+        const NewActiveDiv = document.getElementById(NewActiveMenuId);
+        if(currentActiveMenuID != undefined){
+            const currentActiveDiv = document.getElementById(currentActiveMenuID);
+            currentActiveDiv.classList.remove('activeP');
+
+            if(currentActiveDiv!= NewActiveDiv){
+                NewActiveDiv.classList.add('activeP');
+                setCurrentActiveMenuID(NewActiveMenuId);
+            } else {
+                setCurrentActiveMenuID(undefined);
+            }          
+        }else{
+            NewActiveDiv.classList.add('activeP');
+            setCurrentActiveMenuID(NewActiveMenuId);
+        }        
+    }
     
     
     return ( 
@@ -151,7 +172,6 @@ function ConfigPage(props) {
                 :  
                     <div className={classes.rowDisplay}>
                         <img src="images/configuration4.png"  className={classes.imageMargin1} id='en' width ='75px' height='80px' alt="my image"/>
-                        {t("configurationM")}
                     </div>
                 }
                 
@@ -168,37 +188,43 @@ function ConfigPage(props) {
                     <MenuItemList minWtdhStyle={classes.size72Vw} libelle= 'Configuration des Paramètres Personnels' theme={selectedTheme}>
                         <div className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
-                                {(currentAppContext.enableProfiles["CONFIG_A1"]=='1') ? <MenuItem menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification Du Login'                    itemSelected={()=>{(section1SelectedItem == 0) ? setSection1SelectedItem(1):(section1SelectedItem == 1) ? setSection1SelectedItem(0):setSection1SelectedItem(1)}}> </MenuItem>  :  null}
-                                {(currentAppContext.enableProfiles["CONFIG_A2"]=='1') ? <MenuItem menuItemId ='2' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification Du Mot de Passe'             itemSelected={()=>{(section1SelectedItem == 0) ? setSection1SelectedItem(2):(section1SelectedItem == 2) ? setSection1SelectedItem(0):setSection1SelectedItem(2)}}> </MenuItem>  :  null}
-                                {(currentAppContext.enableProfiles["CONFIG_A3"]=='1') ? <MenuItem menuItemId ='3' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification De La Photo de profil'       itemSelected={()=>{(section1SelectedItem == 0) ? setSection1SelectedItem(3):(section1SelectedItem == 3) ? setSection1SelectedItem(0):setSection1SelectedItem(3)}}> </MenuItem>  :  null}
-                                {(currentAppContext.enableProfiles["CONFIG_A4"]=='1') ? <MenuItem menuItemId ='4' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification Du Thème'                    itemSelected={()=>{(section1SelectedItem == 0) ? setSection1SelectedItem(4):(section1SelectedItem == 4) ? setSection1SelectedItem(0):setSection1SelectedItem(4)}}> </MenuItem>  :  null}
+                                {(currentAppContext.enableProfiles["CONFIG_A1"]=='1') ? <MenuItem menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification Du Login'                    itemSelected={()=>{toggleActiveMenu('1'); (sectionSelectedItem == 0) ? setSectionSelectedItem(1):(sectionSelectedItem == 1) ? setSectionSelectedItem(0):setSectionSelectedItem(1)}}> </MenuItem>  :  null}
+                                {(currentAppContext.enableProfiles["CONFIG_A2"]=='1') ? <MenuItem menuItemId ='2' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification Du Mot de Passe'             itemSelected={()=>{toggleActiveMenu('2'); (sectionSelectedItem == 0) ? setSectionSelectedItem(2):(sectionSelectedItem == 2) ? setSectionSelectedItem(0):setSectionSelectedItem(2)}}> </MenuItem>  :  null}
+                                {(currentAppContext.enableProfiles["CONFIG_A3"]=='1') ? <MenuItem menuItemId ='3' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification De La Photo de profil'       itemSelected={()=>{toggleActiveMenu('3'); (sectionSelectedItem == 0) ? setSectionSelectedItem(3):(sectionSelectedItem == 3) ? setSectionSelectedItem(0):setSectionSelectedItem(3)}}> </MenuItem>  :  null}
+                                {(currentAppContext.enableProfiles["CONFIG_A4"]=='1') ? <MenuItem menuItemId ='4' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle='Modification Du Thème'                    itemSelected={()=>{toggleActiveMenu('4'); (sectionSelectedItem == 0) ? setSectionSelectedItem(4):(sectionSelectedItem == 4) ? setSectionSelectedItem(0):setSectionSelectedItem(4)}}> </MenuItem>  :  null}
                             </div>
                             
-                            <div className={(section1SelectedItem == 0) ? getDetailSectionBlankTheme():getDetailSectionTheme()}> 
+                            
                                 
-                                {(section1SelectedItem==1) ?
+                            {(sectionSelectedItem==1) ?
+                                <div className={getDetailSectionTheme()}> 
                                     <ConfigLogin/>
-                                    : null
-                                }
-                                
-                                {(section1SelectedItem==2) ?
-                                    <ConfigPswd/>
-                                    : null
-                                }
-
-                                {(section1SelectedItem==3) ?
-                                    <ConfigPhoto/>
-                                    : null
-                                }
-
-                                {(section1SelectedItem==4) ?
-                                    <ConfigTheme/>
-                                    : null
-                                }
-                            </div>
-                                
+                                </div>
+                                : null
+                            }
                             
-                        </div>
+                            {(sectionSelectedItem==2) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigPswd/>
+                                </div>
+                                : null
+                            }
+
+                            {(sectionSelectedItem==3) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigPhoto/>
+                                </div>
+                                : null
+                            }
+
+                            {(sectionSelectedItem==4) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigTheme/>
+                                </div>                                    
+                                : null
+                            }
+                        </div>                               
+                       
                     </MenuItemList>
                     :
                     null
@@ -207,153 +233,200 @@ function ConfigPage(props) {
                 {(currentAppContext.enableProfiles["CONFIG_B"]=='1') ? 
                     <MenuItemList minWtdhStyle={classes.size72Vw} libelle= "Configuration De La Structure De L'Etablissement" theme={selectedTheme}>
                         <div className={classes.MenuGroup}>
-                            <div className={classes.MenuItemsection} >
-                                {(currentAppContext.enableProfiles["CONFIG_B1"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle= "Modification Des Infos Générales De L'Etablissement"               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(1):(section2SelectedItem == 1) ? setSection2SelectedItem(0):setSection2SelectedItem(1)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion Des Cycles"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(2):(section2SelectedItem == 2) ? setSection2SelectedItem(0):setSection2SelectedItem(2)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Gestion Des Niveaux'                                                 itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(3):(section2SelectedItem == 3) ? setSection2SelectedItem(0):setSection2SelectedItem(3)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Gestion Des Classes'                                                 itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(9):(section2SelectedItem == 9) ? setSection2SelectedItem(0):setSection2SelectedItem(9)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Des Classes d'Examen"                                    itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(10):(section2SelectedItem == 10) ? setSection2SelectedItem(0):setSection2SelectedItem(10)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion des Matières de l'Etablissement"                   itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(4):(section2SelectedItem == 4) ? setSection2SelectedItem(0):setSection2SelectedItem(4)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Association des Matières aux Classes'                    itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(5):(section2SelectedItem == 5) ? setSection2SelectedItem(0):setSection2SelectedItem(5)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Définition des Cours par Classes'                    itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(11):(section2SelectedItem == 11) ? setSection2SelectedItem(0):setSection2SelectedItem(11)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Définition des Groupes de Matières'                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(6):(section2SelectedItem == 6) ? setSection2SelectedItem(0):setSection2SelectedItem(6)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Gestion des Matricules'        itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(7):(section2SelectedItem == 7) ? setSection2SelectedItem(0):setSection2SelectedItem(7)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Modifier la configuration de l'établissement"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(8):(section2SelectedItem == 8) ? setSection2SelectedItem(0):setSection2SelectedItem(8)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Hierarchie Etablissement"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(12):(section2SelectedItem == 12) ? setSection2SelectedItem(0):setSection2SelectedItem(12)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Quotas Cursus"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(13):(section2SelectedItem == 13) ? setSection2SelectedItem(0):setSection2SelectedItem(13)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Type d'Enseignants"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(14):(section2SelectedItem == 14) ? setSection2SelectedItem(0):setSection2SelectedItem(14)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion des Trimestres"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(15):(section2SelectedItem == 15) ? setSection2SelectedItem(0):setSection2SelectedItem(15)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion des Séquences"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(16):(section2SelectedItem == 16) ? setSection2SelectedItem(0):setSection2SelectedItem(16)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Classes de Spécialité"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(17):(section2SelectedItem == 17) ? setSection2SelectedItem(0):setSection2SelectedItem(17)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Jours ouvrables"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(18):(section2SelectedItem == 18) ? setSection2SelectedItem(0):setSection2SelectedItem(18)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Pauses"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(19):(section2SelectedItem == 19) ? setSection2SelectedItem(0):setSection2SelectedItem(19)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Tranches Horaires"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(20):(section2SelectedItem == 20) ? setSection2SelectedItem(0):setSection2SelectedItem(20)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Matières de spécialité des Enseignants"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(21):(section2SelectedItem == 21) ? setSection2SelectedItem(0):setSection2SelectedItem(21)}}></MenuItem> : null}
-                                {/* {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={classes.imageStyle}   libelle="Définition des Quotas Cursus"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(13):(section2SelectedItem == 13) ? setSection2SelectedItem(0):setSection2SelectedItem(13)}}></MenuItem> : null} */}
-                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion Des Appréciation De Notes"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(22):(section2SelectedItem == 22) ? setSection2SelectedItem(0):setSection2SelectedItem(22)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Causes de Convocation au Conseil de Discipline"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(23):(section2SelectedItem == 23) ? setSection2SelectedItem(0):setSection2SelectedItem(23)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Condition de Reoublement et d'exclusion"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(24):(section2SelectedItem == 24) ? setSection2SelectedItem(0):setSection2SelectedItem(24)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Types de Sanctions"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(25):(section2SelectedItem == 25) ? setSection2SelectedItem(0):setSection2SelectedItem(25)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Classes de passage possibles pour l'année prochaine"                                               itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(26):(section2SelectedItem == 26) ? setSection2SelectedItem(0):setSection2SelectedItem(26)}}></MenuItem> : null}
+                            <div className={classes.MenuItemsection} > 
+                                {(currentAppContext.enableProfiles["CONFIG_B1"]=='1') ?  <MenuItem menuItemId ='5'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle= "Modification Des Infos Générales De L'Etablissement"               itemSelected={()=>{toggleActiveMenu('5');   (sectionSelectedItem == 0) ? setSectionSelectedItem(5):  (sectionSelectedItem == 5)  ? setSectionSelectedItem(0):setSectionSelectedItem(5)}}>   </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem menuItemId ='6'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion Des Cycles"                                                 itemSelected={()=>{toggleActiveMenu('6');   (sectionSelectedItem == 0) ? setSectionSelectedItem(6):  (sectionSelectedItem == 6)  ? setSectionSelectedItem(0):setSectionSelectedItem(6)}}>   </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='7'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Gestion Des Niveaux'                                                itemSelected={()=>{toggleActiveMenu('7');   (sectionSelectedItem == 0) ? setSectionSelectedItem(7):  (sectionSelectedItem == 7)  ? setSectionSelectedItem(0):setSectionSelectedItem(7)}}>   </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='8'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Des Classes d'Examen"                                    itemSelected={()=>{toggleActiveMenu('8');   (sectionSelectedItem == 0) ? setSectionSelectedItem(8):  (sectionSelectedItem == 8)  ? setSectionSelectedItem(0):setSectionSelectedItem(8)}}>   </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='9'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion des Matières de l'Etablissement"                            itemSelected={()=>{toggleActiveMenu('9');   (sectionSelectedItem == 0) ? setSectionSelectedItem(9):  (sectionSelectedItem == 9)  ? setSectionSelectedItem(0):setSectionSelectedItem(9)}}>   </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='10' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Association des Matières aux Classes'                               itemSelected={()=>{toggleActiveMenu('10');  (sectionSelectedItem == 0) ? setSectionSelectedItem(10): (sectionSelectedItem == 10) ? setSectionSelectedItem(0):setSectionSelectedItem(10)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='11' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Définition des Cours par Classes'                                   itemSelected={()=>{toggleActiveMenu('11');  (sectionSelectedItem == 0) ? setSectionSelectedItem(11): (sectionSelectedItem == 11) ? setSectionSelectedItem(0):setSectionSelectedItem(11)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='12' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Définition des Groupes de Matières'                                 itemSelected={()=>{toggleActiveMenu('12');  (sectionSelectedItem == 0) ? setSectionSelectedItem(12): (sectionSelectedItem == 12) ? setSectionSelectedItem(0):setSectionSelectedItem(12)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='13' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Gestion des Matricules'                                             itemSelected={()=>{toggleActiveMenu('13');  (sectionSelectedItem == 0) ? setSectionSelectedItem(13): (sectionSelectedItem == 13) ? setSectionSelectedItem(0):setSectionSelectedItem(13)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='14' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Modifier la configuration de l'établissement"                       itemSelected={()=>{toggleActiveMenu('14');  (sectionSelectedItem == 0) ? setSectionSelectedItem(14): (sectionSelectedItem == 14) ? setSectionSelectedItem(0):setSectionSelectedItem(14)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='15' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Hierarchie Etablissement"                                           itemSelected={()=>{toggleActiveMenu('15');  (sectionSelectedItem == 0) ? setSectionSelectedItem(15): (sectionSelectedItem == 15) ? setSectionSelectedItem(0):setSectionSelectedItem(15)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='16' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Quotas Cursus"                                       itemSelected={()=>{toggleActiveMenu('16');  (sectionSelectedItem == 0) ? setSectionSelectedItem(16): (sectionSelectedItem == 16) ? setSectionSelectedItem(0):setSectionSelectedItem(16)}}>  </MenuItem> : null}
+                                {/* {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='17' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={classes.imageStyle}   libelle="Définition des Quotas Cursus"                         itemSelected={()=>{(section2SelectedItem == 0) ? setSection2SelectedItem(13):(section2SelectedItem == 13) ? setSection2SelectedItem(0):setSection2SelectedItem(13)}}></MenuItem> : null} */}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='18' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Type d'Enseignants"                                      itemSelected={()=>{toggleActiveMenu('18');  (sectionSelectedItem == 0) ? setSectionSelectedItem(18): (sectionSelectedItem == 18) ? setSectionSelectedItem(0):setSectionSelectedItem(18)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='19' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion des Trimestres"                                             itemSelected={()=>{toggleActiveMenu('19');  (sectionSelectedItem == 0) ? setSectionSelectedItem(19): (sectionSelectedItem == 19) ? setSectionSelectedItem(0):setSectionSelectedItem(19)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='20' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion des Séquences"                                              itemSelected={()=>{toggleActiveMenu('20');  (sectionSelectedItem == 0) ? setSectionSelectedItem(20): (sectionSelectedItem == 20) ? setSectionSelectedItem(0):setSectionSelectedItem(20)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='21' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Classes de Spécialité"                               itemSelected={()=>{toggleActiveMenu('21');  (sectionSelectedItem == 0) ? setSectionSelectedItem(21): (sectionSelectedItem == 21) ? setSectionSelectedItem(0):setSectionSelectedItem(21)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='22' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Jours ouvrables"                                     itemSelected={()=>{toggleActiveMenu('22');  (sectionSelectedItem == 0) ? setSectionSelectedItem(22): (sectionSelectedItem == 22) ? setSectionSelectedItem(0):setSectionSelectedItem(22)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='23' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Pauses"                                              itemSelected={()=>{toggleActiveMenu('23');  (sectionSelectedItem == 0) ? setSectionSelectedItem(23): (sectionSelectedItem == 23) ? setSectionSelectedItem(0):setSectionSelectedItem(23)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='24' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Tranches Horaires"                                   itemSelected={()=>{toggleActiveMenu('24');  (sectionSelectedItem == 0) ? setSectionSelectedItem(24): (sectionSelectedItem == 24) ? setSectionSelectedItem(0):setSectionSelectedItem(24)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B3"]=='1') ?  <MenuItem menuItemId ='25' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Matières de spécialité des Enseignants"                  itemSelected={()=>{toggleActiveMenu('25');  (sectionSelectedItem == 0) ? setSectionSelectedItem(25): (sectionSelectedItem == 25) ? setSectionSelectedItem(0):setSectionSelectedItem(25)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem menuItemId ='26' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Gestion Des Appréciation De Notes"                                  itemSelected={()=>{toggleActiveMenu('26');  (sectionSelectedItem == 0) ? setSectionSelectedItem(26): (sectionSelectedItem == 26) ? setSectionSelectedItem(0):setSectionSelectedItem(26)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem menuItemId ='27' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Causes de Convocation au Conseil de Discipline"                     itemSelected={()=>{toggleActiveMenu('27');  (sectionSelectedItem == 0) ? setSectionSelectedItem(27): (sectionSelectedItem == 27) ? setSectionSelectedItem(0):setSectionSelectedItem(27)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem menuItemId ='28' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Condition de Reoublement et d'exclusion"                            itemSelected={()=>{toggleActiveMenu('28');  (sectionSelectedItem == 0) ? setSectionSelectedItem(28): (sectionSelectedItem == 28) ? setSectionSelectedItem(0):setSectionSelectedItem(28)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem menuItemId ='29' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Types de Sanctions"                                                 itemSelected={()=>{toggleActiveMenu('29');  (sectionSelectedItem == 0) ? setSectionSelectedItem(29): (sectionSelectedItem == 29) ? setSectionSelectedItem(0):setSectionSelectedItem(29)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?  <MenuItem menuItemId ='30' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Classes de passage possibles pour l'année prochaine"                itemSelected={()=>{toggleActiveMenu('30');  (sectionSelectedItem == 0) ? setSectionSelectedItem(30): (sectionSelectedItem == 30) ? setSectionSelectedItem(0):setSectionSelectedItem(30)}}>  </MenuItem> : null}
 
                             </div>
                             
-                            <div className={ (section2SelectedItem == 0) ? getDetailSectionBlankTheme() : getDetailSectionTheme()} style={{height:'fit-content'}}>
-                                {(section2SelectedItem==1) ?
+                                    
+                            {(sectionSelectedItem==5) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigGen/>
-                                    : null
-                                } 
+                                </div>                                   
+                                : null
+                            } 
 
-                                {(section2SelectedItem==2) ?
+                            {(sectionSelectedItem==6) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigCycle/>
-                                    : null
-                                }
+                                </div>                                   
+                                : null
+                            }
 
-                                {(section2SelectedItem==3) ?
+                            {(sectionSelectedItem==7) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigNiveau/>
-                                    : null
-                                }
+                                </div>                                     
+                                : null
+                            }
 
-                                {(section2SelectedItem==9) ?
+                            {(sectionSelectedItem==8) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigClasses/>
-                                    : null
-                                }
-                                {(section2SelectedItem==10) ?
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==9) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigClasseExamen/>
-                                    : null
-                                }
-                                {(section2SelectedItem==11) ?
-                                    <ConfigCours/>
-                                    : null
-                                }
-
-
-                                {(section2SelectedItem==4) ?
-                                    <ConfigMatieres/>
-                                    : null
-                                }
-                                {(section2SelectedItem==6) ?
-                                    <ConfigGroupe/>
-                                    : null
-                                }
-
-                                {(section2SelectedItem==7) ?
-                                    <ConfigMatricule/>
-                                    : null
-                                }
-
-                                {(section2SelectedItem==5) ?
-                                    <ConfigMatieresClasse/>
-                                    : null
-                                }
-
-                                {(section2SelectedItem==8) ?
-                                    <ConfigAnnee/>
-                                    : null
-                                }
-
-                                {(section2SelectedItem==12) ?
-                                    <ConfigHierarchie/>
-                                    : null
-                                }
-                                {(section2SelectedItem==13) ?
-                                    <ConfigQuotasCursus/>
-                                    : null
-                                }
-                                {(section2SelectedItem==14) ?
-                                    <ConfigTypeEnseignant/>
-                                    : null
-                                }
-                                {(section2SelectedItem==15) ?
-                                    <ConfigTrimestre/>
-                                    : null
-                                }
-                                {(section2SelectedItem==16) ?
-                                    <ConfigSequence/>
-                                    : null
-                                }
-                                {(section2SelectedItem==17) ?
-                                    <ConfigSpecialiteClasse/>
-                                    : null
-                                }
-                                {(section2SelectedItem==18) ?
-                                    <ConfigJour/>
-                                    : null
-                                }
-                                {(section2SelectedItem==19) ?
-                                    <ConfigPause/>
-                                    : null
-                                }
-                                {(section2SelectedItem==20) ?
-                                    <ConfigTrancheHoraire/>
-                                    : null
-                                }
-                                {(section2SelectedItem==21) ?
-                                    <ConfigSpecialiteEns/>
-                                    : null
-                                }
-                                {(section2SelectedItem==22) ?
-                                    <ConfigAppreciationNote/>
-                                    : null
-                                }
-                                {(section2SelectedItem==23) ?
-                                    <ConfigCausesConvocationCD/>
-                                    : null
-                                }
-                                {(section2SelectedItem==24) ?
-                                    <ConfigConditionRedoublementExclusion/>
-                                    : null
-                                }
-                                {(section2SelectedItem==25) ?
-                                    <ConfigTypeSanction/>
-                                    : null
-                                }
-                                {(section2SelectedItem==26) ?
-                                    <ConfigClassesPassages/>
-                                    : null
-                                }
+                                </div>
                                 
-                            </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==10) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigCours/>
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==11) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigMatieres/>
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==12) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigGroupe/>
+                                </div>                                   
+                                : null
+                            }
+
+                            {(sectionSelectedItem==13) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigMatricule/>
+                                </div>                                    
+                                : null
+                            }
+
+                            {(sectionSelectedItem==14) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigMatieresClasse/>
+                                </div>                                    
+                                : null
+                            }
+
+                            {(sectionSelectedItem==15) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigAnnee/>
+                                </div>                                    
+                                : null
+                            }
+
+                            {(sectionSelectedItem==16) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigHierarchie/>
+                                </div>                                   
+                                : null
+                            }
+                            {/*(sectionSelectedItem==17) ?
+                                <ConfigQuotasCursus/>
+                                : null*/
+                            }
+                            {(sectionSelectedItem==18) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigTypeEnseignant/>
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==19) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigTrimestre/>
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==20) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigSequence/>
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==21) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigSpecialiteClasse/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==22) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigJour/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==23) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigPause/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==24) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigTrancheHoraire/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==25) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigSpecialiteEns/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==26) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigAppreciationNote/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==27) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigCausesConvocationCD/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==28) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigConditionRedoublementExclusion/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==29) ?                                    
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigTypeSanction/>
+                                </div>
+                                : null
+                            }
+                            {(sectionSelectedItem==30) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigClassesPassages/>
+                                </div>                                    
+                                : null
+                            }                               
+                            
                                 
                         </div>
                     </MenuItemList>
@@ -365,27 +438,31 @@ function ConfigPage(props) {
                     <MenuItemList minWtdhStyle={classes.size72Vw}  libelle= "Configuartion Des Comptes Utilisateurs Et Des Rôles" theme={selectedTheme}>
                         <div className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
-                                {(currentAppContext.enableProfiles["CONFIG_C1"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Gestion des Utilisateurs'       itemSelected={()=>{(section3SelectedItem == 0) ? setSection3SelectedItem(1):(section3SelectedItem == 1) ? setSection3SelectedItem(0):setSection3SelectedItem(1)}}> </MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_C2"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Activer Utilisateurs désactivés"     itemSelected={()=>{(section3SelectedItem == 0) ? setSection3SelectedItem(2):(section3SelectedItem == 2) ? setSection3SelectedItem(0):setSection3SelectedItem(2)}}> </MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_C2"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Spécialité(s) Enseignants"     itemSelected={()=>{(section3SelectedItem == 0) ? setSection3SelectedItem(3):(section3SelectedItem == 3) ? setSection3SelectedItem(0):setSection3SelectedItem(3)}}> </MenuItem> : null}
-                            </div>
-                           
-                            <div className={(section3SelectedItem == 0) ? getDetailSectionBlankTheme() : getDetailSectionTheme()}> 
-                            {(section3SelectedItem==1) ?
-                                    <ConfigUser/>
-                                    : null
-                                }
-                            {(section3SelectedItem==2) ?
-                                <ConfigActiverUser/>
-                                : null
-                            }
-                            {(section3SelectedItem==3) ?
-                                <ConfigEnseignantSpecialites/>
-                                : null
-                            }
-                            </div>
+                                {(currentAppContext.enableProfiles["CONFIG_C1"]=='1') ?  <MenuItem menuItemId ='31' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Gestion des Utilisateurs'               itemSelected={()=>{toggleActiveMenu('31'); (sectionSelectedItem == 0) ? setSectionSelectedItem(31):(sectionSelectedItem == 31) ? setSectionSelectedItem(0):setSectionSelectedItem(31)}}> </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_C2"]=='1') ?  <MenuItem menuItemId ='32' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Activer Utilisateurs désactivés"        itemSelected={()=>{toggleActiveMenu('32'); (sectionSelectedItem == 0) ? setSectionSelectedItem(32):(sectionSelectedItem == 32) ? setSectionSelectedItem(0):setSectionSelectedItem(32)}}> </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_C2"]=='1') ?  <MenuItem menuItemId ='33' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition Spécialité(s) Enseignants"   itemSelected={()=>{toggleActiveMenu('33'); (sectionSelectedItem == 0) ? setSectionSelectedItem(33):(sectionSelectedItem == 33) ? setSectionSelectedItem(0):setSectionSelectedItem(33)}}> </MenuItem> : null}
+                            </div>                           
                             
-                        </div>
+                            {(sectionSelectedItem==31) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigUser/>
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==32) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigActiverUser/>
+                                </div>                                
+                                : null
+                            }
+                            {(sectionSelectedItem==33) ?
+                                <div className={getDetailSectionTheme()}>
+                                    <ConfigEnseignantSpecialites/>
+                                </div>                                
+                                : null
+                            }
+                        </div>                            
+                        
                     </MenuItemList>
                     :
                     null
@@ -395,32 +472,39 @@ function ConfigPage(props) {
                     <MenuItemList minWtdhStyle={classes.size72Vw}   libelle= "Configuartion Des Paiements" theme={selectedTheme}>
                         <div className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
-                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Définition Type Payement Elève'           itemSelected={()=>{(section4SelectedItem == 0) ? setSection4SelectedItem(1):(section4SelectedItem == 1) ? setSection4SelectedItem(0):setSection4SelectedItem(1)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Types de Payement Divers"  itemSelected={()=>{(section4SelectedItem == 0) ? setSection4SelectedItem(2):(section4SelectedItem == 2) ? setSection4SelectedItem(0):setSection4SelectedItem(2)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Types de Payement Enseignants"  itemSelected={()=>{(section4SelectedItem == 0) ? setSection4SelectedItem(3):(section4SelectedItem == 3) ? setSection4SelectedItem(0):setSection4SelectedItem(3)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Types de Payement Personnel Administratif"  itemSelected={()=>{(section4SelectedItem == 0) ? setSection4SelectedItem(4):(section4SelectedItem == 4) ? setSection4SelectedItem(0):setSection4SelectedItem(4)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem menuItemId ='34' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='Définition Type Payement Elève'                             itemSelected={()=>{toggleActiveMenu('34'); (sectionSelectedItem == 0) ? setSectionSelectedItem(34):(sectionSelectedItem == 34) ? setSectionSelectedItem(0):setSectionSelectedItem(34)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem menuItemId ='35' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Types de Payement Divers"                    itemSelected={()=>{toggleActiveMenu('35'); (sectionSelectedItem == 0) ? setSectionSelectedItem(35):(sectionSelectedItem == 35) ? setSectionSelectedItem(0):setSectionSelectedItem(35)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem menuItemId ='36' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Types de Payement Enseignants"               itemSelected={()=>{toggleActiveMenu('36'); (sectionSelectedItem == 0) ? setSectionSelectedItem(36):(sectionSelectedItem == 36) ? setSectionSelectedItem(0):setSectionSelectedItem(36)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem menuItemId ='37' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Définition des Types de Payement Personnel Administratif"   itemSelected={()=>{toggleActiveMenu('37'); (sectionSelectedItem == 0) ? setSectionSelectedItem(37):(sectionSelectedItem == 37) ? setSectionSelectedItem(0):setSectionSelectedItem(37)}}></MenuItem> : null}
                             </div>
                             
-                            <div className={ (section4SelectedItem == 0) ? getDetailSectionBlankTheme() : getDetailSectionTheme()}> 
-                                {(section4SelectedItem==1) ?
+                            
+                            {(sectionSelectedItem==34) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigPayementEleve/>
-                                    : null
-                                    }
-                                {(section4SelectedItem==2) ?
+                                </div>                                    
+                                : null
+                            }
+                            {(sectionSelectedItem==35) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigPayementDivers/>
-                                    : null
-                                    } 
-                                {(section4SelectedItem==3) ?
+                                </div>                                    
+                                : null
+                            } 
+                            {(sectionSelectedItem==36) ?                                    
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigTypePayementEns/>
-                                    : null
-                                    } 
-                                {(section4SelectedItem==4) ?
+                                </div>
+                                : null
+                            } 
+                            {(sectionSelectedItem==37) ?
+                                <div className={getDetailSectionTheme()}>
                                     <ConfigTypePayementAdminstaff/>
-                                    : null
-                                    } 
-                            </div>
-                            
+                                </div>                                    
+                                : null
+                            } 
                         </div>
+                        
                     </MenuItemList>
                     :
                     null
@@ -430,13 +514,24 @@ function ConfigPage(props) {
                     <MenuItemList minWtdhStyle={classes.size72Vw}  libelle= "Configuartion Des Messages" theme={selectedTheme}>
                         <div className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
-                                {(currentAppContext.enableProfiles["CONFIG_E1"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='EVolution Du Budget'                                    itemSelected={()=>{(section5SelectedItem == 0) ? setSection5SelectedItem(1):(section5SelectedItem == 1) ? setSection5SelectedItem(0):setSection5SelectedItem(1)}}></MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_E2"]=='1') ?  <MenuItem isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Evolution de l'Interaction  Avec les Parents D'Elèves"  itemSelected={()=>{(section5SelectedItem == 0) ? setSection5SelectedItem(2):(section5SelectedItem == 2) ? setSection5SelectedItem(0):setSection5SelectedItem(2)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_E1"]=='1') ?  <MenuItem menuItemId ='38'isSimple={true}  imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle='EVolution Du Budget'                                     itemSelected={()=>{toggleActiveMenu('38'); (sectionSelectedItem == 0) ? setSectionSelectedItem(38):(sectionSelectedItem == 38) ? setSectionSelectedItem(0):setSectionSelectedItem(38)}}></MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_E2"]=='1') ?  <MenuItem menuItemId ='39' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle="Evolution de l'Interaction  Avec les Parents D'Elèves"   itemSelected={()=>{toggleActiveMenu('39'); (sectionSelectedItem == 0) ? setSectionSelectedItem(39):(sectionSelectedItem == 39) ? setSectionSelectedItem(0):setSectionSelectedItem(39)}}></MenuItem> : null}
                             </div>
                             
-                            <div className={(section5SelectedItem == 0) ? getDetailSectionBlankTheme() : getDetailSectionTheme()}> 
-                                
-                            </div>
+                          
+                            {(sectionSelectedItem==38) ?
+                                <div className={getDetailSectionTheme()}>
+                                  {/*mettre la balise ici qd ce sera cree*/} 
+                                </div>                                    
+                                : null
+                            } 
+
+                            {(sectionSelectedItem==39) ?
+                                <div className={getDetailSectionTheme()}>
+                                  {/*mettre la balise ici qd ce sera cree*/} 
+                                </div>                                    
+                                : null
+                            } 
                                
                         </div>
                     </MenuItemList>

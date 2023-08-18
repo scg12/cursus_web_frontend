@@ -63,6 +63,9 @@ const UiContext = createContext({
     previousSelectedMenuID: '0',
     prgramCoverSelectedLevel:{},
 
+    //Emploi de temps Matiere et prof principal
+    isMatiereEnable : true,
+
 
 
 
@@ -110,6 +113,9 @@ const UiContext = createContext({
     //ID du menu actuel sur lequel on est et de son precedent
     setCurrentSelectedMenuID : (idMenu)=>{},
     setPreviousSelectedMenuID: (idMenu)=>{},
+
+    //Emploi de temps Matiere et prof principal
+    setIsMatiereEnable : (boolVal) => {}, 
     
 });
 
@@ -165,8 +171,11 @@ export function UiContextProvider(props)
     const [ETDataChanged, setETDataChanged]  = useState(false);
 
     //ID du menu actuel sur lequel on est et de son precedent
-    const [currentSelectedMenuID, setCurrentSelectedMenuID]  = useState('0');
+    const [currentSelectedMenuID, setCurrentSelectedMenuID]    = useState('0');
     const [previousSelectedMenuID, setPreviousSelectedMenuID]  = useState('0');
+
+    //Emploi de temps Matiere et prof principal
+    const [isMatiereEnable, setIsMatiereEnable] = useState(true);
 
     
     
@@ -348,6 +357,11 @@ export function UiContextProvider(props)
     function previousSelectedMenuIDHandler(idMenu){
         setPreviousSelectedMenuID(idMenu)
     }
+
+    //Emploi de temps Matiere et prof principal
+    function ETMatiereEnableHandler(boolval){
+        setIsMatiereEnable(boolval)
+    }
      
 
 
@@ -406,6 +420,8 @@ export function UiContextProvider(props)
 
         prgramCoverSelectedLevel : prgramCoverSelectedLevel,
 
+        //Emploi de temps Matiere et prof principal
+        isMatiereEnable : isMatiereEnable,
     
 
 
@@ -472,8 +488,11 @@ export function UiContextProvider(props)
         setCurrentSelectedMenuID :currentSelectedMenuIDHandler,
         setPreviousSelectedMenuID : previousSelectedMenuIDHandler,
 
-         //pour Dashboard
-         setPrgramCoverSelectedLevel:setPrgramCoverSelectedLevelHandler,
+        //pour Dashboard
+        setPrgramCoverSelectedLevel:setPrgramCoverSelectedLevelHandler,
+
+        //Emploi de temps Matiere et prof principal
+        setIsMatiereEnable:ETMatiereEnableHandler
 
     };
 

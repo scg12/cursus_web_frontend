@@ -326,8 +326,15 @@ function ScolaritePage(){
           {curentMenuItemPId== 109  && <SuiviFicheProgress/>                   }
           {curentMenuItemPId== 110  && <ProgramClasse/>                        } 
           {curentMenuItemPId== 111  && <CahierDeTexte currentClasse={null} currentMatiere={null}/> }
+
+          {/*------SCOLARITE-3 : Suivi scolaire - examen de classe et Notes-----*/}
+          {curentMenuItemPId== 120 && <SaveNotes noteMax={20}/>                   }
+          {curentMenuItemPId== 121 && <ListingNotes/>                             }
+          {curentMenuItemPId== 122 && <PrintStudentReport formMode='generation'/> }
+          {curentMenuItemPId== 123 && <PrintStudentReport formMode='impression'/> }
+          {/*curentMenuItemPId== 121 && <SaveNotes noteMax={20}/>               */}
           
-          {/*------------- SCOLARITE-3 : Discipline et assiduite --------------*/}
+          {/*------------- SCOLARITE-4 : Discipline et assiduite --------------*/}
           {curentMenuItemPId== 112  && <Appel formMode='appel'/>                 }
           {curentMenuItemPId== 113  && <LookStudentPresence/>                    }
           {curentMenuItemPId== 114  && <ConseilDiscipline formMode='ajout'/>     }
@@ -335,14 +342,6 @@ function ScolaritePage(){
           {curentMenuItemPId== 116  && <BilletEntreeSortie/>                     }
           {/*curentMenuItemPId== 117  && <BilletSortie/>                           */}
           
-          {/*------SCOLARITE-4 : Suivi scolaire - examen de classe et Notes-----*/}
-          {curentMenuItemPId== 120 && <SaveNotes noteMax={20}/>                   }
-          {curentMenuItemPId== 121 && <ListingNotes/>                             }
-          {curentMenuItemPId== 122 && <PrintStudentReport formMode='generation'/> }
-          {curentMenuItemPId== 123 && <PrintStudentReport formMode='impression'/> }
-          {/*curentMenuItemPId== 121 && <SaveNotes noteMax={20}/>               */}
-          
-
           {/*------SCOLARITE-5 : Examen officiels------*/}
           {curentMenuItemPId== 124 && <NewOfficialExam/>                          }
           {curentMenuItemPId== 125 && <SaveExamNotes/>                            }

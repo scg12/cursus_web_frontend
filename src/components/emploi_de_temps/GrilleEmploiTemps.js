@@ -1,5 +1,6 @@
 import React from 'react';
 import classes from './EmploiT.module.css';
+import classesPP from '../pages/scolarite/subPages/SubPages.module.css';
 import LigneMatieres from './LigneMatieres';
 import LigneProfs from './LigneProfs'
 import LigneValeur from './LigneValeur';
@@ -61,6 +62,8 @@ function GrilleEmploiTemps(props) {
     const [pausecreated, setPauseCreated] = useState(false);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const { t, i18n } = useTranslation();
+    const [matiereEnable, setMatiereEnable] = useState(true);
+    const [listMatieres,setListMatieres] = useState([]);
     
     
     const changeLanguage = (event) => {
@@ -221,7 +224,8 @@ function GrilleEmploiTemps(props) {
                 var listMat = currentUiContext.listMatieres[indexClasse];
 
                 tabMatieres = listMat.split('_');
-                initMatiereList(tabMatieres);             
+                setListMatieres(tabMatieres);
+               // initMatiereList(tabMatieres);             
             
             
                 var ET_data = getSaveEmploiTempsData(currentClasseId);
@@ -234,7 +238,7 @@ function GrilleEmploiTemps(props) {
                 CURRENT_DROPPED_MATIERE_LIST = liste_dropped_matiere;
                 currentUiContext.addMatiereToDroppedMatiereList(liste_dropped_matiere,-2);
                 
-                console.log("currentUiContext.CURRENT_DROPPED_MATIERE_LIST: ",currentUiContext.CURRENT_DROPPED_MATIERE_LIST)
+                console.log("profs LIST: ",currentUiContext.CURRENT_DROPPED_PROFS_LIST)
             
             }  
 
@@ -268,6 +272,9 @@ function GrilleEmploiTemps(props) {
     }
    
 
+    function validerPP(){
+
+    }
 
     function getMatieres(indexClasse){
       let ligne = "";
@@ -291,7 +298,8 @@ function GrilleEmploiTemps(props) {
        
         currentClasseId = e.target.value;
         currentClasseLabel = optClasse.find((elt)=>elt.value == currentClasseId).label;
-        currentUiContext.setETDataChanged(false)
+        currentUiContext.setETDataChanged(false);
+       // currentUiContext.setIsMatiereEnable(true);
         loadClassesET(currentClasseId)
         
     }
@@ -309,12 +317,14 @@ function GrilleEmploiTemps(props) {
         initProfList(currentUiContext.listProfs);
 
         //Initialisation de la liste des  matieres 
-        clearMatiereList(currentUiContext.matiereSousEtab); 
+        //clearMatiereList(currentUiContext.matiereSousEtab); 
         let indexClasse = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==classId);
         var listMat = getMatieres(indexClasse);
         console.log("ICI listMat: ",listMat);
         tabMatieres = listMat.split('_');
-        initMatiereList(tabMatieres);
+        setListMatieres(tabMatieres);
+        
+        //initMatiereList(tabMatieres);
         
         //Pre-remplissage de la grille avec les creneau deja configures 
         var ET_data = getSaveEmploiTempsData(currentClasseId);
@@ -598,8 +608,9 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
 
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
+                        PROF_DATA.sexe       = sexe;
                         // PROF_DATA.NomProf    = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
-                        PROF_DATA.NomProf    = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1];
+                        PROF_DATA.NomProf    = sexe=='M' ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1] : emploiTemps[i].value.split("*")[2+j].split("%")[0].split("Mme.")[1];
                         PROF_DATA.idJour     = jour;
                         PROF_DATA.idMatiere  = idMatiereToDrop;
                         PROF_DATA.heureDeb   = periode.split('_')[0];
@@ -694,6 +705,8 @@ function matiereClickHandler(e){
         }
     }
 }
+
+
 function initProfList(listProfs){
     clearProflist();
     COUNT_SELECTED_PROFS=0;
@@ -702,6 +715,8 @@ function initProfList(listProfs){
     CURRENT_DROPPED_PROFS_LIST=[];
    
 }
+
+
 function clearProflist(){
     let listProfs = currentUiContext.listProfs;
     var draggableSon, draggableSonText, draggableSonImg;
@@ -730,6 +745,8 @@ function clearProflist(){
     } 
     CURRENT_PROFS_LIST = [];
 }
+
+
 function clearGrille(TAB_PERIODES,TAB_JOURS) {
     var DropZoneId;
     var childDivs;
@@ -779,6 +796,7 @@ function clearGrille(TAB_PERIODES,TAB_JOURS) {
     }
 
 }
+
 function clearMatiereList(matieres){
     var parent, enfants, draggableSon;
     //On initialise tout ce aui concerne la matiere.
@@ -789,7 +807,7 @@ function clearMatiereList(matieres){
     CURRENT_MATIERE_LIST=[];
     let MATIERE_MAXSIZE = matieres.length;
     
-    parent = document.getElementById('matieres');
+    /*parent = document.getElementById('matieres');
     enfants = parent.childNodes;
     
     for (var i = 0; i < MATIERE_MAXSIZE; i++) {
@@ -799,9 +817,10 @@ function clearMatiereList(matieres){
         parent.title = '';
         draggableSon.textContent ='';
         draggableSon.className = null; 
-    }  
+    }  */
     currentUiContext.setCURRENT_MATIERE_LIST([])  
 }
+
 function initMatiereList(listeMatieres){
     console.log("listeMatieres: ",listeMatieres)
     //mis en commentaire le 12/04/2023 dans le cadre de l'ajout de couleur a l'ET.
@@ -860,6 +879,7 @@ function initMatiereList(listeMatieres){
     console.log('matieres',CURRENT_MATIERE_LIST);
     currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
 }
+
 function Evaluate(val){
     if(val==''||val==' '|| isNaN(val)) return 0;
     else return eval(val);
@@ -1339,7 +1359,96 @@ const closePreview =()=>{
 
 
 /*************************** <JSX Code> ****************************/
-   return (              
+function LigneProfPrincipal(props) {
+  
+    const currentUiContext = useContext(UiContext);
+
+     //Cette constante sera lu lors de la configuration de l'utilisateur.
+    const selectedTheme = currentUiContext.theme;
+    const { t, i18n } = useTranslation();
+    
+    const changeLanguage = (event) => {
+        i18n.changeLanguage(event.target.id);
+    };
+
+  
+    
+    function getCurrentTheme()
+    {  // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_footer;
+            case 'Theme2': return classes.Theme2_footer;
+            case 'Theme3': return classes.Theme3_footer;
+            default: return classes.Theme1_footer;
+        }
+    }
+
+    function getCurrentFooterTheme()
+    {  // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_footer;
+            case 'Theme2': return classes.Theme2_footer;
+            case 'Theme3': return classes.Theme3_footer;
+            default: return classes.Theme1_footer;
+        }
+    }
+
+    function getSmallButtonStyle()
+    { // Choix du theme courant
+      switch(selectedTheme){
+        case 'Theme1': return classesPP.Theme1_BtnstyleSmall ;
+        case 'Theme2': return classesPP.Theme2_BtnstyleSmall ;
+        case 'Theme3': return classesPP.Theme3_BtnstyleSmall ;
+        default: return classesPP.Theme1_BtnstyleSmall ;
+      }
+    }
+
+
+   return (
+        <div style={{display:'flex', flexDirection:'row'}}>
+
+            <div className={classes.profTitle} style={{marginLeft:'-3vw'}}>{t('enseignants')}</div>
+            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw'}}>
+               
+                <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
+                    {currentUiContext.CURRENT_DROPPED_PROFS_LIST.map((prof) => {
+                        return (
+                                <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
+                                    <div style={{display:'flex', flexDirection:'row'}}> 
+                                        <input type='radio' name='ppsList'/>
+                                        <img src= {prof.sexe=='M'? "images/maleTeacher.png" : "images/femaleTeacher.png"} style={{width:'2vw'}}/>
+                                    </div>
+                                    
+                                    <div style={{display:'flex', flexDirection:'column'}}> 
+                                        <div style={{fontSize:'0.9vw'}}>{prof.NomProf}</div>
+                                        <div style={{fontSize:'0.79vw', textAlign:'center'}}>(...)</div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    }
+                </div>
+                 
+
+                <CustomButton
+                    id = {"addEleve"}
+                    btnText={t("valider")}
+                    buttonStyle={getSmallButtonStyle()}
+                    style={{marginBottom:'-0.3vh',position :'relative', right:'-37vw'}}
+                    btnTextStyle = {classesPP.btnSmallTextStyle}
+                    btnClickHandler={validerPP}
+                    //disable = {allStudentsConvocated}
+                />
+            </div>
+            
+        </div>       
+    );
+}
+
+
+
+
+    return (              
        <DndProvider backend={isMobile? TouchBackend: HTML5Backend} options= {isMobile ? {enableTouchEvents: true, enableMouseEvents: false,  delayTouchStart:5000}:null}>
             {(currentUiContext.TAB_JOURS.length>0) ?
                 <div className={classes.formET} >
@@ -1428,8 +1537,15 @@ const closePreview =()=>{
                         </div>
                         
 
-                       
-                        <div className={classes.matiereTitle}>{t('matieres')}</div>
+                        {/*currentUiContext.isMatiereEnable ?
+                            <div className={classes.matiereTitle}>
+                                {t('matieres')}
+                            </div>
+                            :
+                            <div className={classes.matiereTitle}>
+                                {t('matieres')}
+                            </div>*/
+                        }
                         
 
                         <div style={{display:'flex', flexDirection:'row',justifyContent:'center'}}>
@@ -1481,8 +1597,14 @@ const closePreview =()=>{
                                     })}                         
                             
                                 </div> 
-                               
-                                <LigneMatieres/>
+                                {
+                                    currentUiContext.isMatiereEnable ?
+
+                                    <LigneMatieres listeMatieres={listMatieres}/>
+                                    :
+                                    <LigneProfPrincipal/>                               
+                                }
+                                
                                 
                             </div>
 

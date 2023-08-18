@@ -21,52 +21,19 @@ var SELECTED_ROLE = undefined;
 var SELECTED_PARTICIPANT = undefined;
 var SELECTED_DECISION = 0 //0-> Recale, 1-> Admis, 2-> Traduit, 3->Blame, 4->Autre
 var SELECTED_ELEVE = undefined;
-var CURRENT_RESPONSABLE_ID= undefined;
-var CURRENT_RESPONSABLE_LABEL = undefined;
 var MEETING_OBJET_ID = undefined;
 var MEETING_OBJET_LABEL = undefined;
-var periodeId = undefined;
+
+
+var PERIODE_ID = undefined;
+var PERIODE_LABEL = "";
+var MEETING_GEN_DECISION = undefined
+
+
+var participant_data = [];
 
 var eleves_data=[];
-
-
-
-var MEETING = {
-    //---Infos Generales 
-    id:-1,
-    classeId : 0,
-    classeLabel:'',
-
-    responsableId:0,
-    responsableLabel:'',
-
-    profPrincipalId :0,
-    profPrincipalLabel : '',
-
-    date:'',
-    heure:'',
-
-    objetId:0,
-    objetLabel:'',
-
-    autreObjet:'',
-
-    etat:0,
-    etatLabel:'En cours',
-
-    decision:'',
-    note_passage:0,
-
-    note_exclusion:0,
-    //---participants
-    listParticipants : [],  
-   
-    //---prof presents
-    listPresents : [],
-
-    //---decisions cas par cas
-    listCaspasCas : [],
-};
+var MEETING = {};
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -76,106 +43,153 @@ const MSG_WARNING =2;
 function AddClassMeeting(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
-    const currentAppContext = useContext(AppContext)
-    const [isValid, setIsValid] = useState(false);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
+    const currentAppContext = useContext(AppContext);
     const selectedTheme = currentUiContext.theme;
+
+    const [isValid, setIsValid] = useState(false);
+    
     const [etape,setEtape] = useState(1);
     const [etape1InActiv, setEtape1InActiv] = useState(setButtonDisable(1));
     const [etape2InActiv, setEtape2InActiv] = useState(setButtonDisable(2));
-    const [tabParticipant, setTabParticipant] = useState([]);
-    const [tabEleves, setTabEleves]= useState([]);
-   
-   // const [tabPresents, setTabPresents] = useState([]);
-    const [optOK, setOptOK] = useState([]);
     
-    const [optResponsable, setOptResponsable] = useState(props.otherMembers);
-    const [optRole, setOptRole]= useState(getListRoles());
-    const [optObjet, setOptObjet] = useState(getListObjets());
-    const [optPeriode, setOptPeriode] = useState([]);
+    const [tabEleves, setTabEleves]= useState([]);
+    const [optObjet, setOptObjet] = useState([]);
+    
     const [isBilan, setIsBilan] = useState(false);
-    const [notifVisible, setNotifVisible]= useState(false);
     const [isButtonClicked, setIsButtonClicked] = useState(false);
     const [currentDecision, setCurrentDecision]=useState(0);
-    const [presents, setPresents]= useState([]);
-  
-    useEffect(()=> {
+    
 
+    const [optMembres, setOptMembres] = useState([]);
+    const [optAutresMembres, setOptAutresMembres] = useState([]);
+    const [tabProfsPresents, setTabProfsPresents] = useState([]);
+   
+    const [optPeriode, setOptPeriode] = useState([]);
+    const [presents, setPresents]= useState([]);
+
+    const [optDecisions, setOptDecisions] = useState([]);
+    const [optPromuEn, setOptPromuEn] = useState([]);
+    const [infosEleves, setInfosEleves] = useState([]);
+
+    var firstSelectItem = {
+        value: 0,   
+        label:'-----'+ t('choisir') +'-----'
+    }
+
+    const nonDefini=[        
+        {value: -1,   label:'-----'+ t('non defini') +'-----' },
+    ];
+
+    const choisir = [        
+        {value: undefined,   label:'-----'+ t('choisir') +'-----' },
+    ];
+
+    
+    const tabTypeConseil=[
+        {value:1, label:"Conseil bilan sequentiel" },
+        {value:2, label:"Conseil bilan trimestriel"},
+        {value:3, label:"Conseil bilan annuel"     },
+    ];
+    
+    
+    
+    useEffect(()=> {
+        console.log("valeure", props.defaultMembres);
         getClassStudentList(props.currentClasseId);
         setOptPeriode(nonDefini);
-        /*setOptResponsable(tabResponsables);
-        setOptRole(tabRoles);
-        setOptObjet(tabObjets);*/
-       
-        MEETING = {
-            classeId : props.currentClasseId,
-            classeLabel:props.currentClasseLabel,
-            profPrincipalId : props.currentPpId,
-            profPrincipalLabel : props.currentPpLabel,
-
-            id : putToEmptyStringIfUndefined(currentUiContext.formInputs[0]),
-
-            responsableId:putToEmptyStringIfUndefined(currentUiContext.formInputs[1]),
-            responsableLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[10]),
-
-            date:putToEmptyStringIfUndefined(currentUiContext.formInputs[2]),
-            heure:putToEmptyStringIfUndefined(currentUiContext.formInputs[3]),
-
-            objetId:putToEmptyStringIfUndefined(currentUiContext.formInputs[4]),
-            objetLabel:putToEmptyStringIfUndefined(currentUiContext.formInputs[11]),
-
-            autreObjet:putToEmptyStringIfUndefined(currentUiContext.formInputs[5]),
-
-            decision:putToEmptyStringIfUndefined(currentUiContext.formInputs[6]),
-
-            note_passage:putToEmptyStringIfUndefined(currentUiContext.formInputs[7]),
-            note_exclusion:putToEmptyStringIfUndefined(currentUiContext.formInputs[8]),
-
-            etat : putToEmptyStringIfUndefined(currentUiContext.formInputs[9]),
-           
-            //---participants
-            listParticipants :[...props.defaultMembrers],  
-            
-            //---prof presents
-            listPresents : [...props.presentsMembers],
-        
-            //---decisions cas par cas
-            listCaspasCas :  [...getListCasParCas()],
-                        
-        };    
-
-        
-        setTabParticipant([...props.defaultMembrers]);
       
+       
+        if (props.formMode == 'creation'){
+   
+            var tempTab = [...tabTypeConseil];
+            tempTab.unshift(firstSelectItem);
+            setOptObjet(tempTab);
+
+            tempTab = [...props.defaultMembres];
+           // tempTab.unshift(firstSelectItem);
+            setOptMembres(tempTab);
+    
+            tempTab = [...props.otherMembres];
+            tempTab.unshift(firstSelectItem);
+            setOptAutresMembres(tempTab);
+
+            console.log("les tableaux", optMembres,optAutresMembres);
+
+        } else {
+ 
+            var tempTab = [...props.defaultMembres];
+            tempTab.unshift(firstSelectItem);
+            setOptMembres(tempTab);
+    
+            tempTab = [...props.otherMembres];
+            tempTab.unshift(firstSelectItem);
+            setOptAutresMembres(tempTab);
+
+            tempTab = [...props.presentsMembres];
+            setTabProfsPresents(tempTab);
+
+
+            tempTab = []; // a initialiser d'abord...
+            tempTab.unshift(choisir);
+            setOptDecisions(tempTab);
+
+
+            tempTab = []; // a initialiser d'abord...
+            tempTab.unshift(choisir);
+            setOptDecisions(tempTab);
+
+            var infos_eleves = currentUiContext.formInputs[10];
+            setInfosEleves(infos_eleves);
+
+
+
+
+            console.log("les tableaux",optMembres,optAutresMembres);
+
+            MEETING = {};
         
+            MEETING.id                 = putToEmptyStringIfUndefined(currentUiContext.formInputs[0]);
+            MEETING.classeId           = props.currentClasseId; 
+            MEETING.classeLabel        = props.currentClasseLabel;
+            
+            MEETING.currentPpUserId    = props.currentPpUserId;
+            MEETING.profPrincipalId    = props.currentPpId; 
+            MEETING.profPrincipalLabel = props.currentPpLabel;
+           
+            
+            MEETING.date         = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
+            MEETING.heure        = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
+            MEETING.periode      = putToEmptyStringIfUndefined(currentUiContext.formInputs[5]); //Mettre la periode 
+            MEETING.id_periode   = putToEmptyStringIfUndefined(currentUiContext.formInputs[4]); //Mettre la periode              
 
-        if (props.formMode == 'modif'){
-            console.log('responsable:',MEETING.responsableId);
-            setTabEleves([...getListCasParCas()]);
-            tabResponsables.splice(0,1);
-            var responsable = tabResponsables.find((resp)=>resp.value == MEETING.responsableId);
-            var index = tabResponsables.findIndex((resp)=>resp.value == MEETING.responsableId);
-            tabResponsables.splice(index,1);
-            tabResponsables.unshift(responsable);
-            setOptResponsable(tabResponsables);
+            
+            MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
+            MEETING.alerter_membres = true;
+            
+            //----- 2ieme partie du formulaire1 ----- 
+            MEETING.resume_general_decisions = putToEmptyStringIfUndefined(currentUiContext.formInputs[13]); 
+            MEETING.etat = putToEmptyStringIfUndefined(currentUiContext.formInputs[8]);
 
-            CURRENT_RESPONSABLE_ID =  MEETING.responsableId;
-            CURRENT_RESPONSABLE_LABEL = MEETING.responsableLabel;
+            if (props.formMode == 'modif') {
+            
+                //initialisation du select objet du conseil
+                var index1  = optObjet.findIndex((elt)=>elt.value ==  MEETING.id_periode);
+                var objet   = optObjet.find((elt)=>elt.value ==  MEETING.id_periode);
+                var listTypeConseils = [...optObjet];
+                listTypeConseils.splice(index1,1);
+                listTypeConseils.unshift(objet);
 
-            tabObjets.splice(0,1);
-            var objet = tabObjets.find((obj)=>obj.value == MEETING.objetId);
-            index = tabObjets.findIndex((obj)=>obj.value == MEETING.objetId);
-            tabObjets.splice(index,1);
-            tabObjets.unshift(objet);
-            setOptObjet(tabObjets);
+                
+                //initialisation du select periode associee
+                var index2  = optPeriode.findIndex((elt)=>elt.label ==  MEETING.type_conseil);
+                var periode = optPeriode.find((elt)=>elt.label ==  MEETING.type_conseil);
+                var tabPeriode = [...optPeriode];
+                tabPeriode.splice(index2,1);
+                tabPeriode.unshift(periode);
+            }
 
-            MEETING_OBJET_ID = MEETING.objetId;
-            MEETING_OBJET_LABEL =  MEETING.objetLabel;
-
-            if(MEETING.etat==0) setNotifVisible(true);
-        } 
-
-        console.log(currentUiContext.formInputs);        
+            console.log(currentUiContext.formInputs);
+        }      
 
     },[]);
 
@@ -205,105 +219,7 @@ function AddClassMeeting(props) {
         return tabEleves;
     }
 
-    function getListParticipants(){
-        return([
-            {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0, present:true, etat:1},
-            {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1, present:true, etat:1},
-            {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2, present:true, etat:1},            
-        ]);
-    }
-
-    function getListCasParCas(){
-        if(props.formMode == 'creation') return [];
-        else
-        return([
-            {id:1, nom:'TABI Thomas',  decisionId:0,  decisionLabel:'Recale',  decisions:[0,1,2,3,4], etat:1},
-            {id:2, nom:'ANABA Luc',    decisionId:1,  decisionLabel:'Admis',   decisions:[0,1,2,3,4], etat:1},
-            {id:3, nom:'TALLA Hubert', decisionId:2,  decisionLabel:'Traduit', decisions:[0,1,2,3,4], etat:1},
-        ]);
-    }
-
-    function getListPresents(){
-        if(props.formMode != 'consult') return [];
-        else
-        return([
-            {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0,  etat:1},
-            {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1,  etat:1},
-            {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2,  etat:1},            
-        ]);
-    }
-
-    function getListResponsables(){
-        return [        
-            {value: 0,  label:'-----'+t('choisir')+'-----' },
-            {value: 11,  label:'Mr MBANBILI Hubert'        },
-            {value: 12,  label:'Mme TIEFONG Huguette'      },
-            {value: 13,  label:'Mme HEMLE MArthe'          },
-            {value: 14,  label:'Mme EMORO MArthe'          },
-            {value: 15,  label:'Mme TALLA Isabelle'        },
-        ];    
-    }
-    
-
-    function getListObjets(){
-        return[
-            {value:"null", label:'-----'+ t('choisir') +'-----'    },
-            {value:"sequentiel",  label:"Conseil bilan sequentiel" },
-            {value:"trimestriel", label:"Conseil bilan trimestriel"},
-            {value:"annuel",      label:"Conseil bilan annuel"},
-        ];    
-    }
-
-    function getListRoles(){
-        return [
-            {value:-1,label:t('choisir')},
-            {value:0, label:'President'},
-            {value:1, label:'Prof Principal'},
-            {value:2, label:'Enseignant'}
-        ];
-    }
-
-    const nonDefini=[        
-        {value: -1,   label:'-----'+ t('non defini') +'-----' },
-    ];
-
-    const tabResponsables=[        
-        {value: 0,   Slabel:'-----'+ t('choisir') +'-----' },
-        {value: 11,  label:'Mr MBANBILI Hubert'            },
-        {value: 12,  label:'Mme TIEFONG Huguette'          },
-        {value: 13,  label:'Mme HEMLE MArthe'              },
-        {value: 14,  label:'Mme EMORO MArthe'              },
-        {value: 15,  label:'Mme TALLA Isabelle'            },
-    ];
-
-    const tabObjets=[
-        {value:0, label:'--- '+ t('choisir') +'---'},
-        {value:1, label:"Conseil bilan sequentiel" },
-        {value:2, label:"Conseil bilan trimestriel"},
-        {value:3, label:"Conseil bilan annuel"     },
-        {value:4, label:"Autre conseil"            },
-    ];
-
-    const tabParticipants=[
-        {value:-1,label:'--- '+ t('choisir') +'---'},
-        {value:1, label:'MBARGA Alfred'},
-        {value:2, label:'MOUDIO Luc'},
-        {value:3, label:'DEMBA BA Lucas'}
-    ];
-
-    const tabRoles=[
-        {value:-1,label:t('choisir')},
-        {value:0, label:'President'},
-        {value:1, label:'Prof Principal'},
-        {value:2, label:'Enseignant'}
-    ];
-
-    var participant_data = [
-        {id:1, nom:'MBARGA Alfred',   role: 'Proviseur',      roleId:0,  present:true, etat:1},
-        {id:2, nom:'MOUDIO Luc',      role: 'Prof Principal', roleId:1,  present:true, etat:1},
-        {id:3, nom:'DEMBA BA Lucas',  role: 'Enseignant',     roleId:2,  present:true, etat:1},            
-
-    ];
+   
    
     function setButtonDisable(etape){
         switch(props.formMode){  
@@ -336,26 +252,6 @@ function AddClassMeeting(props) {
         }
     }
 
-    function getNotifButtonStyle()
-    { // Choix du theme courant
-        switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P ;
-            case 'Theme2': return classes.Theme2_notifButtonStyle + ' '+ classes.margRight5P;
-            case 'Theme3': return classes.Theme3_notifButtonStyle + ' '+ classes.margRight5P;
-            default: return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P;
-        }
-    }   
-  
-    function getButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_Btnstyle ;
-        case 'Theme2': return classes.Theme2_Btnstyle ;
-        case 'Theme3': return classes.Theme3_Btnstyle ;
-        default: return classes.Theme1_Btnstyle ;
-      }
-    }
-
     function getSmallButtonStyle()
     { // Choix du theme courant
       switch(selectedTheme){
@@ -386,7 +282,23 @@ function AddClassMeeting(props) {
         }
     }
    
-    /************************************ Handlers ************************************/    
+    /************************************ Handlers ************************************/  
+    function getDecisionGeneraleHandler(e){
+        MEETING_GEN_DECISION = e.taget.value;
+    }
+
+
+    function periodeChangeHandler(e){
+        if(e.target.value > 0){
+            PERIODE_ID    = e.target.value;
+            PERIODE_LABEL = e.target.label;
+        } else {
+            PERIODE_ID = undefined;
+            PERIODE_LABEL = "";
+        }
+    }
+
+
     function getNonSelectedMembers(){
         var tabOthers = [...props.otherMembers];
         var members = [... props.defaultMembrers];
@@ -403,26 +315,21 @@ function AddClassMeeting(props) {
   
     function saveMeetingHandler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        getFormData1();
+        getFormData();
+      
         if(formDataCheck1().length==0){
+
             if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
-            }       
-            MEETING.etat = 0 ;
-            MEETING.etatLabel = 'En cours' ;
-                      
-            props.actionHandler(MEETING);
-           //setNotifVisible(true);
+            } 
+
+            MEETING.status = 0 ;
+            MEETING.statusLabel = 'En cours' ;
+            
+            if(props.formMode=="creation")  props.addMeetingHandler(MEETING);
+            else props.modifyMeetingHandler(MEETING);
            
-            /*chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"question", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")+"\n"+t("notify_prof")
-            })*/
-         
         } else {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck1();
@@ -432,7 +339,7 @@ function AddClassMeeting(props) {
 
     function gotoStep2Handler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        getFormData1();
+        getFormData();
         if(formDataCheck1().length==0){
             if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
@@ -447,31 +354,34 @@ function AddClassMeeting(props) {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck1();
         }
+        
     }
 
     function backToStep1Handler(){
-        getFormData2();
+        getFormData();
         setEtape2InActiv(true);
         setEtape(1);
         setFormData1();
     }
-
-   
-
     
     function finishAllSteps(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
         console.log('avant:',MEETING);
-        getFormData2();
+        getFormData();
         console.log('apres:',MEETING);
+        
         if(formDataCheck2().length==0){
-           if(errorDiv.textContent.length!=0){
+           
+            if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
-            }  
-            MEETING.etat = 1 ;
-            MEETING.etatLabel = 'Cloture' ;       
-            props.actionHandler(MEETING);
+            }
+              
+            MEETING.status = 1 ;
+            MEETING.statLabel = t('cloture') ; 
+            MEETING.to_close = true;      
+            props.modifyMeetingHandler(MEETING);
+
         } else {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck2();
@@ -482,69 +392,97 @@ function AddClassMeeting(props) {
         if (chaine==undefined) return '';
         else return chaine;
     }
+
+    function getListElementByFields(tabEleves, fields){
+        var tab = [] ;
+        (tabEleves||[]).map((elev,index)=>{tab.push(elev[index][fields])});
+
+        if (tab.length==0) return '';
+        else return tab.join('²²');
+    }
     
 
-    function getFormData1(){
+    function getFormData(){
+        
+        MEETING = {};
+        
+        //----- 1ere partie du formulaire1 ----- 
+        if(props.formMode == "creation") MEETING.id = -1;             
+        else MEETING.id = currentUiContext.formInputs[0];           
 
-        MEETING.id      = -1;
-        MEETING.id_sousetab        = currentAppContext.currentEtab
-        MEETING.classeId           =  props.currentClasseId; 
-        MEETING.classeLabel        =  props.currentClasseLabel;
-       
-        MEETING.alerter_membres    = true;
-
-        MEETING.responsableId      = CURRENT_RESPONSABLE_ID; 
-        MEETING.responsableLabel   = CURRENT_RESPONSABLE_LABEL;
+        MEETING.classeId       = props.currentClasseId; 
+        MEETING.classeLabel    =  props.currentClasseLabel;
 
         MEETING.currentPpUserId    = props.currentPpUserId;
         MEETING.profPrincipalId    = props.currentPpId; 
         MEETING.profPrincipalLabel = props.currentPpLabel;
-
-        MEETING.date  = document.getElementById('anne').value+'-'+ document.getElementById('mois').value + '-' + document.getElementById('jour').value;
+        
+        
+        MEETING.type_conseil    = MEETING_OBJET_LABEL;  //Mettre le type de conseil
+        MEETING.type_conseilId  = MEETING_OBJET_ID;     //Mettre l'ID type conseil
+        
+        MEETING.id_periode      = PERIODE_ID            //Mettre la periode   
+        MEETING.periode         = PERIODE_LABEL;    
+        
+        MEETING.alerter_membres = true;
+        MEETING.date  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
         MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
-        
-        MEETING.objetId    = MEETING_OBJET_ID;
-        MEETING.objetLabel = MEETING_OBJET_LABEL;
-        MEETING.periodeId = periodeId;
-        
-        MEETING.listParticipants  = [...tabParticipant];
+
+        //----- 2ieme partie du formulaire1 ----- 
+        MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
+
+        //----- 3ieme partie du formulaire1 ----- 
+        MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
+        MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
+        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
+
+        //----- 1ere partie du formulaire2 -----
+        MEETING.resume_general_decisions = MEETING_GEN_DECISION;                        //Resumer des decisions
+
+        //----- 2ieme partie du formulaire2 -----
+        MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
+        MEETING.list_decisions_conseil_eleves  = getListElementByFields(infosEleves, "decision_final_conseil_classe"); //Liste des decisions pour chaque eleves separe par²²
+        MEETING.list_classes_promotions_eleves = getListElementByFields(infosEleves, "classe_annee_prochaine_id");     //Promotions
+
+        //----- 3ieme partie du formulaire2 -----
+        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
+
+        MEETING.to_close = false;
        
         console.log(MEETING);
+       
     }
 
-    function getFormData2(){
-        MEETING.decision = document.getElementById('bilan').value;
-        MEETING.note_passage = (document.getElementById('note_passage')==null||document.getElementById('note_passage')==undefined) ? -1 : document.getElementById('note_passage').value;
-        MEETING.note_exclusion = (document.getElementById('note_exclusion')==null||document.getElementById('note_exclusion')==undefined) ? -1 : document.getElementById('note_exclusion').value;
-        MEETING.listParticipants = [...tabParticipant];
-        MEETING.listPresents = [...tabParticipant.filter((participant)=>participant.present == true)];
-        MEETING.listCaspasCas = [...tabEleves];
-        console.log(MEETING);        
-    }
 
     function setFormData1(){
         var tabEleve=[];        
-        tabEleve[1]  =  MEETING.responsableId; 
-        tabEleve[2]  =  convertDateToUsualDate(MEETING.date);
-        tabEleve[3]  =  MEETING.heure; 
-        tabEleve[4]  =  MEETING.objetId;
-        tabEleve[9]  =  MEETING.etat;
+        tabEleve[1]  =  convertDateToUsualDate(MEETING.date); 
+        tabEleve[2]  =  MEETING.heure;
+        tabEleve[3]  =  MEETING.type_conseil; 
+        tabEleve[4]  =  MEETING.id_type_conseil;
+        tabEleve[8]  =  MEETING.status;
+        tabEleve[9]  =  MEETING.statusLabel;
         currentUiContext.setFormInputs(tabEleve);
         console.log(MEETING.date);
     }
   
     function setFormData2(){
         var tabEleve=[];       
-        
+ 
         var profPresent =[];
-        tabParticipant.map((elt, index)=>{profPresent[index]=true});
+        optMembres.map((elt, index)=>{profPresent[index]=true});
         setPresents(profPresent);
-       
 
-        tabEleve[6] =  MEETING.decision;
-        tabEleve[7] =  MEETING.note_passage ==-1 ? 0 : MEETING.note_passage;
-        tabEleve[8] =  MEETING.note_exclusion == -1 ? 0 : MEETING.note_exclusion;
-        tabEleve[9] =  MEETING.etat;
+        profPresent = [];
+        optMembres.map((elt)=>{
+            profPresent.push({value:elt.value, label:elt.label, role:elt.role, present:elt.present, etat:0});
+        })
+
+        setTabProfsPresents(profPresent);        
+        
+        tabEleve[11] = MEETING.resume_general_decisions;
+        tabEleve[8] =  MEETING.status;
+        tabEleve[9] =  MEETING.statusLabel;
         currentUiContext.setFormInputs(tabEleve);
 
         console.log('ici',currentUiContext.formInputs, profPresent);
@@ -559,10 +497,10 @@ function AddClassMeeting(props) {
         if(meeting_min[0]=='0')  meeting_min  = meeting_min[1];
        // console.log('jjjj',eval(meeting_hour),eval(meeting_min));
        
-        if(MEETING.responsableId  == undefined){
-            errorMsg= t("select_meeting_pres");
-            return errorMsg;
-        }
+        // if(MEETING.responsableId  == undefined){
+        //     errorMsg= t("select_meeting_pres");
+        //     return errorMsg;
+        // }
 
         if(MEETING.date.length == 0) {
             errorMsg=t("enter_meeting_date");
@@ -599,7 +537,7 @@ function AddClassMeeting(props) {
     function formDataCheck2(){       
         var errorMsg='';
         
-        if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
+      /*  if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
             errorMsg=t("enter_success_mark");
             return errorMsg;
         }
@@ -627,7 +565,7 @@ function AddClassMeeting(props) {
         if(MEETING.note_exclusion != -1 && (MEETING.note_exclusion > 20 || MEETING.note_exclusion < 0)){
             errorMsg= t("enter_valid_elim_mark");
             return errorMsg;
-        }
+        }*/
 
         if(MEETING.decision.length == 0 ){
             errorMsg=t("type_meeting_decision");
@@ -664,51 +602,28 @@ function AddClassMeeting(props) {
 
     }
 
-    function periodeChangeHandler(e){
-        if(e.target.value > 0){
-            periodeId = e.target.value;
-        } else periodeId = undefined;
-    }
-
-    // function responsableChangeHandler(e){
-    //     if(e.target.value > 0){
-    //         var responsable = tabResponsables.find((resp)=>resp.value == e.target.value);
-            
-    //         CURRENT_RESPONSABLE_ID = responsable.value;
-    //         CURRENT_RESPONSABLE_LABEL = responsable.label;
-
-    //     } else{
-    //         CURRENT_RESPONSABLE_ID = undefined;
-    //         CURRENT_RESPONSABLE_LABEL = undefined;
-    //     }
-    // }
-
+    
     function objetChangeHandler(e){
+       
         var typeConseil = e.target.value;
-        var tabPeriode=nonDefini;
+        var tabPeriode = nonDefini;
         
        if(typeConseil != "null"){       
             switch(typeConseil){
-                case 'sequentiel': {tabPeriode = [...props.sequencesDispo]; break;}
-                case 'trimestriel': {tabPeriode = [...props.trimestresDispo]; break;}
-                case 'annuel': {tabPeriode = [...props.anneDispo]; break;}                
-                default:tabPeriode = nonDefini;
+                case 'sequentiel'  : {tabPeriode = [...props.sequencesDispo];              break;}
+                case 'trimestriel' : {tabPeriode = [...props.trimestresDispo];             break;}
+                case 'annuel'      : {tabPeriode = [...props.anneDispo]; setIsBilan(true); break;}
+                default: tabPeriode = nonDefini;
             }
-            console.log("periode choisie",tabPeriode, typeConseil)
+            console.log("periode choisie",tabPeriode, typeConseil, props.sequencesDispo)
             setOptPeriode(tabPeriode);
-            var meeting = tabObjets.find((meetg)=>meetg.value==e.target.value);
+            
+            var meeting = tabTypeConseil.find((meetg)=>meetg.value==e.target.value);
 
-            MEETING_OBJET_ID = meeting.value;
+            MEETING_OBJET_ID    = meeting.value;
             MEETING_OBJET_LABEL = meeting.label;
-
-            if(MEETING_OBJET_ID == tabObjets[3].value) setIsBilan(true);
-            else setIsBilan(false);
-
-            // if(MEETING_OBJET_ID == tabObjets[4].value) setSeeDetail(true);
-            // else setSeeDetail(false);
-        }else{
-            // setSeeDetail(false);
-            setIsBilan(false);
+  
+        } else {
             MEETING_OBJET_ID = undefined;
             MEETING_OBJET_LABEL = undefined;
         }
@@ -728,79 +643,75 @@ function AddClassMeeting(props) {
     /************************************ JSX Code ************************************/
 
     //----------------- PARTICIPANT-----------------
-
+   
     function participantChangeHandler(e){
         console.log(e, e.target.value);
-        if(e.target.value != optResponsable[0].value){
+        if(e.target.value != optAutresMembres[0].value){
+
+           var selected_memmbre = optAutresMembres.find((elt)=>(elt.value == e.target.value));
+
             document.getElementById('participantId').style.borderRadius = '1vh';
             document.getElementById('participantId').style.border = '0.47vh solid rgb(128, 180, 248)';
             SELECTED_PARTICIPANT = e.target.value;
+            SELECTED_ROLE = selected_memmbre.role;
 
         }else{
             document.getElementById('participantId').style.borderRadius = '1vh';
             document.getElementById('participantId').style.border = '0.47vh solid red';
             SELECTED_PARTICIPANT = undefined;
-        }
-
-    }
-
-    function roleChangeHandler(e){
-        if(e.target.value != optRole[0].value){
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid rgb(128, 180, 248)';
-            SELECTED_ROLE = e.target.value;
-        }else{
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid red';
             SELECTED_ROLE = undefined;
         }
+
     }
 
+
     function addParticipantRow(){
-        setOptResponsable(getNonSelectedMembers());
-        participant_data = [...tabParticipant];
+       
+        participant_data = [...optMembres];
         var index = participant_data.findIndex((elt)=>elt.id==0);
         if (index <0){
             
             participant_data.push({id:0, nom:'', role:'', present:true, etat:-1});
-            setTabParticipant(participant_data);
+            setOptMembres(participant_data);
             console.log(participant_data);
-        } else {alert("ici")}
+        } 
     }
 
     function addParticipant(){
-        participant_data =[...tabParticipant];
+        participant_data =[...optMembres];
+
         if(SELECTED_PARTICIPANT==undefined){
             document.getElementById('participantId').style.borderRadius = '1vh';
             document.getElementById('participantId').style.border = '0.47vh solid red';
             return -1;
         }
 
-        if(SELECTED_ROLE==undefined){
-            document.getElementById('roleId').style.borderRadius = '1vh';
-            document.getElementById('roleId').style.border = '0.47vh solid red';
-            return -1
-        }
+        // if(SELECTED_ROLE==undefined){
+        //     document.getElementById('roleId').style.borderRadius = '1vh';
+        //     document.getElementById('roleId').style.border = '0.47vh solid red';
+        //     return -1
+        // }
         
         var index = participant_data.findIndex((elt)=>elt.id==0);
         if (index >=0) participant_data.splice(index,1);
       
-        var nomParticipant = optResponsable.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
-        var roleParticipant = optRole.find((role)=>role.value==SELECTED_ROLE).label
-        participant_data.push({id:SELECTED_PARTICIPANT, nom:nomParticipant, roleId:SELECTED_ROLE, role:roleParticipant, present:true, etat:0});
-        setTabParticipant(participant_data);
+        var nomParticipant  = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
+        
+        participant_data.push({id:SELECTED_PARTICIPANT, nom:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
+        setOptMembres(participant_data);
+        
         SELECTED_PARTICIPANT=undefined;
-        SELECTED_ROLE = undefined
+        SELECTED_ROLE = undefined;        
     }
 
     function deleteParticipant(e){
         console.log(e);
-        participant_data =[...tabParticipant];
+        participant_data =[...optMembres];
         var idParticipant = e.target.id;
         var index = participant_data.findIndex((elt)=>elt.id==idParticipant);
         if (index >=0){
             participant_data.splice(index,1);
-            setTabParticipant(participant_data);
+            setOptMembres(participant_data);
         }
         SELECTED_PARTICIPANT=undefined;
         SELECTED_ROLE = undefined
@@ -824,8 +735,8 @@ function AddClassMeeting(props) {
                     {(props.etat >= 0) ? 
                         props.nom
                      :
-                        <select id='participantId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', marginBottom:1}} onChange={participantChangeHandler} className={classes.comboBoxStyle}>
-                            {(optResponsable||[]).map((option)=> {
+                        <select id='participantId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', borderRadius:'1vh', borderColor:'#80b4f8', borderWidth:'0.47vh'}} onChange={participantChangeHandler} >
+                            {(optAutresMembres||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
                                 );
@@ -834,26 +745,16 @@ function AddClassMeeting(props) {
                     }
                 </div>
                 
-                <div style={{width:'11.3vw'}}> 
-                    {(props.etat >= 0) ? 
-                        props.role
-                        :
-                        <select id='roleId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', marginBottom:1}} onChange={roleChangeHandler} className={classes.comboBoxStyle}>
-                            {(optRole||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    }
+                <div style={{width:'11.3vw'}}>
+                    { props.role}
                 </div>
               
                 <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
                     {(props.etat<=0)&&
                         <img src="images/cancel_trans.png"  
                             id={props.participantId}
-                            width={ isMobile? '10vw':25} 
-                            height={isMobile? '13.7vw':33} 
+                            width={25} 
+                            height={33} 
                             className={classes.cellPointer} 
                             onClick={deleteParticipant}                         
                             alt=''
@@ -861,12 +762,12 @@ function AddClassMeeting(props) {
                     }
                     {(props.etat<0)&&
                         <img src="images/checkp_trans.png"  
-                            width={ isMobile? '7.7vw':19} 
-                            height={isMobile? '7.7vw':19} 
+                            width={19} 
+                            height={19} 
                             className={classes.cellPointer} 
                             onClick={addParticipant}                         
                             alt=''
-                            style={{marginLeft:'1vw', marginTop:isMobile? '0.97vh':'1.2vh'}}
+                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
                         />
                     }
                 </div>
@@ -876,6 +777,29 @@ function AddClassMeeting(props) {
     }
 
     //----------------- ELEVE (cas par cas)------------
+
+    function decisionChangeHandler(e,rowIndex){
+        var selectedDecision = e.target.value;  //initialiser les selects avec undefined
+        var Eleves_data = [...infosEleves];
+
+        if(selectedDecision != undefined){
+            Eleves_data[rowIndex].decision_final_conseil_classe = selectedDecision;
+            setInfosEleves(Eleves_data);
+        }
+
+    }
+
+
+    function promotionChangeHandler(e,rowIndex){
+        var classePromotion = e.target.value;  //initialiser les selects avec undefined
+        var Eleves_data = [...infosEleves];
+
+        if(classePromotion != undefined){
+            Eleves_data[rowIndex].classe_annee_prochaine_id = classePromotion;
+            setInfosEleves(Eleves_data);
+        }
+    }
+
 
     function eleveChangeHandler(e){
         if(e.target.value != LIST_ELEVES[0].value){
@@ -945,8 +869,14 @@ function AddClassMeeting(props) {
         return(
             <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
                 <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'30vw'}}>{t("decision")}</div>
-                <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
+                <div style={{width:'3vw'}}>{t("age")}</div>
+                <div style={{width:'7vw'}}>{t("redouble")}?</div>
+                <div style={{width:'7vw'}}>{t("absence NJ")}</div>
+                <div style={{width:'7vw'}}>{t("absence J")}</div>
+                <div style={{width:'10vw'}}>{t("convocation CD")}</div>
+                <div style={{width:'10vw'}}>{t("moyenne")}</div>
+                <div style={{width:'13vw'}}>{t("decision")}</div>
+                <div style={{width:'13vw'}}>{t("promu en")}</div>
             </div>
         );
     }
@@ -954,44 +884,48 @@ function AddClassMeeting(props) {
     const LigneEleve=(props)=>{
         return(
             <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>
-                    {(props.etat == 1) ? 
-                        props.nom
-                      
-                     :
-                        <select id='eleveId' style={{height:'3.5vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={eleveChangeHandler}>
-                            {(LIST_ELEVES||[]).map((option)=> {
+                <div style={{width:'17vw'}}>  {props.nom}           </div>               
+                <div style={{width:'3vw'}}>   {props.age}           </div>
+                <div style={{width:'7vw'}}>   {props.redouble}      </div>
+                <div style={{width:'7vw'}}>   {props.absences_nj}   </div>
+                <div style={{width:'7vw'}}>   {props.absences_j}    </div>
+                <div style={{width:'10vw'}}>  {props.convocations}  </div>
+                <div style={{width:'10vw'}} > {props.moyenne}       </div>
+ 
+                {(props.formMode == 'consult')?
+                    <div style={{width:'13vw'}}>{props.decision_finale}</div>
+
+                    :
+
+                    <div style={{width:'13vw'}}>
+                        <select id={'decision'+ props.eleveId} style={{height:'3.5vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>decisionChangeHandler(e,props.rowIndex)}>
+                            {(optDecisions||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
                                 );
                             })}
                         </select> 
-                    }                   
-                </div>
+                    </div>
+                
+                }
+           
 
+                {(props.formMode == 'consult')?
+                    <div style={{width:'13vw'}}>{props.promuEn}</div>
 
-                {(props.etat == 1) ?
-                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.decision} </div>
-                   
-                   :
-                        <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
-                            <input type='radio' id='recale' style={{width:'1vw', height:'2vh'}} checked={props.recale == currentDecision}  value={0} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(0)}}/>
-                            <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("recale")} </label>
-                                            
-                            <input type='radio'  id='admis' style={{width:'1vw', height:'2vh'}} checked={props.admis== currentDecision}  value={1} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(1)}}/>
-                            <label style={{ width:'2vw', color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"1vw", marginLeft:"0.3vw"}}>{t("admis")} </label>
+                    :
 
-                            <input type='radio' id='traduit'  style={{width:'1vw', height:'2vh'}} checked={props.traduit== currentDecision}  value={2} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(2)}}/>
-                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("traduit")}</label>
-
-                            <input type='radio' id='blame' style={{width:'1vw', height:'2vh'}} checked={props.blame== currentDecision}  value={3} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(3)}}/>
-                            <label style={{width:'2vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("blame")} </label>
-                                            
-                            <input type='radio' id='autre' style={{width:'1vw', height:'2vh'}} checked={props.autre== currentDecision}  value={4} name={'eleveDecision'+props.rowIndex} onClick={()=>{setCurrentDecision(4)}}/>
-                            <label style={{color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"0.3vw", marginLeft:"0.3vw"}}>{t("autre")} </label>
-            
-                        </div>
-                    }
+                    <div style={{width:'13vw'}}>
+                        <select id={'promuEn'+ props.eleveId} style={{height:'3.5vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>promotionChangeHandler(e,props.rowIndex)}>
+                            {(optPromuEn||[]).map((option)=> {
+                                return(
+                                    <option  value={option.value}>{option.label}</option>
+                                );
+                            })}
+                        </select> 
+                    </div>
+                }
+               
               
                 <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
                     {(props.formMode!='consult')&&
@@ -1051,28 +985,25 @@ function AddClassMeeting(props) {
 
     function managePresent(e){
         e.preventDefault();
-        var participants = [...tabParticipant];
+        var participants = [...optMembres];
         var tabPresent = [...presents];
         var row = e.target.id;
+
         if(e.target.checked){
             tabPresent[row]=true;
             participants[row].present= true;
             e.target.checked = true;
             setPresents(tabPresent);
-            setTabParticipant(participants);
+            setOptMembres(participants);
 
-            //addPresent(idProf)
-        }  
-        else {
+        } else {
            tabPresent[row]=false;
            participants[row].present= false;
            e.target.checked = false;
-
             setPresents(tabPresent);
-            setTabParticipant(participants);
-            //removePresent(idProf)
+            setOptMembres(participants);
         }
-        console.log(tabParticipant);
+
     }
 
     const LignePresentsHeader=(props)=>{
@@ -1191,7 +1122,7 @@ function AddClassMeeting(props) {
                                     {t("classe_cible")}: 
                                 </div>                    
                                 <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
-                                    <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'4vw', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw'}} disabled={true}/>
+                                    <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'3vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
                                     <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                                 </div>
                             </div>
@@ -1283,7 +1214,7 @@ function AddClassMeeting(props) {
 
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[11]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="objetLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                         <input id="objetId" type="hidden"    className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[4]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>  
                                     :
@@ -1360,7 +1291,7 @@ function AddClassMeeting(props) {
 
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'30vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LigneProfParticipantHeader date={'Date'} nbreJours={'Nbre Jours'} etat={'Etat'}/>
-                                    {(tabParticipant||[]).map((prof)=>{
+                                    {(optMembres||[]).map((prof)=>{
                                         return <LigneProfParticipant  participantId={prof.id} nom={prof.nom} role={prof.role} etat={prof.etat}/>
                                         })
                                     }
@@ -1380,8 +1311,7 @@ function AddClassMeeting(props) {
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={cancelHandler}
-                            />
-                            
+                            />                            
                            
                             <CustomButton
                                 btnText={t("save")} 
@@ -1465,7 +1395,7 @@ function AddClassMeeting(props) {
                             </div>
 
                         </div>
-                            {(isBilan==true)&&
+                            {/* {(isBilan==true)&&
                                 <div className={classes.inputRowLeft} style={{height:'3.7vh'}}> 
                                     <div style={{display:'flex', flexDirection:'row', marginLeft:'0vw'}}>
                                         <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
@@ -1498,18 +1428,19 @@ function AddClassMeeting(props) {
                                
                                 </div>
                           
-                            }
+                            } */}
 
-                            <div className={classes.inputRowLeft} style={{height:'11.7vh'}}> 
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("dicision_resume")}:  
-                                </div>
-                                    
-                                <div> 
-                                    <textarea id='bilan' rows={50}  className={classes.comboBoxStyle} defaultValue={currentUiContext.formInputs[6]} style={{marginLeft:'-2vw', height:'12vh',width:'27vw', fontSize:'0.77vw'}}/>
-                                </div>
+                        <div className={classes.inputRowLeft} style={{height:'11.7vh'}}> 
+                            <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                                {t("dicision_resume")}:  
                             </div>
-
+                                
+                            <div> 
+                                <textarea id='bilan' rows={50}  className={classes.comboBoxStyle} onChange={getDecisionGeneraleHandler} defaultValue={currentUiContext.formInputs[6]} style={{marginLeft:'-2vw', height:'12vh',width:'27vw', fontSize:'0.77vw'}}/>
+                            </div>
+                        </div>
+                        
+                        { isBilan==true &&                        
                             <div className={classes.inputRowLeft}> 
                                 <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'23vh', marginLeft:'-2vw'}}>
                                     <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
@@ -1524,7 +1455,7 @@ function AddClassMeeting(props) {
                                             style={{marginBottom:'-1vh'}}
                                             puceImgStyle={{marginRight:'-0.3vw', marginTop:'1vh'}}
                                         />
-                                        {(props.formMode!='consult')&&  
+                                        {/*(props.formMode!='consult')&&  
                                             <CustomButton
                                                 btnText={t("add")} 
                                                 buttonStyle={getSmallButtonStyle()}
@@ -1532,19 +1463,34 @@ function AddClassMeeting(props) {
                                                 btnTextStyle = {classes.btnSmallTextStyle}
                                                 btnClickHandler = {() => {addEleveRow()}}
                                             />  
-                                        }                    
+                                        */}                    
                                     </div>
 
                                     <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                         <LigneEleveHeader/>
-                                        {(tabEleves||[]).map((eleve, index)=>{
-                                            return <LigneEleve  eleveId ={eleve.id} rowIndex={index} nom={eleve.nom} decision={eleve.decisionLabel} recale={eleve.decisions[0]} admis={eleve.decisions[1]} traduit={eleve.decisions[2]} blame={eleve.decisions[3]} autre={eleve.decisions[4]} etat={eleve.etat}/>
+                                        {(infosEleves||[]).map((eleve, index)=>{
+                                            return (
+                                                <LigneEleve  
+                                                    eleveId         =  {eleve.id} 
+                                                    rowIndex        =  {index} 
+                                                    nom             =  {eleve.nom} 
+                                                    redouble        =  {eleve.redouble} 
+                                                    absences_nj     =  {eleve.absences_nj} 
+                                                    absences_j      =  {eleve.absences_j} 
+                                                    convocations    =  {eleve.convocations}
+                                                    moyenne         =  {eleve.moyenne}
+                                                    decision_finale =  {eleve.decision_final_conseil_classe}
+                                                    promuEn         =  {eleve.classe_annee_prochaine_id} 
+                                                />
+                                                )
+                                               
                                             })
                                         }
                                     </div>
 
                                 </div>
                             </div>
+                        }
 
 
                         <div className={classes.inputRowLeft}> 
@@ -1567,7 +1513,7 @@ function AddClassMeeting(props) {
 
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LignePresentsHeader/>
-                                    {(tabParticipant||[]).map((participant, index)=>{
+                                    {(tabProfsPresents||[]).map((participant, index)=>{
                                         return <LignePresent id={participant.id} rowIndex={index} nom={participant.nom}/>
                                         })
                                     }
@@ -1615,7 +1561,7 @@ function AddClassMeeting(props) {
                     btnText={t("decision_conseil")}
                     hasIconImg= {true}
                     imgSrc='images/etape2.png'
-                    imgStyle = {classes.frmBtnImgStyle1} 
+                    imgStyle = {classes.frmBtnImgStyle2} 
                     buttonStyle={classes.buttonEtape3}
                     btnTextStyle = {classes.btnEtapeTextStyle}
                     btnClickHandler={(etape2InActiv) ? null:()=>{showStep2();}}
