@@ -24,6 +24,8 @@ import Assiduite from './subPages/assiduite/Assiduite';
 import Resultats from './subPages/resultats/Resultats';
 
 import axiosInstance from '../../../axios';
+import axios from 'axios';
+
 
 
 function DashBoardPage() {
@@ -86,7 +88,14 @@ function DashBoardPage() {
     const [barchartDataLabels, setBarchartDataLabels] = useState([]);
     const [barchartDataValues, setBarchartDataValues] = useState([]);
 
-
+    const axiosInstance2 = axios.create({
+      baseURL: '',
+      timeout: 50000,
+      headers: {
+        'Content-Type': 'application/json',
+        accept: 'application/json',
+      }, 
+    });
 
   useEffect(()=> {
     var tabNiveaux  = [...getEtabNiveaux(currentAppContext.currentEtab)];
@@ -240,8 +249,8 @@ function getData(niveauId){
   }).then((res)=>{
       console.log(res.data);
       setDoughnutData(res.data.doughnut_data);       
-      setBarchartDataLabels(res.data.barchart_data.classes);       
-      setBarchartDataValues(res.data.barchart_data.taux);       
+      setBarchartDataLabels(res.data.barchart_data.classes);
+      setBarchartDataValues(res.data.barchart_data.taux); 
   })
   // if(niveauId<=3)
   //   setDoughnutData([55,45]);  
