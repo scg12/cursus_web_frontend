@@ -60,7 +60,7 @@ function GrilleEmploiTemps(props) {
     const selectedTheme = currentUiContext.theme;
     const [isValid, setIsValid] = useState(false);
    
-    const [optClasse, setOptClasse] = useState();
+    const [optClasse, setOptClasse] = useState([]);
     const [pausecreated, setPauseCreated] = useState(false);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     
@@ -194,6 +194,7 @@ function GrilleEmploiTemps(props) {
     useEffect(()=> {
         console.log(currentUiContext.previousSelectedMenuID, currentUiContext.currentSelectedMenuID)
         if((currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID) || (currentUiContext.previousSelectedMenuID=='0' && currentUiContext.currentSelectedMenuID=='0')){
+            console.log("00000 ",currentUiContext)
        
             if(currentUiContext.TAB_CRENEAU_PAUSE.length>0) {
            

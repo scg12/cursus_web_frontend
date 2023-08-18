@@ -67,7 +67,7 @@ function AddClassesPassages(props) {
                 </div>
                     
                 <div> 
-                    <input id="classe" type="text" className={classess.inputRowControl + ' formInput'} onChange={handleChange} defaultValue={currentUiContext.formInputs[0]} />
+                    <input id="classe" readOnly type="text" className={classess.inputRowControl + ' formInput'} onChange={handleChange} defaultValue={currentUiContext.formInputs[0]} />
                 </div>
             </div>
             
