@@ -7,7 +7,9 @@ import { useTranslation } from "react-i18next";
 import '../../translation/i18n';
 
 import MatiereDiv from './matiereDiv/MatiereDiv';
-
+var CURRENT_MATIERE_LIST =[];
+var tabMatiere;
+var MATIERE_DATA = {};
 
 
 function LigneMatieres(props) {
@@ -24,10 +26,6 @@ function LigneMatieres(props) {
 
     useEffect(()=> {
 
-        var CURRENT_MATIERE_LIST =[];
-        var tabMatiere;
-        var MATIERE_DATA = {};
-
         for (var i = 0; i < props.listeMatieres.length; i++) {
             tabMatiere = props.listeMatieres[i].split('*');
             MATIERE_DATA = {};
@@ -43,7 +41,7 @@ function LigneMatieres(props) {
         console.log('matieres',CURRENT_MATIERE_LIST);
         currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
 
-    },[]);
+    },[currentUiContext.CURRENT_MATIERE_LIST]);
 
   
     
