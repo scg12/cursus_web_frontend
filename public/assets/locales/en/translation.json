@@ -1,4 +1,7 @@
-{   "exitdate_lower_than_today_error":"Exit date must be greater than today's date!!!",
+{   "non_justify_auth_exist":"non justify authorization exist for this student!!!",
+    "def_as_principal":"set as main teacher",
+    "principal_M":"MAIN TEACHER",
+    "exitdate_lower_than_today_error":"Exit date must be greater than today's date!!!",
     "justify_authorization" : "Do you really want to justify this exit autorisation?",
     "justyfy_authorization_M":"JUSTIFY AUTHORIZATION",
     "heure_deb" :"Start hour",

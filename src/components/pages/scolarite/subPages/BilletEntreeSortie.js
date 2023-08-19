@@ -227,7 +227,7 @@ function BilletEntreeSortie(props) {
 
 
     function NonJustifyAuthExist(eleveId){
-        var elevData = listAutorisations.find((elt)=>elt.id == eleveId && elt.status == false);
+        var elevData = listAutorisations.find((elt)=>elt.idEleve == eleveId && elt.status == false);
         console.log("resultat",listAutorisations,elevData,eleveId);
         if (elevData == undefined) return false;
         else return true;        
@@ -543,7 +543,7 @@ const columnsFr = [
         inputs[7]= row.date_fin;
         inputs[8]= row.date_jour;
         inputs[9]= row.status;
-        inputs[10] = [...eleves_data];
+       // inputs[10] = [...eleves_data];
      
         currentUiContext.setFormInputs(inputs);
         setModalMode('consult');
@@ -564,7 +564,7 @@ const columnsFr = [
         inputs[7]= row.date_fin;
         inputs[8]= row.date_jour;
         inputs[9]= row.status;
-        inputs[10] = [...eleves_data];
+       // inputs[10] = [...eleves_data];
         
         currentUiContext.setFormInputs(inputs);
         console.log("Billes edit",row, currentUiContext.formInputs);
@@ -760,7 +760,7 @@ const columnsFr = [
                 visible  : true, 
                 msgType  : "danger", 
                 msgTitle:t("error_M"), 
-                message :t("non justify authorization exist for this student!!!")
+                message :t("non_justify_auth_exist")
             })         
 
         } else {
@@ -886,6 +886,7 @@ const columnsFr = [
                 <BilletES 
                     formMode={modalMode} 
                     currentClasseId={CURRENT_CLASSE_ID} 
+                    eleves = {eleves_data}
                     cancelHandler={quitForm}  
                     createElthandler={addNewAutSortie}  
                     ModifyEltHandler={MofifyAutSortie} 

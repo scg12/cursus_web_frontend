@@ -51,7 +51,7 @@ function BilletES(props) {
   
     useEffect(()=> {
        // getClassStudentList(props.currentClasseId);
-        eleves_data = currentUiContext.formInputs[10];
+        eleves_data = props.eleves;
         setOptEleves(eleves_data);
         currentEleveId = undefined;
         

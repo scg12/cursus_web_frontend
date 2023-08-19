@@ -1,7 +1,6 @@
 import React from 'react';
 import classes from './EmploiT.module.css';
 import classesPP from '../pages/scolarite/subPages/SubPages.module.css';
-import LigneMatieres from './LigneMatieres';
 import LigneProfs from './LigneProfs'
 import LigneValeur from './LigneValeur';
 import CustomButton from '../customButton/CustomButton';
@@ -42,11 +41,14 @@ var currentClasseId = undefined;
 var currentClasseLabel = undefined;
 var ETPageSet ={};
 var printedETFileName='';
+var CURRENT_PP={};
+
 
 function GrilleEmploiTemps(props) {
   
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
+    const { t, i18n } = useTranslation();
   
     let indexClasse = -1;
     let nb_refresh = 0;
@@ -61,9 +63,12 @@ function GrilleEmploiTemps(props) {
     const [optClasse, setOptClasse] = useState([]);
     const [pausecreated, setPauseCreated] = useState(false);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const { t, i18n } = useTranslation();
+    
     const [matiereEnable, setMatiereEnable] = useState(true);
     const [listMatieres,setListMatieres] = useState([]);
+    const [isPPset, setIsPPset] = useState(false);
+    const [selectedPP, setSetectedPP] = useState({});
+    const [currentPP, setCurrentPP] = useState({});
     
     
     const changeLanguage = (event) => {
@@ -224,8 +229,9 @@ function GrilleEmploiTemps(props) {
                 var listMat = currentUiContext.listMatieres[indexClasse];
 
                 tabMatieres = listMat.split('_');
+                initMatiereList(tabMatieres);             
                 setListMatieres(tabMatieres);
-               // initMatiereList(tabMatieres);             
+               
             
             
                 var ET_data = getSaveEmploiTempsData(currentClasseId);
@@ -272,8 +278,28 @@ function GrilleEmploiTemps(props) {
     }
    
 
-    function validerPP(){
+    function validerPP(e){
 
+        if(CURRENT_PP!= undefined){
+            setIsPPset(true);
+            setCurrentPP(selectedPP);
+           // document.getElementById(CURRENT_PP.NomProf).sele
+        } else {
+            setIsPPset(false);
+            setCurrentPP({});
+        }
+
+       
+
+    }
+
+    function getSelectedProf(e){
+        var pp_nom = e.target.id
+        var PPSelected = currentUiContext.CURRENT_DROPPED_PROFS_LIST.find((prof)=>prof.NomProf == pp_nom);
+        if (PPSelected != undefined) {
+            CURRENT_PP = {...PPSelected}
+            setSetectedPP(CURRENT_PP);
+        }
     }
 
     function getMatieres(indexClasse){
@@ -293,19 +319,20 @@ function GrilleEmploiTemps(props) {
     function saveEmploiDeTemps(classeId){
         //Ici on ecrit le code du save.
     }
+
     // *activer
     function dropDownHandler(e){       
-       
         currentClasseId = e.target.value;
         currentClasseLabel = optClasse.find((elt)=>elt.value == currentClasseId).label;
         currentUiContext.setETDataChanged(false);
-       // currentUiContext.setIsMatiereEnable(true);
-        loadClassesET(currentClasseId)
+        loadClassesET(currentClasseId);
+       
+        //gerer le profs principaux
+        //au chargement, voir s'il y a un pp et le definir ds les useStates
         
     }
 
     function loadClassesET(classId){
-        var tabMatieres=[];
         
         var tabMatieres=[];
         
@@ -322,12 +349,15 @@ function GrilleEmploiTemps(props) {
         var listMat = getMatieres(indexClasse);
         console.log("ICI listMat: ",listMat);
         tabMatieres = listMat.split('_');
+        initMatiereList(tabMatieres);
         setListMatieres(tabMatieres);
+
+        CURRENT_PP ={}
         
-        //initMatiereList(tabMatieres);
+        
         
         //Pre-remplissage de la grille avec les creneau deja configures 
-        var ET_data = getSaveEmploiTempsData(currentClasseId);
+        var ET_data = getSaveEmploiTempsData(classId);
         console.log("ET_data.length: ",ET_data.length);
         console.log("currentClasseId: ",classId);
         console.log("init currentUiContext.emploiDeTemps: ",currentUiContext.emploiDeTemps);
@@ -822,60 +852,25 @@ function clearMatiereList(matieres){
 }
 
 function initMatiereList(listeMatieres){
-    console.log("listeMatieres: ",listeMatieres)
-    //mis en commentaire le 12/04/2023 dans le cadre de l'ajout de couleur a l'ET.
-   /* var MATIERE_DATA ={
-        idMatiere:'',
-        codeMatiere:'',
-        libelleMatiere:'',
-        idClasse:-1,
-        idJour:'',
-        heureDeb:'',
-        heureFin:'',
-        tabProfsID:[]
-    };*/
-
-    var MATIERE_DATA ={
-        idMatiere:'',
-        codeMatiere:'',
-        libelleMatiere:'',
-        colorCode:'',
-        idJour:'',
-        heureDeb:'',
-        heureFin:'',
-        tabProfsID:[]
-    };
-
-    var parent, draggableSon;
+   
+    var MATIERE_DATA ={};
     var tabMatiere =[];
-    // var colorIndexes = generateRandomNumbers(listeMatieres.length,0,COLORS.length)
-    
-    for (var i = 0; i < listeMatieres.length; i++) {
-        
-        tabMatiere = listeMatieres[i].split('*');
-        parent =  document.getElementById('matiere_' + tabMatiere[1]);
-        draggableSon = document.getElementById('matiere_' + tabMatiere[1]+'_sub');
-        parent.className = classes.matiereStyle; 
-        
-        // parent.style.backgroundColor=COLORS[colorIndexes[i]];  
-        parent.style.backgroundColor=tabMatiere[2];  
-        parent.title = tabMatiere[0];
-        
-        MATIERE_DATA = {};
-        MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
-        MATIERE_DATA.libelleMatiere = tabMatiere[0];
-        MATIERE_DATA.codeMatiere = tabMatiere[1];
-        //MATIERE_DATA.colorCode = COLORS[colorIndexes[i]];
 
+    CURRENT_MATIERE_LIST=[];
+    console.log("listeMatieres: ",listeMatieres)
+    
+    listeMatieres.map((matiere, index)=>{
+        tabMatiere = matiere.split('*');
+        MATIERE_DATA = {};
+        MATIERE_DATA.libelleMatiere = tabMatiere[0];
+        MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
+        MATIERE_DATA.codeMatiere = tabMatiere[1];
         MATIERE_DATA.colorCode = tabMatiere[2];
         
-        CURRENT_MATIERE_LIST[i] = MATIERE_DATA;
-        
-        draggableSon.textContent = tabMatiere[0];
-        draggableSon.className = classes.matiereTitleStyle;                     
-              
-    }
-    MATIERE_DATA = {};
+        CURRENT_MATIERE_LIST.push(MATIERE_DATA);
+
+    })
+   
     console.log('matieres',CURRENT_MATIERE_LIST);
     currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
 }
@@ -1357,8 +1352,101 @@ const closePreview =()=>{
     setModalOpen(0);
 }
 
+function distinctList(list, prop){
+    var resultList = [];
+
+    list.map((elt1)=>{
+        if(resultList.find((elt2)=>elt2[prop] == elt1[prop])==undefined){
+            resultList.push(elt1);
+        }
+
+    })
+    console.log("liste resultat",resultList)
+    return resultList;
+}
+
 
 /*************************** <JSX Code> ****************************/
+
+function LigneMatieres(props) {
+  
+    const currentUiContext = useContext(UiContext);
+
+     //Cette constante sera lu lors de la configuration de l'utilisateur.
+    const selectedTheme = currentUiContext.theme;
+    const { t, i18n } = useTranslation();
+    
+    const changeLanguage = (event) => {
+        i18n.changeLanguage(event.target.id);
+    };
+
+    // useEffect(()=> {
+
+    //     for (var i = 0; i < props.listeMatieres.length; i++) {
+    //         tabMatiere = props.listeMatieres[i].split('*');
+    //         MATIERE_DATA = {};
+    //         MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
+    //         MATIERE_DATA.libelleMatiere = tabMatiere[0];
+    //         MATIERE_DATA.codeMatiere = tabMatiere[1];
+    //         MATIERE_DATA.colorCode = tabMatiere[2];
+            
+    //         CURRENT_MATIERE_LIST[i] = MATIERE_DATA;
+          
+    //     }
+       
+    //     console.log('matieres',CURRENT_MATIERE_LIST);
+    //     currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
+
+    // },[currentUiContext.CURRENT_MATIERE_LIST]);
+
+  
+    
+    function getCurrentTheme()
+    {  // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_footer;
+            case 'Theme2': return classes.Theme2_footer;
+            case 'Theme3': return classes.Theme3_footer;
+            default: return classes.Theme1_footer;
+        }
+    }
+
+    function getCurrentFooterTheme()
+    {  // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_footer;
+            case 'Theme2': return classes.Theme2_footer;
+            case 'Theme3': return classes.Theme3_footer;
+            default: return classes.Theme1_footer;
+        }
+    }
+
+   return (
+        <div style={{display:'flex', flexDirection:'row'}}>
+            <div className={classes.matiereTitle} style={{marginLeft:'-2.7vw'}}>{t('matieres')}</div>
+            <div id='matieres' className={classes.listeMatieres + ' matieres'}>
+                {(listMatieres||[]).map((matiere) => {
+                    return (
+                        <MatiereDiv id={"matiere_"+matiere.split('*')[1]}
+                            title = {matiere.split('*')[0]}
+                            dragDivClassName  = {classes.matiereStyle} 
+                            matiereTitleStyle = {classes.matiereTitleStyle} 
+                            dropDivClassName  = {null}
+                            style={{backgroundColor:matiere.split('*')[2]}}
+                           
+                        >
+                            {matiere.split('*')[0]} 
+                        </MatiereDiv>
+                    );
+                })} 
+                  
+            </div>       
+
+        </div>
+        
+    );
+}
+
 function LigneProfPrincipal(props) {
   
     const currentUiContext = useContext(UiContext);
@@ -1408,14 +1496,14 @@ function LigneProfPrincipal(props) {
         <div style={{display:'flex', flexDirection:'row'}}>
 
             <div className={classes.profTitle} style={{marginLeft:'-3vw'}}>{t('enseignants')}</div>
-            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw'}}>
+            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw', /*position:'absolute'*/}}>
                
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
-                    {currentUiContext.CURRENT_DROPPED_PROFS_LIST.map((prof) => {
+                    {distinctList(currentUiContext.CURRENT_DROPPED_PROFS_LIST,"NomProf").map((prof) => {
                         return (
                                 <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
                                     <div style={{display:'flex', flexDirection:'row'}}> 
-                                        <input type='radio' name='ppsList'/>
+                                        <input id ={prof.NomProf} type='radio' name='ppsList' checked={selectedPP.NomProf==prof.NomProf} onClick={getSelectedProf}/>
                                         <img src= {prof.sexe=='M'? "images/maleTeacher.png" : "images/femaleTeacher.png"} style={{width:'2vw'}}/>
                                     </div>
                                     
@@ -1432,7 +1520,7 @@ function LigneProfPrincipal(props) {
 
                 <CustomButton
                     id = {"addEleve"}
-                    btnText={t("valider")}
+                    btnText={t("def_as_principal")}
                     buttonStyle={getSmallButtonStyle()}
                     style={{marginBottom:'-0.3vh',position :'relative', right:'-37vw'}}
                     btnTextStyle = {classesPP.btnSmallTextStyle}
@@ -1515,7 +1603,7 @@ function LigneProfPrincipal(props) {
                       
                     <div className={classes.inputRow}>
                         <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                        {t('class_M')}:                       
+                            {t('class_M')}:                       
                         </div>
                         <div>
                             <select id='selectClasse' onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
@@ -1525,7 +1613,17 @@ function LigneProfPrincipal(props) {
                                     );
                                 })}
                             </select>
-                        </div>              
+                        </div>     
+                        {isPPset &&
+                            <div className={classes.bold+ ' '+classes.fontSize1} style={{marginLeft:"1.3vw",alignSelf:'center'}}>
+                                {t('principal_M')} :                        
+                            </div>
+                        }
+                        {isPPset &&
+                            <div  className= {classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center', color:'#3a5da1'}}>
+                                {currentPP.sexe =='M' ? ' Mr '+ currentPP.NomProf :' Mme '+ currentPP.NomProf}
+                            </div>   
+                        }          
                     </div>  
                
                 
@@ -1600,7 +1698,7 @@ function LigneProfPrincipal(props) {
                                 {
                                     currentUiContext.isMatiereEnable ?
 
-                                    <LigneMatieres listeMatieres={listMatieres}/>
+                                    <LigneMatieres/>
                                     :
                                     <LigneProfPrincipal/>                               
                                 }
