@@ -1291,8 +1291,8 @@ function cancelHandler(){
     currentUiContext.showMsgBox({
         visible:true, 
         msgType:"question", 
-        msgTitle:"ANNULATION",  
-        message:"Voulez-vous vraiment annuler les modifications appportées?"
+        msgTitle : t("cancellation_M"),  
+        message  : t("rollback_changes")
     })
 }
 
@@ -1301,8 +1301,8 @@ function UpdateEmploiDeTemps(){
     currentUiContext.showMsgBox({
         visible:true, 
         msgType:"question", 
-        msgTitle:"CONFIRMATION ",
-        message:"Voulez-vous vraiment enregistrer les modifications appportées?"        
+        msgTitle : t("confirm_M"),
+        message  : t("save_changes")        
     }) 
 
 }
@@ -1496,7 +1496,7 @@ function LigneProfPrincipal(props) {
         <div style={{display:'flex', flexDirection:'row'}}>
 
             <div className={classes.profTitle} style={{marginLeft:'-3vw'}}>{t('enseignants')}</div>
-            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw', /*position:'absolute'*/}}>
+            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw', height:"4.7vw" /*position:'absolute'*/}}>
                
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                     {distinctList(currentUiContext.CURRENT_DROPPED_PROFS_LIST,"NomProf").map((prof) => {
