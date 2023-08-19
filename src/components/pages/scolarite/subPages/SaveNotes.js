@@ -416,7 +416,8 @@ function SaveNotes(props) {
             id_sequence : CURRENT_SEQUENCE_ID,
             coef   : CURRENT_COURS_COEF,
             notes  :  notes.join('_'),
-            elevesIds: NOTES_CHANGED_IDS.join('_')
+            elevesIds: NOTES_CHANGED_IDS.join('_'),
+            id_sousetab : currentAppContext.currentEtab
 
         }).then((res)=>{
             NOTES_CHANGED_IDS=[];
