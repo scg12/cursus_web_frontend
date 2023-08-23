@@ -66,6 +66,9 @@ const UiContext = createContext({
     //Emploi de temps Matiere et prof principal
     isMatiereEnable : true,
 
+    //Emploi de temps Gestion des profs principaux
+    currentPPList : [],
+
 
 
 
@@ -116,6 +119,9 @@ const UiContext = createContext({
 
     //Emploi de temps Matiere et prof principal
     setIsMatiereEnable : (boolVal) => {}, 
+
+    //Emploi de temps Gestion des profs principaux
+    setCurrentPPList : (tab) => {},
     
 });
 
@@ -176,6 +182,11 @@ export function UiContextProvider(props)
 
     //Emploi de temps Matiere et prof principal
     const [isMatiereEnable, setIsMatiereEnable] = useState(true);
+
+    //Emploi de temps Gestion des profs principaux
+    const [currentPPList, setCurrentPPList] = useState([]);
+
+   
 
     
     
@@ -362,6 +373,11 @@ export function UiContextProvider(props)
     function ETMatiereEnableHandler(boolval){
         setIsMatiereEnable(boolval)
     }
+
+    //Emploi de temps Gestion des profs principaux
+    function currentPPlistHandler(tab){
+        setCurrentPPList(tab)
+    }
      
 
 
@@ -422,6 +438,9 @@ export function UiContextProvider(props)
 
         //Emploi de temps Matiere et prof principal
         isMatiereEnable : isMatiereEnable,
+
+        //Emploi de temps Gestion des profs principaux
+        currentPPList : currentPPList,
     
 
 
@@ -492,7 +511,10 @@ export function UiContextProvider(props)
         setPrgramCoverSelectedLevel:setPrgramCoverSelectedLevelHandler,
 
         //Emploi de temps Matiere et prof principal
-        setIsMatiereEnable:ETMatiereEnableHandler
+        setIsMatiereEnable:ETMatiereEnableHandler,
+
+        //Emploi de temps Gestion des profs principaux
+        setCurrentPPList:currentPPlistHandler
 
     };
 

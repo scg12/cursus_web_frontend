@@ -246,7 +246,7 @@ function DroppableDiv(props){
                         console.log("Yooo: ",CURRENT_DROPPED_PROFS_LIST);
                         console.log("aaa: ",droppedProf);
                         AddValueToDroppedProfList(-1,droppedProf);
-                        currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST);
+                        currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
                     
                         // var droppedProfTab = [...CURRENT_DROPPED_PROFS_LIST];
                         // var droppedProfTab = CURRENT_DROPPED_PROFS_LIST;

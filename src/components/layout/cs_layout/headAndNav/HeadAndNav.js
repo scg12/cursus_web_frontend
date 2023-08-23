@@ -171,8 +171,17 @@ function HeadAndNav(props) {
         switch(chosenMsgBox){
 
             case MSG_SUCCESS: {
-               
-                
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                return 1;
+            }
+            
+    
+            case MSG_QUESTION: {
                 console.log("IL VEUT DECONNECTER: ")
                 axiosInstance
                 .post(`logout/`,
@@ -186,27 +195,14 @@ function HeadAndNav(props) {
                 },(res)=>{                    
                     console.log('Erreur: ',res);
                 });
-               
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 }) 
-
                 currentUiContext.updateFirstLoad(true);
                 currentAppContext.logOut();
-        
-                return 1;
-            }
-    
-            case MSG_QUESTION: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
                 return 1;
             }
     
