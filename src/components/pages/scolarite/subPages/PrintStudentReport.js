@@ -584,7 +584,8 @@ const columnsFr = [
             setModalOpen(5);
             axiosInstance.post(`generer-bulletin-classe/`, {
                 id_classe   : CURRENT_CLASSE_ID,
-                id_sequence : CURRENT_PERIOD_ID
+                id_sequence : CURRENT_PERIOD_ID,
+                id_sousetab : currentAppContext.currentEtab
             }).then((res)=>{
                 setModalOpen(0);
                 chosenMsgBox = MSG_SUCCESS_NOTES;
