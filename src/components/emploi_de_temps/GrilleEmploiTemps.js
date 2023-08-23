@@ -41,7 +41,8 @@ var currentClasseId = undefined;
 var currentClasseLabel = undefined;
 var ETPageSet ={};
 var printedETFileName='';
-var CURRENT_PP={};
+var CURRENT_PP = undefined;
+var TAB_PROF_PRINCIPAUX = [];
 
 
 function GrilleEmploiTemps(props) {
@@ -69,11 +70,9 @@ function GrilleEmploiTemps(props) {
     const [isPPset, setIsPPset] = useState(false);
     const [selectedPP, setSetectedPP] = useState({});
     const [currentPP, setCurrentPP] = useState({});
+    const [currentProfsPrincipauxList, setcurrentprofsPrincipauxList] = useState([]);
     
     
-    const changeLanguage = (event) => {
-        i18n.changeLanguage(event.target.id);
-    };
     let SELECTED_MATIERE_ID;
     let COUNT_SELECTED_MATIERES;
 
@@ -87,95 +86,8 @@ function GrilleEmploiTemps(props) {
     let CURRENT_PROFS_LIST;
     let CURRENT_DROPPED_PROFS_LIST;
 
-    var PROF_DATA ={
-        idProf:'',
-        NomProf:'',
-        idJour:'',
-        heureDeb:'',
-        heureFin:'',
-        idMatiere:'',
-        isSelected:false
-    }
-    function updateSelectedProfId(valeur){
-        SELECTED_PROF_ID = valeur;
-    }
+    var PROF_DATA = {};
     
-    function updateCountSelectedProfs(valeur){
-        COUNT_SELECTED_PROFS = valeur;
-    }
-    
-    //---SELECTED_PROF_TAB
-    function AddValueToSelectedProfTab(position, valeur){
-        if(position!=-1) SELECTED_PROF_TAB.splice(position,0,valeur);
-        else SELECTED_PROF_TAB.push(valeur);
-    }
-    
-    function removeValueToSelectedProfTab(position){
-        SELECTED_PROF_TAB.splice(position,1);    
-    }
-    
-    
-    //---CURRENT_PROF_LIST
-    function AddValueToCurrentProfList(position, valeur){
-        if(position!=-1) CURRENT_PROFS_LIST.splice(position,0,valeur);
-        else CURRENT_PROFS_LIST.push(valeur);
-    }
-    
-    function removeValueToCurrentProfList(position){
-        CURRENT_PROFS_LIST.splice(position,1);    
-    }
-    
-    
-    //---CURRENT_DROPPED_PROFS_LIST
-    function AddValueToDroppedProfList(position, valeur){
-        if(position!=-1) CURRENT_DROPPED_PROFS_LIST.splice(position,0,valeur);
-        else CURRENT_DROPPED_PROFS_LIST.push(valeur);
-    }
-    
-    function removeValueToDroppedProfList(position){
-        CURRENT_MATIERE_LIST.splice(position,1);    
-    }
-
-    function updateSelectedMatiereId(valeur){
-        SELECTED_MATIERE_ID = valeur;
-    }
-    
-    function updateCountSelectedMatieres(valeur){
-        COUNT_SELECTED_MATIERES = valeur;
-    }
-    
-    //---SELECTED_MATIERE_TAB
-    function AddValueToSelectedMatiereTab(position, valeur){
-        if(valeur='') SELECTED_MATIERE_TAB=[];
-        else{
-            if(position!=-1) SELECTED_MATIERE_TAB.splice(position,0,valeur);
-            else SELECTED_MATIERE_TAB.push(valeur);
-        }   
-    }
-    
-    function removeValueToSelectedMatiereTab(position){
-        SELECTED_MATIERE_TAB.splice(position,1);    
-    }
-    
-    //---CURRENT_MATIERE_LIST
-    function AddValueToCurrentMatiereList(position, valeur){
-        if(position!=-1) CURRENT_MATIERE_LIST.splice(position,0,valeur);
-        else CURRENT_MATIERE_LIST.push(valeur);
-    }
-    
-    function removeValueToCurrentMatiereList(position){
-        CURRENT_MATIERE_LIST.splice(position,1);    
-    }
-    
-    //---CURRENT_DROPPED_MATIERE_LIST
-    function AddValueToValueDroppedMatiereList(position, valeur){
-        if(position!=-1) CURRENT_DROPPED_MATIERE_LIST.splice(position,0,valeur);
-        else CURRENT_DROPPED_MATIERE_LIST.push(valeur);
-    }
-    
-    function removeValueToDroppedMatiereList(position){
-        CURRENT_DROPPED_MATIERE_LIST.splice(position,1);    
-    }
     
     
     function createOption2(libellesOption){
@@ -217,6 +129,13 @@ function GrilleEmploiTemps(props) {
                 console.log("currentClasseId: ",currentClasseId,currentUiContext.classeEmploiTemps)
                 indexClasse = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==currentClasseId);
                 console.log("INDEX: ",indexClasse);
+
+                //TAB_PROF_PRINCIPAUX = [...currentUiContext.currentPPList];
+                CURRENT_PP = getPPInfos(currentClasseId);
+                setCurrentPP(CURRENT_PP); setSetectedPP(CURRENT_PP);
+                setIsPPset(currentPP!=undefined)
+
+
 
                 clearGrille(currentUiContext.TAB_PERIODES, currentUiContext.TAB_JOURS.length);
                 
@@ -277,28 +196,72 @@ function GrilleEmploiTemps(props) {
       }
     }
    
+/*************************** <Other functions> ****************************/
+
+    function getPPInfos(classeId){
+        var ppInfo = undefined;
+        if(currentUiContext.currentPPList.length>0){
+           var pp = currentUiContext.currentPPList.find((elt)=>elt.id_classe == classeId);
+           if(pp!=undefined){
+                ppInfo = {}
+                ppInfo.NomProf = pp.PP_nom;
+                ppInfo.id = pp.PP_id;           
+            }
+        }
+        console.log('currentPP',ppInfo);
+        return ppInfo;
+    }
 
     function validerPP(e){
+        console.log("les tabs",currentUiContext.currentPPList,currentUiContext.CURRENT_DROPPED_PROFS_LIST)
 
-        if(CURRENT_PP!= undefined){
+        TAB_PROF_PRINCIPAUX = [...currentUiContext.currentPPList];
+
+        if(selectedPP!= undefined){
             setIsPPset(true);
             setCurrentPP(selectedPP);
-           // document.getElementById(CURRENT_PP.NomProf).sele
+
+            var ppId = currentUiContext.CURRENT_DROPPED_PROFS_LIST.find((elt)=>elt.NomProf==selectedPP.NomProf);
+            var idProf = ppId.idProf.split('_')[2];
+
+            if(TAB_PROF_PRINCIPAUX.length>0){
+                var ppData = TAB_PROF_PRINCIPAUX.find((elt)=>elt.id_classe==currentClasseId);
+                if(ppData != undefined){
+                    var ppIndex =  TAB_PROF_PRINCIPAUX.findIndex((elt)=>elt.id_classe==currentClasseId);
+                    TAB_PROF_PRINCIPAUX[ppIndex].PP_nom = selectedPP.NomProf;
+                    TAB_PROF_PRINCIPAUX[ppIndex].PP_id  = idProf;
+                    currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);
+                }else{
+                    var ppInfo = {};
+                    ppInfo.id_classe = currentClasseId;
+                    ppInfo.PP_nom    = selectedPP.NomProf;
+                    ppInfo.PP_id     = idProf;
+                    TAB_PROF_PRINCIPAUX.push(ppInfo);
+                    currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);                }    
+
+            } else{
+                var ppInfo = {};
+                ppInfo.id_classe = currentClasseId;
+                ppInfo.PP_nom    = selectedPP.NomProf;
+                ppInfo.PP_id     = idProf;
+                TAB_PROF_PRINCIPAUX.push(ppInfo);
+                currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);
+            }
+
         } else {
             setIsPPset(false);
             setCurrentPP({});
         }
-
-       
 
     }
 
     function getSelectedProf(e){
         var pp_nom = e.target.id
         var PPSelected = currentUiContext.CURRENT_DROPPED_PROFS_LIST.find((prof)=>prof.NomProf == pp_nom);
+       
         if (PPSelected != undefined) {
-            CURRENT_PP = {...PPSelected}
-            setSetectedPP(CURRENT_PP);
+            var curent_pp = {...PPSelected}
+            setSetectedPP(curent_pp);
         }
     }
 
@@ -329,6 +292,19 @@ function GrilleEmploiTemps(props) {
        
         //gerer le profs principaux
         //au chargement, voir s'il y a un pp et le definir ds les useStates
+        var PP_info = currentUiContext.currentPPList.find((elt)=>elt.id_classe == currentClasseId);
+        if(PP_info != undefined){
+            CURRENT_PP = {}
+            CURRENT_PP.NomProf = PP_info.PP_nom;
+            CURRENT_PP.id      = PP_info.PP_id;
+            setCurrentPP(CURRENT_PP);
+            setSetectedPP(CURRENT_PP);
+            setIsPPset(true);
+        } else {
+            setCurrentPP({});
+            setSetectedPP({});
+            setIsPPset(false);
+        }
         
     }
 
@@ -352,10 +328,6 @@ function GrilleEmploiTemps(props) {
         initMatiereList(tabMatieres);
         setListMatieres(tabMatieres);
 
-        CURRENT_PP ={}
-        
-        
-        
         //Pre-remplissage de la grille avec les creneau deja configures 
         var ET_data = getSaveEmploiTempsData(classId);
         console.log("ET_data.length: ",ET_data.length);
@@ -1189,14 +1161,33 @@ function cancelETData() {
 
 }
 
+function createPPString(){
+    var queryString ='';
+    var eltString   ='';
+    var tabSize =  currentUiContext.currentPPList.length;
+
+    if(tabSize>0){
+        currentUiContext.currentPPList.map((elt, index)=>{
+            eltString = elt.id_classe+'*'+elt.PP_id+'*'+elt.PP_nom;
+            if(tabSize == index+1) queryString = queryString + eltString;
+            else queryString = queryString + eltString+'_';           
+        })
+    }
+    return queryString;
+}
+
 
 function updateETHandler(emploiDetempsToUpdate){
-    console.log(emploiDetempsToUpdate);
+   
     var emploiDeTemps = [];
+    var ppString = createPPString();
+    console.log("data ici",emploiDetempsToUpdate, ppString);
+
     setModalOpen(3);
     axiosInstance .post(`set-emploi-de-temps/`,{
-        id_sousetab: currentAppContext.currentEtab,
-        emploiDeTemps:emploiDetempsToUpdate 
+        id_sousetab    : currentAppContext.currentEtab,
+        emploiDeTemps  : emploiDetempsToUpdate,
+        profPrincipaux : ppString 
     }).then((res)=>{
         res.data.emplois.map((em)=>{emploiDeTemps.push(em)});
         console.log(res.data.emplois);
@@ -1291,8 +1282,8 @@ function cancelHandler(){
     currentUiContext.showMsgBox({
         visible:true, 
         msgType:"question", 
-        msgTitle:"ANNULATION",  
-        message:"Voulez-vous vraiment annuler les modifications appportées?"
+        msgTitle : t("cancellation_M"),  
+        message  : t("rollback_changes")
     })
 }
 
@@ -1301,8 +1292,8 @@ function UpdateEmploiDeTemps(){
     currentUiContext.showMsgBox({
         visible:true, 
         msgType:"question", 
-        msgTitle:"CONFIRMATION ",
-        message:"Voulez-vous vraiment enregistrer les modifications appportées?"        
+        msgTitle : t("confirm_M"),
+        message  : t("save_changes")        
     }) 
 
 }
@@ -1353,74 +1344,50 @@ const closePreview =()=>{
 }
 
 function distinctList(list, prop){
+    console.log("tabblle", list,currentUiContext.CURRENT_DROPPED_PROFS_LIST);
+    
     var resultList = [];
+    if(list!= undefined && list.length > 0){
+        list.map((elt1)=>{
+            if(resultList.find((elt2)=>elt2[prop] == elt1[prop])==undefined){
+                resultList.push(elt1);
+            }    
+        })
 
-    list.map((elt1)=>{
-        if(resultList.find((elt2)=>elt2[prop] == elt1[prop])==undefined){
-            resultList.push(elt1);
-        }
-
-    })
-    console.log("liste resultat",resultList)
+    }
     return resultList;
 }
+
+function getPPClasses(pp_nom){
+    console.log("gdgdg",TAB_PROF_PRINCIPAUX)
+    var listClasses = '('+t("no_class")+')';
+    var pp_classes = [];
+  
+    if(TAB_PROF_PRINCIPAUX.length>0){
+       pp_classes = TAB_PROF_PRINCIPAUX.filter((elt)=>elt.PP_nom == pp_nom);
+       
+       if(pp_classes.length>0){
+            listClasses = '('; 
+            pp_classes.map((elt, index)=>{
+                var classeProf = optClasse.find((classe)=>classe.value == elt.id_classe).label;
+                if(index+1 == pp_classes.length)
+                    listClasses = listClasses + classeProf+')';
+                else
+                    listClasses = listClasses + classeProf + ',';
+            })
+        }
+    }
+    return listClasses;    
+}
+
+
+
 
 
 /*************************** <JSX Code> ****************************/
 
 function LigneMatieres(props) {
   
-    const currentUiContext = useContext(UiContext);
-
-     //Cette constante sera lu lors de la configuration de l'utilisateur.
-    const selectedTheme = currentUiContext.theme;
-    const { t, i18n } = useTranslation();
-    
-    const changeLanguage = (event) => {
-        i18n.changeLanguage(event.target.id);
-    };
-
-    // useEffect(()=> {
-
-    //     for (var i = 0; i < props.listeMatieres.length; i++) {
-    //         tabMatiere = props.listeMatieres[i].split('*');
-    //         MATIERE_DATA = {};
-    //         MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
-    //         MATIERE_DATA.libelleMatiere = tabMatiere[0];
-    //         MATIERE_DATA.codeMatiere = tabMatiere[1];
-    //         MATIERE_DATA.colorCode = tabMatiere[2];
-            
-    //         CURRENT_MATIERE_LIST[i] = MATIERE_DATA;
-          
-    //     }
-       
-    //     console.log('matieres',CURRENT_MATIERE_LIST);
-    //     currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
-
-    // },[currentUiContext.CURRENT_MATIERE_LIST]);
-
-  
-    
-    function getCurrentTheme()
-    {  // Choix du theme courant
-       switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_footer;
-            case 'Theme2': return classes.Theme2_footer;
-            case 'Theme3': return classes.Theme3_footer;
-            default: return classes.Theme1_footer;
-        }
-    }
-
-    function getCurrentFooterTheme()
-    {  // Choix du theme courant
-       switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_footer;
-            case 'Theme2': return classes.Theme2_footer;
-            case 'Theme3': return classes.Theme3_footer;
-            default: return classes.Theme1_footer;
-        }
-    }
-
    return (
         <div style={{display:'flex', flexDirection:'row'}}>
             <div className={classes.matiereTitle} style={{marginLeft:'-2.7vw'}}>{t('matieres')}</div>
@@ -1450,36 +1417,7 @@ function LigneMatieres(props) {
 function LigneProfPrincipal(props) {
   
     const currentUiContext = useContext(UiContext);
-
-     //Cette constante sera lu lors de la configuration de l'utilisateur.
-    const selectedTheme = currentUiContext.theme;
     const { t, i18n } = useTranslation();
-    
-    const changeLanguage = (event) => {
-        i18n.changeLanguage(event.target.id);
-    };
-
-  
-    
-    function getCurrentTheme()
-    {  // Choix du theme courant
-       switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_footer;
-            case 'Theme2': return classes.Theme2_footer;
-            case 'Theme3': return classes.Theme3_footer;
-            default: return classes.Theme1_footer;
-        }
-    }
-
-    function getCurrentFooterTheme()
-    {  // Choix du theme courant
-       switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_footer;
-            case 'Theme2': return classes.Theme2_footer;
-            case 'Theme3': return classes.Theme3_footer;
-            default: return classes.Theme1_footer;
-        }
-    }
 
     function getSmallButtonStyle()
     { // Choix du theme courant
@@ -1492,11 +1430,11 @@ function LigneProfPrincipal(props) {
     }
 
 
-   return (
+    return (
         <div style={{display:'flex', flexDirection:'row'}}>
 
             <div className={classes.profTitle} style={{marginLeft:'-3vw'}}>{t('enseignants')}</div>
-            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw', /*position:'absolute'*/}}>
+            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw', height:"4.7vw" /*position:'absolute'*/}}>
                
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                     {distinctList(currentUiContext.CURRENT_DROPPED_PROFS_LIST,"NomProf").map((prof) => {
@@ -1509,7 +1447,7 @@ function LigneProfPrincipal(props) {
                                     
                                     <div style={{display:'flex', flexDirection:'column'}}> 
                                         <div style={{fontSize:'0.9vw'}}>{prof.NomProf}</div>
-                                        <div style={{fontSize:'0.79vw', textAlign:'center'}}>(...)</div>
+                                        <div style={{fontSize:'0.79vw', textAlign:'center', marginTop:'-0.77vh'}}>{getPPClasses(prof.NomProf)}</div>
                                     </div>
                                 </div>
                             );
@@ -1525,7 +1463,6 @@ function LigneProfPrincipal(props) {
                     style={{marginBottom:'-0.3vh',position :'relative', right:'-37vw'}}
                     btnTextStyle = {classesPP.btnSmallTextStyle}
                     btnClickHandler={validerPP}
-                    //disable = {allStudentsConvocated}
                 />
             </div>
             

@@ -185,6 +185,7 @@ function loadEmploiDetemps(etabId){
         currentUiContext.setTAB_VALEUR_HORAIRE(tab_valeur_horaire);
         currentUiContext.setEmploiDeTemps(emploiDeTemps);
         currentUiContext.setTAB_CRENEAU_PAUSE(tab_creneau_pause);
+        currentUiContext.setCurrentPPList(res.data.profPrincipaux);
 
         if(tab_valeur_horaire.length>0){
         currentUiContext.setIntervalleMaxTranche(tab_valeur_horaire[0]+"_"+tab_valeur_horaire[tab_valeur_horaire.length-1]);

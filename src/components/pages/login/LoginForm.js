@@ -186,6 +186,8 @@ function LoginForm(props){
             currentUiContext.setTAB_VALEUR_HORAIRE(tab_valeur_horaire);
             currentUiContext.setEmploiDeTemps(emploiDeTemps);
             currentUiContext.setTAB_CRENEAU_PAUSE(tab_creneau_pause);
+            currentUiContext.setCurrentPPList(res.data.profPrincipaux);
+
             console.log("------ListProfs:------", listProfs)
 
             if(tab_valeur_horaire.length>0){
@@ -239,18 +241,14 @@ function LoginForm(props){
             currentUiContext.setIsDashboardNav(true);
 
             loadEmploiDetemps(res.data.id_etab_init);
-
             setIsLoading(false);
             history.replace('/');
-
-
         },(res)=>{
             ERROR_CODE = res.response.status;
             setPassWordError(true);
             setIsLoading(false);
             //console.log('erreur',res.response.status);
-        });
-     
+        });     
     }
     
     return ( 

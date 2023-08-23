@@ -83,7 +83,7 @@ function ScolaritePage(){
 
   
   function showSideMenu(e) {
-    //currentUiContext.setIsParentMsgBox(false);
+    currentUiContext.setIsParentMsgBox(false);
     
     const itemId = e.currentTarget.id
     setMenuItemPId(itemId);

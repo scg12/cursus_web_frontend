@@ -26,8 +26,10 @@ var constMsg ={
     msgTitle:"",
     message:"",   
 }
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
+var chosenMsgBox;
+const MSG_SUCCESS  =1;
+const MSG_WARNING  =2;
+const MSG_QUESTION =3;
   
 function HeadAndNav(props) {
     const etabName = 'College Francois Xavier Vogt';
@@ -55,6 +57,7 @@ function HeadAndNav(props) {
   
     function logouthandler(){
         currentUiContext.setIsParentMsgBox(true);
+        chosenMsgBox = MSG_QUESTION
         currentUiContext.showMsgBox({
             visible:true, 
             msgType:"question", 
@@ -165,38 +168,110 @@ function HeadAndNav(props) {
     }
 
     const acceptHandler=()=>{
-        console.log("IL VEUT DECONNECTER: ")
-        axiosInstance
-        .post(`logout/`,
-         {
-            refresh: localStorage.getItem('refresh'),
-        },{headers:{}})
-        .then((res) => {
-            localStorage.removeItem('access');
-            localStorage.removeItem('refresh');
-            console.log(res.data);
-        },(res)=>{
-            
-            console.log('Erreur: ',res);
-        });
+        switch(chosenMsgBox){
 
-        currentUiContext.updateFirstLoad(true);
-        currentAppContext.logOut();
-        currentUiContext.showMsgBox({
-            visible:false, 
-            msgType:"question", 
-            msgTitle:t("logout"), 
-            message:t("quit_question")
-        });
+            case MSG_SUCCESS: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                return 1;
+            }
+            
+    
+            case MSG_QUESTION: {
+                console.log("IL VEUT DECONNECTER: ")
+                axiosInstance
+                .post(`logout/`,
+                {
+                    refresh: localStorage.getItem('refresh'),
+                },{headers:{}})
+                .then((res) => {
+                    localStorage.removeItem('access');
+                    localStorage.removeItem('refresh');
+                    console.log(res.data);
+                },(res)=>{                    
+                    console.log('Erreur: ',res);
+                });
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                currentUiContext.updateFirstLoad(true);
+                currentAppContext.logOut();
+                return 1;
+            }
+    
+            case MSG_WARNING: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+        }
+       
     }
 
     const rejectHandler=()=>{
-        currentUiContext.showMsgBox({
-            visible:false, 
-            msgType:"question", 
-            msgTitle:"Deconnexion", 
-            message:"Voulez-vous vraiment quitter l'application?",
-        });
+        switch(chosenMsgBox){
+            case MSG_SUCCESS: {               
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                return 1;
+            }
+    
+            case MSG_QUESTION: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                return 1;
+            }
+    
+            case MSG_WARNING: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+        }        
     }
     
     return (

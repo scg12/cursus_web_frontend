@@ -155,10 +155,16 @@ function LookStudentPresence(props) {
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value;
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
+           
         }else{
             CURRENT_CLASSE_ID = undefined;
             getCoursClasse(currentAppContext.currentEtab, 0);
             getAbsenceCours(0,CURRENT_CLASSE_ID);
+
+            setCourseSelected(false)
+            setIsDateFull(false); 
+            JOUR = ''; MOIS = ''; YEAR =''; DATE_VERIF='';
+            getAbsenceCours(0, CURRENT_CLASSE_ID);
         }
     }
 
@@ -167,8 +173,7 @@ function LookStudentPresence(props) {
         if(e.target.value != optCours[0].value){
             CURRRENT_COURS_ID = e.target.value;
             getAbsenceCours(CURRRENT_COURS_ID, CURRENT_CLASSE_ID);  
-            setCourseSelected(true);
-                     
+            setCourseSelected(true);                     
             
         } else {
             CURRRENT_COURS_ID = undefined;
@@ -199,7 +204,6 @@ function LookStudentPresence(props) {
             listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant"; 
             formattedList.push(listElt);
             rang ++;
-
         })
         return formattedList;
     }

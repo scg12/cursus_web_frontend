@@ -359,7 +359,7 @@ function AddStudent(props) {
                 errorDiv.textContent = '';
             }         
             props.actionHandler(CURRENT_ELEVE);
-            props.cancelHandler();
+            //props.cancelHandler();
 
         } else {
             errorDiv.className = classes.formErrorMsg;

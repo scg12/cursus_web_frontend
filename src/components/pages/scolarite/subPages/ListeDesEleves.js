@@ -672,7 +672,7 @@ const columnsFr = [
         }).then((res)=>{
             console.log(res.data);
 
-            setModalOpen(0);
+            //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -713,7 +713,7 @@ const columnsFr = [
 
         }).then((res)=>{
             console.log(res.data);
-            setModalOpen(0);
+            //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -721,12 +721,6 @@ const columnsFr = [
                 msgTitle:t("success_modif_M"), 
                 message:t("success_modif")
             })
-            /*if(res.data.status ==1){
-                //afficher le message Box succes
-                setModalOpen(0);
-            } else {
-                //afficher le message erreur
-            }*/
             
         })
     }
@@ -984,7 +978,7 @@ const columnsFr = [
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            disable={(isValid==false)}    
                         />
                     </div>
                         
