@@ -79,6 +79,7 @@ export function AppContextProvider(props)
     /*---------- Gestion des lecons -----------*/
     const [etatLesson, setEtatLesson] = useState(0);
     const [currentLesson, setCurrentLesson] = useState({});
+    
   
     
     function connectHandler(givenLogin, givenProfile){
@@ -163,53 +164,53 @@ export function AppContextProvider(props)
 
     
     const APP_Ctx = {
-        usrLogin : usrLogin,
-        usrIsLogged : isUsrLogged,
-        isDataLoaded : isDataLoaded,
-        userProfile : userProfile,
-        enableProfiles: enableProfiles,
-        idUser: idUser,
-        currentYear: currentYear,
-        currentCycle:currentCycle,
-        currentEtab:currentEtab,
-        idEtabInit: idEtabInit,
-        activatedYear: activatedYear,
-        infoAnnees: infoAnnees,
-        infoSetabs: infoSetabs,
-        infoCycles: infoCycles,
-        infoNiveaux: infoNiveaux,
-        infoClasses: infoClasses,
-        infoMatieres: infoMatieres,
-        infoCours: infoCours,
-        
+        usrLogin       : usrLogin,
+        usrIsLogged    : isUsrLogged,
+        isDataLoaded   : isDataLoaded,
+        userProfile    : userProfile,
+        enableProfiles : enableProfiles,
+        idUser         : idUser,
+        currentYear    : currentYear,
+        currentCycle   : currentCycle,
+        currentEtab    : currentEtab,
+        idEtabInit     : idEtabInit,
+        activatedYear  : activatedYear,
+        infoAnnees     : infoAnnees,
+        infoSetabs     : infoSetabs,
+        infoCycles     : infoCycles,
+        infoNiveaux    : infoNiveaux,
+        infoClasses    : infoClasses,
+        infoMatieres   : infoMatieres,
+        infoCours      : infoCours,        
         /*---------- Gestion des Lesons -----------*/
-        etatLesson:etatLesson,
-        currentLesson:currentLesson,
+        etatLesson     : etatLesson,
+        currentLesson  : currentLesson,
         
        
-        setUsrConnected: connectHandler,
-        setUsrLogin : connectedUserHandler,
-        logOut: logOutHandler,
-        setIsDataLoaded: setIsDataLoadedHandler,
-        setUserProfile : setUserProfileHandler,
-        setEnableProfiles: setEnableProfilesHandler,
-        setIdUser: setIdUserHandler,
-        setCurrentEtab: setCurrentEtabHandler,
-        setCurrentCycle: setCurrentCycleHandler,
-        setCurrentYear: setCurrentYearHandler,
-        setIdEtabInit: setIdEtabInitHandler,
-        setActivatedYear: setActivatedYearHandler,
-        setInfoAnnees: setInfoAnneesHandler,
-        setInfoSetabs: setInfoSetabsHandler,
-        setInfoCycles: setInfoCyclesHandler,
-        setInfoNiveaux: setInfoNiveauxHandler,
-        setInfoClasses: setInfoClassesHandler,
-        setInfoMatieres: setInfoMatieresHandler,
-        setInfoCours: setInfoCoursHandler,
+        setUsrConnected   : connectHandler,
+        setUsrLogin       : connectedUserHandler,
+        logOut            : logOutHandler,
+        setIsDataLoaded   : setIsDataLoadedHandler,
+        setUserProfile    : setUserProfileHandler,
+        setEnableProfiles : setEnableProfilesHandler,
+        setIdUser         : setIdUserHandler,
+        setCurrentEtab    : setCurrentEtabHandler,
+        setCurrentCycle   : setCurrentCycleHandler,
+        setCurrentYear    : setCurrentYearHandler,
+        setIdEtabInit     : setIdEtabInitHandler,
+        setActivatedYear  : setActivatedYearHandler,
+        setInfoAnnees     : setInfoAnneesHandler,
+        setInfoSetabs     : setInfoSetabsHandler,
+        setInfoCycles     : setInfoCyclesHandler,
+        setInfoNiveaux    : setInfoNiveauxHandler,
+        setInfoClasses    : setInfoClassesHandler,
+        setInfoMatieres   : setInfoMatieresHandler,
+        setInfoCours      : setInfoCoursHandler,
 
         /*---------- Gestion des lecons -----------*/
-        setEtatLesson:setEtatLessonHandler,
-        setCurrentLesson:setCurrentLessonHandler      
+        setEtatLesson    : setEtatLessonHandler,
+        setCurrentLesson : setCurrentLessonHandler   
+         
     };
 
 

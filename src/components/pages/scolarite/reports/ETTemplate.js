@@ -256,8 +256,13 @@ function ETTemplate(props){
                 
                 <PageHeadCenter style={styles.headerCenter} page={props.pageSet}/>
                
-                <View style={styles.pageTitleContainer}>
-                    <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:13, textTransform:'uppercase', fontWeight:'heavy'}}>{props.pageSet.pageTitle}</Text>
+                <View style={{display:'flex', flexDirection:"row", justifyContent:'center', alignItems:'center'}}>
+                    <View style={styles.pageTitleContainer}>
+                        <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:13, textTransform:'uppercase', fontWeight:'heavy'}}>{props.pageSet.pageTitle}</Text>
+                    </View>
+                    {(props.pageSet.profprincipal.length>0)&&
+                        <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:11.5, textTransform:'uppercase', marginLeft:'2vw', fontWeight:'heavy'}}> ({t('principal_M')} :{props.pageSet.profprincipal})</Text>
+                    }
                 </View>
                 
                 <View style={styles.main}>
@@ -422,13 +427,13 @@ const styles = StyleSheet.create({
    
     pageTitleContainer:{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent:'center',
         alignItems:'center',
         width:'auto',
         height:'4vh',
         borderBottom: "1.3px solid black",
-        marginBottom:"2vh",       
+        marginBottom:"2vh", 
     },
 
     titleStyle:{

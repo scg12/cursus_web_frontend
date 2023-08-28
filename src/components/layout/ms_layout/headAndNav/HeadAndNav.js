@@ -17,8 +17,10 @@ import MsgBox from "../../../msgBox/MsgBox";
 import BackDrop from "../../../backDrop/BackDrop";
 import axiosInstance from "../../../../axios";
 
-
-var currentActiveMenuId ='menuLi0';
+var chosenMsgBox;
+const MSG_SUCCESS  =1;
+const MSG_WARNING  =2;
+const MSG_QUESTION =3;
   
 function HeadAndNav(props) {
     const etabName = 'College Francois Xavier Vogt';
@@ -40,7 +42,7 @@ function HeadAndNav(props) {
     //currentActiveMenuId = getTheInitialActiveMenuId();
 
     function editProfile(){
-        alert("Voulez-vous modifier vos parametres personnels?")
+        alert("Voulez-vous modifier vos parametres personnels?")    
     }
   
     function logouthandler(){
@@ -49,12 +51,7 @@ function HeadAndNav(props) {
             msgType:"question", 
             msgTitle:t("logout"), 
             message:t("quit_question")
-        })
-        /*if(window.confirm("Voulez-vous vraiment vous deconnecter?")){
-            currentUiContext.updateFirstLoad(true);
-            //currentUiContext.updateTab(getTheInitialActiveMenuId());
-            currentAppContext.logOut();
-        }*/        
+        })       
     }
   
     function getCurrentTheme()
@@ -152,38 +149,111 @@ function HeadAndNav(props) {
     }
 
     const acceptHandler=()=>{
-        console.log("IL VEUT DECONNECTER: ")
-        axiosInstance
-        .post(`logout/`,
-         {
-            refresh: localStorage.getItem('refresh'),
-        },{headers:{}})
-        .then((res) => {
-            localStorage.removeItem('access');
-            localStorage.removeItem('refresh');
-            console.log(res.data);
-        },(res)=>{
-            
-            console.log('Erreur: ',res);
-        });
+        switch(chosenMsgBox){
+            case MSG_SUCCESS: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                return 1;
+            }
 
-        currentUiContext.updateFirstLoad(true);
-        currentAppContext.logOut();
-        currentUiContext.showMsgBox({
-            visible:false, 
-            msgType:"question", 
-            msgTitle:t("logout"), 
-            message:t("quit_question"),
-        });
+    
+            case MSG_QUESTION: {
+                console.log("IL VEUT DECONNECTER: ")
+                currentUiContext.updateFirstLoad(true);
+                currentAppContext.logOut();
+                currentUiContext.setCurrentSelectedMenuID('0');
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+               
+
+                axiosInstance.post(`logout/`, {
+                    refresh: localStorage.getItem('refresh'),
+                },{headers:{}})
+                    .then((res) => {
+                        localStorage.removeItem('access');
+                        localStorage.removeItem('refresh');
+                        console.log(res.data);
+                    },(res)=>{                    
+                        console.log('Erreur: ',res);                       
+                    });                    
+               
+                return 1;
+            }
+    
+            case MSG_WARNING: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+        }
+       
     }
 
     const rejectHandler=()=>{
-        currentUiContext.showMsgBox({
-            visible:false, 
-            msgType:"question", 
-            msgTitle:t("logout"), 
-            message:t("quit_question")
-        });
+        switch(chosenMsgBox){
+            case MSG_SUCCESS: {               
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                return 1;
+            }
+    
+            case MSG_QUESTION: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                return 1;
+            }
+    
+            case MSG_WARNING: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+        }        
     }
     
     return (

@@ -1,4 +1,5 @@
-{   "no_class":"No class",
+{   "class_schedule":"Time table for ",
+    "no_class":"No class",
     "rollback_changes":"Do you really want to cancel made changes ?",
     "save_changes":"Do you really want to save made changes ?",
     "non_justify_auth_exist":"non justify authorization exist for this student!!!",

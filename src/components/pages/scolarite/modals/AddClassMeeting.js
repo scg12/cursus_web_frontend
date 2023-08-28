@@ -697,7 +697,7 @@ function AddClassMeeting(props) {
       
         var nomParticipant  = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
         
-        participant_data.push({id:SELECTED_PARTICIPANT, nom:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
+        participant_data.push({id:SELECTED_PARTICIPANT, label:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
         setOptMembres(participant_data);
         
         SELECTED_PARTICIPANT=undefined;
@@ -1292,7 +1292,7 @@ function AddClassMeeting(props) {
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'30vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LigneProfParticipantHeader date={'Date'} nbreJours={'Nbre Jours'} etat={'Etat'}/>
                                     {(optMembres||[]).map((prof)=>{
-                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.nom} role={prof.role} etat={prof.etat}/>
+                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.label} role={prof.role} etat={prof.etat}/>
                                         })
                                     }
                                 </div>

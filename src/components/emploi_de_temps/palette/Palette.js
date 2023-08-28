@@ -4,6 +4,8 @@ import classes from './Palette.module.css';
 
 import { useContext } from "react";
 import UiContext from '../../../store/UiContext';
+import BackDrop from '../../backDrop/BackDrop';
+import MsgBox from '../../msgBox/MsgBox';
 
 import { useTranslation } from "react-i18next";
 import '../../../translation/i18n';
@@ -14,14 +16,7 @@ import classesP from './Palette.module.css';
 // import {PROFLIST_MAXSIZE, TAB_COLORS} from '../ET_Module';
 // import {getProfsList,getProfs, initProfList, setMatiereColor, getCountSelectedDroppedMatieres, updateCountSelectedMatieres, AddValueToSelectedMatiereTab, deleteMatiere, deleteProf, clearProflist} from '../ET_Module';
 
-var PROF_DATA ={
-    idProf:'',
-    NomProf:'',
-    idJour:'',
-    heureDeb:'',
-    heureFin:'',
-    IdMatiere:''
-}
+var PROF_DATA ={}
 let COUNT_SELECTED_PROFS;
 let SELECTED_PROF_ID;
 
@@ -46,6 +41,20 @@ TAB_COLORS["Black"] ='rgb(26, 25, 25)';
 let CURRENT_DROPPED_MATIERE_LIST;
 let CURRENT_DROPPED_PROFS_LIST;
 
+var droppedPPid;
+var AssociatedProfCount;
+var currentDroppedProfs;
+var deleteContinu = true;
+var ppemploiDeTemps;
+var ppIndex;
+
+var chosenMsgBox;
+const MSG_QUESTION_PAL1 = 110;
+const MSG_QUESTION_PAL2 = 111;
+const MSG_SUCCESS_PAL   = 12;
+const MSG_WARNING_PAL   = 13;
+const MSG_ERROR_PAL     = 12;
+
  
 function Palette(props) {
 
@@ -55,13 +64,7 @@ function Palette(props) {
     //Cette constante sera lu lors de la configuration de l'utilisateur.
     const selectedTheme = currentUiContext.theme;
     const { t, i18n } = useTranslation();
-    
-    const changeLanguage = (event) => {
-        i18n.changeLanguage(event.target.id);
-    };
-
-
-
+  
     function getOngletProfStyle()
     { // Choix du theme courant
         if(currentUiContext.isMatiereEnable){
@@ -104,25 +107,193 @@ function Palette(props) {
         }       
     }
 
-    function getCurrentButtonTheme()
-    {  // Choix du theme courant
-       switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_buttonStyle;
-            case 'Theme2': return classes.Theme2_buttonStyle;
-            case 'Theme3': return classes.Theme3_buttonStyle;
-            default: return classes.Theme1_buttonStyle;
-        }
+    
+    const acceptHandler=()=>{
+        
+        switch(chosenMsgBox){
+
+            case MSG_QUESTION_PAL1: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                
+                //currentUiContext.setIsParentMsgBox(true);                
+               
+                var profDropZone =  document.getElementById(droppedPPid); 
+                var profIndex = currentDroppedProfs.findIndex((elt)=>elt.idProf == droppedPPid);
+                
+                if(profIndex>=0){
+                    var nomProf = currentDroppedProfs[profIndex].NomProf;
+                    var idPP = "prof_" + nomProf;
+                    document.getElementById(idPP).style.display="none";
+                    currentDroppedProfs.splice(profIndex,1);
+                }
+
+                var children = profDropZone.childNodes;   
+                for(var i = 0; i < children.length; i++){
+                    children[i].remove();
+                } 
+            
+                profDropZone.remove();
+        
+                if (profDropZone.style.borderColor=='red'){
+                    profDropZone.style.borderStyle = null;
+                    profDropZone.style.borderWidth = null;
+                    profDropZone.style.borderColor = null;
+                }                   
+                //AssociatedProfCount--;
+                return 1;                
+            }
+
+            case MSG_QUESTION_PAL2: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //currentUiContext.setIsParentMsgBox(true);
+                //On update l'emploi de temps avec les modifs pour suppression effective
+                currentUiContext.setEmploiDeTemps(ppemploiDeTemps);
+
+                var profDropZone =  document.getElementById(droppedPPid);  
+                var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == droppedPPid);
+                
+                if(profIndex>=0){
+                    var nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf;
+                    var idPP = "prof_" + nomProf;
+                    document.getElementById(idPP).style.display="none";
+                }
+
+                children = profDropZone.childNodes;   
+                for(var i = 0; i < children.length; i++){
+                    children[i].remove();
+                } 
+                profDropZone.remove();
+        
+                if (profDropZone.style.borderColor=='red'){
+                    profDropZone.style.borderStyle = null;
+                    profDropZone.style.borderWidth = null;
+                    profDropZone.style.borderColor = null;
+                    profDropZone.className = null;
+                }
+                
+                CURRENT_DROPPED_PROFS_LIST.splice(ppIndex,1);
+                return 1;
+                
+            }
+
+            case MSG_SUCCESS_PAL: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //currentUiContext.setIsParentMsgBox(true);
+                return 1;
+                
+            }
+
+            case MSG_WARNING_PAL: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                //currentUiContext.setIsParentMsgBox(true);
+                return 1;
+            }
+            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+               // currentUiContext.setIsParentMsgBox(true);
+            }
+        }        
     }
 
-    function getCurrentFooterTheme()
-    {  // Choix du theme courant
-       switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_footer;
-            case 'Theme2': return classes.Theme2_footer;
-            case 'Theme3': return classes.Theme3_footer;
-            default: return classes.Theme1_footer;
+    const rejectHandler=()=>{
+        
+        switch(chosenMsgBox){
+
+            
+            case MSG_QUESTION_PAL1: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+               // currentUiContext.setIsParentMsgBox(true);
+                deleteContinu = false
+                return 1;
+            }
+
+            case MSG_QUESTION_PAL2: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+               // currentUiContext.setIsParentMsgBox(true);
+               var profDropZone =  document.getElementById(droppedPPid);  
+               if (profDropZone.style.borderColor=='red'){
+                   console.log("pppppdhdhd")
+                   profDropZone.style.borderStyle = null;
+                   profDropZone.style.borderWidth = null;
+                   profDropZone.style.borderColor = null;
+                   profDropZone.className = null;
+               }
+                return 1;
+            }
+
+            case MSG_SUCCESS_PAL: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+               // currentUiContext.setIsParentMsgBox(true);
+                return 1;
+            }
+
+            case MSG_WARNING_PAL :{
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+               // currentUiContext.setIsParentMsgBox(true);
+                return 1;
+            }
+            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+               // currentUiContext.setIsParentMsgBox(true);
+            }
         }
+        
     }
+
 
     
 
@@ -136,6 +307,7 @@ function Palette(props) {
         currentUiContext.addMatiereToDroppedMatiereList(CURRENT_DROPPED_MATIERE_LIST,-1);
         currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
     }
+
     function getCountSelectedDroppedMatieres(){
         var count = 0;
         for(var i=0 ; i<CURRENT_DROPPED_MATIERE_LIST.length; i++){
@@ -143,49 +315,107 @@ function Palette(props) {
         }
         return count;
     }
+
+    function isProfPrincipal(idprof,classeId){
+        var pp = currentUiContext.currentPPList.find((elt)=>(elt.PP_id == idprof && elt.id_classe == classeId))
+        if(pp!=undefined) return true;
+        else return false;
+    }
+
     function deleteMatiere () {
+
         var DropZoneId,toDeleIndex, droppedProfId, droppedProfZone,idTab;
-        var countMatiere, tabPos, profDropZone, AssociatedProfCount;
+        var countMatiere, tabPos, profDropZone;
+        var currentDroppedProfs = [];
         countMatiere = getCountSelectedDroppedMatieres();
-        // var tabSelectedDroppedMatieres = getSelectedDroppedMatieres();
+       
        
         tabPos = 0;
         console.log('ggdgdgd',countMatiere, CURRENT_DROPPED_MATIERE_LIST);
+
         while(tabPos<countMatiere){
-            console.log(tabPos+'fois')
+            
             var toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true)
+            
             DropZoneId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].idMatiere;
             idTab = DropZoneId.split('_');
-            //'DM_'+jour +'_'+ PeriodDeb +'_'+ PeriodFin;
             droppedProfZone ='P_'+idTab[1]+'_'+idTab[2]+'_'+idTab[3];
                         
-            //toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == DropZoneId);             
-            console.log(CURRENT_DROPPED_MATIERE_LIST[toDeleIndex]);
             if(toDeleIndex >= 0){
-                console.log('matiere a supprimer',CURRENT_DROPPED_MATIERE_LIST[toDeleIndex]);
+                
                 var matiereToDeleteProf = {...CURRENT_DROPPED_MATIERE_LIST[toDeleIndex]};
+               
                 if (CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.length > 0) {
+
+                    currentDroppedProfs = [...currentUiContext.CURRENT_DROPPED_PROFS_LIST];
+
                     AssociatedProfCount = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.length;
                     
-                    while(AssociatedProfCount > 0){
-                        droppedProfId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.shift();
-                        profDropZone =  document.getElementById(droppedProfId);  
-                        var children = profDropZone.childNodes;   
-                        for(var i = 0; i < children.length; i++){
-                            children[i].remove();
-                        } 
-                        profDropZone.remove();
-                
-                        if (profDropZone.style.borderColor=='red'){
-                            profDropZone.style.borderStyle = null;
-                            profDropZone.style.borderWidth = null;
-                            profDropZone.style.borderColor = null;
-                        }                   
-                        AssociatedProfCount--;
-                    }  
-                }
-                CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
-                document.getElementById(DropZoneId).remove();
+                    while(AssociatedProfCount > 0 && deleteContinu){
+                        
+                        droppedProfId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.shift();                        
+                        profDropZone =  document.getElementById(droppedProfId); 
+                        
+                        var idProf   = droppedProfId.split('_')[2];
+                        var idClasse = document.getElementById("selectClasse").value;
+                        var droppedPP = currentDroppedProfs.filter((elt)=>elt.idProf.split('_')[2] == idProf);
+                        console.log('gggggdrop',droppedPP);
+                        
+                        if (isProfPrincipal(idProf,idClasse)) {
+                            droppedPPid  = droppedProfId;
+                            if(droppedPP.length == 1){
+                                chosenMsgBox = MSG_QUESTION_PAL1;
+                                currentUiContext.showMsgBox({
+                                    visible:true, 
+                                    msgType:"question", 
+                                    msgTitle:t("question_M"),
+                                    message:t("L'enseignant affecte a cette matiere est professeur principal. Voulez-vous vraiment supprimer cette matiere?")
+                                }) 
+                            }
+
+                        } else {
+                            var profIndex = currentDroppedProfs.findIndex((elt)=>elt.idProf == droppedProfId);
+                            if(profIndex>=0){
+                                currentDroppedProfs.splice(profIndex,1);
+                            
+                                if(droppedPP.length == 1){
+                                    var nomProf = currentDroppedProfs[profIndex].NomProf;
+                                    var idPP = "prof_" + nomProf;
+                                    document.getElementById(idPP).style.display="none";
+                                }
+                                
+                            }
+
+                            var children = profDropZone.childNodes;   
+                            for(var i = 0; i < children.length; i++){
+                                children[i].remove();
+                            } 
+                        
+                            profDropZone.remove();
+                    
+                            if (profDropZone.style.borderColor=='red'){
+                                profDropZone.style.borderStyle = null;
+                                profDropZone.style.borderWidth = null;
+                                profDropZone.style.borderColor = null;
+                            }                   
+                           
+                        }    
+
+                        AssociatedProfCount--;                   
+                    }
+                    
+                    if(deleteContinu){
+                        CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
+                        document.getElementById(DropZoneId).remove();                           
+                        currentUiContext.addProfToDroppedProfList(currentDroppedProfs,-1);
+                        console.log("prof associes", currentDroppedProfs, currentUiContext.CURRENT_DROPPED_PROFS_LIST,droppedProfId);
+                    }
+                        
+                   
+                } else {
+                    CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
+                    document.getElementById(DropZoneId).remove();                   
+                }               
             }
             tabPos++;
 
@@ -217,78 +447,108 @@ function Palette(props) {
         currentUiContext.addMatiereToDroppedMatiereList(CURRENT_DROPPED_MATIERE_LIST,-2);
         clearProflist();
     }
+
+    function clearPPList(){
+        var parentDiv = document.getElementById("profsList2");
+        var childDiv = undefined
+        while(parentDiv.firstChild){
+            childDiv = parentDiv.firstChild;
+            parentDiv.removeChild(parentDiv.firstChild);
+        } 
+    }
+    
     function deleteProf (){
+        
         var DropProfId, children, profDropZone;
         var associatedMatiere, idTab, matiereIndex,profIndex, indexProf, profId;
         var countProfs = getCountSelectedDroppedProfs();
+        
         console.log("delete prof: ",countProfs)
-        // tabProfsID
-        // let matiereDroppedSelected = CURRENT_DROPPED_MATIERE_LIST.filter
+       
         if (countProfs >0) {
-        //    let CURRENT_DROPPED_PROFS_LIST = currentUiContext.CURRENT_DROPPED_PROFS_LIST;
-        //    let CURRENT_DROPPED_MATIERE_LIST = currentUiContext.CURRENT_DROPPED_MATIERE_LIST;
             for(var i=0; i < countProfs; i++){
                 profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((prof)=>prof.isSelected == true)
-               console.log("ici : ",profIndex)
-               console.log("yo ",CURRENT_DROPPED_PROFS_LIST)
-                if(profIndex>=0){
-                    DropProfId = CURRENT_DROPPED_PROFS_LIST[profIndex].idProf;
-                    console.log(DropProfId,CURRENT_DROPPED_PROFS_LIST[profIndex])
-                    associatedMatiere = CURRENT_DROPPED_PROFS_LIST[profIndex].idMatiere;
-                    console.log(associatedMatiere)
-                    matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere)
-                    console.log(matiereIndex)
-                    if (matiereIndex>=0){
-                        indexProf = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.findIndex((prof)=> prof == DropProfId);
-                        if (profIndex>=0) {
-                            console.log("prof trouvé: ",DropProfId);
-                            CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.splice(indexProf,1);
+                DropProfId = CURRENT_DROPPED_PROFS_LIST[profIndex].idProf;
+                associatedMatiere = CURRENT_DROPPED_PROFS_LIST[profIndex].idMatiere;
+                matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere)
+                
+                if (profIndex>=0 && matiereIndex>=0){
+                    indexProf = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.findIndex((prof)=> prof == DropProfId);
+                   
+                    CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.splice(indexProf,1);
 
-                            var id_matiere = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].codeMatiere;
-                            var tab = DropProfId.split("_");
-                            let emploiDeTemps = currentUiContext.emploiDeTemps;
-                            let emp = emploiDeTemps.filter(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
-                                e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
-                            console.log("emp: ",emp);
-                            let nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf[1];
-                            console.log("Mr"+nomProf+"%prof_"+tab[2]);
-                            
-                            // 5:10h30_11h25*2*Mr.Enseigant1 Aminata%prof_5*Mr.Censeur Censeur%prof_14
-                            let listProfs = currentUiContext.listProfs.filter(item=>item.id==tab[2]);
-                            console.log(listProfs);
-                            nomProf = listProfs[0].nom+" "+listProfs[0].prenom;
-                            if(emp.length>0){
-                                for(let i=0;i<emp.length;i++){
-                                    let val =  emp[i].value;
-                                    console.log(val,"Mr."+nomProf+"%prof_"+tab[2]);
-                                    val = val.replace("*Mr."+nomProf+"%prof_"+tab[2],"")
-                                    emp[i].value = val;
-                                    console.log(emp);
-                                }
-                                let empIndex =-1;
-                                empIndex=emploiDeTemps.findIndex(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
-                                    e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
-                                    console.log("empIndex: ",empIndex);
-                                    if(empIndex>-1){
-                                        emploiDeTemps[empIndex] = emp[0];
-                                        emploiDeTemps[empIndex].modify += "e";
-                                        emploiDeTemps[empIndex].id_enseignants.splice();
-                                        let idEnsIndex = -1;
-                                        idEnsIndex = emploiDeTemps[empIndex].id_enseignants.findIndex(item=>item==tab[2]);
-                                        console.log("idEnsIndex: ",idEnsIndex,tab[2])
-                                        if(idEnsIndex>-1) 
-                                            emploiDeTemps[empIndex].id_enseignants.splice(idEnsIndex,1);
-
-                                    }
-                                console.log("emploiDeTemps: ",emploiDeTemps)
-                                currentUiContext.setEmploiDeTemps(emploiDeTemps);
+                    var id_matiere = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].codeMatiere;
+                    var tab = DropProfId.split("_");
+                    let emploiDeTemps = currentUiContext.emploiDeTemps;
+                    let emp = emploiDeTemps.filter(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+                        e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
+                    console.log("emp: ",emp);
+                    let nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf[1];
+                    console.log("Mr"+nomProf+"%prof_"+tab[2]);
+                    
+                    // 5:10h30_11h25*2*Mr.Enseigant1 Aminata%prof_5*Mr.Censeur Censeur%prof_14
+                    let listProfs = currentUiContext.listProfs.filter(item=>item.id==tab[2]);
+                    console.log(listProfs);
+                    nomProf = listProfs[0].nom+" "+listProfs[0].prenom;
+                    if(emp.length>0){
+                        for(let i=0;i<emp.length;i++){
+                            let val =  emp[i].value;
+                            console.log(val,"Mr."+nomProf+"%prof_"+tab[2]);
+                            val = val.replace("*Mr."+nomProf+"%prof_"+tab[2],"")
+                            emp[i].value = val;
+                            console.log(emp);
+                        }
+                        let empIndex =-1;
+                        empIndex=emploiDeTemps.findIndex(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+                            e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
+                            console.log("empIndex: ",empIndex);
+                            if(empIndex>-1){
+                                emploiDeTemps[empIndex] = emp[0];
+                                emploiDeTemps[empIndex].modify += "e";
+                                emploiDeTemps[empIndex].id_enseignants.splice();
+                                let idEnsIndex = -1;
+                                idEnsIndex = emploiDeTemps[empIndex].id_enseignants.findIndex(item=>item==tab[2]);
+                                console.log("idEnsIndex: ",idEnsIndex,tab[2])
+                                if(idEnsIndex>-1) 
+                                    emploiDeTemps[empIndex].id_enseignants.splice(idEnsIndex,1);
 
                             }
+                        console.log("emploiDeTemps: ",emploiDeTemps)                     
+                    }
+
+                    //console.log("prof trouvé: ",DropProfId);
+                    var idProf   = DropProfId.split('_')[2];
+                    var idClasse = document.getElementById("selectClasse").value;
+                    var droppedPP = CURRENT_DROPPED_PROFS_LIST.filter((elt)=>elt.idProf.split('_')[2] == idProf);
+
+                    if (isProfPrincipal(idProf,idClasse)) {
+                        droppedPPid  = DropProfId;
+                        ppemploiDeTemps = [...emploiDeTemps];
+                        ppIndex = profIndex;                        
+
+                        if(droppedPP.length == 1){
+                            chosenMsgBox = MSG_QUESTION_PAL2;
+                            currentUiContext.showMsgBox({
+                                visible:true, 
+                                msgType:"question", 
+                                msgTitle:t("question_M"),
+                                message:t("L'enseignant selectionne est principal. Voulez-vous vraiment le supprimer ?")
+                            }) 
                         }
-                        else{alert("Erreur, le prof n'est pas enregistre pour une matiere")}
-                       
-    
+
+                    } else {
+                        //On update l'emploi de temps avec les modifs pour suppression effective
+                        currentUiContext.setEmploiDeTemps(emploiDeTemps);
+
                         profDropZone =  document.getElementById(DropProfId);  
+                        var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == DropProfId);
+                
+                        if(profIndex>=0 && droppedPP.length==1){
+                            var ProfName = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf;
+                            var idPP = "prof_" + ProfName;
+                            document.getElementById(idPP).style.display="none";
+                        }
+
                         children = profDropZone.childNodes;   
                         for(var i = 0; i < children.length; i++){
                             children[i].remove();
@@ -301,76 +561,51 @@ function Palette(props) {
                             profDropZone.style.borderColor = null;
                             profDropZone.className = null;
                         }
-                    }                
-                    CURRENT_DROPPED_PROFS_LIST.splice(profIndex,1);
-                }                      
+                        
+                        CURRENT_DROPPED_PROFS_LIST.splice(profIndex,1);       
+                    }
+                
+                } else alert("Erreur, le prof n'est pas enregistre pour une matiere");              
             }
+                 
             currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
-            SELECTED_PROF_TAB =[];
-            COUNT_SELECTED_PROFS = 0;
-            SELECTED_PROF_ID='';        
+            //SELECTED_PROF_TAB =[];
+            //COUNT_SELECTED_PROFS = 0;
+            //SELECTED_PROF_ID='';        
         } 
     }
-    function setMatiereColor(colorString){
     
-        var countSelectedMatieres = getCountSelectedDroppedMatieres();
-       if(countSelectedMatieres){
-            for (var i= 0; i< CURRENT_DROPPED_MATIERE_LIST.length; i++){
-                
-                if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true){
-                    
-                    //CURRENT_DROPPED_MATIERE_LIST[i].isSelected = false;
-                    document.getElementById(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere).style.backgroundColor = TAB_COLORS[colorString];
-                    //document.getElementById(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere).style.borderColor = TAB_COLORS[colorString];
-                    
-                    if (colorString=='Yellow'|| colorString=='YellowGold'){
-                        document.getElementById(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere).style.color = 'black';
-                    }
-    
-                }
-                
-            }
-    
-        }
-    }
     function clearProflist(){
-    let listProfs = currentUiContext.listProfs;
-    var draggableSon, draggableSonText, draggableSonImg;
-    var PROFLIST_MAXSIZE =listProfs.length;
-    for (var i = 0; i < PROFLIST_MAXSIZE; i++) {
-        draggableSon =  document.getElementById('prof_' + listProfs[i].id);
-        draggableSonText = document.getElementById('prof_' + listProfs[i].id+'_sub');
-       
-        draggableSon.className = null;
-        draggableSon.title = '';
-        draggableSonText.textContent ='';
-        draggableSonText.className = null;
+        let listProfs = currentUiContext.listProfs;
+        var draggableSon, draggableSonText, draggableSonImg;
+        var PROFLIST_MAXSIZE =listProfs.length;
+        for (var i = 0; i < PROFLIST_MAXSIZE; i++) {
+            draggableSon =  document.getElementById('prof_' + listProfs[i].id);
+            draggableSonText = document.getElementById('prof_' + listProfs[i].id+'_sub');
+        
+            draggableSon.className = null;
+            draggableSon.title = '';
+            draggableSonText.textContent ='';
+            draggableSonText.className = null;
 
-        draggableSonImg =  document.getElementById('prof_' + listProfs[i].id + '_img');
-        draggableSonImg.className = null;
+            draggableSonImg =  document.getElementById('prof_' + listProfs[i].id + '_img');
+            draggableSonImg.className = null;
 
-        draggableSonImg = document.querySelector('#prof_' + listProfs[i].id + '_img > img');
-        draggableSonImg.style.display = 'none';
-    
-        // draggableSonImg.setAttribute('src','images/blank_prof.JPG');
-        // if (draggableSonImg.hasAttribute('src')) draggableSonImg.removeAttribute('src');
-        // draggableSonImg.setAttribute('src',null);  
-        // if (draggableSonImg!=null)
-            // while(draggableSonImg.firstChild) draggableSonImg.removeChild(draggableSonImg.firstChild);
-          
-    } 
-    CURRENT_PROFS_LIST = [];
-}
+            draggableSonImg = document.querySelector('#prof_' + listProfs[i].id + '_img > img');
+            draggableSonImg.style.display = 'none';
+        } 
+        CURRENT_PROFS_LIST = [];
+    }
+
     function getCountSelectedDroppedProfs(){
         var count = 0;
         var nb = CURRENT_DROPPED_PROFS_LIST.length;
-        // console.log("getCountSelectedDroppedProfs CURRENT_DROPPED_PROFS_LIST: ",CURRENT_DROPPED_PROFS_LIST,CURRENT_DROPPED_PROFS_LIST.length)
         for(let i=0 ; i<nb; i++){
             if(CURRENT_DROPPED_PROFS_LIST[i].isSelected==true) count++;
         }
         return count;
     }
-    // function getProfsList2(codeMatiere, listProfs,emploiDeTemps,idjour,h_deb,h_fin)
+
     function getProfsList2(codeMatiere)
     {   console.log("codeMatiere: ",codeMatiere);
         var libre=true;
@@ -440,16 +675,6 @@ function Palette(props) {
 
     function enableMatieresList(){
         currentUiContext.setIsMatiereEnable(true);
-        /*indexClasse = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==currentClasseId);
-       
-        clearMatiereList(currentUiContext.matiereSousEtab); 
-        var tabMatieres=[]
-        
-        var listMat = currentUiContext.listMatieres[indexClasse];
-
-        tabMatieres = listMat.split('_');
-        initMatiereList(tabMatieres); */
-       
     }
 
     function initMatiereList(listeMatieres){
@@ -459,7 +684,6 @@ function Palette(props) {
         var MATIERE_DATA ={}
         var parent, draggableSon;
         var tabMatiere =[];
-        // var colorIndexes = generateRandomNumbers(listeMatieres.length,0,COLORS.length)
         
         for (var i = 0; i < listeMatieres.length; i++) {
             
@@ -489,40 +713,30 @@ function Palette(props) {
         console.log('matieres',CURRENT_MATIERE_LIST);
         currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
     }
-    
-
-   /* function clearMatiereList(matieres){
-        var parent, enfants, draggableSon;
-        //On initialise tout ce aui concerne la matiere.
-        COUNT_SELECTED_MATIERES=0;
-        SELECTED_MATIERE_ID='';
-        SELECTED_MATIERE_TAB=[]
-        CURRENT_DROPPED_MATIERE_LIST=[];
-        CURRENT_MATIERE_LIST=[];
-        let MATIERE_MAXSIZE = matieres.length;
-        
-        parent = document.getElementById('matieres');
-        enfants = parent.childNodes;
-        
-        for (var i = 0; i < MATIERE_MAXSIZE; i++) {
-            parent =  document.getElementById('matiere_' + matieres[i].id);
-            draggableSon = document.getElementById('matiere_' + matieres[i].id+'_sub');
-            parent.className = null;
-            parent.title = '';
-            draggableSon.textContent ='';
-            draggableSon.className = null; 
-        }  
-        currentUiContext.setCURRENT_MATIERE_LIST([])  
-    }*/
-    
-
 
     function enableprofsList(){
         currentUiContext.setIsMatiereEnable(false);
     }
    
     return (    
-        <div style={{display:'flex', flexDirection:'column'}}>
+        <div style={{display:'flex', flexDirection:'column'}}> 
+            {/* {(currentUiContext.msgBox.visible == true) && <BackDrop/>}
+            {(currentUiContext.msgBox.visible == true) && 
+                <MsgBox 
+                    msgTitle = {currentUiContext.msgBox.msgTitle} 
+                    msgType  = {currentUiContext.msgBox.msgType} 
+                    message  = {currentUiContext.msgBox.message} 
+                    customImg ={true}
+                    customStyle={true}
+                    contentStyle={classes.msgContent}
+                    imgStyle={classes.msgBoxImgStyleP}
+                    buttonAcceptText = {currentUiContext.msgBox.msgType == "question" ? t('yes'):t('ok')}
+                    buttonRejectText = {t('no')}  
+                    buttonAcceptHandler = {acceptHandler}  
+                    buttonRejectHandler = {rejectHandler}            
+                />                 
+            } */}
+
             <div className={classes.paletteContainer} style={{marginBottom:'2vh'}}> 
                 <div className={classes.buttonContainer}>
                     <CustomButton

@@ -442,8 +442,10 @@
     font-weight: 670;
     align-self: flex-end;
     transform: rotate(-90deg);
-    margin-bottom: 3.7vh;
+    /*margin-bottom: 3.7vh;*/
     margin-right: -1.8vw;
+    position:absolute;
+    bottom: 34.7vh;
 }
 
 .PalettePosition{

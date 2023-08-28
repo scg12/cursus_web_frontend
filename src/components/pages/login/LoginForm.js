@@ -187,6 +187,7 @@ function LoginForm(props){
             currentUiContext.setEmploiDeTemps(emploiDeTemps);
             currentUiContext.setTAB_CRENEAU_PAUSE(tab_creneau_pause);
             currentUiContext.setCurrentPPList(res.data.profPrincipaux);
+           
 
             console.log("------ListProfs:------", listProfs)
 
@@ -233,9 +234,9 @@ function LoginForm(props){
             currentAppContext.setInfoMatieres(res.data.info_matieres);
             currentAppContext.setInfoCours(res.data.info_cours);
             currentUiContext.updateFirstLoad(true);
-            //Pour les MsgBoxes
-            currentUiContext.setIsParentMsgBox(true);
             
+            //Pour les MsgBoxes
+            currentUiContext.setIsParentMsgBox(true);            
             profileAuthorisationString = getRightsStringFromProfile(userProfile);
             //console.log(currentAppContext.infoCours);
             currentUiContext.setIsDashboardNav(true);

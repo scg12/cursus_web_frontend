@@ -4,7 +4,7 @@ import classesPP from '../pages/scolarite/subPages/SubPages.module.css';
 import LigneProfs from './LigneProfs'
 import LigneValeur from './LigneValeur';
 import CustomButton from '../customButton/CustomButton';
-import Palette from './palette/Palette';
+import classesPal from './palette/Palette.module.css';
 import DroppableDiv from '../droppableDiv/DroppableDiv';
 import DownloadTemplate from '../../components/downloadTemplate/DownloadTemplate';
 import Jour from './Jour';
@@ -31,11 +31,38 @@ import ETTemplate from '../pages/scolarite/reports/ETTemplate';
 import {createPrintingPages} from '../pages/scolarite/reports/PrintingModule';
 
 
+let CURRENT_MATIERE_LIST;
+let CURRENT_DROPPED_MATIERE_LIST;
+let SELECTED_PROF_ID;
+let indexClasse = -1;
+let OLD_DROPPED_MATIERE = [];
+
+
+let CURRENT_PROFS_LIST;
+let CURRENT_DROPPED_PROFS_LIST;
+var PROF_DATA = {};
+
+
 var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
-const MSG_QUESTION1 = 3;
-const MSG_QUESTION2 = 4;
+const MSG_SUCCESS    = 1;
+const MSG_WARNING    = 2;
+const MSG_QUESTION1  = 3;
+const MSG_QUESTION2  = 4;
+
+const MSG_QUESTION_PAL1 = 110;
+const MSG_QUESTION_PAL2 = 111;
+const MSG_SUCCESS_PAL   = 120;
+const MSG_WARNING_PAL   = 130;
+const MSG_ERROR_PAL     = 140;
+
+var droppedPPid;
+var AssociatedProfCount;
+var currentDroppedProfs;
+var deleteContinu = true;
+var ppemploiDeTemps;
+var ppIndex;
+
+ 
 const ROWS_PER_PAGE= 40;
 var currentClasseId = undefined;
 var currentClasseLabel = undefined;
@@ -49,45 +76,20 @@ function GrilleEmploiTemps(props) {
   
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-    const { t, i18n } = useTranslation();
-  
-    let indexClasse = -1;
-    let nb_refresh = 0;
-    let decallage_pause =0;
-    let OLD_DROPPED_MATIERE = [];
-   
+    const { t, i18n } = useTranslation(); 
 
      //Cette constante sera lu lors de la configuration de l'utilisateur.
     const selectedTheme = currentUiContext.theme;
     const [isValid, setIsValid] = useState(false);
    
     const [optClasse, setOptClasse] = useState([]);
-    const [pausecreated, setPauseCreated] = useState(false);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     
-    const [matiereEnable, setMatiereEnable] = useState(true);
     const [listMatieres,setListMatieres] = useState([]);
     const [isPPset, setIsPPset] = useState(false);
-    const [selectedPP, setSetectedPP] = useState({});
+    const [selectedPP, setSelectedPP] = useState({});
     const [currentPP, setCurrentPP] = useState({});
     const [currentProfsPrincipauxList, setcurrentprofsPrincipauxList] = useState([]);
-    
-    
-    let SELECTED_MATIERE_ID;
-    let COUNT_SELECTED_MATIERES;
-
-    let SELECTED_MATIERE_TAB;
-    let CURRENT_MATIERE_LIST;
-    let CURRENT_DROPPED_MATIERE_LIST;
-    let COUNT_SELECTED_PROFS;
-    let SELECTED_PROF_ID;
-    
-    let SELECTED_PROF_TAB;
-    let CURRENT_PROFS_LIST;
-    let CURRENT_DROPPED_PROFS_LIST;
-
-    var PROF_DATA = {};
-    
     
     
     function createOption2(libellesOption){
@@ -104,7 +106,7 @@ function GrilleEmploiTemps(props) {
     
     
     useEffect(()=> {
-        console.log(currentUiContext.previousSelectedMenuID, currentUiContext.currentSelectedMenuID)
+        console.log("les menus",currentUiContext.previousSelectedMenuID, currentUiContext.currentSelectedMenuID)
         if((currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID) || (currentUiContext.previousSelectedMenuID=='0' && currentUiContext.currentSelectedMenuID=='0')){
             console.log("00000 ",currentUiContext)
        
@@ -112,7 +114,7 @@ function GrilleEmploiTemps(props) {
            
                 console.log("00000 ",currentUiContext)
                 setOptClasse(createOption2(currentUiContext.classeEmploiTemps));
-                console.log("init TAB_VALEUR_HORAIRE",currentUiContext.TAB_VALEUR_HORAIRE)
+                console.log("init TAB_VALEUR_HORAIRE",currentUiContext.classeEmploiTemps.length,currentUiContext.TAB_VALEUR_HORAIRE)
             
 
                 // Affichage initial des matières pr la première classe selectionnée
@@ -122,8 +124,7 @@ function GrilleEmploiTemps(props) {
                     console.log("nb_refresh: ",currentUiContext.nbRefreshEmpoiTemps);
                     console.log("=currentUiContext.CURRENT_DROPPED_MATIERE_LIST: ",currentUiContext.CURRENT_DROPPED_MATIERE_LIST)
                     currentClasseId = currentUiContext.classeEmploiTemps[0].id;
-                    currentClasseLabel = currentUiContext.classeEmploiTemps[0].libelle;
-                
+                    currentClasseLabel = currentUiContext.classeEmploiTemps[0].libelle;                
                 }
 
                 console.log("currentClasseId: ",currentClasseId,currentUiContext.classeEmploiTemps)
@@ -132,7 +133,7 @@ function GrilleEmploiTemps(props) {
 
                 //TAB_PROF_PRINCIPAUX = [...currentUiContext.currentPPList];
                 CURRENT_PP = getPPInfos(currentClasseId);
-                setCurrentPP(CURRENT_PP); setSetectedPP(CURRENT_PP);
+                setCurrentPP(CURRENT_PP); setSelectedPP(CURRENT_PP);
                 setIsPPset(currentPP!=undefined)
 
 
@@ -205,7 +206,8 @@ function GrilleEmploiTemps(props) {
            if(pp!=undefined){
                 ppInfo = {}
                 ppInfo.NomProf = pp.PP_nom;
-                ppInfo.id = pp.PP_id;           
+                ppInfo.id      = pp.PP_id; 
+                ppInfo.sexe    = pp.sexe;          
             }
         }
         console.log('currentPP',ppInfo);
@@ -230,12 +232,14 @@ function GrilleEmploiTemps(props) {
                     var ppIndex =  TAB_PROF_PRINCIPAUX.findIndex((elt)=>elt.id_classe==currentClasseId);
                     TAB_PROF_PRINCIPAUX[ppIndex].PP_nom = selectedPP.NomProf;
                     TAB_PROF_PRINCIPAUX[ppIndex].PP_id  = idProf;
+                    TAB_PROF_PRINCIPAUX[ppIndex].sexe   = selectedPP.sexe;
                     currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);
                 }else{
                     var ppInfo = {};
                     ppInfo.id_classe = currentClasseId;
                     ppInfo.PP_nom    = selectedPP.NomProf;
                     ppInfo.PP_id     = idProf;
+                    ppInfo.sexe      = selectedPP.sexe;
                     TAB_PROF_PRINCIPAUX.push(ppInfo);
                     currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);                }    
 
@@ -244,6 +248,7 @@ function GrilleEmploiTemps(props) {
                 ppInfo.id_classe = currentClasseId;
                 ppInfo.PP_nom    = selectedPP.NomProf;
                 ppInfo.PP_id     = idProf;
+                ppInfo.sexe      = selectedPP.sexe;
                 TAB_PROF_PRINCIPAUX.push(ppInfo);
                 currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);
             }
@@ -261,7 +266,7 @@ function GrilleEmploiTemps(props) {
        
         if (PPSelected != undefined) {
             var curent_pp = {...PPSelected}
-            setSetectedPP(curent_pp);
+            setSelectedPP(curent_pp);
         }
     }
 
@@ -284,7 +289,7 @@ function GrilleEmploiTemps(props) {
     }
 
     // *activer
-    function dropDownHandler(e){       
+    function dropDownHandler(e){  
         currentClasseId = e.target.value;
         currentClasseLabel = optClasse.find((elt)=>elt.value == currentClasseId).label;
         currentUiContext.setETDataChanged(false);
@@ -297,12 +302,13 @@ function GrilleEmploiTemps(props) {
             CURRENT_PP = {}
             CURRENT_PP.NomProf = PP_info.PP_nom;
             CURRENT_PP.id      = PP_info.PP_id;
+            CURRENT_PP.sexe    = PP_info.sexe;
             setCurrentPP(CURRENT_PP);
-            setSetectedPP(CURRENT_PP);
+            setSelectedPP(CURRENT_PP);
             setIsPPset(true);
         } else {
             setCurrentPP({});
-            setSetectedPP({});
+            setSelectedPP({});
             setIsPPset(false);
         }
         
@@ -410,62 +416,7 @@ function GrilleEmploiTemps(props) {
         marge = (Evaluate(heure[1])*65/minutes);
         return Math.floor(marge);
     }
-/*************************** <Profs Functions> ****************************/
-    // function getProfs(codeMatiere){
-    //     switch(codeMatiere){
-    //         case '001': return listProfs[1] ;
-    //         case '002': return listProfs[2] ;
-    //         case '003': return listProfs[3]
-    //         default: return listProfs[0];
-    //         //case 'matiere_4':   return listProfs[2] ;           
-    //     }
-      
-    // }
-    // function initProfListWithProfs(listeProf){
-    //     var parent = document.getElementById('profList');
-    //     var draggableSon, draggableSonText, draggableSonImg;
-    
-    //     clearProflist();
-    //     //alert(listeProf);
-      
-    //     for (var i = 0; i < listeProf.length; i++) {
-    //         PROF_DATA = {};
-    //         draggableSon =  document.getElementById('prof_' + (i+1));
-    //         draggableSonText = document.getElementById('prof_' + (i+1)+'_sub');
-            
-    //         draggableSon.className = classesP.profDivStyle;  
-    //         draggableSon.title = listeProf[i];       
-            
-    //         draggableSonText.textContent = listeProf[i];
-    //         draggableSonText.className = classesP.profTextSyle;            
-    
-    //         draggableSonImg =  document.getElementById('prof_' + (i+1) + '_img');
-    //         draggableSonImg.className = classesP.profImgStyle;
-    
-    //         draggableSonImg = document.querySelector('#prof_' + (i+1) + '_img > img')
-    //         if(listeProf[i].includes('Mr.')) {
-    //             draggableSonImg.setAttribute('src',"images/maleTeacher.png");
-    //         }else{
-    //             draggableSonImg.setAttribute('src',"images/femaleTeacher.png");
-    //         }
-            
-            
-    //         PROF_DATA.idProf = 'prof_' + (i+1);
-    //         PROF_DATA.NomProf = listeProf[i];
-            
-    //         CURRENT_PROFS_LIST.push(PROF_DATA);
-    //         PROF_DATA = {};                                     
-    //     }
-     
-    // }
-    // function getProfsList(codeMatiere, periode){
-    //     var tabProfs,profList;
-    //     var codeMatiere;
-    
-    //     profList = getProfs(codeMatiere)
-    //     tabProfs = profList.split('_');
-    //     initProfListWithProfs(tabProfs);
-    // }
+
 /****************************Copié depuis ET_Module**************************** */
 function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,functionAppellante) {
     var i, j, jour, periode, codeMatiere, profId,id_tranche;
@@ -511,9 +462,7 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 droppedMatiere.heureDeb = periode.split('_')[0];
                 droppedMatiere.heureFin = periode.split('_')[1];
                 droppedMatiere.tabProfsID =[];
-                //droppedMatiere.tabProfsID.push(tabMatiere[i].split(':')[1].split('*')[2]);
-
-            
+                //droppedMatiere.tabProfsID.push(tabMatiere[i].split(':')[1].split('*')[2]);            
                 
                 //POSITIONNEMENT DE L'ELEMENT SUR LA GRILLE
                 var parentDiv = document.createElement('div');
@@ -538,10 +487,9 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 parentDiv.addEventListener('click', (e) => {matiereClickHandler(e)})
                 
                 //S'IL YA UN OU DES PROFS, ON LES GERE
-                if(emploiTemps[i].value!="" && emploiTemps[i].value.split('*').length>2&& emploiTemps[i].value.split('*')[2].length>2)
-                {
-                //    var countProf =  tabMatiere[i].split(':')[1].split('*').length-2;
-                var countProf =  emploiTemps[i].id_enseignants.length;
+                if(emploiTemps[i].value!="" && emploiTemps[i].value.split('*').length>2&& emploiTemps[i].value.split('*')[2].length>2) {
+                    // var countProf =  tabMatiere[i].split(':')[1].split('*').length-2;
+                    var countProf =  emploiTemps[i].id_enseignants.length;
                     j = 0;
                     while(j<countProf){
                         console.log("emploiTemps[i].id_enseignants[j]: ",emploiTemps[i].id_enseignants[j])
@@ -597,7 +545,6 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                         var container = document.getElementById('P_'+ jour + '_' +  periode);
                         container.appendChild(droppedprofDiv)
                         //container.addEventListener('click', () => {droppedProfClickHandler(droppedProfId)})
-
                         droppedMatiere.tabProfsID.push(droppedProfId);
                         
                         // let listProfs = currentUiContext.listProfs;
@@ -611,7 +558,6 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
                         PROF_DATA.sexe       = sexe;
-                        // PROF_DATA.NomProf    = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
                         PROF_DATA.NomProf    = sexe=='M' ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1] : emploiTemps[i].value.split("*")[2+j].split("%")[0].split("Mme.")[1];
                         PROF_DATA.idJour     = jour;
                         PROF_DATA.idMatiere  = idMatiereToDrop;
@@ -621,23 +567,19 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                         
                         CURRENT_DROPPED_PROFS_LIST.push(PROF_DATA);
                         j++;
-
                         console.log(PROF_DATA, CURRENT_DROPPED_PROFS_LIST)
                     }
                 }
                 
                 OLD_DROPPED_MATIERE.push(droppedMatiere);
                 //MISE A JOUR DES DONNEES GLOBALES
-                //  AddValueToValueDroppedMatiereList(-1,droppedMatiere);
-            
-            
+                //AddValueToValueDroppedMatiereList(-1,droppedMatiere);          
             }  
             i++;         
         }
    
-    }else{
-        loadClassesET(id_classe);
-    }
+    } else loadClassesET(id_classe);      
+ 
     currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
     currentUiContext.setNbRefreshEmpoiTemps(0);
 }
@@ -711,9 +653,7 @@ function matiereClickHandler(e){
 
 function initProfList(listProfs){
     clearProflist();
-    COUNT_SELECTED_PROFS=0;
     SELECTED_PROF_ID='';
-    SELECTED_PROF_TAB=[];
     CURRENT_DROPPED_PROFS_LIST=[];
    
 }
@@ -802,12 +742,9 @@ function clearGrille(TAB_PERIODES,TAB_JOURS) {
 function clearMatiereList(matieres){
     var parent, enfants, draggableSon;
     //On initialise tout ce aui concerne la matiere.
-    COUNT_SELECTED_MATIERES=0;
-    SELECTED_MATIERE_ID='';
-    SELECTED_MATIERE_TAB=[]
     CURRENT_DROPPED_MATIERE_LIST=[];
     CURRENT_MATIERE_LIST=[];
-    let MATIERE_MAXSIZE = matieres.length;
+    
     
     /*parent = document.getElementById('matieres');
     enfants = parent.childNodes;
@@ -1253,6 +1190,102 @@ const acceptHandler=()=>{
             })  
             return 1;
         }
+
+        case MSG_QUESTION_PAL1: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            }) 
+            
+            //currentUiContext.setIsParentMsgBox(true);                
+           
+            var profDropZone =  document.getElementById(droppedPPid); 
+            var profIndex = currentDroppedProfs.findIndex((elt)=>elt.idProf == droppedPPid);
+            
+            if(profIndex>=0){
+                var nomProf = currentDroppedProfs[profIndex].NomProf;
+                var idPP = "prof_" + nomProf;
+                document.getElementById(idPP).style.display="none";
+                currentDroppedProfs.splice(profIndex,1);
+            }
+
+            var children = profDropZone.childNodes;   
+            for(var i = 0; i < children.length; i++){
+                children[i].remove();
+            } 
+        
+            profDropZone.remove();
+    
+            if (profDropZone.style.borderColor=='red'){
+                profDropZone.style.borderStyle = null;
+                profDropZone.style.borderWidth = null;
+                profDropZone.style.borderColor = null;
+            }                   
+        }
+
+
+        case MSG_QUESTION_PAL2: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            }) 
+            //currentUiContext.setIsParentMsgBox(true);
+            //On update l'emploi de temps avec les modifs pour suppression effective
+            currentUiContext.setEmploiDeTemps(ppemploiDeTemps);
+
+            var profDropZone =  document.getElementById(droppedPPid);  
+            var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == droppedPPid);
+            
+            if(profIndex>=0){
+                var nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf;
+                var idPP = "prof_" + nomProf;
+                document.getElementById(idPP).style.display="none";
+            }
+
+            children = profDropZone.childNodes;   
+            for(var i = 0; i < children.length; i++){
+                children[i].remove();
+            } 
+            profDropZone.remove();
+    
+            if (profDropZone.style.borderColor=='red'){
+                profDropZone.style.borderStyle = null;
+                profDropZone.style.borderWidth = null;
+                profDropZone.style.borderColor = null;
+                profDropZone.className = null;
+            }
+            
+            CURRENT_DROPPED_PROFS_LIST.splice(ppIndex,1);
+            return 1;
+            
+        }
+
+        case MSG_SUCCESS_PAL: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            }) 
+            //currentUiContext.setIsParentMsgBox(true);
+            return 1;
+            
+        }
+
+        case MSG_WARNING_PAL: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            })  
+            //currentUiContext.setIsParentMsgBox(true);
+            return 1;
+        }
         
        
         default: {
@@ -1267,12 +1300,72 @@ const acceptHandler=()=>{
 }
 
 const rejectHandler=()=>{   
-    currentUiContext.showMsgBox({
-        visible:false, 
-        msgType:"", 
-        msgTitle:"", 
-        message:""
-    })  
+
+    switch(chosenMsgBox){
+        case MSG_QUESTION_PAL1: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            }) 
+        // currentUiContext.setIsParentMsgBox(true);
+            deleteContinu = false
+            return 1;
+        }
+
+        case MSG_QUESTION_PAL2: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            }) 
+        // currentUiContext.setIsParentMsgBox(true);
+        var profDropZone =  document.getElementById(droppedPPid);  
+        if (profDropZone.style.borderColor=='red'){
+            console.log("pppppdhdhd")
+            profDropZone.style.borderStyle = null;
+            profDropZone.style.borderWidth = null;
+            profDropZone.style.borderColor = null;
+            profDropZone.className = null;
+        }
+            return 1;
+        }
+
+        case MSG_SUCCESS_PAL: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            }) 
+        // currentUiContext.setIsParentMsgBox(true);
+            return 1;
+        }
+
+        case MSG_WARNING_PAL :{
+                currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            })  
+        // currentUiContext.setIsParentMsgBox(true);
+            return 1;
+        }
+
+        default: {
+            currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            })  
+        }
+    }
+    
+    
     
 }
 
@@ -1307,7 +1400,7 @@ function PrintEmploiDeTemps(){
             centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
             rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
             pageImages:["images/collegeVogt.png"],
-            pageTitle: "Emploi de temps de la classe de " + currentClasseLabel /*CURRENT_CLASSE_LABEL*/,
+            pageTitle: t("class_schedule") + currentClasseLabel /*CURRENT_CLASSE_LABEL*/,
             tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
             tableData :[],
             isClassET : true,
@@ -1320,7 +1413,8 @@ function PrintEmploiDeTemps(){
             numberEltPerPage:ROWS_PER_PAGE,
             emploiDeTemps:currentUiContext.emploiDeTemps.filter(em=>!em.modify.includes("s") && em.id_classe == currentClasseId),
             matieres:  currentUiContext.CURRENT_MATIERE_LIST,
-            profs : currentUiContext.listProfs
+            profs : currentUiContext.listProfs,
+            profprincipal: (currentPP==undefined || currentPP == {}) ? '': (currentPP.sexe == 'M') ? 'Mr ' + currentPP.NomProf : 'Mme ' + currentPP.NomProf
         };
         printedETFileName = "Emplois_de_temps_("+currentClasseLabel+").pdf"    
         setModalOpen(4);
@@ -1345,7 +1439,6 @@ const closePreview =()=>{
 
 function distinctList(list, prop){
     console.log("tabblle", list,currentUiContext.CURRENT_DROPPED_PROFS_LIST);
-    
     var resultList = [];
     if(list!= undefined && list.length > 0){
         list.map((elt1)=>{
@@ -1359,15 +1452,18 @@ function distinctList(list, prop){
 }
 
 function getPPClasses(pp_nom){
-    console.log("gdgdg",TAB_PROF_PRINCIPAUX)
+   
     var listClasses = '('+t("no_class")+')';
     var pp_classes = [];
+    
+    TAB_PROF_PRINCIPAUX = [...currentUiContext.currentPPList];
+    console.log("gdgdg",TAB_PROF_PRINCIPAUX)
   
     if(TAB_PROF_PRINCIPAUX.length>0){
        pp_classes = TAB_PROF_PRINCIPAUX.filter((elt)=>elt.PP_nom == pp_nom);
        
        if(pp_classes.length>0){
-            listClasses = '('; 
+            listClasses = '(PP:'; 
             pp_classes.map((elt, index)=>{
                 var classeProf = optClasse.find((classe)=>classe.value == elt.id_classe).label;
                 if(index+1 == pp_classes.length)
@@ -1385,6 +1481,516 @@ function getPPClasses(pp_nom){
 
 
 /*************************** <JSX Code> ****************************/
+
+function Palette(props) {
+
+    const currentUiContext = useContext(UiContext);
+    const [isValid,setIsValid]=useState(false);
+
+    //Cette constante sera lu lors de la configuration de l'utilisateur.
+    const selectedTheme = currentUiContext.theme;
+    const { t, i18n } = useTranslation();
+  
+    function getOngletProfStyle()
+    { // Choix du theme courant
+        if(currentUiContext.isMatiereEnable){
+            switch(selectedTheme){
+                case 'Theme1': return classesPal.paletteContainerP + ' '+ classesPal.Theme1_Btnstyle +' buttonDefault ';
+                case 'Theme2': return classesPal.paletteContainerP + ' '+ classesPal.Theme2_Btnstyle +' buttonDefault ';
+                case 'Theme3': return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault ';
+                default: return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault ';
+            }
+        } else {
+            switch(selectedTheme){
+                case 'Theme1': return classesPal.paletteContainerP + ' '+ classesPal.Theme1_Btnstyle +' buttonDefault Theme1_active';
+                case 'Theme2': return classesPal.paletteContainerP + ' '+ classesPal.Theme2_Btnstyle +' buttonDefault Theme2_active';
+                case 'Theme3': return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault Theme3_active';
+                      default: return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault Theme1_active';
+            }
+
+        }
+       
+    }
+
+
+    function getOngletMatiereStyle()
+    { // Choix du theme courant
+        if(currentUiContext.isMatiereEnable){
+            switch(selectedTheme){
+                case 'Theme1': return classesPal.paletteContainerP + ' '+ classesPal.Theme1_Btnstyle +' buttonDefault Theme1_active';
+                case 'Theme2': return classesPal.paletteContainerP + ' '+ classesPal.Theme2_Btnstyle +' buttonDefault Theme2_active';
+                case 'Theme3': return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault Theme3_active';
+                      default: return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault Theme1_active';
+            }
+           
+        } else {
+            switch(selectedTheme){
+                case 'Theme1': return classesPal.paletteContainerP + ' '+ classesPal.Theme1_Btnstyle +' buttonDefault ';
+                case 'Theme2': return classesPal.paletteContainerP + ' '+ classesPal.Theme2_Btnstyle +' buttonDefault ';
+                case 'Theme3': return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault ';
+                      default: return classesPal.paletteContainerP + ' '+ classesPal.Theme3_Btnstyle +' buttonDefault ';
+            }
+        }       
+    }
+
+    function deleteElements(){
+        CURRENT_DROPPED_MATIERE_LIST = currentUiContext.CURRENT_DROPPED_MATIERE_LIST;
+        CURRENT_DROPPED_PROFS_LIST = currentUiContext.CURRENT_DROPPED_PROFS_LIST;
+        console.log("CURRENT_DROPPED_MATIERE_LIST: ",CURRENT_DROPPED_MATIERE_LIST);
+        console.log("CURRENT_DROPPED_PROFS_LIST: ",CURRENT_DROPPED_PROFS_LIST);
+        deleteMatiere();
+        deleteProf();
+        currentUiContext.addMatiereToDroppedMatiereList(CURRENT_DROPPED_MATIERE_LIST,-1);
+        currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
+    }
+
+    function getCountSelectedDroppedMatieres(){
+        var count = 0;
+        for(var i=0 ; i<CURRENT_DROPPED_MATIERE_LIST.length; i++){
+            if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true) count++;
+        }
+        return count;
+    }
+
+    function isProfPrincipal(idprof,classeId){
+        var pp = currentUiContext.currentPPList.find((elt)=>(elt.PP_id == idprof && elt.id_classe == classeId))
+        if(pp!=undefined) return true;
+        else return false;
+    }
+
+    function deleteMatiere () {
+
+        var DropZoneId,toDeleIndex, droppedProfId, droppedProfZone,idTab;
+        var countMatiere, tabPos, profDropZone;
+        var currentDroppedProfs = [];
+        countMatiere = getCountSelectedDroppedMatieres();
+       
+       
+        tabPos = 0;
+        console.log('ggdgdgd',countMatiere, CURRENT_DROPPED_MATIERE_LIST);
+
+        while(tabPos<countMatiere){
+            
+            var toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true)
+            
+            DropZoneId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].idMatiere;
+            idTab = DropZoneId.split('_');
+            droppedProfZone ='P_'+idTab[1]+'_'+idTab[2]+'_'+idTab[3];
+                        
+            if(toDeleIndex >= 0){
+                
+                var matiereToDeleteProf = {...CURRENT_DROPPED_MATIERE_LIST[toDeleIndex]};
+               
+                if (CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.length > 0) {
+
+                    currentDroppedProfs = [...currentUiContext.CURRENT_DROPPED_PROFS_LIST];
+
+                    AssociatedProfCount = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.length;
+                    
+                    while(AssociatedProfCount > 0 && deleteContinu){
+                        
+                        droppedProfId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.shift();                        
+                        profDropZone =  document.getElementById(droppedProfId); 
+                        
+                        var idProf   = droppedProfId.split('_')[2];
+                        var idClasse = document.getElementById("selectClasse").value;
+                        var droppedPP = currentDroppedProfs.filter((elt)=>elt.idProf.split('_')[2] == idProf);
+                        console.log('gggggdrop',droppedPP);
+                        
+                        if (isProfPrincipal(idProf,idClasse)) {
+                            droppedPPid  = droppedProfId;
+                            if(droppedPP.length == 1){
+                                chosenMsgBox = MSG_QUESTION_PAL1;
+                                currentUiContext.showMsgBox({
+                                    visible:true, 
+                                    msgType:"question", 
+                                    msgTitle:t("question_M"),
+                                    message:t("L'enseignant affecte a cette matiere est professeur principal. Voulez-vous vraiment supprimer cette matiere?")
+                                }) 
+                            }
+
+                        } else {
+                            var profIndex = currentDroppedProfs.findIndex((elt)=>elt.idProf == droppedProfId);
+                            if(profIndex>=0){
+                                currentDroppedProfs.splice(profIndex,1);
+                            
+                                if(droppedPP.length == 1){
+                                    var nomProf = currentDroppedProfs[profIndex].NomProf;
+                                    var idPP = "prof_" + nomProf;
+                                    document.getElementById(idPP).style.display="none";
+                                }
+                                
+                            }
+
+                            var children = profDropZone.childNodes;   
+                            for(var i = 0; i < children.length; i++){
+                                children[i].remove();
+                            } 
+                        
+                            profDropZone.remove();
+                    
+                            if (profDropZone.style.borderColor=='red'){
+                                profDropZone.style.borderStyle = null;
+                                profDropZone.style.borderWidth = null;
+                                profDropZone.style.borderColor = null;
+                            }                   
+                           
+                        }    
+
+                        AssociatedProfCount--;                   
+                    }
+                    
+                    if(deleteContinu){
+                        CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
+                        document.getElementById(DropZoneId).remove();                           
+                        currentUiContext.addProfToDroppedProfList(currentDroppedProfs,-1);
+                        console.log("prof associes", currentDroppedProfs, currentUiContext.CURRENT_DROPPED_PROFS_LIST,droppedProfId);
+                    }
+                        
+                   
+                } else {
+                    CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
+                    document.getElementById(DropZoneId).remove();                   
+                }               
+            }
+            tabPos++;
+
+            let emploiDeTemps = currentUiContext.emploiDeTemps;
+            let emp = emploiDeTemps.filter(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+                e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
+            let empIndex = emploiDeTemps.findIndex(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+                e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
+                console.log("empIndex: ",empIndex);
+
+            if (emp.length>0){
+                let empToUpdate = emp[0];
+                // C'est un cours qui a été créé pendant la session courante on peut simplement le supprimer
+                if(empToUpdate.modify.includes("c"))
+                    emploiDeTemps.splice(empIndex,1)                
+                // Ca vient de la bd donc la suppression doit se faire en bd
+                else{
+                    empToUpdate.modify +="s";
+                    emploiDeTemps.splice(empIndex,1,empToUpdate)
+                    console.log("emploiDeTemps: ",emploiDeTemps);
+                }
+                    
+                currentUiContext.setEmploiDeTemps(emploiDeTemps);
+            }
+        }
+        currentUiContext.addMatiereToDroppedMatiereList(CURRENT_DROPPED_MATIERE_LIST,-2);
+        clearProflist();
+    }
+
+    function clearPPList(){
+        var parentDiv = document.getElementById("profsList2");
+        var childDiv = undefined
+        while(parentDiv.firstChild){
+            childDiv = parentDiv.firstChild;
+            parentDiv.removeChild(parentDiv.firstChild);
+        } 
+    }
+    
+    function deleteProf (){
+        
+        var DropProfId, children, profDropZone;
+        var associatedMatiere, idTab, matiereIndex,profIndex, indexProf, profId;
+        var countProfs = getCountSelectedDroppedProfs();
+        
+        console.log("delete prof: ",countProfs)
+       
+        if (countProfs >0) {
+            for(var i=0; i < countProfs; i++){
+                profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((prof)=>prof.isSelected == true)
+                DropProfId = CURRENT_DROPPED_PROFS_LIST[profIndex].idProf;
+                associatedMatiere = CURRENT_DROPPED_PROFS_LIST[profIndex].idMatiere;
+                matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere)
+                
+                if (profIndex>=0 && matiereIndex>=0){
+                    indexProf = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.findIndex((prof)=> prof == DropProfId);
+                   
+                    CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.splice(indexProf,1);
+
+                    var id_matiere = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].codeMatiere;
+                    var tab = DropProfId.split("_");
+                    let emploiDeTemps = currentUiContext.emploiDeTemps;
+                    let emp = emploiDeTemps.filter(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+                        e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
+                    console.log("emp: ",emp);
+                    let nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf[1];
+                    console.log("Mr"+nomProf+"%prof_"+tab[2]);
+                    
+                    // 5:10h30_11h25*2*Mr.Enseigant1 Aminata%prof_5*Mr.Censeur Censeur%prof_14
+                    let listProfs = currentUiContext.listProfs.filter(item=>item.id==tab[2]);
+                    console.log(listProfs);
+                    nomProf = listProfs[0].nom+" "+listProfs[0].prenom;
+                    if(emp.length>0){
+                        for(let i=0;i<emp.length;i++){
+                            let val =  emp[i].value;
+                            console.log(val,"Mr."+nomProf+"%prof_"+tab[2]);
+                            val = val.replace("*Mr."+nomProf+"%prof_"+tab[2],"")
+                            emp[i].value = val;
+                            console.log(emp);
+                        }
+                        let empIndex =-1;
+                        empIndex=emploiDeTemps.findIndex(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+                            e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
+                            console.log("empIndex: ",empIndex);
+                            if(empIndex>-1){
+                                emploiDeTemps[empIndex] = emp[0];
+                                emploiDeTemps[empIndex].modify += "e";
+                                emploiDeTemps[empIndex].id_enseignants.splice();
+                                let idEnsIndex = -1;
+                                idEnsIndex = emploiDeTemps[empIndex].id_enseignants.findIndex(item=>item==tab[2]);
+                                console.log("idEnsIndex: ",idEnsIndex,tab[2])
+                                if(idEnsIndex>-1) 
+                                    emploiDeTemps[empIndex].id_enseignants.splice(idEnsIndex,1);
+
+                            }
+                        console.log("emploiDeTemps: ",emploiDeTemps)                     
+                    }
+
+                    //console.log("prof trouvé: ",DropProfId);
+                    var idProf   = DropProfId.split('_')[2];
+                    var idClasse = document.getElementById("selectClasse").value;
+                    var droppedPP = CURRENT_DROPPED_PROFS_LIST.filter((elt)=>elt.idProf.split('_')[2] == idProf);
+
+                    if (isProfPrincipal(idProf,idClasse)) {
+                        droppedPPid  = DropProfId;
+                        ppemploiDeTemps = [...emploiDeTemps];
+                        ppIndex = profIndex;                        
+
+                        if(droppedPP.length == 1){
+                            chosenMsgBox = MSG_QUESTION_PAL2;
+                            currentUiContext.showMsgBox({
+                                visible:true, 
+                                msgType:"question", 
+                                msgTitle:t("question_M"),
+                                message:t("L'enseignant selectionne est principal. Voulez-vous vraiment le supprimer ?")
+                            }) 
+                        }
+
+                    } else {
+                        //On update l'emploi de temps avec les modifs pour suppression effective
+                        currentUiContext.setEmploiDeTemps(emploiDeTemps);
+
+                        profDropZone =  document.getElementById(DropProfId);  
+                        var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == DropProfId);
+                
+                        if(profIndex>=0 && droppedPP.length==1){
+                            var ProfName = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf;
+                            var idPP = "prof_" + ProfName;
+                            document.getElementById(idPP).style.display="none";
+                        }
+
+                        children = profDropZone.childNodes;   
+                        for(var i = 0; i < children.length; i++){
+                            children[i].remove();
+                        } 
+                        profDropZone.remove();
+                
+                        if (profDropZone.style.borderColor=='red'){
+                            profDropZone.style.borderStyle = null;
+                            profDropZone.style.borderWidth = null;
+                            profDropZone.style.borderColor = null;
+                            profDropZone.className = null;
+                        }
+                        
+                        CURRENT_DROPPED_PROFS_LIST.splice(profIndex,1);       
+                    }
+                
+                } else alert("Erreur, le prof n'est pas enregistre pour une matiere");              
+            }
+                 
+            currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1); 
+        } 
+    }
+    
+    function clearProflist(){
+        let listProfs = currentUiContext.listProfs;
+        var draggableSon, draggableSonText, draggableSonImg;
+        var PROFLIST_MAXSIZE =listProfs.length;
+        for (var i = 0; i < PROFLIST_MAXSIZE; i++) {
+            draggableSon =  document.getElementById('prof_' + listProfs[i].id);
+            draggableSonText = document.getElementById('prof_' + listProfs[i].id+'_sub');
+        
+            draggableSon.className = null;
+            draggableSon.title = '';
+            draggableSonText.textContent ='';
+            draggableSonText.className = null;
+
+            draggableSonImg =  document.getElementById('prof_' + listProfs[i].id + '_img');
+            draggableSonImg.className = null;
+
+            draggableSonImg = document.querySelector('#prof_' + listProfs[i].id + '_img > img');
+            draggableSonImg.style.display = 'none';
+        } 
+        CURRENT_PROFS_LIST = [];
+    }
+
+    function getCountSelectedDroppedProfs(){
+        var count = 0;
+        var nb = CURRENT_DROPPED_PROFS_LIST.length;
+        for(let i=0 ; i<nb; i++){
+            if(CURRENT_DROPPED_PROFS_LIST[i].isSelected==true) count++;
+        }
+        return count;
+    }
+
+    function getProfsList2(codeMatiere)
+    {   console.log("codeMatiere: ",codeMatiere);
+        var libre=true;
+        let listProfs = currentUiContext.listProfs;
+        let emploiDeTemps = currentUiContext.emploiDeTemps
+        let profLibres = [];
+        let profsMatieres = listProfs.filter((prof)=>prof.id_spe1==codeMatiere||prof.id_spe2==codeMatiere||prof.id_spe3==codeMatiere);
+        console.log("*** listProfs: ",listProfs)
+        for(let i=0;i<profsMatieres.length;i++){
+            libre = true;
+            for(let j=0;j<emploiDeTemps.length;j++){
+                if(emploiDeTemps[j].id_enseignants.includes(profsMatieres[i].id)){
+                    // console.log("==EGALITE  emploiDeTemps[j]: ",emploiDeTemps[j],"profsMatieres[i]: ",profsMatieres[i],emploiDeTemps[j].id_enseignants.includes(profsMatieres[i].id))
+                    libre=false;
+                    break;
+                }
+            }
+            if (libre) profLibres.push(profsMatieres[i])
+        }
+        console.log("*** profLibres: ",profLibres)
+        // profList = getProfs(codeMatiere)
+        // tabProfs = profList.split('_');
+        // initProfListWithProfs2(profsMatieres);
+        initProfListWithProfs2(profLibres);
+    
+    }
+    function initProfListWithProfs2(){
+        var parent = document.getElementById('profList');
+        var draggableSon, draggableSonText, draggableSonImg;
+        let listeProf = currentUiContext.listeProf;
+        clearProflist();
+        //alert(listeProf);
+      
+        for (var i = 0; i < listeProf.length; i++) {
+            PROF_DATA = {};
+            draggableSon =  document.getElementById('prof_' + listeProf[i].id);
+            draggableSonText = document.getElementById('prof_' + listeProf[i].id+'_sub');
+            
+            draggableSon.className = classesP.profDivStyle;  
+            draggableSon.title = listeProf[i].nom+" "+listeProf[i].prenom;       
+            
+            draggableSonText.textContent = listeProf[i].nom;
+            draggableSonText.className = classesP.profTextSyle;            
+    
+            draggableSonImg =  document.getElementById('prof_' + listeProf[i].id + '_img');
+            draggableSonImg.className = classesP.profImgStyle;
+    
+            draggableSonImg = document.querySelector('#prof_' + listeProf[i].id + '_img > img')
+    
+            draggableSonImg.setAttribute('src',"images/maleTeacher.png");
+    
+            // if(listeProf[i].includes('Mr.')) {
+            //     draggableSonImg.setAttribute('src',"images/maleTeacher.png");
+            // }else{
+            //     draggableSonImg.setAttribute('src',"images/femaleTeacher.png");
+            // }
+            
+            
+            PROF_DATA.idProf = 'prof_' +listeProf[i].id;
+            PROF_DATA.NomProf = listeProf[i].nom;
+            
+            CURRENT_PROFS_LIST.push(PROF_DATA);
+            PROF_DATA = {};                                     
+        }
+     
+    }
+
+    
+    function enableMatieresList(){
+        currentUiContext.setIsMatiereEnable(true);
+    }
+
+    
+    function initMatiereList(listeMatieres){
+        var CURRENT_MATIERE_LIST=[];
+        console.log("listeMatieres: ",listeMatieres)
+      
+        var MATIERE_DATA ={}
+        var parent, draggableSon;
+        var tabMatiere =[];
+        
+        for (var i = 0; i < listeMatieres.length; i++) {
+            
+            tabMatiere = listeMatieres[i].split('*');
+            parent =  document.getElementById('matiere_' + tabMatiere[1]);
+            draggableSon = document.getElementById('matiere_' + tabMatiere[1]+'_sub');
+            parent.className = classes.matiereStyle; 
+            
+            // parent.style.backgroundColor=COLORS[colorIndexes[i]];  
+            parent.style.backgroundColor=tabMatiere[2];  
+            parent.title = tabMatiere[0];
+            
+            MATIERE_DATA = {};
+            MATIERE_DATA.idMatiere = 'matiere_' + tabMatiere[1];
+            MATIERE_DATA.libelleMatiere = tabMatiere[0];
+            MATIERE_DATA.codeMatiere = tabMatiere[1];
+           
+            MATIERE_DATA.colorCode = tabMatiere[2];
+            
+            CURRENT_MATIERE_LIST[i] = MATIERE_DATA;
+            
+            draggableSon.textContent = tabMatiere[0];
+            draggableSon.className = classes.matiereTitleStyle;                     
+                  
+        }
+        MATIERE_DATA = {};
+        console.log('matieres',CURRENT_MATIERE_LIST);
+        currentUiContext.setCURRENT_MATIERE_LIST(CURRENT_MATIERE_LIST);
+    }
+
+    function enableprofsList(){
+        currentUiContext.setIsMatiereEnable(false);
+    }
+   
+    return (    
+        <div style={{display:'flex', flexDirection:'column'}}> 
+            <div className={classesPal.paletteContainer} style={{marginBottom:'2vh'}}> 
+                <div className={classesPal.buttonContainer}>
+                    <CustomButton
+                        btnText=''
+                        buttonStyle={classesPal.buttonStyle}
+                        //btnTextStyle = {classes.btnTextStyleX}
+                        hasIconImg= {true}
+                        imgSrc='images/delete.png'
+                        imgStyle = {classesPal.imgStyle}
+                        btnClickHandler={deleteElements}
+                    />           
+                </div>
+            </div>
+
+            <CustomButton  
+                id='matieresPalette'
+                btnText=' Matieres'
+                hasIconImg= {false}
+                buttonStyle={getOngletMatiereStyle()}
+                style={{marginBottom:'1.3vh'}}
+                btnClickHandler={enableMatieresList}
+                btnTextStyle={classesPal.ongletTexte}                                                   
+            />
+
+            <CustomButton 
+                id='profPrincipalPalette' 
+                btnText=' Principal'
+                hasIconImg= {false}
+                buttonStyle={getOngletProfStyle()}
+                btnClickHandler={enableprofsList}
+                btnTextStyle={classesPal.ongletTexte} 
+                disable={(currentUiContext.CURRENT_DROPPED_PROFS_LIST.length == 0)}                                                   
+            />  
+        </div> 
+       
+    );
+}
+
+
 
 function LigneMatieres(props) {
   
@@ -1434,12 +2040,12 @@ function LigneProfPrincipal(props) {
         <div style={{display:'flex', flexDirection:'row'}}>
 
             <div className={classes.profTitle} style={{marginLeft:'-3vw'}}>{t('enseignants')}</div>
-            <div id='profsList' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw', height:"4.7vw" /*position:'absolute'*/}}>
+            <div id='profsList1' style={{display:'flex', flexDirection:'row', alignItems:'center', borderStyle:'solid', borderWidth:'1.7px',paddingLeft:'0.5vw',borderRadius:'4px', width:'65vw', height:"5.7vw", /*position:'absolute'*/}}>
                
-                <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
+                <div id= "profsList2" style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', overflowX:'scroll', width:'87%'}}>
                     {distinctList(currentUiContext.CURRENT_DROPPED_PROFS_LIST,"NomProf").map((prof) => {
                         return (
-                                <div style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
+                                <div id ={"prof_" + prof.NomProf} style={{display:'flex', flexDirection:'column', marginLeft:'1vw'}}> 
                                     <div style={{display:'flex', flexDirection:'row'}}> 
                                         <input id ={prof.NomProf} type='radio' name='ppsList' checked={selectedPP.NomProf==prof.NomProf} onClick={getSelectedProf}/>
                                         <img src= {prof.sexe=='M'? "images/maleTeacher.png" : "images/femaleTeacher.png"} style={{width:'2vw'}}/>
@@ -1447,7 +2053,7 @@ function LigneProfPrincipal(props) {
                                     
                                     <div style={{display:'flex', flexDirection:'column'}}> 
                                         <div style={{fontSize:'0.9vw'}}>{prof.NomProf}</div>
-                                        <div style={{fontSize:'0.79vw', textAlign:'center', marginTop:'-0.77vh'}}>{getPPClasses(prof.NomProf)}</div>
+                                        <div style={{fontSize:'0.79vw', textAlign:'center', marginTop:'-0.77vh',/*color:'red'*/ color:'#3a5da1',fontWeight:'bold'}}>{getPPClasses(prof.NomProf)}</div>
                                     </div>
                                 </div>
                             );
@@ -1460,7 +2066,7 @@ function LigneProfPrincipal(props) {
                     id = {"addEleve"}
                     btnText={t("def_as_principal")}
                     buttonStyle={getSmallButtonStyle()}
-                    style={{marginBottom:'-0.3vh',position :'relative', right:'-37vw'}}
+                    style={{marginBottom:'-0.3vh'}}
                     btnTextStyle = {classesPP.btnSmallTextStyle}
                     btnClickHandler={validerPP}
                 />
@@ -1570,18 +2176,6 @@ function LigneProfPrincipal(props) {
                         <div className={classes.PalettePosition}>
                             <Palette/>
                         </div>
-                        
-
-                        {/*currentUiContext.isMatiereEnable ?
-                            <div className={classes.matiereTitle}>
-                                {t('matieres')}
-                            </div>
-                            :
-                            <div className={classes.matiereTitle}>
-                                {t('matieres')}
-                            </div>*/
-                        }
-                        
 
                         <div style={{display:'flex', flexDirection:'row',justifyContent:'center'}}>
                             <div className={classes.grilleEtMatiere}> 
@@ -1665,9 +2259,7 @@ function LigneProfPrincipal(props) {
                         btnTextStyle = {classes.btnTextStyle}
                         btnClickHandler={cancelHandler}
                     />
-                    
-                    
-                  
+
                     <CustomButton
                         btnText={t('save')} 
                         buttonStyle={getButtonStyle()}
@@ -1676,7 +2268,6 @@ function LigneProfPrincipal(props) {
                         disable={(currentUiContext.ETDataChanged==true)}
                         // disable={(currentUiContext.CURRENT_DROPPED_MATIERE_LIST.length == 0)}
                     />
-                    
 
                     <CustomButton
                         btnText={t('imprimer')}

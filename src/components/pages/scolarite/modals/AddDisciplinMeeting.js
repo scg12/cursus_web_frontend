@@ -1477,7 +1477,7 @@ function AddDisciplinMeeting(props) {
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LigneProfParticipantHeader date={'Date'} nbreJours={t('nbre_jours')} etat={'Etat'}/>
                                     {(optMembres||[]).map((prof)=>{
-                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.nom} role={prof.role} etat={prof.etat}/>
+                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.label} role={prof.role} etat={prof.etat}/>
                                         })
                                     }
                                 </div>                                    

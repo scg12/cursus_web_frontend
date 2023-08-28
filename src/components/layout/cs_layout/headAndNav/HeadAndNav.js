@@ -18,14 +18,6 @@ import axiosInstance from "../../../../axios";
 
 
 
-var currentActiveMenuId ='menuLi0';
-
-var constMsg ={
-    msgShown:false,
-    msgType:'info',
-    msgTitle:"",
-    message:"",   
-}
 var chosenMsgBox;
 const MSG_SUCCESS  =1;
 const MSG_WARNING  =2;
@@ -167,9 +159,9 @@ function HeadAndNav(props) {
         toggleActiveMenu(firstMenu);
     }
 
+
     const acceptHandler=()=>{
         switch(chosenMsgBox){
-
             case MSG_SUCCESS: {
                 currentUiContext.showMsgBox({
                     visible:false, 
@@ -179,30 +171,32 @@ function HeadAndNav(props) {
                 }) 
                 return 1;
             }
-            
+
     
             case MSG_QUESTION: {
                 console.log("IL VEUT DECONNECTER: ")
-                axiosInstance
-                .post(`logout/`,
-                {
-                    refresh: localStorage.getItem('refresh'),
-                },{headers:{}})
-                .then((res) => {
-                    localStorage.removeItem('access');
-                    localStorage.removeItem('refresh');
-                    console.log(res.data);
-                },(res)=>{                    
-                    console.log('Erreur: ',res);
-                });
+                currentUiContext.updateFirstLoad(true);
+                currentAppContext.logOut();
+                currentUiContext.setCurrentSelectedMenuID('0');
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 }) 
-                currentUiContext.updateFirstLoad(true);
-                currentAppContext.logOut();
+               
+
+                axiosInstance.post(`logout/`, {
+                    refresh: localStorage.getItem('refresh'),
+                },{headers:{}})
+                    .then((res) => {
+                        localStorage.removeItem('access');
+                        localStorage.removeItem('refresh');
+                        console.log(res.data);
+                    },(res)=>{                    
+                        console.log('Erreur: ',res);                       
+                    });                    
+               
                 return 1;
             }
     

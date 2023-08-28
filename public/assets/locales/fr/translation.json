@@ -1,4 +1,5 @@
-{   "no_class":"Libre",
+{   "class_schedule":"Emploi de temps de la classe de ",
+    "no_class":"Libre",
     "rollback_changes":"Voulez-vous vraiment annuler les modifications appportées?",
     "save_changes":"Voulez-vous vraiment enregistrer les modifications appportées?",
     "non_justify_auth_exist":"Il existe des autorisations non justifiées pour cet élève!!!",

@@ -1,3 +1,18 @@
+.msgContent{
+    display: flex;
+    color:black;
+    font-size: 1vw;
+    font-weight: 657;
+    align-self: center;
+    margin-left: 0.17vw;
+
+}
+
+.msgBoxImgStyleP{
+    width:2.7vw;
+    height: 2.7vw;
+}
+    
 .ongletTexte{
     transform: rotate(-90deg);
     color:white;

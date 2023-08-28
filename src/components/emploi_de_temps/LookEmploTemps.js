@@ -43,6 +43,8 @@ var currentClasseLabel = undefined;
 var currentTeacherId = undefined;
 var currentTeacherLabel = undefined;
 var printedETFileName='';
+var CURRENT_PP = undefined;
+
 
 var ETPageSet ={};
 
@@ -67,6 +69,7 @@ function LookEmploTemps(props) {
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [byClassEnable, setByClassEnable] = useState(true);
     const { t, i18n } = useTranslation();
+    const [currentPP, setCurrentPP] = useState({});
     
     
     const changeLanguage = (event) => {
@@ -155,6 +158,10 @@ function LookEmploTemps(props) {
                 indexClasse = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==currentClasseId);
                 console.log("INDEX: ",indexClasse);
 
+                CURRENT_PP = getPPInfos(currentClasseId);
+                setCurrentPP(CURRENT_PP);
+                // setIsPPset(currentPP!=undefined)
+
                 clearGrille(currentUiContext.TAB_PERIODES, currentUiContext.TAB_JOURS.length);
                 
             
@@ -225,6 +232,21 @@ function LookEmploTemps(props) {
     }
 
     /*************************** <Managing Handlers> ****************************/
+    function getPPInfos(classeId){
+        var ppInfo = undefined;
+        if(currentUiContext.currentPPList.length>0){
+           var pp = currentUiContext.currentPPList.find((elt)=>elt.id_classe == classeId);
+           if(pp!=undefined){
+                ppInfo = {}
+                ppInfo.NomProf = pp.PP_nom;
+                ppInfo.id      = pp.PP_id; 
+                ppInfo.sexe    = pp.sexe;          
+            }
+        }
+        console.log('currentPP',ppInfo);
+        return ppInfo;
+    }
+
     function saveEmploiDeTemps(classeId){
         //Ici on ecrit le code du save.
     }
@@ -247,13 +269,28 @@ function LookEmploTemps(props) {
         currentClasseId = e.target.value;
         currentClasseLabel = optClasse.find((elt)=>elt.value == currentClasseId).label;
         loadClassesET(currentClasseId);
+        
+        //gerer le profs principaux
+        //au chargement, voir s'il y a un pp et le definir ds les useStates
+        var PP_info = currentUiContext.currentPPList.find((elt)=>elt.id_classe == currentClasseId);
+        if(PP_info != undefined){
+            CURRENT_PP = {}
+            CURRENT_PP.NomProf = PP_info.PP_nom;
+            CURRENT_PP.id      = PP_info.PP_id;
+            CURRENT_PP.sexe    = PP_info.sexe;
+            setCurrentPP(CURRENT_PP);
+            
+        } else {
+            setCurrentPP({});
+        }
+
     }
 
 
     function dropDownTeachersHandler(e){
         currentTeacherId = e.target.value;
         currentTeacherLabel = optTeachers.find((elt)=>elt.value == currentTeacherId).label;
-        loadTeachersET(currentTeacherId);
+        loadTeachersET(currentTeacherId);        
     }
 
 
@@ -1291,7 +1328,8 @@ function PrintEmploiDeTemps(){
             matieres:  currentUiContext.CURRENT_MATIERE_LIST,
             profs : currentUiContext.listProfs,
             nbreHeures : getCourseCount(),  
-            classesET : getETClasses()     
+            classesET : getETClasses(),    
+            profprincipal: (currentPP==undefined || currentPP == {}) ? '': (currentPP.sexe == 'M') ? 'Mr ' + currentPP.NomProf : 'Mme ' + currentPP.NomProf
         };
               
         setModalOpen(4);
