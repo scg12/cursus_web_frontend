@@ -136,7 +136,7 @@ function LookEmploTemps(props) {
                 setOptClasse(createOption2(currentUiContext.classeEmploiTemps));
                 setByClassEnable(true);
 
-                console.log("init TAB_VALEUR_HORAIRE",currentUiContext.TAB_VALEUR_HORAIRE)
+                console.log("init TAB_VALEUR_HORAIRE",currentUiContext.listProfs,currentUiContext.TAB_VALEUR_HORAIRE)
 
             
 
@@ -1326,15 +1326,16 @@ function PrintEmploiDeTemps(){
             numberEltPerPage:ROWS_PER_PAGE,
             emploiDeTemps:getPrintedETData(),
             matieres:  currentUiContext.CURRENT_MATIERE_LIST,
-            profs : currentUiContext.listProfs,
+            profs   :  currentUiContext.listProfs,
             nbreHeures : getCourseCount(),  
-            classesET : getETClasses(),    
+            classesET  : getETClasses(),    
             profprincipal: (currentPP==undefined || currentPP == {}) ? '': (currentPP.sexe == 'M') ? 'Mr ' + currentPP.NomProf : 'Mme ' + currentPP.NomProf
         };
-              
+
+        console.log("iciPro",ETPageSet);       
         setModalOpen(4);
         ETPageSet={...PRINTING_DATA};
-        console.log("iciPro",ETPageSet);       
+             
         
     } else{
         chosenMsgBox = MSG_WARNING;
@@ -1355,8 +1356,8 @@ function getPrintedETTitleLabel(){
     else {
         printedETFileName = "Emplois_de_temps_"+(currentTeacherLabel)+".pdf"
        var sexe = currentUiContext.listProfs.find((elt)=>elt.id == currentTeacherId).sexe;
-       if (sexe=="M") return "Emploi de temps de Mr/Mme " + currentTeacherLabel;
-       else return "Emploi de temps de Mr/Mme " + currentTeacherLabel;
+       if (sexe=="M") return "Emploi de temps de Mr " + currentTeacherLabel;
+       else return "Emploi de temps de Mme " + currentTeacherLabel;
         
     }
 }

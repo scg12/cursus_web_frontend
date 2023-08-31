@@ -71,8 +71,13 @@ function AddClassMeeting(props) {
     const [optPromuEn, setOptPromuEn] = useState([]);
     const [infosEleves, setInfosEleves] = useState([]);
 
-    var firstSelectItem = {
+    var firstSelectItem1 = {
         value: 0,   
+        label:'-----'+ t('choisir') +'-----'
+    }
+
+    var firstSelectItem2 = {
+        value: undefined,   
         label:'-----'+ t('choisir') +'-----'
     }
 
@@ -86,9 +91,9 @@ function AddClassMeeting(props) {
 
     
     const tabTypeConseil=[
-        {value:1, label:"Conseil bilan sequentiel" },
-        {value:2, label:"Conseil bilan trimestriel"},
-        {value:3, label:"Conseil bilan annuel"     },
+        {value:"sequentiel",  label:"Conseil bilan sequentiel" },
+        {value:"trimestriel", label:"Conseil bilan trimestriel"},
+        {value:"annuel",      label:"Conseil bilan annuel"     },
     ];
     
     
@@ -102,7 +107,7 @@ function AddClassMeeting(props) {
         if (props.formMode == 'creation'){
    
             var tempTab = [...tabTypeConseil];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem2);
             setOptObjet(tempTab);
 
             tempTab = [...props.defaultMembres];
@@ -110,7 +115,7 @@ function AddClassMeeting(props) {
             setOptMembres(tempTab);
     
             tempTab = [...props.otherMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptAutresMembres(tempTab);
 
             console.log("les tableaux", optMembres,optAutresMembres);
@@ -118,11 +123,11 @@ function AddClassMeeting(props) {
         } else {
  
             var tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptMembres(tempTab);
     
             tempTab = [...props.otherMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptAutresMembres(tempTab);
 
             tempTab = [...props.presentsMembres];
@@ -608,7 +613,7 @@ function AddClassMeeting(props) {
         var typeConseil = e.target.value;
         var tabPeriode = nonDefini;
         
-       if(typeConseil != "null"){       
+       if(typeConseil != undefined){       
             switch(typeConseil){
                 case 'sequentiel'  : {tabPeriode = [...props.sequencesDispo];              break;}
                 case 'trimestriel' : {tabPeriode = [...props.trimestresDispo];             break;}

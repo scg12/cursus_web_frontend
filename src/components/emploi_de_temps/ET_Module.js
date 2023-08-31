@@ -660,14 +660,14 @@ export const profZoneClickedHandler=(id)=>{
             if(CURRENT_DROPPED_PROFS_LIST[index].isSelected == false){
                 CURRENT_DROPPED_PROFS_LIST[index].isSelected = true;
                 document.getElementById(SELECTED_PROF_ID).style.borderStyle ='solid';
-                document.getElementById(SELECTED_PROF_ID).style.borderWidth ='1px';  
-                document.getElementById(SELECTED_PROF_ID).style.borderColor ='red';
+                document.getElementById(SELECTED_PROF_ID).style.borderWidth ='1.7px';  
+                document.getElementById(SELECTED_PROF_ID).style.borderColor ='red';                
 
             } else {
                 CURRENT_DROPPED_PROFS_LIST[index].isSelected = false;
                 document.getElementById(SELECTED_PROF_ID).style.borderStyle = null;
                 document.getElementById(SELECTED_PROF_ID).style.borderWidth = null;
-                document.getElementById(SELECTED_PROF_ID).style.borderColor = null;
+                document.getElementById(SELECTED_PROF_ID).style.borderColor = null;               
             }
  
         } else{

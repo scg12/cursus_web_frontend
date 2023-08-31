@@ -260,8 +260,11 @@ function ETTemplate(props){
                     <View style={styles.pageTitleContainer}>
                         <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:13, textTransform:'uppercase', fontWeight:'heavy'}}>{props.pageSet.pageTitle}</Text>
                     </View>
-                    {(props.pageSet.profprincipal.length>0)&&
-                        <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:11.5, textTransform:'uppercase', marginLeft:'2vw', fontWeight:'heavy'}}> ({t('principal_M')} :{props.pageSet.profprincipal})</Text>
+                    {(isClassET&&props.pageSet.profprincipal.length>0)&&
+                        <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:11.5, /*textTransform:'uppercase',*/ marginLeft:'2vw', fontWeight:'heavy'}}> ({t('principal')} :{props.pageSet.profprincipal})</Text>
+                    }
+                    {!isClassET && 
+                        <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:11.5, /*textTransform:'uppercase',*/ marginLeft:'2vw', fontWeight:'heavy', marginTop:'3vh'}}>({t('total_hours')} : {props.pageSet.nbreHeures} {(props.pageSet.nbreHeures > 1) ? t("hours"):t("hour") })</Text>
                     }
                 </View>
                 
@@ -311,7 +314,7 @@ function ETTemplate(props){
                         )
                     )}
                     
-                    {!isClassET && <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:12, textTransform:'uppercase', fontWeight:'heavy', marginTop:'3vh'}}>NOMBRE TOTAL D'HEURES : {props.pageSet.nbreHeures} {(props.pageSet.nbreHeures > 1) ? "HEURES":"HEURE" }</Text>}
+                    
                 </View>
                 
                 <View style={styles.footer}> 

@@ -78,7 +78,7 @@ function DroppableDiv(props){
         CURRENT_PROFS_LIST = currentUiContext.CURRENT_PROFS_LIST;
         console.log("*** dropHandler id: ",id,CURRENT_MATIERE_LIST);
         console.log("CURRENT_DROPPED_MATIERE_LIST:",CURRENT_DROPPED_MATIERE_LIST);
-        console.log("CURRENT_MATIERE_LIST:",CURRENT_MATIERE_LIST);
+        console.log("CURRENT_MATIERE_LIST et PROFS:",CURRENT_MATIERE_LIST);
         CURRENT_DROPPED_PROFS_LIST=currentUiContext.CURRENT_DROPPED_PROFS_LIST;
 
         var id_matiere = 0;

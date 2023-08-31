@@ -116,11 +116,11 @@ function ConseilClasse(props) {
                 OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
                 PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
 
-                SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs);
-                TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims);
+                SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs_dispo);
+                TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
                 ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
 
-                listConseils = [...formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims)]
+                listConseils = [...formatList(res.data.conseil_classes, res.data.seqs_dispo, res.data.trims_dispo)]
                 console.log(listConseils);                
             }
      
