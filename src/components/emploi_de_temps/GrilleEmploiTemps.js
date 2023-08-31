@@ -108,7 +108,8 @@ function GrilleEmploiTemps(props) {
     
     useEffect(()=> {
         console.log("les menus",currentUiContext.previousSelectedMenuID, currentUiContext.currentSelectedMenuID)
-        if((currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID) || (currentUiContext.previousSelectedMenuID=='0' && currentUiContext.currentSelectedMenuID=='0')){
+       // if((currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID) || (currentUiContext.previousSelectedMenuID=='0' && currentUiContext.currentSelectedMenuID=='0')){
+        if(optClasse.length == 0){
             console.log("00000 ",currentUiContext)
        
             if(currentUiContext.TAB_CRENEAU_PAUSE.length>0) {
