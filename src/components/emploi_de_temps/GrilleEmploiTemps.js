@@ -204,7 +204,7 @@ function GrilleEmploiTemps(props) {
 
     function getPPInfos(classeId){
         var ppInfo = undefined;
-        if(currentUiContext.currentPPList.length>0){
+        if(currentUiContext.currentPPList!= undefined && currentUiContext.currentPPList.length>0){
            var pp = currentUiContext.currentPPList.find((elt)=>elt.id_classe == classeId);
            if(pp!=undefined){
                 ppInfo = {}

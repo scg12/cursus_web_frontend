@@ -80,8 +80,13 @@ function AddDisciplinMeeting(props) {
     
     
     
-    var firstSelectItem = {
+    var firstSelectItem1 = {
         value: 0,   
+        label:'-----'+ t('choisir') +'-----'
+    }
+
+    var firstSelectItem2 = {
+        value: undefined,   
         label:'-----'+ t('choisir') +'-----'
     }
 
@@ -89,11 +94,17 @@ function AddDisciplinMeeting(props) {
         {value: -1,   label:'-----'+ t('non defini') +'-----' },
     ];
 
-    const tabTypeConseil=[
-        {value:"null", label:'-----'+ t('choisir') +'-----'    },
-        {value:1,      label:"Conseil bilan sequentiel" },
-        {value:2,      label:"Conseil bilan trimestriel"},
+    const choisir = [        
+        {value: undefined,   label:'-----'+ t('choisir') +'-----' },
     ];
+
+  
+
+    const tabTypeConseil=[
+        {value:"sequentiel",  label:"Conseil bilan sequentiel" },
+        {value:"trimestriel", label:"Conseil bilan trimestriel"}       
+    ];
+    
    
   
     useEffect(()=> {
@@ -105,20 +116,24 @@ function AddDisciplinMeeting(props) {
         
 
         if (props.formMode == 'creation'){
-            setOptObjet(tabTypeConseil);
+           
             setTabElevesMotifs([]);
-            setTabElevesDecisions([]);    
+            setTabElevesDecisions([]);   
+            
+            var tempTab = [...tabTypeConseil];
+            tempTab.unshift(firstSelectItem2);
+            setOptObjet(tempTab);
             
             var tempTab = [...props.convoquePar];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptConvocateurs(tempTab);
             
             tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptMembres(tempTab);
     
             tempTab = [...props.othersMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptAutresMembres(tempTab);
 
             console.log("les tableaux",optConvocateurs,optMembres,optAutresMembres);
@@ -126,15 +141,15 @@ function AddDisciplinMeeting(props) {
         } else {
 
             var tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptConvocateurs(tempTab);
             
             tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptMembres(tempTab);
     
             tempTab = [...props.othersMembres];
-            tempTab.unshift(firstSelectItem);
+            tempTab.unshift(firstSelectItem1);
             setOptAutresMembres(tempTab);
 
             console.log("les tableaux",optConvocateurs,optMembres,optAutresMembres);
@@ -289,10 +304,10 @@ function AddDisciplinMeeting(props) {
         var typeConseil = e.target.value;
         var tabPeriode = nonDefini;
         
-       if(typeConseil != "null"){       
+        if(typeConseil != undefined){       
             switch(typeConseil){
-                case 'sequentiel'  : {tabPeriode = [...props.sequencesDispo]; break;}
-                case 'trimestriel' : {tabPeriode = [...props.trimestresDispo]; break;}
+                case 'sequentiel'  : {tabPeriode = [...props.sequencesDispo];              break;}
+                case 'trimestriel' : {tabPeriode = [...props.trimestresDispo];             break;}                
                 default: tabPeriode = nonDefini;
             }
             console.log("periode choisie",tabPeriode, typeConseil, props.sequencesDispo)
