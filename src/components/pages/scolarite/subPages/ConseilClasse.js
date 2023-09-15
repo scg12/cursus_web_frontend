@@ -61,8 +61,9 @@ var page = {
 }
 
 var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
+const MSG_SUCCESS_CREATE = 1;
+const MSG_SUCCESS_PRINT  = 2;
+const MSG_WARNING        = 3;
 const ROWS_PER_PAGE= 40;
 var CCPageSet=[];
 
@@ -112,7 +113,7 @@ function ConseilClasse(props) {
                 CURRENT_PROF_PP_USERID  = res.data.prof_principal.user_id;
                 CURRENT_PROF_PP_LABEL   = res.data.prof_principal.nom;
                 
-                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_conv];
+                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_classe];
                 OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
                 PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
 
@@ -120,7 +121,7 @@ function ConseilClasse(props) {
                 TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
                 ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
 
-                listConseils = [...formatList(res.data.conseil_classes, res.data.seqs_dispo, res.data.trims_dispo)]
+                listConseils = [...formatList(res.data.conseil_classes,res.data.prof_principal,res.data.seqs_dispo, res.data.trims_dispo)]
                 console.log(listConseils);                
             }
      
@@ -161,16 +162,15 @@ function ConseilClasse(props) {
             listElt.heure_prevue = elt.heure_prevue;
             listElt.type_conseil = elt.type_conseil;
             listElt.id_type_conseil = elt.id_type_conseil;
-            listElt.nom = ProfInfo.nom;
+            listElt.nom = (ProfInfo!= undefined && ProfInfo!= {})?  ProfInfo.nom : t("non_defini");
             listElt.user_id = ProfInfo.user_id;
             listElt.rang = rang; 
             listElt.status = elt.status; 
             listElt.periodeId = elt.id_type_conseil;
-            listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos, trimInfos);
+            listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos,trimInfos);
             listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
-            formattedList.push(listElt);
-            
+            formattedList.push(listElt);            
             rang ++;
         })
         return formattedList;
@@ -178,14 +178,20 @@ function ConseilClasse(props) {
 
 
     function getPeriodeLabel(idPeriode,listSequence, listTrimestres){
-        var foundedPeriode={};        
+        var foundedPeriode={id:-1, libelle:''};     
+        
+        if(listSequence   == undefined) listSequence   = {};
+        if(listTrimestres == undefined) listTrimestres = {};
+           
+        
         foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
-        if (foundedPeriode==-1){
+        if (foundedPeriode == undefined){
             foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
-            if (foundedPeriode==-1){
+            if (foundedPeriode == undefined){
                 foundedPeriode = {id:-1, libelle:t('conseil_anuuel')};
             }
         }
+
         return foundedPeriode.libelle;
     }
 
@@ -573,6 +579,7 @@ const columnsFr = [
     function handleEditRow(row){       
         var inputs=[];       
         var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+        console.log("hhhjki",CURRENT_CC.membres_presents);
       
         DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
         OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
@@ -652,8 +659,35 @@ const columnsFr = [
         return tabResults.join("²²")
     }
 
-    function createGridData(){
+    function createGridData(list){
+        var listData = [];
+        var listDataElt;
 
+        if(list.length>0){
+            list.map((elt)=>{
+                listDataElt = {};
+               
+                listDataElt.id = elt.id;
+                listDataElt.rang = elt.rang;
+                listDataElt.date_prevue = elt.date_prevue;
+                listDataElt.heure_prevue = elt.heure_prevue;
+                listDataElt.type_conseil = elt.type_conseil;
+                listDataElt.id_type_conseil = elt.id_type_conseil;
+                listDataElt.periode = elt.periode;
+                listDataElt.nom = elt.nom; 
+                listDataElt.user_id = elt.user_id;
+                listDataElt.status = elt.status;
+                listDataElt.etatLabel = elt.etatLabel;
+                listDataElt.date_effective = elt.date_effective;
+                listDataElt.periode = elt.periode;
+                listDataElt.periode = elt.periode;
+                listDataElt.periode = elt.periode;
+
+                listData.push(listDataElt)
+            })
+        }
+
+        return listData
     }
   
 
@@ -666,7 +700,7 @@ const columnsFr = [
             id_classe       : meeting.classeId,
             id_pp           : meeting.profPrincipalId,
             id_pp_user      : meeting.currentPpUserId,
-            type_conseil    : MEETING.type_conseil,
+            type_conseil    : meeting.type_conseilId,
             date_prevue     : meeting.date,
             heure_prevue    : meeting.heure,
             id_periode      : meeting.id_periode,
@@ -675,15 +709,15 @@ const columnsFr = [
             roles_membres   : meeting.roles_membres
             
         }).then((res)=>{
-           var gridData = createGridData(res.data.conseil_classes)
+           var gridData = formatList(res.data.conseil_classes, res.data.prof_principal, res.data.seqs_dispo, res.data.trims_dispo)
             setGridMeeting(gridData);
             console.log(res.data);
 
-            setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
+            //setModalOpen(0);
+            chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
                 visible:true, 
-                msgType:"question", 
+                msgType:"info", 
                 msgTitle:t("success_add_M"), 
                 message:t("success_add")
             })
@@ -695,34 +729,36 @@ const columnsFr = [
         CURRENT_MEETING = meeting;
            
         axiosInstance.post(`update-conseil-classe/`, {
-            id_sousetab     : meeting.id_sousetab,
-            id_classe       : meeting.classeId,
-            id_pp           : meeting.profPrincipalId,
-            id_pp_user      : meeting.currentPpUserId,
-            type_conseil    : meeting.type_conseil,
-            date_prevue     : meeting.date,
-            heure_prevue    : meeting.heure,
-            id_periode      : meeting.id_periode,
-            alerter_membres : meeting.alerter_membres,
-            id_membres      : meeting.id_membres,
-            roles_membres   : meeting.roles_membres,
-            membre_presents : meeting.membre_presents,
+            id_conseil_classe              : meeting.id_conseil_classe,
+            id_sousetab                    : meeting.id_sousetab,
+            id_classe                      : meeting.classeId,
+            id_pp                          : meeting.profPrincipalId,
+            id_pp_user                     : meeting.currentPpUserId,
+            type_conseil                   : meeting.type_conseil,
+            date_prevue                    : meeting.date,
+            heure_prevue                   : meeting.heure,
+            id_periode                     : meeting.id_periode,
+            alerter_membres                : meeting.alerter_membres,
+            id_membres                     : meeting.id_membres,
+            roles_membres                  : meeting.membre_presents,
             
-            id_eleves       : meeting.id_eleves,
+            id_eleves                      : meeting.id_eleves,
             list_decisions_conseil_eleves  : meeting.id_eleves,
             list_classes_promotions_eleves : meeting.id_eleves,
-            resume_general_decisions       : meeting.resume_general_decisions
+            resume_general_decisions       : meeting.resume_general_decisions,
+            membre_presents                : meeting.membre_presents,
+            to_close                       : meeting.to_close
 
         }).then((res)=>{
            var gridData = createGridData(res.data.conseil_classes)
             setGridMeeting(gridData);
             console.log(res.data);
 
-            setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
+           //setModalOpen(0);
+            chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
                 visible:true, 
-                msgType:"question", 
+                msgType:"info", 
                 msgTitle:t("success_add_M"), 
                 message:t("success_add")
             })
@@ -775,7 +811,19 @@ const columnsFr = [
         
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS: {
+            case MSG_SUCCESS_CREATE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //setModalOpen(4); //debut de l'impression
+                //printMeetingReport()
+                return 1;
+            }
+
+            case MSG_SUCCESS_PRINT: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -812,7 +860,7 @@ const columnsFr = [
     const rejectHandler=()=>{
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS: {
+            case MSG_SUCCESS_CREATE: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -975,7 +1023,7 @@ const columnsFr = [
                     customStyle = {true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {t("yes")}
+                    buttonAcceptText = {(currentUiContext.msgBox.msgType  == "question")? t("yes") : t("ok")}
                     buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
@@ -1051,7 +1099,7 @@ const columnsFr = [
                         <StripedDataGrid
                             rows={gridMeeting}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='etatLabel' && params.row.etat ==1)?  classes.clotureStyle: (params.field==='etatLabel' && params.row.etat ==0) ? classes.enCoursStyle : classes.gridRowStyle }
+                            getCellClassName={(params) => (params.field==='etatLabel' && params.row.status==1)?  classes.clotureStyle: (params.field==='etatLabel' && params.row.status==0) ? classes.enCoursStyle : classes.gridRowStyle }
                             onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {

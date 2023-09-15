@@ -165,7 +165,7 @@ function LoginForm(props){
         axiosInstance.post(`get-current-emploi-de-temps/`, {
             id_sousetab: etabId
         }).then((res)=>{
-            console.log("ET",res.data);
+            console.log("ET",res.data, res.data.profPrincipaux);
             res.data.matieres.map((m)=>{matieres.push(m)});
             res.data.classes.map((c)=>{classess.push(c)});
             res.data.ListMatieres.map((lm)=>{listMatieres.push(lm)});

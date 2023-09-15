@@ -12,7 +12,7 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -102,16 +102,15 @@ function AddClassMeeting(props) {
         console.log("valeure", props.defaultMembres);
         getClassStudentList(props.currentClasseId);
         setOptPeriode(nonDefini);
-      
        
         if (props.formMode == 'creation'){
-   
+
             var tempTab = [...tabTypeConseil];
             tempTab.unshift(firstSelectItem2);
             setOptObjet(tempTab);
-
+   
             tempTab = [...props.defaultMembres];
-           // tempTab.unshift(firstSelectItem);
+           //tempTab.unshift(firstSelectItem);
             setOptMembres(tempTab);
     
             tempTab = [...props.otherMembres];
@@ -123,7 +122,7 @@ function AddClassMeeting(props) {
         } else {
  
             var tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem1);
+            //tempTab.unshift(firstSelectItem1);
             setOptMembres(tempTab);
     
             tempTab = [...props.otherMembres];
@@ -153,7 +152,7 @@ function AddClassMeeting(props) {
 
             MEETING = {};
         
-            MEETING.id                 = putToEmptyStringIfUndefined(currentUiContext.formInputs[0]);
+            MEETING.id_conseil_classe  = putToEmptyStringIfUndefined(currentUiContext.formInputs[0]);
             MEETING.classeId           = props.currentClasseId; 
             MEETING.classeLabel        = props.currentClasseLabel;
             
@@ -169,31 +168,55 @@ function AddClassMeeting(props) {
 
             
             MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
+            MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
             MEETING.alerter_membres = true;
             
             //----- 2ieme partie du formulaire1 ----- 
-            MEETING.resume_general_decisions = putToEmptyStringIfUndefined(currentUiContext.formInputs[13]); 
+            MEETING.resume_general_decisions = putToEmptyStringIfUndefined(currentUiContext.formInputs[11]); 
             MEETING.etat = putToEmptyStringIfUndefined(currentUiContext.formInputs[8]);
 
-            if (props.formMode == 'modif') {
-            
-                //initialisation du select objet du conseil
-                var index1  = optObjet.findIndex((elt)=>elt.value ==  MEETING.id_periode);
-                var objet   = optObjet.find((elt)=>elt.value ==  MEETING.id_periode);
-                var listTypeConseils = [...optObjet];
-                listTypeConseils.splice(index1,1);
-                listTypeConseils.unshift(objet);
+            MEETING_GEN_DECISION = MEETING.resume_general_decisions;
 
+            if (props.formMode == 'modif') {
+
+                //initialisation du select objet du conseil
+                var tempTab = [...tabTypeConseil];             
+                var index1  = tempTab.findIndex((elt)=>elt.value ==  MEETING.type_conseil);
+                var objet   = tempTab.find((elt)=>elt.value ==  MEETING.type_conseil);
+                
+                MEETING_OBJET_ID    = objet.value;
+                MEETING_OBJET_LABEL = objet.label
+               
+                tempTab.splice(index1,1);
+                tempTab.unshift(objet);
+
+                setOptObjet(tempTab);
                 
                 //initialisation du select periode associee
-                var index2  = optPeriode.findIndex((elt)=>elt.label ==  MEETING.type_conseil);
-                var periode = optPeriode.find((elt)=>elt.label ==  MEETING.type_conseil);
-                var tabPeriode = [...optPeriode];
+               
+
+                var tabPeriode =[];
+                switch(objet.value){
+                    case 'sequentiel'  : {tabPeriode = [...props.sequencesDispo];              break;}
+                    case 'trimestriel' : {tabPeriode = [...props.trimestresDispo];             break;}
+                    case 'annuel'      : {tabPeriode = [...props.anneDispo]; setIsBilan(true); break;}
+                    default: tabPeriode = nonDefini;
+                }
+                
+                var index2  = tabPeriode.findIndex((elt)=>elt.value == 3/*  MEETING.id_periode*/);
+                var periode = tabPeriode.find((elt)=>elt.value ==3  /*MEETING.id_periode*/);
+
+                console.log("objet",objet,MEETING.type_conseil, MEETING.id_periode,periode, tabPeriode);
+
+                PERIODE_ID    = periode.value;
+                PERIODE_LABEL = periode.label;
+
                 tabPeriode.splice(index2,1);
                 tabPeriode.unshift(periode);
+                setOptPeriode(tabPeriode)
             }
 
-            console.log(currentUiContext.formInputs);
+            console.log("hhgtuiop",currentUiContext.formInputs);
         }      
 
     },[]);
@@ -289,11 +312,13 @@ function AddClassMeeting(props) {
    
     /************************************ Handlers ************************************/  
     function getDecisionGeneraleHandler(e){
-        MEETING_GEN_DECISION = e.taget.value;
+        //console.log("dfdffd",e);
+        MEETING_GEN_DECISION = e.target.value;
     }
 
 
     function periodeChangeHandler(e){
+        console.log("hdhhdh",e.target.value)
         if(e.target.value > 0){
             PERIODE_ID    = e.target.value;
             PERIODE_LABEL = e.target.label;
@@ -331,9 +356,9 @@ function AddClassMeeting(props) {
 
             MEETING.status = 0 ;
             MEETING.statusLabel = 'En cours' ;
-            
-            if(props.formMode=="creation")  props.addMeetingHandler(MEETING);
-            else props.modifyMeetingHandler(MEETING);
+
+            props.actionHandler(MEETING);
+           // else props.modifyClassMeeting(MEETING);
            
         } else {
             errorDiv.className = classes.formErrorMsg;
@@ -344,6 +369,7 @@ function AddClassMeeting(props) {
 
     function gotoStep2Handler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
+        console.log("toronto1", currentUiContext.formInputs);
         getFormData();
         if(formDataCheck1().length==0){
             if(errorDiv.textContent.length!=0){
@@ -353,7 +379,7 @@ function AddClassMeeting(props) {
                         
             setEtape2InActiv(false);
             setEtape(2);
-            setFormData2();
+            setFormData();
             setIsButtonClicked(true);
         } else {
             errorDiv.className = classes.formErrorMsg;
@@ -363,10 +389,11 @@ function AddClassMeeting(props) {
     }
 
     function backToStep1Handler(){
+        console.log("toronto2", currentUiContext.formInputs);
         getFormData();
+        //setFormData();
         setEtape2InActiv(true);
-        setEtape(1);
-        setFormData1();
+        setEtape(1);       
     }
     
     function finishAllSteps(){
@@ -400,7 +427,8 @@ function AddClassMeeting(props) {
 
     function getListElementByFields(tabEleves, fields){
         var tab = [] ;
-        (tabEleves||[]).map((elev,index)=>{tab.push(elev[index][fields])});
+        console.log(tabEleves);
+        (tabEleves||[]).map((elev,index)=>{tab.push(elev[fields])});
 
         if (tab.length==0) return '';
         else return tab.join('²²');
@@ -410,52 +438,57 @@ function AddClassMeeting(props) {
     function getFormData(){
         
         MEETING = {};
-        
-        //----- 1ere partie du formulaire1 ----- 
-        if(props.formMode == "creation") MEETING.id = -1;             
-        else MEETING.id = currentUiContext.formInputs[0];           
 
-        MEETING.classeId       = props.currentClasseId; 
-        MEETING.classeLabel    =  props.currentClasseLabel;
+        if(etape==1){
+             
+            //----- 1ere partie du formulaire1 ----- 
+            if(props.formMode == "creation") MEETING.id_conseil_classe = -1;             
+            else MEETING.id_conseil_classe = currentUiContext.formInputs[0]; 
+            
+            MEETING.id_sousetab    =  currentAppContext.currentEtab;
 
-        MEETING.currentPpUserId    = props.currentPpUserId;
-        MEETING.profPrincipalId    = props.currentPpId; 
-        MEETING.profPrincipalLabel = props.currentPpLabel;
-        
-        
-        MEETING.type_conseil    = MEETING_OBJET_LABEL;  //Mettre le type de conseil
-        MEETING.type_conseilId  = MEETING_OBJET_ID;     //Mettre l'ID type conseil
-        
-        MEETING.id_periode      = PERIODE_ID            //Mettre la periode   
-        MEETING.periode         = PERIODE_LABEL;    
-        
-        MEETING.alerter_membres = true;
-        MEETING.date  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
-        MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
+            MEETING.classeId       =  props.currentClasseId; 
+            MEETING.classeLabel    =  props.currentClasseLabel;
 
-        //----- 2ieme partie du formulaire1 ----- 
-        MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
+            MEETING.currentPpUserId    = props.currentPpUserId;
+            MEETING.profPrincipalId    = props.currentPpId; 
+            MEETING.profPrincipalLabel = props.currentPpLabel;
+            
+            
+            MEETING.type_conseil    = MEETING_OBJET_LABEL;  //Mettre le type de conseil
+            MEETING.type_conseilId  = MEETING_OBJET_ID;     //Mettre l'ID type conseil
+            
+            MEETING.id_periode      = PERIODE_ID            //Mettre la periode   
+            MEETING.periode         = PERIODE_LABEL;  
+              
+            
+            MEETING.alerter_membres = true;
+            MEETING.date  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
+            MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
 
-        //----- 3ieme partie du formulaire1 ----- 
-        MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
-        MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
-        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
+            //----- 2ieme partie du formulaire1 ----- 
+            MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
 
+            //----- 3ieme partie du formulaire1 ----- 
+            MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
+            MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
+            MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
+        }
+        
         //----- 1ere partie du formulaire2 -----
         MEETING.resume_general_decisions = MEETING_GEN_DECISION;                        //Resumer des decisions
 
         //----- 2ieme partie du formulaire2 -----
-        MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
-        MEETING.list_decisions_conseil_eleves  = getListElementByFields(infosEleves, "decision_final_conseil_classe"); //Liste des decisions pour chaque eleves separe par²²
-        MEETING.list_classes_promotions_eleves = getListElementByFields(infosEleves, "classe_annee_prochaine_id");     //Promotions
+        // MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
+        // MEETING.list_decisions_conseil_eleves  = getListElementByFields(infosEleves, "decision_final_conseil_classe"); //Liste des decisions pour chaque eleves separe par²²
+        // MEETING.list_classes_promotions_eleves = getListElementByFields(infosEleves, "classe_annee_prochaine_id");     //Promotions
 
         //----- 3ieme partie du formulaire2 -----
-        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
+        //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
 
         MEETING.to_close = false;
        
-        console.log(MEETING);
-       
+        console.log(MEETING);       
     }
 
 
@@ -471,7 +504,7 @@ function AddClassMeeting(props) {
         console.log(MEETING.date);
     }
   
-    function setFormData2(){
+    function setFormData(){
         var tabEleve=[];       
  
         var profPresent =[];
@@ -484,10 +517,13 @@ function AddClassMeeting(props) {
         })
 
         setTabProfsPresents(profPresent);        
-        
-        tabEleve[11] = MEETING.resume_general_decisions;
-        tabEleve[8] =  MEETING.status;
-        tabEleve[9] =  MEETING.statusLabel;
+        tabEleve[1]  =  convertDateToUsualDate(MEETING.date); 
+        tabEleve[2]  =  MEETING.heure;
+        tabEleve[3]  =  MEETING.type_conseil; 
+        tabEleve[4]  =  MEETING.id_type_conseil;       
+        tabEleve[8]  =  MEETING.status;
+        tabEleve[9]  =  MEETING.statusLabel;
+        tabEleve[11] =  MEETING.resume_general_decisions;
         currentUiContext.setFormInputs(tabEleve);
 
         console.log('ici',currentUiContext.formInputs, profPresent);
@@ -500,8 +536,8 @@ function AddClassMeeting(props) {
         var meeting_min = MEETING.heure.split(':')[1]
         if(meeting_hour[0]=='0') meeting_hour = meeting_hour[1];
         if(meeting_min[0]=='0')  meeting_min  = meeting_min[1];
-       // console.log('jjjj',eval(meeting_hour),eval(meeting_min));
-       
+        
+        //console.log('jjjj',eval(meeting_hour),eval(meeting_min));       
         // if(MEETING.responsableId  == undefined){
         //     errorMsg= t("select_meeting_pres");
         //     return errorMsg;
@@ -512,7 +548,7 @@ function AddClassMeeting(props) {
             return errorMsg;
         } 
 
-        if(!((isNaN(MEETING.date) && (!isNaN(Date.parse(MEETING.date)))))){
+        if(!((isNaN(changeDateIntoMMJJAAAA(MEETING.date)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(MEETING.date))))))){
             errorMsg=t("enter_good_meeting_date");
             return errorMsg;
         }
@@ -532,7 +568,7 @@ function AddClassMeeting(props) {
             return errorMsg;
         }
 
-        if( MEETING.objetId == undefined ){
+        if( MEETING.type_conseilId == undefined ){
             errorMsg=t("selecte_meeting_purpose");
             return errorMsg;
         }    
@@ -602,7 +638,7 @@ function AddClassMeeting(props) {
 
     function showStep2(){
         if(props.formMode=='consult'){
-            setFormData2(); setEtape(2);
+            setFormData(); setEtape(2);
         }
 
     }
@@ -627,10 +663,22 @@ function AddClassMeeting(props) {
 
             MEETING_OBJET_ID    = meeting.value;
             MEETING_OBJET_LABEL = meeting.label;
+
+            if(tabPeriode.length>0){
+                PERIODE_ID    = tabPeriode[0].value;
+                PERIODE_LABEL = tabPeriode[0].label;
+
+            }else{
+                PERIODE_ID    = undefined;
+                PERIODE_LABEL = undefined;
+            }           
   
         } else {
-            MEETING_OBJET_ID = undefined;
+            MEETING_OBJET_ID    = undefined;
             MEETING_OBJET_LABEL = undefined;
+
+            PERIODE_ID    = undefined;
+            PERIODE_LABEL = undefined;
         }
     }
 
@@ -670,13 +718,11 @@ function AddClassMeeting(props) {
     }
 
 
-    function addParticipantRow(){
-       
+    function addParticipantRow(){       
         participant_data = [...optMembres];
-        var index = participant_data.findIndex((elt)=>elt.id==0);
-        if (index <0){
-            
-            participant_data.push({id:0, nom:'', role:'', present:true, etat:-1});
+        var index = participant_data.findIndex((elt)=>elt.value==0);
+        if (index <0){            
+            participant_data.push({value:0, label:'', role:'', present:true, etat:-1});
             setOptMembres(participant_data);
             console.log(participant_data);
         } 
@@ -691,19 +737,18 @@ function AddClassMeeting(props) {
             return -1;
         }
 
-        // if(SELECTED_ROLE==undefined){
-        //     document.getElementById('roleId').style.borderRadius = '1vh';
-        //     document.getElementById('roleId').style.border = '0.47vh solid red';
-        //     return -1
-        // }
-        
-        var index = participant_data.findIndex((elt)=>elt.id==0);
+        var index = participant_data.findIndex((elt)=>elt.value==0);
         if (index >=0) participant_data.splice(index,1);
       
-        var nomParticipant  = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
+        var nomParticipant   = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
+        var indexParticipant = optAutresMembres.findIndex((participant)=>participant.value==SELECTED_PARTICIPANT)
         
-        participant_data.push({id:SELECTED_PARTICIPANT, label:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
+        participant_data.push({value:SELECTED_PARTICIPANT, label:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
         setOptMembres(participant_data);
+
+        participant_data = [...optAutresMembres];
+        participant_data.splice(indexParticipant,1);
+        setOptAutresMembres(participant_data);
         
         SELECTED_PARTICIPANT=undefined;
         SELECTED_ROLE = undefined;        
@@ -711,12 +756,22 @@ function AddClassMeeting(props) {
 
     function deleteParticipant(e){
         console.log(e);
+        console.log("participants",optMembres);
         participant_data =[...optMembres];
         var idParticipant = e.target.id;
-        var index = participant_data.findIndex((elt)=>elt.id==idParticipant);
+
+        var index = participant_data.findIndex((elt)=>elt.value==idParticipant);
+        var participantToDelete = participant_data.find((elt)=>elt.value==idParticipant);
+
         if (index >=0){
             participant_data.splice(index,1);
             setOptMembres(participant_data);
+
+            if(participantToDelete.value > 0){
+                participant_data = [...optAutresMembres];
+                participant_data.push(participantToDelete);
+                setOptAutresMembres(participant_data);
+            }
         }
         SELECTED_PARTICIPANT=undefined;
         SELECTED_ROLE = undefined
@@ -765,6 +820,7 @@ function AddClassMeeting(props) {
                             alt=''
                         />
                     }
+
                     {(props.etat<0)&&
                         <img src="images/checkp_trans.png"  
                             width={19} 
@@ -1161,7 +1217,7 @@ function AddClassMeeting(props) {
                                 </div>
                                     
                                 <div> 
-                                    <input id="profPrincipalLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-2vw', height:'1rem', width:'15vw', fontSize:'1.13vw'}}/>
+                                    <input id="profPrincipalLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-2vw', height:'1rem', width:'15vw', fontSize:'1.13vw', color:'#898585'}}/>
                                     <input id="profPrincipalId" type="hidden"  defaultValue={props.currentPpId}/>
                                 </div>
                             </div>
@@ -1172,10 +1228,10 @@ function AddClassMeeting(props) {
                                 </div>
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="date_meeting" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[2]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="date_meeting" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[1]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>
                                     :
-                                    (currentUiContext.formInputs[2].length == 0) ?
+                                    (currentUiContext.formInputs[1].length == 0) ?
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
                                         <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw'}} />/
                                         <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      maxLength={2}     className={classes.inputRowControl }  style={{width:'1.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}  />/
@@ -1183,9 +1239,9 @@ function AddClassMeeting(props) {
                                     </div>
                                     :
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="jour"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw'}}  defaultValue={currentUiContext.formInputs[2].split("/")[0]} />/
-                                        <input id="mois"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[1]} />/
-                                        <input id="anne" type="text"  maxLength={4}   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     className={classes.inputRowControl}  style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split("/")[2]} />
+                                        <input id="jour"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw'}}  defaultValue={currentUiContext.formInputs[1].split("/")[0]} />/
+                                        <input id="mois"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[1].split("/")[1]} />/
+                                        <input id="anne" type="text"  maxLength={4}   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     className={classes.inputRowControl}  style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[1].split("/")[2]} />
                                     </div>
                                 }
 
@@ -1195,18 +1251,18 @@ function AddClassMeeting(props) {
 
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="heure" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}/>
+                                        <input id="heure" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[2]} style={{width:'3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}/>
                                     </div>
                                     :
-                                    (currentUiContext.formInputs[3].length == 0) ?
+                                    (currentUiContext.formInputs[2].length == 0) ?
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="heure"  type="text"  Placeholder='hh'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} /><b>h</b>
-                                        <input id="min"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), document.getElementById("objet"))}}    maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  /><b>min</b>
+                                        <input id="heure"  type="text"  Placeholder='hh'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} /><b>h</b>
+                                        <input id="min"  type="text"    Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), document.getElementById("objet"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  /><b>min</b>
                                     </div>
                                     :
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
-                                        <input id="heure"  type="text" maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}  defaultValue={currentUiContext.formInputs[3].split(":")[0]} /><b>h</b>
-                                        <input id="min"  type="text"   maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), document.getElementById("objet"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[3].split(":")[1]} /><b>min</b>
+                                        <input id="heure"  type="text" maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}}  defaultValue={currentUiContext.formInputs[2].split(":")[0]} /><b>h</b>
+                                        <input id="min"  type="text"   maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), document.getElementById("objet"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[2].split(":")[1]} /><b>min</b>
                                     </div>
                                 }
 
@@ -1297,7 +1353,7 @@ function AddClassMeeting(props) {
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'30vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LigneProfParticipantHeader date={'Date'} nbreJours={'Nbre Jours'} etat={'Etat'}/>
                                     {(optMembres||[]).map((prof)=>{
-                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.label} role={prof.role} etat={prof.etat}/>
+                                        return <LigneProfParticipant  participantId={prof.value} nom={prof.label} role={prof.role} etat={prof.etat}/>
                                         })
                                     }
                                 </div>
@@ -1441,7 +1497,7 @@ function AddClassMeeting(props) {
                             </div>
                                 
                             <div> 
-                                <textarea id='bilan' rows={50}  className={classes.comboBoxStyle} onChange={getDecisionGeneraleHandler} defaultValue={currentUiContext.formInputs[6]} style={{marginLeft:'-2vw', height:'12vh',width:'27vw', fontSize:'0.77vw'}}/>
+                                <textarea id='bilan' rows={50}  className={classes.comboBoxStyle} onChange={getDecisionGeneraleHandler} defaultValue={currentUiContext.formInputs[11]} style={{marginLeft:'-2vw', height:'12vh',width:'27vw', fontSize:'0.77vw'}}/>
                             </div>
                         </div>
                         
@@ -1519,7 +1575,7 @@ function AddClassMeeting(props) {
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LignePresentsHeader/>
                                     {(tabProfsPresents||[]).map((participant, index)=>{
-                                        return <LignePresent id={participant.id} rowIndex={index} nom={participant.nom}/>
+                                        return <LignePresent id={participant.value} rowIndex={index} nom={participant.label}/>
                                         })
                                     }
                                 </div>

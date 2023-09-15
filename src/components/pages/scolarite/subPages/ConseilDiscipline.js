@@ -22,24 +22,27 @@ import PVCDMeeting from '../reports/PVCDMeeting';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 
-var CURRENT_MEETING={};
+
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
-let CONVOQUE_PAR ={};
+var CURRENT_MEETING = {};
 
-var CURRENT_MEETING={};
-var printedETFileName='';
-var SEQUENCES_DISPO = [];
+
+var CURRENT_MEETING   = {};
+var printedETFileName = '';
+var SEQUENCES_DISPO   = [];
 var TRIMESTRES_DISPO  = [];
-var ANNEE_DISPO = [];
+var ANNEE_DISPO       = [];
 
-var DEFAULT_MEMBERS = []; 
+var DEFAULT_MEMBERS  = []; 
 var PRESENTS_MEMBERS = [];
-var OTHER_MEMBERS = [];
+var OTHER_MEMBERS    = [];
+var CONVOQUE_PAR    = [];
 
-var DEFAULT_MEMBERS_ADD = []; 
+var DEFAULT_MEMBERS_ADD  = []; 
 var PRESENTS_MEMBERS_ADD = [];
-var OTHER_MEMBERS_ADD = [];
+var OTHER_MEMBERS_ADD    = [];
+var CONVOQUE_PAR_ADD     = [];
 
 var ELEVES_SANCTIONS = [];
 var ELEVES_MOTIFS = [];
@@ -109,9 +112,11 @@ function ConseilDiscipline(props) {
             if(res.data!= undefined && res.data!=null){
                 LIST_CONSEILS_INFOS = [...res.data.conseil_disciplines];
                 
-                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_conv];
+                CONVOQUE_PAR_ADD     = [...res.data.enseignants_conv];
+                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_classe];
                 OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
                 PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
+                
 
                 SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs);
                 TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims);
@@ -572,11 +577,20 @@ const columnsFr = [
 
     function handleEditRow(row){       
         var inputs=[];   
+        
         var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+        var convoquePar   =  CURRENT_CD.convoque_par;
+
+        if(CONVOQUE_PAR_ADD != undefined){
+            if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
+                CONVOQUE_PAR_ADD.unshift(convoquePar);
+            }           
+        }//else CONVOQUE_PAR_ADD = [];
       
         DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
         OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
         PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 0);
+        CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 0);
        
         if(CURRENT_CD.is_all_class_convoke){
             ELEVES_SANCTIONS  = createListElevesSanctions(CURRENT_CD.sanction_generale_classe,0);
@@ -779,12 +793,14 @@ const columnsFr = [
     }
    
     function AddNewMeetingHandler(e){
-        if(CURRENT_CLASSE_ID != undefined){        
-            CONVOQUE_PAR     =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD, true,   1);
-            OTHER_MEMBERS    =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,   false, -1);
-            DEFAULT_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD, true,  0);
+        if(CURRENT_CLASSE_ID != undefined){   
+            DEFAULT_MEMBERS  =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,  true,   1);     
+            CONVOQUE_PAR     =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,     true,   1);
+            OTHER_MEMBERS    =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,    false, -1);            
+            
             ELEVES_SANCTIONS =  [];
             ELEVES_MOTIFS    =  [];
+
             setModalOpen(1); 
             initFormInputs();
         } else{
@@ -965,17 +981,17 @@ const columnsFr = [
 
             {(modalOpen>0 && modalOpen<4) && 
                 <AddDisciplinMeeting
-                    currentClasseLabel={CURRENT_CLASSE_LABEL} 
-                    currentClasseId={CURRENT_CLASSE_ID}     
-                    defaultMembres={PRESENTS_MEMBERS} 
-                    othersMembres={OTHER_MEMBERS} 
-                    convoquePar={DEFAULT_MEMBERS} 
-                    sequencesDispo  = {SEQUENCES_DISPO}
-                    trimestresDispo = {TRIMESTRES_DISPO}
-                    formMode={(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}
+                    currentClasseLabel = {CURRENT_CLASSE_LABEL} 
+                    currentClasseId    = {CURRENT_CLASSE_ID}     
+                    defaultMembres     = {DEFAULT_MEMBERS} 
+                    othersMembres      = {OTHER_MEMBERS} 
+                    convoquePar        = {CONVOQUE_PAR} 
+                    sequencesDispo     = {SEQUENCES_DISPO}
+                    trimestresDispo    = {TRIMESTRES_DISPO}
+                    formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}
                     addMeetingHandler    = {addMeeting}  
                     modifyMeetingHandler = {modifyMeeting}
-                    cancelHandler={quitForm} 
+                    cancelHandler        = {quitForm} 
                 />
             }
 

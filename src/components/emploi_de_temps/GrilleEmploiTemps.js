@@ -220,7 +220,7 @@ function GrilleEmploiTemps(props) {
     function validerPP(e){
         console.log("les tabs",currentUiContext.currentPPList,currentUiContext.CURRENT_DROPPED_PROFS_LIST)
 
-        TAB_PROF_PRINCIPAUX = [...currentUiContext.currentPPList];
+        TAB_PROF_PRINCIPAUX = (currentUiContext.currentPPList!=undefined)? [...currentUiContext.currentPPList]:[];
 
         if(selectedPP!= undefined){
             setIsPPset(true);
@@ -244,7 +244,8 @@ function GrilleEmploiTemps(props) {
                     ppInfo.PP_id     = idProf;
                     ppInfo.sexe      = selectedPP.sexe;
                     TAB_PROF_PRINCIPAUX.push(ppInfo);
-                    currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);                }    
+                    currentUiContext.setCurrentPPList(TAB_PROF_PRINCIPAUX);                
+                }    
 
             } else{
                 var ppInfo = {};
@@ -1414,8 +1415,8 @@ function getPPClasses(pp_nom){
    
     var listClasses = '('+t("no_class")+')';
     var pp_classes = [];
-    
-    TAB_PROF_PRINCIPAUX = [...currentUiContext.currentPPList];
+    console.log("Liste des PPs:", currentUiContext.currentPPList);
+    TAB_PROF_PRINCIPAUX = (currentUiContext.currentPPList != undefined) ? [...currentUiContext.currentPPList]:[];
     console.log("gdgdg",TAB_PROF_PRINCIPAUX)
   
     if(TAB_PROF_PRINCIPAUX.length>0){

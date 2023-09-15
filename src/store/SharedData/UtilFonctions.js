@@ -16,3 +16,8 @@ export const convertDateToUsualDate=(date)=>{
     }
 
 }
+
+export function changeDateIntoMMJJAAAA(date){
+    var dateTab = date.split('/');
+    return dateTab[1]+'/'+dateTab[0]+'/'+dateTab[2];
+}

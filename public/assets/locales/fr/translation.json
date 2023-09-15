@@ -1,4 +1,5 @@
-{   "delete_pp_question":"Cette opération va entrainer la suppression de l'enseignant principal de la classe. Voulez-vous vraiment continuer?",
+{   "non_defini":"Non défini",
+    "delete_pp_question":"Cette opération va entrainer la suppression de l'enseignant principal de la classe. Voulez-vous vraiment continuer?",
     "total_hours" : "Nombre total d'heures",
     "class_schedule":"Emploi de temps de la classe de ",
     "no_class":"Libre",

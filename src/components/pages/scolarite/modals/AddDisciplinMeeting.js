@@ -129,7 +129,7 @@ function AddDisciplinMeeting(props) {
             setOptConvocateurs(tempTab);
             
             tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem1);
+           //tempTab.unshift(firstSelectItem1);
             setOptMembres(tempTab);
     
             tempTab = [...props.othersMembres];
@@ -140,16 +140,16 @@ function AddDisciplinMeeting(props) {
 
         } else {
 
-            var tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem1);
+            var tempTab = [...props.convoquePar];
+            //tempTab.unshift(firstSelectItem1);
             setOptConvocateurs(tempTab);
             
             tempTab = [...props.defaultMembres];
-            tempTab.unshift(firstSelectItem1);
+            //tempTab.unshift(firstSelectItem1);
             setOptMembres(tempTab);
     
             tempTab = [...props.othersMembres];
-            tempTab.unshift(firstSelectItem1);
+            //tempTab.unshift(firstSelectItem1);
             setOptAutresMembres(tempTab);
 
             console.log("les tableaux",optConvocateurs,optMembres,optAutresMembres);
@@ -250,9 +250,10 @@ function AddDisciplinMeeting(props) {
         listMotifs = []
         axiosInstance.post(`list-causes-convocation-cd/`, {
             id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-            console.log(res.data);
+        }).then((res)=>{            
             listMotifs = [...formatMotif(res.data)];
+            setTabMotifs(listMotifs);
+            console.log("motifs convocation",res.data,listMotifs);
         })  
         return listMotifs;     
     }
@@ -772,10 +773,10 @@ function AddDisciplinMeeting(props) {
 
     function addParticipantRow(){
         participant_data = [...optMembres];
-        var index = participant_data.findIndex((elt)=>elt.id==0);
+        var index = participant_data.findIndex((elt)=>elt.value==0);
         if (index <0){
             
-            participant_data.push({id:0, nom:'', role:'', present:true, etat:-1});
+            participant_data.push({value:0, label:'', role:'', present:true, etat:-1});
             //setTabParticipant(participant_data);
             setOptMembres(participant_data);
             console.log(participant_data);
@@ -790,19 +791,21 @@ function AddDisciplinMeeting(props) {
             return -1;
         }
 
-        // if(SELECTED_ROLE==undefined){
-        //     document.getElementById('roleId').style.borderRadius = '1vh';
-        //     document.getElementById('roleId').style.border = '0.47vh solid red';
-        //     return -1
-        // }
-        
-        var index = participant_data.findIndex((elt)=>elt.id==0);
+        var index = participant_data.findIndex((elt)=>elt.value==0);
         if (index >=0) participant_data.splice(index,1);
       
-        var nomParticipant  = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
-        
-        participant_data.push({id:SELECTED_PARTICIPANT, nom:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
+        var nomParticipant   = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
+        var indexParticipant = optAutresMembres.findIndex((participant)=>participant.value==SELECTED_PARTICIPANT)
+       
+        participant_data.push({value:SELECTED_PARTICIPANT, label:nomParticipant, role:SELECTED_ROLE, present:true, etat:0});
+        console.log("participant",participant_data);
         setOptMembres(participant_data);
+
+        participant_data = [...optAutresMembres];
+        participant_data.splice(indexParticipant,1);
+        setOptAutresMembres(participant_data);
+
+
         
         SELECTED_PARTICIPANT=undefined;
         SELECTED_ROLE = undefined;
@@ -812,11 +815,22 @@ function AddDisciplinMeeting(props) {
     function deleteParticipant(e){
         console.log(e);
         participant_data =[...optMembres];
+        console.log("tabparticipants",participant_data);
+        
         var idParticipant = e.target.id;
-        var index = participant_data.findIndex((elt)=>elt.id==idParticipant);
-        if (index >=0){
+        var index = participant_data.findIndex((elt)=>elt.value==idParticipant);
+        var participantToDelete = participant_data.find((elt)=>elt.value==idParticipant);
+        
+        if (index >= 0){
             participant_data.splice(index,1);
             setOptMembres(participant_data);
+
+            if(participantToDelete.value > 0){
+                participant_data = [...optAutresMembres];
+                participant_data.push(participantToDelete);
+                setOptAutresMembres(participant_data);
+            }
+           
         }
         SELECTED_PARTICIPANT=undefined;
         SELECTED_ROLE = undefined
@@ -865,6 +879,7 @@ function AddDisciplinMeeting(props) {
                             alt=''
                         />
                     }
+
                     {(props.etat<0)&&
                         <img src="images/checkp_trans.png"  
                             width={19} 
@@ -1015,14 +1030,20 @@ function AddDisciplinMeeting(props) {
                    
                    :
                         <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
-                            {
-                                listMotifs.map((motif,index)=>{
+                        { 
+                            tabMotifs.map((motif,index)=>{
+                                return (
                                     <div style={{display:'flex', flexDirection:'row',}}>
                                         <input type='radio' id={'motif'+props.rowIndex+'_'+index} style={{width:'1vw', height:'2vh'}} checked={motif.label == tabMotifs[props.rowIndex]}  value={index} name={'eleveConv'+props.rowIndex} onClick={(e)=>{updateMotif(e,props.rowIndex)}}/>
                                         <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{motif.label} </label>
-                                    </div>                                    
-                                })
-                            }
+                                    </div>    
+                                )                                
+                            })
+
+                            
+                        }
+
+
                             {
                                 /*<input type='radio' id='absence' style={{width:'1vw', height:'2vh'}} checked={props.absence == currentMotif}  value={0} name={'eleveConv'+props.rowIndex} onClick={()=>{setCurrentMotif(0)}}/>
                                 <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{t("absences")} </label>
@@ -1492,7 +1513,7 @@ function AddDisciplinMeeting(props) {
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh',overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LigneProfParticipantHeader date={'Date'} nbreJours={t('nbre_jours')} etat={'Etat'}/>
                                     {(optMembres||[]).map((prof)=>{
-                                        return <LigneProfParticipant  participantId={prof.id} nom={prof.label} role={prof.role} etat={prof.etat}/>
+                                        return <LigneProfParticipant  participantId={prof.value} nom={prof.label} role={prof.role} etat={prof.etat}/>
                                         })
                                     }
                                 </div>                                    
