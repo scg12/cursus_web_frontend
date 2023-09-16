@@ -203,8 +203,8 @@ function AddClassMeeting(props) {
                     default: tabPeriode = nonDefini;
                 }
                 
-                var index2  = tabPeriode.findIndex((elt)=>elt.value == 3/*  MEETING.id_periode*/);
-                var periode = tabPeriode.find((elt)=>elt.value ==3  /*MEETING.id_periode*/);
+                var index2  = tabPeriode.findIndex((elt)=>elt.value ==  MEETING.id_periode);
+                var periode = tabPeriode.find((elt)=>elt.value == MEETING.id_periode);
 
                 console.log("objet",objet,MEETING.type_conseil, MEETING.id_periode,periode, tabPeriode);
 
