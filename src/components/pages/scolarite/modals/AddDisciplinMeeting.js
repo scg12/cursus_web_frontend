@@ -252,6 +252,7 @@ function AddDisciplinMeeting(props) {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{            
             listMotifs = [...formatMotif(res.data)];
+            initMotifsTab(listMotifs[0].value)
             setTabMotifs(listMotifs);
             console.log("motifs convocation",res.data,listMotifs);
         })  

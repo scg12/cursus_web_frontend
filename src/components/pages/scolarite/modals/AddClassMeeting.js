@@ -34,6 +34,7 @@ var participant_data = [];
 
 var eleves_data=[];
 var MEETING = {};
+var dateDeb, heureDeb;
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -133,6 +134,7 @@ function AddClassMeeting(props) {
             setTabProfsPresents(tempTab);
 
 
+
             tempTab = []; // a initialiser d'abord...
             tempTab.unshift(choisir);
             setOptDecisions(tempTab);
@@ -168,7 +170,6 @@ function AddClassMeeting(props) {
 
             
             MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
-            MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
             MEETING.alerter_membres = true;
             
             //----- 2ieme partie du formulaire1 ----- 
@@ -177,15 +178,21 @@ function AddClassMeeting(props) {
 
             MEETING_GEN_DECISION = MEETING.resume_general_decisions;
 
+            console.log("meeting",MEETING);
+
             if (props.formMode == 'modif') {
 
                 //initialisation du select objet du conseil
                 var tempTab = [...tabTypeConseil];             
                 var index1  = tempTab.findIndex((elt)=>elt.value ==  MEETING.type_conseil);
                 var objet   = tempTab.find((elt)=>elt.value ==  MEETING.type_conseil);
+
+                console.log("objet",objet);
                 
                 MEETING_OBJET_ID    = objet.value;
                 MEETING_OBJET_LABEL = objet.label
+
+               
                
                 tempTab.splice(index1,1);
                 tempTab.unshift(objet);
@@ -203,8 +210,9 @@ function AddClassMeeting(props) {
                     default: tabPeriode = nonDefini;
                 }
                 
-                var index2  = tabPeriode.findIndex((elt)=>elt.value == 3/*  MEETING.id_periode*/);
-                var periode = tabPeriode.find((elt)=>elt.value ==3  /*MEETING.id_periode*/);
+                var index2  = tabPeriode.findIndex((elt)=>elt.value == MEETING.id_periode);
+                var periode = tabPeriode.find((elt)=>elt.value ==  MEETING.id_periode);
+                console.log("hshshshhs", props.sequencesDispo)
 
                 console.log("objet",objet,MEETING.type_conseil, MEETING.id_periode,periode, tabPeriode);
 
@@ -355,7 +363,7 @@ function AddClassMeeting(props) {
             } 
 
             MEETING.status = 0 ;
-            MEETING.statusLabel = 'En cours' ;
+            MEETING.statusLabel = t('en_cours') ;
 
             props.actionHandler(MEETING);
            // else props.modifyClassMeeting(MEETING);
@@ -410,9 +418,10 @@ function AddClassMeeting(props) {
             }
               
             MEETING.status = 1 ;
-            MEETING.statLabel = t('cloture') ; 
-            MEETING.to_close = true;      
-            props.modifyMeetingHandler(MEETING);
+            MEETING.statusLabel = t('cloture') ; 
+            MEETING.to_close = true;    
+            props.actionHandler(MEETING);  
+            //props.modifyMeetingHandler(MEETING);
 
         } else {
             errorDiv.className = classes.formErrorMsg;
@@ -439,8 +448,6 @@ function AddClassMeeting(props) {
         
         MEETING = {};
 
-        if(etape==1){
-             
             //----- 1ere partie du formulaire1 ----- 
             if(props.formMode == "creation") MEETING.id_conseil_classe = -1;             
             else MEETING.id_conseil_classe = currentUiContext.formInputs[0]; 
@@ -463,28 +470,38 @@ function AddClassMeeting(props) {
               
             
             MEETING.alerter_membres = true;
-            MEETING.date  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
-            MEETING.heure = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
+            
+            if(etape==1){
+                dateDeb  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
+                heureDeb = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
+                
+                MEETING.date  = dateDeb;
+                MEETING.heure = heureDeb;
+            } else{
+                MEETING.date  = dateDeb;
+                MEETING.heure = heureDeb;
+            }
 
+            
             //----- 2ieme partie du formulaire1 ----- 
             MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
 
             //----- 3ieme partie du formulaire1 ----- 
             MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
             MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
-            MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
-        }
+            //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
+        
         
         //----- 1ere partie du formulaire2 -----
         MEETING.resume_general_decisions = MEETING_GEN_DECISION;                        //Resumer des decisions
 
         //----- 2ieme partie du formulaire2 -----
-        // MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
-        // MEETING.list_decisions_conseil_eleves  = getListElementByFields(infosEleves, "decision_final_conseil_classe"); //Liste des decisions pour chaque eleves separe par²²
-        // MEETING.list_classes_promotions_eleves = getListElementByFields(infosEleves, "classe_annee_prochaine_id");     //Promotions
+        MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
+        MEETING.list_decisions_conseil_eleves  = getListElementByFields(infosEleves, "decision_final_conseil_classe"); //Liste des decisions pour chaque eleves separe par²²
+        MEETING.list_classes_promotions_eleves = getListElementByFields(infosEleves, "classe_annee_prochaine_id");     //Promotions
 
         //----- 3ieme partie du formulaire2 -----
-        //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
+        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
 
         MEETING.to_close = false;
        
@@ -517,6 +534,7 @@ function AddClassMeeting(props) {
         })
 
         setTabProfsPresents(profPresent);        
+        tabEleve[0]  =  MEETING.id_conseil_classe;
         tabEleve[1]  =  convertDateToUsualDate(MEETING.date); 
         tabEleve[2]  =  MEETING.heure;
         tabEleve[3]  =  MEETING.type_conseil; 
@@ -572,6 +590,12 @@ function AddClassMeeting(props) {
             errorMsg=t("selecte_meeting_purpose");
             return errorMsg;
         }    
+
+        //Test de posteriorite a la date d'aujourd'hui
+        if(new Date(changeDateIntoMMJJAAAA(MEETING.date)+' 23:59:59') < new Date()) {
+            errorMsg = t("exitdate_lower_than_today_error");
+            return errorMsg;
+        }
         return errorMsg;  
     }
     
@@ -608,7 +632,7 @@ function AddClassMeeting(props) {
             return errorMsg;
         }*/
 
-        if(MEETING.decision.length == 0 ){
+        if(MEETING.resume_general_decisions.length == 0 ){
             errorMsg=t("type_meeting_decision");
             return errorMsg;
         }
@@ -657,9 +681,10 @@ function AddClassMeeting(props) {
                 default: tabPeriode = nonDefini;
             }
             console.log("periode choisie",tabPeriode, typeConseil, props.sequencesDispo)
-            setOptPeriode(tabPeriode);
             
-            var meeting = tabTypeConseil.find((meetg)=>meetg.value==e.target.value);
+            setOptPeriode(tabPeriode.filter((elt)=>elt.deja_tenu == 0));
+            
+            var meeting = tabTypeConseil.find((meetg)=>meetg.value == typeConseil);
 
             MEETING_OBJET_ID    = meeting.value;
             MEETING_OBJET_LABEL = meeting.label;
