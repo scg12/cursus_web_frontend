@@ -62,8 +62,9 @@ var page = {
 
 var chosenMsgBox;
 const MSG_SUCCESS_CREATE = 1;
-const MSG_SUCCESS_PRINT  = 2;
-const MSG_WARNING        = 3;
+const MSG_SUCCESS_UPDATE = 2;
+const MSG_SUCCESS_PRINT  = 3;
+const MSG_WARNING        = 4;
 const ROWS_PER_PAGE= 40;
 var CCPageSet=[];
 
@@ -117,8 +118,8 @@ function ConseilClasse(props) {
                 OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
                 PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
 
-                SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs_dispo);
-                TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims_dispo);
+                SEQUENCES_DISPO   =  createLabelValueTableDejaTenu(res.data.seqs_dispo);
+                TRIMESTRES_DISPO  =  createLabelValueTableDejaTenu(res.data.trims_dispo);
                 ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
 
                 listConseils = [...formatList(res.data.conseil_classes,res.data.prof_principal,res.data.seqs_dispo, res.data.trims_dispo)]
@@ -129,6 +130,18 @@ function ConseilClasse(props) {
             console.log(gridMeeting);
         })  
     }
+
+
+    function createLabelValueTableDejaTenu(tab){
+        var resultTab = [];
+        if(tab.length>0){
+            tab.map((elt)=>{
+                resultTab.push({value:elt.id, label:elt.libelle, deja_tenu:elt.deja_tenu});
+            })
+        }
+        return resultTab;
+    }
+
 
 
     function createLabelValueTable(tab){
@@ -599,7 +612,7 @@ const columnsFr = [
         inputs[8]  = row.status;
         inputs[9]  = row.statusLabel;
         inputs[10] = [...INFO_ELEVES];
-        inputs[11] = row.resume_general_decisions;
+        inputs[11] = CURRENT_CC.resume_general_decisions;
   
         currentUiContext.setFormInputs(inputs);
         console.log("laligne",row, currentUiContext.formInputs);
@@ -734,7 +747,7 @@ const columnsFr = [
             id_classe                      : meeting.classeId,
             id_pp                          : meeting.profPrincipalId,
             id_pp_user                     : meeting.currentPpUserId,
-            type_conseil                   : meeting.type_conseil,
+            type_conseil                   : meeting.type_conseilId,
             date_prevue                    : meeting.date,
             heure_prevue                   : meeting.heure,
             id_periode                     : meeting.id_periode,
@@ -755,7 +768,7 @@ const columnsFr = [
             console.log(res.data);
 
            //setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS_CREATE;
+            chosenMsgBox = MSG_SUCCESS_UPDATE;
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"info", 
@@ -820,7 +833,21 @@ const columnsFr = [
                 }) 
                 //setModalOpen(4); //debut de l'impression
                 //printMeetingReport()
+                getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
                 return 1;
+            }
+
+            case MSG_SUCCESS_UPDATE:{
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
+                setModalOpen(0); 
+                return 1;
+
             }
 
             case MSG_SUCCESS_PRINT: {
