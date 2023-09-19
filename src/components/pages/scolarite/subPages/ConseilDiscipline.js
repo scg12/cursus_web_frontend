@@ -45,13 +45,18 @@ var OTHER_MEMBERS_ADD    = [];
 var CONVOQUE_PAR_ADD     = [];
 
 var ELEVES_SANCTIONS = [];
-var ELEVES_MOTIFS = [];
 
-var LIST_CONSEILS_INFOS =[];
+var ELEVES_MOTIFS    = [];
+var LIST_MOTIFS      = [];
+var LIST_SANCTIONS   = [];
+var LIST_ELEVES      = [];
+var CURRENT_POS      = [];
 
-var printedETFileName='';
 
-var listElt ={}
+var LIST_CONSEILS_INFOS = [];
+var printedETFileName   = '';
+
+var listElt = {}
 
 var MEETING = {}
 
@@ -82,8 +87,10 @@ function ConseilDiscipline(props) {
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
-        if(gridMeeting.length==0)  CURRENT_CLASSE_ID = undefined;
+        if(gridMeeting.length==0)  CURRENT_CLASSE_ID = undefined;       
         getEtabListClasses();
+        getMotifConvocation();
+        getTypeSAnction();
     },[]);
 
     
@@ -99,6 +106,75 @@ function ConseilDiscipline(props) {
                 console.log(tempTable);
            })         
         }) 
+    }
+
+
+    function getMotifConvocation(){
+        LIST_MOTIFS = []
+        axiosInstance.post(`list-causes-convocation-cd/`, {
+            id_sousetab: currentAppContext.currentEtab,
+        }).then((res)=>{            
+            LIST_MOTIFS = [...formatMotif(res.data)];           
+            console.log("motifs convocation",res.data,LIST_MOTIFS);
+        })  
+    }
+
+    function getTypeSAnction(){
+        LIST_SANCTIONS = []
+        axiosInstance.post(`list-type-sanctions/`, {
+            id_sousetab: currentAppContext.currentEtab,
+        }).then((res)=>{
+            console.log(res.data);
+            LIST_SANCTIONS = [...formatMotif(res.data.sanctions)];
+            console.log("sanction convocation",res.data,LIST_SANCTIONS);
+          
+        }) 
+        return LIST_SANCTIONS; 
+    }
+
+    function formatMotif(list){
+        var tabMotif = [];
+        (list||[]).map((elt)=>tabMotif.push({value:elt.id, label:elt.libelle}));
+        return tabMotif;
+    }
+
+    const  getClassStudentList=(classId)=>{
+        var listEleves = []
+        axiosInstance.post(`list-eleves/`, {
+            id_classe: classId,
+        }).then((res)=>{
+            console.log(res.data);
+            console.log(listEleves);
+            LIST_ELEVES= [...getElevesTab(res.data)];
+            console.log("Eleves",LIST_ELEVES) ; 
+        })  
+    }
+
+    function initMotifsTab(motif){
+        ELEVES_MOTIFS = [];
+        (LIST_ELEVES||[]).map((elt)=>{
+            CURRENT_POS.push(0);
+            ELEVES_MOTIFS.push(motif);
+        });
+        //setTabElevesMotifs(Motifs);
+    }
+    
+
+    function getElevesTab(elevesTab){
+        var tabEleves = [
+                            {value:-1,     label:"----- "+t('choisir')+" -----"},
+                            {value: 'all', label:"----- "+t('all_students')+" -----"}
+                        ]
+        var new_eleve;
+
+        elevesTab.map((eleve)=>{
+            new_eleve = {};
+            new_eleve.value = eleve.id;
+            new_eleve.label = eleve.nom +' '+eleve.prenom;
+            tabEleves.push(new_eleve);       
+        });
+
+        return tabEleves;
     }
 
     const getListConseilDiscipline =(classeId,sousEtabId)=>{
@@ -131,8 +207,7 @@ function ConseilDiscipline(props) {
         })  
         
     }
-    
-    
+
     function createLabelValueTable(tab){
         var resultTab = [];
         if(tab.length>0){
@@ -143,7 +218,6 @@ function ConseilDiscipline(props) {
         return resultTab;
     }
 
-    
     function createLabelValueTableWithUserS(tab, present, etat){
         var resultTab = [];
         if(tab.length>0){
@@ -162,8 +236,7 @@ function ConseilDiscipline(props) {
         return ElevesList;
     }
 
-
-    function createListElevesMoifs(motifsList, etat){
+    function createListElevesMotifs(motifsList, etat){
         var ElevesList = [];
         (motifsList||[]).map((elt) => {
             ElevesList.push({id:elt.id_eleve, nom:elt.nom, motifId:elt.id, motifLabel:elt.libelle, etat:etat})
@@ -171,10 +244,9 @@ function ConseilDiscipline(props) {
         return ElevesList;
     }
 
-
     function formatList(listConseil,seqInfos,trimInfos){
-        var rang = 1;
-        var formattedList=[]
+        var rang = 1;  var formattedList = [];
+       
         (listConseil||[]).map((elt)=>{
             listElt={};
             listElt.id = elt.id;
@@ -221,6 +293,7 @@ function ConseilDiscipline(props) {
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
             getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
+            getClassStudentList(CURRENT_CLASSE_ID);
                
         }else{
             CURRENT_CLASSE_ID = undefined;
@@ -348,7 +421,6 @@ const columnsFr = [
         headerName: '',
         width: 80,
         editable: false,
-        hide:(props.formMode=='ajout')? false : true,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
             
@@ -500,7 +572,6 @@ const columnsFr = [
             headerName: '',
             width: 80,
             editable: false,
-            hide:(props.formMode=='ajout')? false : true,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 
@@ -568,7 +639,7 @@ const columnsFr = [
         inputs[9] = '';
         inputs[10]= '';
         inputs[11]= '';
-        inputs[12]='';
+        inputs[12]= '';
         inputs[13]= '';
        
         currentUiContext.setFormInputs(inputs)
@@ -580,6 +651,8 @@ const columnsFr = [
         
         var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
         var convoquePar   =  CURRENT_CD.convoque_par;
+
+        console.log("le meeting", CURRENT_CD);
 
         if(CONVOQUE_PAR_ADD != undefined){
             if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
@@ -594,12 +667,14 @@ const columnsFr = [
        
         if(CURRENT_CD.is_all_class_convoke){
             ELEVES_SANCTIONS  = createListElevesSanctions(CURRENT_CD.sanction_generale_classe,0);
-            ELEVES_MOTIFS     = createListElevesMoifs(CURRENT_CD.motif_generale_classe,0);
+            ELEVES_MOTIFS     = createListElevesMotifs(CURRENT_CD.motif_generale_classe,0);
         } else {
             ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,0);
-            ELEVES_MOTIFS     =  createListElevesMoifs(CURRENT_CD.motif_cas_par_cas,0);
+            ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,0);
         } 
 
+
+        console.log("convocateurs",CONVOQUE_PAR);
        
         // ELEVES_MOTIFS=[];
 
@@ -636,7 +711,7 @@ const columnsFr = [
         OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
         PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 1);
         ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,1);
-        ELEVES_MOTIFS     =  createListElevesMoifs(CURRENT_CD.motif_cas_par_cas,0);
+        ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,0);
         // ELEVES_MOTIFS=[];
 
         inputs[0]= row.id;
@@ -687,39 +762,37 @@ const columnsFr = [
         return tabResults.join("²²")
     }
 
-    function createGridData(){}
-   
-   
-
-
+ 
     function addMeeting(meeting) {       
         console.log('Ajout',meeting);
         CURRENT_MEETING = meeting;
            
         axiosInstance.post(`create-conseil-discipline/`, {
-            id_sousetab     : meeting.id_sousetab,
-            id_classe       : meeting.classeId,
+            id_sousetab               : meeting.id_sousetab,
+            id_classe                 : meeting.classeId,
             id_convocateur            : meeting.convoque_par.id_user,
             is_all_class_convoke      : meeting.is_all_class_convoke,
-            id_eleves       : meeting.id_eleves,
-            type_conseil    : meeting.type_conseil,
-            date_prevue     : meeting.date,
-            heure_prevue    : meeting.heure,
-            id_periode      : meeting.periodeId,
-            alerter_membres : meeting.alerter_membres,
-            id_membres      : meeting.id_membres,
-            roles_membres   : meeting.roles_membres
+            id_eleves                 : meeting.id_eleves,
+            type_conseil              : meeting.type_conseilId,
+            date_prevue               : meeting.date,
+            heure_prevue              : meeting.heure,
+            id_periode                : meeting.id_periode,
+            alerter_membres           : meeting.alerter_membres,
+            id_membres                : meeting.id_membres,
+            roles_membres             : meeting.roles_membres,
+            list_motifs_covocations   : meeting.list_motifs_covocations
             
         }).then((res)=>{
-           var gridData = createGridData(res.data.conseil_classes)
+           var gridData = formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims);
+         
             setGridMeeting(gridData);
             console.log(res.data);
 
-            setModalOpen(0);
+            //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
-                msgType:"question", 
+                msgType:"info", 
                 msgTitle:t("success_add_M"), 
                 message:t("success_add")
             })
@@ -733,38 +806,37 @@ const columnsFr = [
         CURRENT_MEETING = meeting;
            
         axiosInstance.post(`update-conseil-discipline/`, {
-            id_conseil_discipline : meeting.id,
-            id_sousetab     : meeting.id_sousetab,
-            id_classe       : meeting.classeId,
-            convoque_par    : meeting.convoque_par.id_user,
-            is_all_class_convoke : meeting.is_all_class_convoke,
-            id_eleves       : meeting.id_eleves,
-            type_conseil    : meeting.type_conseil,
-            date_prevue     : meeting.date,
-            heure_prevue    : meeting.heure,
-            id_periode      : meeting.periodeId,
-            alerter_membres : meeting.alerter_membres,
-            id_membres      : meeting.id_membres,
-            roles_membres   : meeting.roles_membres,
-            resume_general_decisions : meeting.resume_general_decisions,
-            to_close : meeting.to_close,
-            membre_presents : meeting.membre_presents,
-            
-            id_eleves                     : meeting.id_eleves,
-            list_motifs_covocations       : meeting.list_motifs_covocations,
-            list_decisions_conseil_eleves : meeting.list_decisions_conseil_eleves,
+            id_conseil_discipline            : meeting.id_conseil_discipline,
+            id_sousetab                      : meeting.id_sousetab,
+            id_classe                        : meeting.classeId,
+            convoque_par                     : meeting.convoque_par.id_user,
+            is_all_class_convoke             : meeting.is_all_class_convoke,
+            id_eleves                        : meeting.id_eleves,
+            type_conseil                     : meeting.type_conseilId,
+            date_prevue                      : meeting.date,
+            heure_prevue                     : meeting.heure,
+            id_periode                       : meeting.id_periode,
+            alerter_membres                  : meeting.alerter_membres,
+            id_membres                       : meeting.id_membres,
+            roles_membres                    : meeting.roles_membres,
+            resume_general_decisions         : meeting.resume_general_decisions,
+            to_close                         : meeting.to_close,
+            membre_presents                  : meeting.membre_presents,            
+            id_eleves                        : meeting.id_eleves,
+            list_motifs_covocations          : meeting.list_motifs_covocations,
+            list_decisions_conseil_eleves    : meeting.list_decisions_conseil_eleves,
             id_type_sanction_generale_classe : meeting.id_type_sanction_generale_classe
 
         }).then((res)=>{
-           var gridData = createGridData(res.data.conseil_classes)
+           var gridData = formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims);
             setGridMeeting(gridData);
             console.log(res.data);
 
-            setModalOpen(0);
+            //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
-                msgType:"question", 
+                msgType:"info", 
                 msgTitle:t("success_add_M"), 
                 message:t("success_add")
             })
@@ -988,10 +1060,12 @@ const columnsFr = [
                     convoquePar        = {CONVOQUE_PAR} 
                     sequencesDispo     = {SEQUENCES_DISPO}
                     trimestresDispo    = {TRIMESTRES_DISPO}
+                    motifsConv         = {LIST_MOTIFS}
+                    sanctionsConv      = {LIST_SANCTIONS}
+                    eleves             = {LIST_ELEVES}
                     formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}
-                    addMeetingHandler    = {addMeeting}  
-                    modifyMeetingHandler = {modifyMeeting}
-                    cancelHandler        = {quitForm} 
+                    actionHandler      = {(modalOpen==1) ? addMeeting : modifyMeeting}
+                    cancelHandler      = {quitForm} 
                 />
             }
 
@@ -1012,18 +1086,18 @@ const columnsFr = [
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
                 <MsgBox 
-                    msgTitle = {currentUiContext.msgBox.msgTitle} 
-                    msgType  = {currentUiContext.msgBox.msgType} 
-                    message  = {currentUiContext.msgBox.message} 
-                    customImg ={true}
-                    customStyle={true}
+                    msgTitle    = {currentUiContext.msgBox.msgTitle} 
+                    msgType     = {currentUiContext.msgBox.msgType} 
+                    message     = {currentUiContext.msgBox.message} 
+                    customImg   = {true}
+                    customStyle = {true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {"oui"}
-                    buttonRejectText = {"non"}  
+                    buttonAcceptText = {(currentUiContext.msgBox.msgType  == "question")? t("yes") : t("ok")}
+                    buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
-                />               
+               />             
             }
             <div className={classes.inputRow} >
                 {(props.formMode=='ajout')?  
@@ -1095,7 +1169,7 @@ const columnsFr = [
                         <StripedDataGrid
                             rows={gridMeeting}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='etatLabel' && params.row.etat ==1)?  classes.clotureStyle: (params.field==='etatLabel' && params.row.etat ==0) ? classes.enCoursStyle : classes.gridRowStyle }
+                            getCellClassName={(params) => (params.field==='etatLabel' && params.row.status==1)?  classes.clotureStyle: (params.field==='etatLabel' && params.row.status==0) ? classes.enCoursStyle : classes.gridRowStyle }
                             onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {
