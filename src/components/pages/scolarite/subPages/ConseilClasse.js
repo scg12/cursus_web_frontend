@@ -355,7 +355,6 @@ const columnsFr = [
         headerName: '',
         width: 80,
         editable: false,
-        hide:(props.formMode=='ajout')? false : true,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
             
@@ -512,7 +511,6 @@ const columnsFr = [
             headerName: '',
             width: 80,
             editable: false,
-            hide:(props.formMode=='ajout')? false : true,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 

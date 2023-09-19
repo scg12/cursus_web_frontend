@@ -147,9 +147,6 @@ function AddClassMeeting(props) {
             var infos_eleves = currentUiContext.formInputs[10];
             setInfosEleves(infos_eleves);
 
-
-
-
             console.log("les tableaux",optMembres,optAutresMembres);
 
             MEETING = {};
@@ -186,16 +183,12 @@ function AddClassMeeting(props) {
                 var tempTab = [...tabTypeConseil];             
                 var index1  = tempTab.findIndex((elt)=>elt.value ==  MEETING.type_conseil);
                 var objet   = tempTab.find((elt)=>elt.value ==  MEETING.type_conseil);
-
-                console.log("objet",objet);
                 
-                MEETING_OBJET_ID    = objet.value;
-                MEETING_OBJET_LABEL = objet.label
-
-               
-               
                 tempTab.splice(index1,1);
                 tempTab.unshift(objet);
+                
+                MEETING_OBJET_ID    = objet.value;
+                MEETING_OBJET_LABEL = objet.label;
 
                 setOptObjet(tempTab);
                 
@@ -213,15 +206,14 @@ function AddClassMeeting(props) {
 
                 var index2  = tabPeriode.findIndex((elt)=>elt.value == MEETING.id_periode);
                 var periode = tabPeriode.find((elt)=>elt.value ==  MEETING.id_periode);
-                console.log("hshshshhs", props.sequencesDispo)
-
+                
                 console.log("objet",objet,MEETING.type_conseil, MEETING.id_periode,periode, tabPeriode);
+                tabPeriode.splice(index2,1);
+                tabPeriode.unshift(periode);
 
                 PERIODE_ID    = periode.value;
                 PERIODE_LABEL = periode.label;
 
-                tabPeriode.splice(index2,1);
-                tabPeriode.unshift(periode);
                 setOptPeriode(tabPeriode)
             }
 
@@ -388,7 +380,7 @@ function AddClassMeeting(props) {
                         
             setEtape2InActiv(false);
             setEtape(2);
-            setFormData();
+            setFormData2();
             setIsButtonClicked(true);
         } else {
             errorDiv.className = classes.formErrorMsg;
@@ -449,48 +441,48 @@ function AddClassMeeting(props) {
         
         MEETING = {};
 
-            //----- 1ere partie du formulaire1 ----- 
-            if(props.formMode == "creation") MEETING.id_conseil_classe = -1;             
-            else MEETING.id_conseil_classe = currentUiContext.formInputs[0]; 
+        //----- 1ere partie du formulaire1 ----- 
+        if(props.formMode == "creation") MEETING.id_conseil_classe = -1;             
+        else MEETING.id_conseil_classe = currentUiContext.formInputs[0]; 
             
-            MEETING.id_sousetab    =  currentAppContext.currentEtab;
+        MEETING.id_sousetab    =  currentAppContext.currentEtab;
 
-            MEETING.classeId       =  props.currentClasseId; 
-            MEETING.classeLabel    =  props.currentClasseLabel;
+        MEETING.classeId       =  props.currentClasseId; 
+        MEETING.classeLabel    =  props.currentClasseLabel;
 
-            MEETING.currentPpUserId    = props.currentPpUserId;
-            MEETING.profPrincipalId    = props.currentPpId; 
-            MEETING.profPrincipalLabel = props.currentPpLabel;
+        MEETING.currentPpUserId    = props.currentPpUserId;
+        MEETING.profPrincipalId    = props.currentPpId; 
+        MEETING.profPrincipalLabel = props.currentPpLabel;
             
             
-            MEETING.type_conseil    = MEETING_OBJET_LABEL;  //Mettre le type de conseil
-            MEETING.type_conseilId  = MEETING_OBJET_ID;     //Mettre l'ID type conseil
+        MEETING.type_conseil    = MEETING_OBJET_LABEL;  //Mettre le type de conseil
+        MEETING.type_conseilId  = MEETING_OBJET_ID;     //Mettre l'ID type conseil
             
-            MEETING.id_periode      = PERIODE_ID            //Mettre la periode   
-            MEETING.periode         = PERIODE_LABEL;  
+        MEETING.id_periode      = PERIODE_ID            //Mettre la periode   
+        MEETING.periode         = PERIODE_LABEL;  
               
             
-            MEETING.alerter_membres = true;
+        MEETING.alerter_membres = true;
             
-            if(etape==1){
-                dateDeb  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
-                heureDeb = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
+        if(etape==1){
+            dateDeb  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
+            heureDeb = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
                 
-                MEETING.date  = dateDeb;
-                MEETING.heure = heureDeb;
-            } else{
-                MEETING.date  = dateDeb;
-                MEETING.heure = heureDeb;
-            }
+            MEETING.date  = dateDeb;
+            MEETING.heure = heureDeb;
+        } else{
+            MEETING.date  = dateDeb;
+            MEETING.heure = heureDeb;
+        }
 
             
-            //----- 2ieme partie du formulaire1 ----- 
-            MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
+         //----- 2ieme partie du formulaire1 ----- 
+         MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
 
-            //----- 3ieme partie du formulaire1 ----- 
-            MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
-            MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
-            //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
+         //----- 3ieme partie du formulaire1 ----- 
+         MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
+         MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
+        //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
         
         
         //----- 1ere partie du formulaire2 -----
@@ -522,7 +514,7 @@ function AddClassMeeting(props) {
         console.log(MEETING.date);
     }
   
-    function setFormData(){
+    function setFormData2(){
         var tabEleve=[];       
  
         var profPresent =[];
@@ -534,7 +526,8 @@ function AddClassMeeting(props) {
             profPresent.push({value:elt.value, label:elt.label, role:elt.role, present:elt.present, etat:0});
         })
 
-        setTabProfsPresents(profPresent);        
+        setTabProfsPresents(profPresent);
+
         tabEleve[0]  =  MEETING.id_conseil_classe;
         tabEleve[1]  =  convertDateToUsualDate(MEETING.date); 
         tabEleve[2]  =  MEETING.heure;
@@ -552,16 +545,11 @@ function AddClassMeeting(props) {
     function formDataCheck1(){       
         var errorMsg='';
         var meeting_hour = MEETING.heure.split(':')[0];
-        var meeting_min = MEETING.heure.split(':')[1]
+        var meeting_min = MEETING.heure.split(':')[1];
+       
         if(meeting_hour[0]=='0') meeting_hour = meeting_hour[1];
         if(meeting_min[0]=='0')  meeting_min  = meeting_min[1];
-        
-        //console.log('jjjj',eval(meeting_hour),eval(meeting_min));       
-        // if(MEETING.responsableId  == undefined){
-        //     errorMsg= t("select_meeting_pres");
-        //     return errorMsg;
-        // }
-
+       
         if(MEETING.date.length == 0) {
             errorMsg=t("enter_meeting_date");
             return errorMsg;
@@ -602,37 +590,7 @@ function AddClassMeeting(props) {
     
     function formDataCheck2(){       
         var errorMsg='';
-        
-      /*  if(MEETING.note_passage != -1 && MEETING.note_passage.length == 0 ){
-            errorMsg=t("enter_success_mark");
-            return errorMsg;
-        }
-
-        if(MEETING.note_passage != -1 && isNaN(MEETING.note_passage)){
-            errorMsg=t("enter_valid_success_mark");
-            return errorMsg;
-        }
-
-        if(MEETING.note_passage != -1 && (MEETING.note_passage > 20 || MEETING.note_passage < 0)){
-            errorMsg=t("enter_valid_success_mark");
-            return errorMsg;
-        }
-
-        if(MEETING.note_exclusion != -1 && MEETING.note_exclusion.length == 0 ){
-            errorMsg=t("enter_elim_mark");
-            return errorMsg;
-        }
-
-        if(MEETING.note_exclusion != -1 && isNaN(MEETING.note_exclusion)){
-            errorMsg= t("enter_valid_elim_mark");
-            return errorMsg;
-        }
-
-        if(MEETING.note_exclusion != -1 && (MEETING.note_exclusion > 20 || MEETING.note_exclusion < 0)){
-            errorMsg= t("enter_valid_elim_mark");
-            return errorMsg;
-        }*/
-
+     
         if(MEETING.resume_general_decisions.length == 0 ){
             errorMsg=t("type_meeting_decision");
             return errorMsg;
@@ -663,7 +621,7 @@ function AddClassMeeting(props) {
 
     function showStep2(){
         if(props.formMode=='consult'){
-            setFormData(); setEtape(2);
+            setFormData2(); setEtape(2);
         }
 
     }

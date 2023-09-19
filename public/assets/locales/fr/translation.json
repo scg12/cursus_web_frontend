@@ -1,4 +1,5 @@
-{   "non_defini":"Non défini",
+{   "student_not_selected" : "Vous n'avez pas sélectionné d'élève pour convocation!",
+    "non_defini":"Non défini",
     "delete_pp_question":"Cette opération va entrainer la suppression de l'enseignant principal de la classe. Voulez-vous vraiment continuer?",
     "total_hours" : "Nombre total d'heures",
     "class_schedule":"Emploi de temps de la classe de ",

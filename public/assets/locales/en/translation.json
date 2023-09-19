@@ -1,4 +1,5 @@
-{   "non_defini":"Not défined",
+{   "student_not_selected" : "No student have been selected. select student to convocate!",
+    "non_defini":"Not défined",
     "delete_pp_question":"This operation will cause the deletion of the class main teacher. Do you want to continue?",
     "total_hours" : "Total Teaching hours",
     "class_schedule":"Time table for ",
