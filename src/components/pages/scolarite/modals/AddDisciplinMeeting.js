@@ -79,6 +79,7 @@ function AddDisciplinMeeting(props) {
     const [tabMotifs, setTabMotifs] = useState([]);
     const [tabElevesMotifs, setTabElevesMotifs]= useState([]);
     const [allStudentsConvocated, setAllStudentsConvocated] = useState(false);
+    const [elevesSanctions, setElevesSanctions] = useState([]);
     
 
     //---To delete
@@ -126,12 +127,10 @@ function AddDisciplinMeeting(props) {
         LIST_SANCTIONS = props.sanctionsConv
 
         if(LIST_MOTIFS.length > 0){
-            initMotifsTab(LIST_MOTIFS[0].value);
             setTabMotifs(LIST_MOTIFS);
         }
 
         if(LIST_SANCTIONS.length > 0){
-            initSanctionTab(LIST_SANCTIONS[0].value);
             setTabSanctions(LIST_SANCTIONS);
         }
        
@@ -179,9 +178,23 @@ function AddDisciplinMeeting(props) {
 
             console.log("les tableaux",optConvocateurs,optMembres,optAutresMembres);
 
+            var ListElevesDecision = [...currentUiContext.formInputs[10]];
+            var ListElevesSanction = [...currentUiContext.formInputs[11]];
 
-            setTabElevesMotifs([...currentUiContext.formInputs[10]]);
-            setTabElevesDecisions([...currentUiContext.formInputs[11]]);
+
+           
+            setTabElevesMotifs(ListElevesDecision);
+
+            if(ListElevesSanction.length > 0){
+                initSanctionTab(ListElevesSanction);
+                setTabElevesDecisions(ListElevesSanction);          
+            }                
+            else{
+                initSanctionTab(ListElevesDecision);
+                setTabElevesDecisions(ListElevesDecision);
+            } 
+
+           
 
             MEETING = {};
         
@@ -304,10 +317,17 @@ function AddDisciplinMeeting(props) {
         });
     }
 
-    function initSanctionTab(sanction){
-        var tabSanctions = [];
-        (LIST_ELEVES||[]).map((elt)=>tabSanctions.push(sanction));
-        setTabSanctions(tabSanctions);
+    function initSanctionTab(lisElevestSanctions){     
+        var sanctionsEleves = [];
+        var i = 0;
+        (lisElevestSanctions||[]).map((elt, rowIndex)=>{  
+            for(i=0; i<LIST_SANCTIONS.length; i++){
+                sanctionsEleves[rowIndex]=[];
+                sanctionsEleves[rowIndex][i]=-1;
+            }       
+        });
+        console.log("eleves sanctions", sanctionsEleves,lisElevestSanctions);
+        setElevesSanctions(sanctionsEleves);
     }
  
     function formatMotif(list){
@@ -561,8 +581,9 @@ function AddDisciplinMeeting(props) {
         //----- 2ieme partie du formulaire1 ----- 
         MEETING.id_eleves               = getListElementByFields(tabElevesMotifs, "id");  //Mettre la chaine des eleves separe par²²
         MEETING.is_all_class_convoke    = ALL_STUDENTS_CONVOCATED;       //Mettre la bonne valeur
-        //MEETING.motif_generale_classe   = MOTIFS_PAR_ELEVES.length > 0 ? MOTIFS_PAR_ELEVES[0] :'';
-        MEETING.list_motifs_covocations = getListElementByFields(tabElevesMotifs, "motifId");
+        
+        MEETING.motif_generale_classe   = getListElementByFields(tabElevesMotifs, "motifLabel");
+        MEETING.list_motifs_covocations = getListElementByFields(tabElevesMotifs, "motifLabel");
 
         //----- 3ieme partie du formulaire1 ----- 
         MEETING.id_membres     = getListElementByFields(optMembres.filter((elt)=>elt.value!=CONVOQUE_PAR_ID), "value");    //Mettre la liste des membres separe par²²
@@ -573,8 +594,8 @@ function AddDisciplinMeeting(props) {
 
         //----- 2ieme partie du formulaire2 -----
         //MEETING.id_eleves  =  getListElementByFields(tabElevesDecisions, "id");
-        MEETING.list_decisions_conseil_eleves    = SANCTIONS_PAR_ELEVES.length > 0 ? SANCTIONS_PAR_ELEVES.join("²²") :''; //Liste des decisions pour chaque eleves separe par²²
-        MEETING.id_type_sanction_generale_classe = SANCTIONS_PAR_ELEVES.length > 0 ? SANCTIONS_PAR_ELEVES[0] : ''; //Sanction generale si toute la classe est convoquee
+        MEETING.list_decisions_conseil_eleves    = getListElementByFields(tabElevesDecisions, "decisionId");; //Liste des decisions pour chaque eleves separe par²²
+        MEETING.id_type_sanction_generale_classe = getListElementByFields(tabElevesDecisions, "decisionId"); //Sanction generale si toute la classe est convoquee
 
         //----- 3ieme partie du formulaire2 -----
         MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
@@ -1126,14 +1147,19 @@ function AddDisciplinMeeting(props) {
 
     function updateEleve(e,rowIndex){
         eleves_data = [...tabElevesDecisions];
+
+        console.log("ffffft",tabElevesDecisions);
        
         var cur_eleveId= e.target.id;
         var index = eleves_data.findIndex((eleve)=>eleve.id == cur_eleveId);
         var cur_eleve = eleves_data.find((eleve)=>eleve.id == cur_eleveId);
 
+        var sanctions  = elevesSanctions[rowIndex];
+        var sanctionId = sanctions.find((elt)=>elt > 0)
+
         cur_eleve.etat = 1;
-        cur_eleve.decisionsId   = tabSanctions[rowIndex];
-        cur_eleve.decisionLabel = tabSanctions[rowIndex];
+        cur_eleve.decisionsId   = sanctionId;
+        cur_eleve.decisionLabel = tabSanctions.find((elt)=>elt.value == sanctionId).label;
 
         console.log('curentEleve', cur_eleve);
 
@@ -1142,15 +1168,15 @@ function AddDisciplinMeeting(props) {
         setTabElevesDecisions(eleves_data);     
     }
 
-    function updateSanction(e, row){
-        var sanctionsList = [...tabSanctions];
-        var selectedItemId = e.target.id;
-        var sanctionIndex  =  selectedItemId.split('_')[1];
-        sanctionsList[row] = listSanctions[sanctionIndex];
-        setTabSanctions(sanctionsList);       
-       
-        SANCTIONS_PAR_ELEVES[row] = listSanctions[sanctionIndex];
+
+    function updateSanction(e, row, index){
+        var sanctionEleves = [...elevesSanctions];
+        if( sanctionEleves[row][index]== -1 )
+            sanctionEleves[row][index] = tabSanctions[index].value;
+        else  sanctionEleves[row][index] = -1;
+        setElevesSanctions(sanctionEleves);     
     }
+
 
     const LigneEleveDecisionHeader=(props)=>{
         return(
@@ -1175,32 +1201,16 @@ function AddDisciplinMeeting(props) {
                    
                    :
                         <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}>
-                            {listSanctions.map((sanction, index)=>{
+                            {tabSanctions.map((sanction, index)=>{
                                 return (
                                     <div> 
-                                        <input type='radio' id={'sanction'+props.rowIndex+'_'+index} style={{width:'1vw', height:'2vh'}} checked={sanction.value == tabSanctions[props.rowIndex]}  value={0} name={'eleveDecision'+index} onClick={(e)=>{updateSanction(e, props.rowIndex)}}/>
-                                        <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}> {sanction.label}</label>
+                                        <input type='radio' id={'sanction'+props.rowIndex+'_'+index} style={{width:'0.8vw', height:'1.57vh'}} checked={elevesSanctions[props.rowIndex][index]>0}  value={0} name={'eleveDecision'+props.rowIndex} onClick={(e)=>{updateSanction(e,props.rowIndex,index)}}/>
+                                        <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"5vw"}}> {sanction.label}</label>
                                    </div>
 
                                 )
                             })}
-                                
-                            
-                            
-                            {/* <input type='radio' id='aucune' style={{width:'1vw', height:'2vh'}} checked={props.aucune == sanctions[props.rowIndex]}  value={0} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(0,props.rowIndex)}}/>
-                            <label style={{ color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}> {t("aucune")}</label>
-                                            
-                            <input type='radio'  id='consigne' style={{width:'1vw', height:'2vh'}} checked={props.consigne== sanctions[props.rowIndex]}  value={1} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(1,props.rowIndex)}}/>
-                            <label style={{ width:'2vw', color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"2vw", marginLeft:"0.3vw"}}> {t("consigne")} </label>
-
-                            <input type='radio' id='exclusion_temp'  style={{width:'1vw', height:'2vh'}} checked={props.excluTemp == sanctions[props.rowIndex]}  value={2} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(2,props.rowIndex)}}/>
-                            <label style={{width:'3.3vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw" }}>{ t('excl_temp')}</label>
-
-                            <input type='radio' id='exclusion_def' style={{width:'1vw', height:'2vh'}} checked={props.excluDef== sanctions[props.rowIndex]}  value={3} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(3,props.rowIndex)}}/>
-                            <label style={{width:'3.3vw', color:'black', fontWeight:"bold", fontSize:"0.77vw", marginLeft:'0.13vw', marginRight:"1vw"}}>{ t('excl_def')} </label>
-                                            
-                            <input type='radio' id='autre' style={{width:'1vw', height:'2vh'}} checked={props.autre== sanctions[props.rowIndex]}  value={4} name={'eleveDecision'+props.rowIndex} onClick={()=>{updateSanction(4,props.rowIndex)}}/>
-                            <label style={{color:'black',  fontWeight:"bold", fontSize:"0.77vw", marginRight:"0.3vw", marginLeft:"0.3vw"}}>{t("autre")} </label> */}
+                        
                         </div>
                     }
               
