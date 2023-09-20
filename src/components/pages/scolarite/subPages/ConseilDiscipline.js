@@ -69,8 +69,9 @@ var page = {
 }
 
 var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
+const MSG_SUCCESS_CREATE = 1;
+const MSG_SUCCESS_UPDATE = 2;
+const MSG_WARNING = 3; 
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var CCPageSet=[];
@@ -652,7 +653,7 @@ const columnsFr = [
         var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
         var convoquePar   =  CURRENT_CD.convoque_par;
 
-        console.log("le meeting", CURRENT_CD);
+        console.log("le meeting", CONVOQUE_PAR_ADD, CURRENT_CD);
 
         if(CONVOQUE_PAR_ADD != undefined){
             if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
@@ -789,7 +790,7 @@ const columnsFr = [
             console.log(res.data);
 
             //setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
+            chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"info", 
@@ -833,7 +834,7 @@ const columnsFr = [
             console.log(res.data);
 
             //setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
+            chosenMsgBox = MSG_SUCCESS_UPDATE;
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"info", 
@@ -890,14 +891,25 @@ const columnsFr = [
         
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS: {
+            case MSG_SUCCESS_CREATE: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 }) 
-                
+                getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
+                return 1;
+            }
+
+            case MSG_SUCCESS_UPDATE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
                 if(CURRENT_MEETING.status==1) printMeetingReport();                
                 return 1;
             }
@@ -927,7 +939,18 @@ const columnsFr = [
     const rejectHandler=()=>{
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS: {
+            case MSG_SUCCESS_CREATE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //getClassStudentList(CURRENT_CLASSE_ID); 
+                return 1;
+            }
+
+            case MSG_SUCCESS_UPDATE: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
