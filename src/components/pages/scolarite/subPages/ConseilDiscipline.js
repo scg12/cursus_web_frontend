@@ -273,9 +273,9 @@ function ConseilDiscipline(props) {
     function getPeriodeLabel(idPeriode, listSequence, listTrimestres){
         var foundedPeriode={};        
         foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
-        if (foundedPeriode==-1){
+        if (foundedPeriode== undefined){
             foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
-            if (foundedPeriode==-1){
+            if (foundedPeriode== undefined){
                 foundedPeriode = {id:-1, libelle:t('conseil_anuuel')};
             }
         }
