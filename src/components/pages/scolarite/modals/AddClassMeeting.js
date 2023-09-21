@@ -171,6 +171,7 @@ function AddClassMeeting(props) {
             
             //----- 2ieme partie du formulaire1 ----- 
             MEETING.resume_general_decisions = putToEmptyStringIfUndefined(currentUiContext.formInputs[11]); 
+            MEETING.status = putToEmptyStringIfUndefined(currentUiContext.formInputs[8]);
             MEETING.etat = putToEmptyStringIfUndefined(currentUiContext.formInputs[8]);
 
             MEETING_GEN_DECISION = MEETING.resume_general_decisions;
@@ -421,6 +422,15 @@ function AddClassMeeting(props) {
         }
     }   
 
+
+    function printReportHandler(){
+        console.log('avant:',MEETING);
+        getFormData();
+        props.printReportHandler(MEETING);
+        console.log('apres:',MEETING);
+    }
+
+
     function putToEmptyStringIfUndefined(chaine){
         if (chaine==undefined) return '';
         else return chaine;
@@ -462,16 +472,20 @@ function AddClassMeeting(props) {
               
             
         MEETING.alerter_membres = true;
-            
-        if(etape==1){
-            dateDeb  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
-            heureDeb = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
-                
-            MEETING.date  = dateDeb;
-            MEETING.heure = heureDeb;
-        } else{
-            MEETING.date  = dateDeb;
-            MEETING.heure = heureDeb;
+        if (props.formMode != 'consult'){
+            if(etape==1){
+                dateDeb  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
+                heureDeb = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
+                    
+                MEETING.date  = dateDeb;
+                MEETING.heure = heureDeb;
+            } else{
+                MEETING.date  = dateDeb;
+                MEETING.heure = heureDeb;
+            }
+        } else {
+            MEETING.date         = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
+            MEETING.heure        = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
         }
 
             
@@ -496,6 +510,11 @@ function AddClassMeeting(props) {
         MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
 
         MEETING.to_close = false;
+
+         //-------------- Pour les besoin d'impression -------------
+        //  MEETING.listConvoques    = [...tabElevesMotifs];
+        //  MEETING.listCaspasCas    = [...tabElevesDecisions];
+         MEETING.listParticipants = [...tabProfsPresents];
        
         console.log(MEETING);       
     }
@@ -507,8 +526,11 @@ function AddClassMeeting(props) {
         tabEleve[2]  =  MEETING.heure;
         tabEleve[3]  =  MEETING.type_conseil; 
         tabEleve[4]  =  MEETING.id_type_conseil;
+        tabEleve[5]  =  MEETING.periode;
         tabEleve[8]  =  MEETING.status;
         tabEleve[9]  =  MEETING.statusLabel;
+        tabEleve[11] =  MEETING.resume_general_decisions;
+       
         currentUiContext.setFormInputs(tabEleve);
         console.log(MEETING.date);
     }
@@ -531,7 +553,8 @@ function AddClassMeeting(props) {
         tabEleve[1]  =  convertDateToUsualDate(MEETING.date); 
         tabEleve[2]  =  MEETING.heure;
         tabEleve[3]  =  MEETING.type_conseil; 
-        tabEleve[4]  =  MEETING.id_type_conseil;       
+        tabEleve[4]  =  MEETING.id_type_conseil; 
+        tabEleve[5]  =  MEETING.periode;      
         tabEleve[8]  =  MEETING.status;
         tabEleve[9]  =  MEETING.statusLabel;
         tabEleve[11] =  MEETING.resume_general_decisions;
@@ -1107,13 +1130,13 @@ function AddClassMeeting(props) {
                         {t("etape")+' 1'}: {t("conseil_class_prepa")}
                         {(props.formMode=='consult')&&
                             <div style={{display:'flex', flexDirection:'row', position:'absolute', right:0, top:'-0.7vh' }}>
-                                {(currentUiContext.formInputs[9]==1) ?  //conseil cloture
+                                {(currentUiContext.formInputs[8]==1) ?  //conseil cloture
                                     <CustomButton
                                         btnText={t("print_pv")} 
                                         buttonStyle={getSmallButtonStyle()}
                                         style={{marginBottom:'-0.3vh', marginRight:'1vw'}}
                                         btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler={props.cancelHandler}
+                                        btnClickHandler={printReportHandler}
                                     />
                                     :null
                                 }
@@ -1290,7 +1313,7 @@ function AddClassMeeting(props) {
 
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="periodeLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="periodeLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[5]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                         <input id="periodeId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>  
                                     :
@@ -1383,7 +1406,7 @@ function AddClassMeeting(props) {
                         {t("etape")+' 2'}: {t("closing_meeting")}
                         {(props.formMode=='consult')&&
                             <div style={{display:'flex', flexDirection:'row', position:'absolute', right:0, top:'-0.7vh' }}>
-                                {(currentUiContext.formInputs[9]==1) ?  //conseil cloture
+                                {(currentUiContext.formInputs[8]==1) ?  //conseil cloture
                                     <CustomButton
                                         btnText={t("print_pv")} 
                                         buttonStyle={getSmallButtonStyle()}

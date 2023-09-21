@@ -28,7 +28,6 @@ let CURRENT_CLASSE_LABEL;
 var CURRENT_MEETING = {};
 
 
-var CURRENT_MEETING   = {};
 var printedETFileName = '';
 var SEQUENCES_DISPO   = [];
 var TRIMESTRES_DISPO  = [];
@@ -69,9 +68,10 @@ var page = {
 }
 
 var chosenMsgBox;
-const MSG_SUCCESS_CREATE = 1;
-const MSG_SUCCESS_UPDATE = 2;
-const MSG_WARNING = 3; 
+const MSG_SUCCESS_CREATE       = 1;
+const MSG_SUCCESS_UPDATE       = 2;
+const MSG_SUCCESS_UPDATE_PRINT = 3;
+const MSG_WARNING = 4; 
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var CCPageSet=[];
@@ -85,7 +85,11 @@ function ConseilDiscipline(props) {
     const [gridMeeting, setGridMeeting]= useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
+    const[isLoading,setIsloading] = useState(false);
+    const[LoadingVisible,setLoadingVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
+
+    
 
     useEffect(()=> {
         if(gridMeeting.length==0)  CURRENT_CLASSE_ID = undefined;       
@@ -148,6 +152,7 @@ function ConseilDiscipline(props) {
             console.log(listEleves);
             LIST_ELEVES= [...getElevesTab(res.data)];
             console.log("Eleves",LIST_ELEVES) ; 
+            setIsloading(false);
         })  
     }
 
@@ -200,7 +205,8 @@ function ConseilDiscipline(props) {
                 ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
 
                 listConseils = [...formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims)]
-                console.log(listConseils);                
+                console.log(listConseils);   
+                //setIsloading(false);             
             }
 
             setGridMeeting(listConseils);
@@ -273,9 +279,9 @@ function ConseilDiscipline(props) {
     function getPeriodeLabel(idPeriode, listSequence, listTrimestres){
         var foundedPeriode={};        
         foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
-        if (foundedPeriode==-1){
+        if (foundedPeriode== undefined){
             foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
-            if (foundedPeriode==-1){
+            if (foundedPeriode== undefined){
                 foundedPeriode = {id:-1, libelle:t('conseil_anuuel')};
             }
         }
@@ -292,7 +298,8 @@ function ConseilDiscipline(props) {
             setIsValid(true);            
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
-            
+
+            setIsloading(true);
             getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
             getClassStudentList(CURRENT_CLASSE_ID);
                
@@ -676,10 +683,7 @@ const columnsFr = [
 
 
         console.log("convocateurs",CONVOQUE_PAR);
-       
-        // ELEVES_MOTIFS=[];
-
-       
+    
         inputs[0] = row.id;
         inputs[1] = row.date_prevue;
         inputs[2] = row.heure_prevue;
@@ -706,14 +710,26 @@ const columnsFr = [
 
     function consultRowData(row){
         var inputs=[];
+       
+
         var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+        var convoquePar   =  CURRENT_CD.convoque_par;
+
+        console.log("le meeting", CONVOQUE_PAR_ADD, CURRENT_CD);
+
+        if(CONVOQUE_PAR_ADD != undefined){
+            if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
+                CONVOQUE_PAR_ADD.unshift(convoquePar);
+            }           
+        }
 
         DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
         OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
         PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 1);
         ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,1);
-        ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,0);
-        // ELEVES_MOTIFS=[];
+        ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,1);
+        CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 1);
+        
 
         inputs[0]= row.id;
         inputs[1]= row.date_prevue;
@@ -803,7 +819,7 @@ const columnsFr = [
   
     
     function modifyMeeting(meeting) {
-        console.log('Ajout',meeting);
+        console.log('Modif',meeting);
         CURRENT_MEETING = meeting;
            
         axiosInstance.post(`update-conseil-discipline/`, {
@@ -834,13 +850,27 @@ const columnsFr = [
             console.log(res.data);
 
             //setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS_UPDATE;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")
-            })
+           
+            if(meeting.to_close==1){                
+                chosenMsgBox = MSG_SUCCESS_UPDATE_PRINT;
+                currentUiContext.showMsgBox({
+                    visible:true, 
+                    msgType:"question", 
+                    msgTitle:t("success_add_M"), 
+                    message:t("success_add") + '  '+ t("print_pv") +'?'
+                });
+                //setModalOpen(0);
+
+            } else {
+                chosenMsgBox = MSG_SUCCESS_UPDATE;
+                currentUiContext.showMsgBox({
+                    visible:true, 
+                    msgType:"info", 
+                    msgTitle:t("success_add_M"), 
+                    message:t("success_add")
+                })
+            }
+           
         })
     }
 
@@ -873,9 +903,15 @@ const columnsFr = [
             
             ELEVES_SANCTIONS =  [];
             ELEVES_MOTIFS    =  [];
-
-            setModalOpen(1); 
-            initFormInputs();
+            
+            if(isLoading==false){
+                setModalOpen(1); 
+                initFormInputs();
+                setLoadingVisible(false);
+            }else{
+                setLoadingVisible(true);
+            }
+           
         } else{
             chosenMsgBox = MSG_WARNING;
             currentUiContext.showMsgBox({
@@ -911,6 +947,18 @@ const columnsFr = [
                 }) 
                 getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
                 if(CURRENT_MEETING.status==1) printMeetingReport();                
+                return 1;
+            }
+
+            case MSG_SUCCESS_UPDATE_PRINT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
+                printMeetingReport();                
                 return 1;
             }
 
@@ -961,15 +1009,17 @@ const columnsFr = [
                 return 1;
             }
 
-            case MSG_WARNING: {
-                    currentUiContext.showMsgBox({
+            case MSG_SUCCESS_UPDATE_PRINT: {
+                currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
-                })  
+                }) 
+                //getClassStudentList(CURRENT_CLASSE_ID); 
                 return 1;
             }
+
             
            
             default: {
@@ -982,6 +1032,12 @@ const columnsFr = [
             }
         }
         
+    }
+
+    function printReport(meeting){
+        CURRENT_MEETING = meeting;
+        console.log("Impression", meeting);
+        printMeetingReport();
     }
 
     const printMeetingReport=()=>{
@@ -1072,14 +1128,20 @@ const columnsFr = [
     return (
         <div className={classes.formStyleP}>
             
-            {(modalOpen!=0) && <BackDrop/>}
+            {LoadingVisible && 
+                <div className={classes.formET} style={{alignItems:"center", width:'100%', height:'100%', backgroundColor:"white"}}>
+                    <img src='images/Loading_icon.gif' alt="loading..." />
+                </div>
+            }
 
+            {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen>0 && modalOpen<4) && 
                 <AddDisciplinMeeting
                     currentClasseLabel = {CURRENT_CLASSE_LABEL} 
                     currentClasseId    = {CURRENT_CLASSE_ID}     
                     defaultMembres     = {DEFAULT_MEMBERS} 
                     othersMembres      = {OTHER_MEMBERS} 
+                    presentsMembres    = {PRESENTS_MEMBERS}
                     convoquePar        = {CONVOQUE_PAR} 
                     sequencesDispo     = {SEQUENCES_DISPO}
                     trimestresDispo    = {TRIMESTRES_DISPO}
@@ -1088,6 +1150,7 @@ const columnsFr = [
                     eleves             = {LIST_ELEVES}
                     formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}
                     actionHandler      = {(modalOpen==1) ? addMeeting : modifyMeeting}
+                    printReportHandler = {printReport}
                     cancelHandler      = {quitForm} 
                 />
             }

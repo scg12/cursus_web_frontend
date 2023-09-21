@@ -119,7 +119,7 @@ function PVCDMeeting(props){
                         (eleve, index) => (
                             <View style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
                                 <Text style={{fontSize:12, width:"50vw", textAlign:'justify' }}>- {eleve.nom} : </Text>
-                                <Text style={{fontSize:12, fontFamily:"MyBold"}}> pour {eleve.decisionLabel}</Text>
+                                <Text style={{fontSize:12, fontFamily:"MyBold"}}> pour {eleve.motifLabel}</Text>
                             </View> 
                         ))
                     }
@@ -156,7 +156,7 @@ function PVCDMeeting(props){
                     { Array.from(props.participants,
                         (participant, index) => (
                             <View style={{display:"flex", flexDirection:"row",marginLeft:"3vw"}}>
-                                <Text style={{fontSize:12, width:"50vw", textAlign:'justify'}}>- {participant.nom} :</Text>
+                                <Text style={{fontSize:12, width:"50vw", textAlign:'justify'}}>- {participant.label} :</Text>
                                 <Text style={{fontSize:12,}}> {participant.role} </Text>
                             </View> 
                         ))

@@ -61,9 +61,9 @@ var page = {
 }
 
 var chosenMsgBox;
-const MSG_SUCCESS_CREATE = 1;
-const MSG_SUCCESS_UPDATE = 2;
-const MSG_SUCCESS_PRINT  = 3;
+const MSG_SUCCESS_CREATE       = 1;
+const MSG_SUCCESS_UPDATE       = 2;
+const MSG_SUCCESS_UPDATE_PRINT = 3;
 const MSG_WARNING        = 4;
 const ROWS_PER_PAGE= 40;
 var CCPageSet=[];
@@ -78,6 +78,8 @@ function ConseilClasse(props) {
     const [gridMeeting, setGridMeeting]= useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
+    const[isLoading,setIsloading] = useState(false);
+    const[LoadingVisible,setLoadingVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -128,6 +130,8 @@ function ConseilClasse(props) {
      
             setGridMeeting(listConseils);
             console.log(gridMeeting);
+            
+            setIsloading(false);
         })  
     }
 
@@ -179,6 +183,7 @@ function ConseilClasse(props) {
             listElt.user_id = ProfInfo.user_id;
             listElt.rang = rang; 
             listElt.status = elt.status; 
+            listElt.resume_general_decisions = elt.resume_general_decisions;
             listElt.periodeId = elt.id_type_conseil;
             listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos,trimInfos);
             listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
@@ -219,6 +224,7 @@ function ConseilClasse(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
+            setIsloading(true);
             getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
             
               
@@ -309,13 +315,13 @@ const columnsFr = [
         headerClassName:classes.GridColumnStyle
     },
 
-    /*{
-        field: 'decision',
-        headerName: 'DECISION DU CONSEIL',
+    {
+        field: 'resume_general_decisions',
+        headerName: 'DECISION',
         width: 200,
         editable: false,
         headerClassName:classes.GridColumnStyle
-    },*/
+    },
 
     {
         field: 'status',
@@ -465,13 +471,13 @@ const columnsFr = [
             headerClassName:classes.GridColumnStyle
         },
     
-        /*{
-            field: 'decision',
-            headerName: 'DECISION DU CONSEIL',
+        {
+            field: 'resume_general_decisions',
+            headerName: 'DECISION',
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
-        },*/
+        },
     
         {
             field: 'status',
@@ -610,7 +616,8 @@ const columnsFr = [
         inputs[8]  = row.status;
         inputs[9]  = row.statusLabel;
         inputs[10] = [...INFO_ELEVES];
-        inputs[11] = CURRENT_CC.resume_general_decisions;
+        inputs[11] = row.resume_general_decisions;
+  
   
         currentUiContext.setFormInputs(inputs);
         console.log("laligne",row, currentUiContext.formInputs);
@@ -723,7 +730,6 @@ const columnsFr = [
            var gridData = formatList(res.data.conseil_classes, res.data.prof_principal, res.data.seqs_dispo, res.data.trims_dispo)
             setGridMeeting(gridData);
             console.log(res.data);
-
             //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
@@ -751,7 +757,7 @@ const columnsFr = [
             id_periode                     : meeting.id_periode,
             alerter_membres                : meeting.alerter_membres,
             id_membres                     : meeting.id_membres,
-            roles_membres                  : meeting.membre_presents,
+            roles_membres                  : meeting.roles_membres,
             
             id_eleves                      : meeting.id_eleves,
             list_decisions_conseil_eleves  : meeting.id_eleves,
@@ -766,15 +772,29 @@ const columnsFr = [
             console.log(res.data);
 
            //setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS_UPDATE;
+           if(meeting.to_close==1){                
+            chosenMsgBox = MSG_SUCCESS_UPDATE_PRINT;
             currentUiContext.showMsgBox({
                 visible:true, 
-                msgType:"info", 
+                msgType:"question", 
                 msgTitle:t("success_add_M"), 
-                message:t("success_add")
-            })
+                message:t("success_add") + ' '+ t("print_pv") + '?'
+            });
+            //setModalOpen(0);
+            } else {
+                chosenMsgBox = MSG_SUCCESS_UPDATE;
+                currentUiContext.showMsgBox({
+                    visible:true, 
+                    msgType:"info", 
+                    msgTitle:t("success_add_M"), 
+                    message:t("success_add")
+                })
+            }
+           
         })    
     }
+
+    
 
     function deleteRow(rowId) {
        // alert(rowId);
@@ -804,9 +824,14 @@ const columnsFr = [
             OTHER_MEMBERS     =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,     false, -1);
             PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD,  true,   0);
             
+            if(isLoading==false){
+                setModalOpen(1); 
+                initFormInputs();
+                setLoadingVisible(false);
+            }else{
+                setLoadingVisible(true);
+            }
           
-            setModalOpen(1); 
-            initFormInputs();
         } else{
             chosenMsgBox = MSG_WARNING;
             currentUiContext.showMsgBox({
@@ -843,22 +868,25 @@ const columnsFr = [
                     message:""
                 }) 
                 getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
-                setModalOpen(0); 
+                //setModalOpen(0); 
                 return 1;
 
             }
 
-            case MSG_SUCCESS_PRINT: {
+            case MSG_SUCCESS_UPDATE_PRINT:{
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 }) 
-                //setModalOpen(4); //debut de l'impression
-                printMeetingReport()
+                getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab); 
+                printMeetingReport() 
+                //setModalOpen(0); 
                 return 1;
             }
+
+           
 
             case MSG_WARNING: {
                     currentUiContext.showMsgBox({
@@ -896,6 +924,28 @@ const columnsFr = [
                 return 1;
             }
 
+            case MSG_SUCCESS_UPDATE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //getClassStudentList(CURRENT_CLASSE_ID); 
+                return 1;
+            }
+
+            case MSG_SUCCESS_UPDATE_PRINT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //getClassStudentList(CURRENT_CLASSE_ID); 
+                return 1;
+            }
+
             case MSG_WARNING: {
                     currentUiContext.showMsgBox({
                     visible:false, 
@@ -919,6 +969,12 @@ const columnsFr = [
         
     }
 
+    function printReport(meeting){
+        CURRENT_MEETING = meeting;
+        console.log("Impression", meeting);
+        printMeetingReport();
+    }
+
     const printMeetingReport=()=>{
        
         if(CURRENT_CLASSE_ID != undefined){
@@ -929,12 +985,12 @@ const columnsFr = [
                 quartier:'Mvolye',
                 ville:'Yaounde',
                 
-                typeMeeting : CURRENT_MEETING.objetLabel,
-                compteRendu: CURRENT_MEETING.decision,
-                successMark:CURRENT_MEETING.note_passage,
-                exclusionMark:CURRENT_MEETING.note_exclusion,
-                elevesDecisions:[...CURRENT_MEETING.listCaspasCas],
-                participants:[...CURRENT_MEETING.listParticipants],
+                typeMeeting     : CURRENT_MEETING.objetLabel,
+                compteRendu     : CURRENT_MEETING.decision,
+                successMark     : '', //CURRENT_MEETING.note_passage,
+                exclusionMark   : '', //CURRENT_MEETING.note_exclusion,
+                elevesDecisions : [], // pour le moment [...CURRENT_MEETING.listCaspasCas],
+                participants    : [...CURRENT_MEETING.listParticipants],
 
                 leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
                 centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
@@ -1004,24 +1060,29 @@ const columnsFr = [
 
     return (
         <div className={classes.formStyleP}>
-            
+            {LoadingVisible && 
+                <div className={classes.formET} style={{alignItems:"center", width:'100%', height:'100%', backgroundColor:"white"}}>
+                    <img src='images/Loading_icon.gif' alt="loading..." />
+                </div>    
+            }
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddClassMeeting 
-                    defaultMembres  = {DEFAULT_MEMBERS}  
-                    otherMembres    = {OTHER_MEMBERS} 
-                    presentsMembres = {PRESENTS_MEMBERS} 
-                    sequencesDispo  = {SEQUENCES_DISPO} 
-                    trimestresDispo = {TRIMESTRES_DISPO} 
-                    anneDispo       = {ANNEE_DISPO} 
-                    currentPpUserId = {CURRENT_PROF_PP_USERID} 
-                    currentPpId     = {CURRENT_PROF_PP_ID} 
-                    currentPpLabel  = {CURRENT_PROF_PP_LABEL} 
+                    defaultMembres     = {DEFAULT_MEMBERS}  
+                    otherMembres       = {OTHER_MEMBERS} 
+                    presentsMembres    = {PRESENTS_MEMBERS} 
+                    sequencesDispo     = {SEQUENCES_DISPO} 
+                    trimestresDispo    = {TRIMESTRES_DISPO} 
+                    anneDispo          = {ANNEE_DISPO} 
+                    currentPpUserId    = {CURRENT_PROF_PP_USERID} 
+                    currentPpId        = {CURRENT_PROF_PP_ID} 
+                    currentPpLabel     = {CURRENT_PROF_PP_LABEL} 
                     currentClasseLabel = {CURRENT_CLASSE_LABEL} 
                     currentClasseId    = {CURRENT_CLASSE_ID} 
-                    formMode      = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
-                    actionHandler = {(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
-                    cancelHandler = {quitForm}
+                    formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    actionHandler      = {(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
+                    printReportHandler = {printReport}
+                    cancelHandler      = {quitForm}
                 />
             }
             {(modalOpen==4) && 

@@ -1,3 +1,9 @@
+.formET{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .legend{
     position: absolute;
     z-index: 3;

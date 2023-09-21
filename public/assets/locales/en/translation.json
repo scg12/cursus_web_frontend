@@ -1,4 +1,5 @@
-{   "student_not_selected" : "No student have been selected. select student to convocate!",
+{   "some_meeting_decision_not_set" : "Some meeting decisions are note set. please set them before end process!",
+    "student_not_selected" : "No student have been selected. select student to convocate!",
     "non_defini":"Not défined",
     "delete_pp_question":"This operation will cause the deletion of the class main teacher. Do you want to continue?",
     "total_hours" : "Total Teaching hours",

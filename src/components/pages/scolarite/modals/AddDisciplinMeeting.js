@@ -81,14 +81,6 @@ function AddDisciplinMeeting(props) {
     const [allStudentsConvocated, setAllStudentsConvocated] = useState(false);
     const [elevesSanctions, setElevesSanctions] = useState([]);
     
-
-    //---To delete
-    const [optConvoques, setOptConvoques] = useState([]);
-    const [sanctions, setSanctions] = useState([]);
-    const [tabEleves, setTabEleves] = useState([]);
-    
-    
-    
     var firstSelectItem1 = {
         value: 0,   
         label:'-----'+ t('choisir') +'-----'
@@ -191,7 +183,11 @@ function AddDisciplinMeeting(props) {
             }                
             else{
                 initSanctionTab(ListElevesDecision);
-                setTabElevesDecisions(ListElevesDecision);
+                var tabDecisions = [];
+                if(ListElevesDecision.length > 0){
+                    ListElevesDecision.map((elt)=>tabDecisions.push({id:elt.id, nom:elt.nom, decisionId:elt.motifId, decisionLabel:elt.motifLabel, etat:elt.etat}));
+                }                
+                setTabElevesDecisions(tabDecisions);
             } 
 
            
@@ -271,6 +267,9 @@ function AddDisciplinMeeting(props) {
 
                 setOptPeriode(tabPeriode);
 
+            } else {
+                tempTab = [...props.defaultMembres];
+                setTabProfsPresents(tempTab);
             }
 
         } 
@@ -319,12 +318,14 @@ function AddDisciplinMeeting(props) {
 
     function initSanctionTab(lisElevestSanctions){     
         var sanctionsEleves = [];
+        var tab = [];
         var i = 0;
         (lisElevestSanctions||[]).map((elt, rowIndex)=>{  
             for(i=0; i<LIST_SANCTIONS.length; i++){
-                sanctionsEleves[rowIndex]=[];
-                sanctionsEleves[rowIndex][i]=-1;
+                tab.push(-1);                
             }       
+            sanctionsEleves[rowIndex]=[...tab];
+            tab = [];
         });
         console.log("eleves sanctions", sanctionsEleves,lisElevestSanctions);
         setElevesSanctions(sanctionsEleves);
@@ -527,7 +528,14 @@ function AddDisciplinMeeting(props) {
             errorDiv.className = classes.formErrorMsg;
             errorDiv.textContent = formDataCheck2();
         }
-    }   
+    }  
+    
+    function printReportHandler(){
+        console.log('avant:',MEETING);
+        getFormData();
+        props.printReportHandler(MEETING);
+        console.log('apres:',MEETING);
+    }
 
     function putToEmptyStringIfUndefined(chaine){
         if (chaine==undefined) return '';
@@ -566,17 +574,23 @@ function AddDisciplinMeeting(props) {
         MEETING.periode              = PERIODE_LABEL;    
         
         MEETING.alerter_membres      = true;
-        
-        if(etape==1){
-            dateDeb                  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
-            heureDeb                 = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
+        if (props.formMode != 'consult'){       
+            if(etape==1){
+                dateDeb                  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
+                heureDeb                 = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
 
-            MEETING.date  = dateDeb;
-            MEETING.heure = heureDeb;
-          
-        } else{
-            MEETING.date  = dateDeb;
-            MEETING.heure = heureDeb;
+                MEETING.date  = dateDeb;
+                MEETING.heure = heureDeb;
+            
+            } else{
+
+                MEETING.date  = dateDeb;
+                MEETING.heure = heureDeb;
+            }
+
+        } else {
+            MEETING.date                = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
+            MEETING.heure               = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
         }
         //----- 2ieme partie du formulaire1 ----- 
         MEETING.id_eleves               = getListElementByFields(tabElevesMotifs, "id");  //Mettre la chaine des eleves separe par²²
@@ -594,6 +608,7 @@ function AddDisciplinMeeting(props) {
 
         //----- 2ieme partie du formulaire2 -----
         //MEETING.id_eleves  =  getListElementByFields(tabElevesDecisions, "id");
+        console.log("decisions", tabElevesDecisions);
         MEETING.list_decisions_conseil_eleves    = getListElementByFields(tabElevesDecisions, "decisionId");; //Liste des decisions pour chaque eleves separe par²²
         MEETING.id_type_sanction_generale_classe = getListElementByFields(tabElevesDecisions, "decisionId"); //Sanction generale si toute la classe est convoquee
 
@@ -601,6 +616,11 @@ function AddDisciplinMeeting(props) {
         MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
 
         MEETING.to_close = false;
+
+        //-------------- Pour les besoin d'impression -------------
+        MEETING.listConvoques    = [...tabElevesMotifs];
+        MEETING.listCaspasCas    = [...tabElevesDecisions];
+        MEETING.listParticipants = [...tabProfsPresents];
        
         console.log(MEETING);
     }
@@ -612,6 +632,14 @@ function AddDisciplinMeeting(props) {
         tabEleve[2]   =  MEETING.heure; 
         tabEleve[8]   =  MEETING.status;
         tabEleve[9]   =  MEETING.statusLabel;
+
+       
+        tabEleve[3]   =  MEETING.type_conseil; 
+        tabEleve[4]   =  MEETING.id_type_conseil;
+        tabEleve[5]   =  MEETING.periode;
+        tabEleve[6]   =  MEETING.convoque_par.nom;   
+        tabEleve[7]   =  MEETING.convoque_par.id_user;          
+        
 
         //tabEleve[4]  =  MEETING.objetId;
         currentUiContext.setFormInputs(tabEleve);
@@ -674,7 +702,7 @@ function AddDisciplinMeeting(props) {
         tabEleve[6]   =  MEETING.convoque_par.nom;   
         tabEleve[7]   =  MEETING.convoque_par.id_user;          
         tabEleve[8]   =  MEETING.status;
-        tabEleve[9]   =  MEETING.statusLabel;
+        tabEleve[9]   =  MEETING.statusLabel
         tabEleve[13]  =  MEETING.resume_general_decisions;
        
            
@@ -751,6 +779,11 @@ function AddDisciplinMeeting(props) {
     
     function formDataCheck2(){       
         var errorMsg='';
+
+        if(tabElevesDecisions.length > 0 && tabElevesDecisions.find((elt)=>elt.decisionId=='')!= undefined){
+            errorMsg=t("some_meeting_decision_not_set");
+            return errorMsg;
+        }
     
         if(MEETING.resume_general_decisions.length == 0 ){
             errorMsg=t("type_meeting_decision");
@@ -1104,7 +1137,7 @@ function AddDisciplinMeeting(props) {
                             tabMotifs.map((motif,index)=>{
                                 return (
                                     <div style={{display:'flex', flexDirection:'row',}}>
-                                        <input type='radio' id={'motif'+props.rowIndex+'_'+index} style={{width:'0.8vw', height:'1.57vh'}} checked={tabElevesMotifs[props.rowIndex].motifId == tabMotifs[index].value}   name={'eleveConv'+props.rowIndex} onClick={(e)=>{updateMotif(e,props.rowIndex,index)}}/>
+                                        <input type='radio' id={'motif'+props.rowIndex+'_'+index} style={{width:'0.8vw', height:'1.57vh', marginLeft:"0.45vw"}} checked={tabElevesMotifs[props.rowIndex].motifId == tabMotifs[index].value}   name={'eleveConv'+props.rowIndex} onClick={(e)=>{updateMotif(e,props.rowIndex,index)}}/>
                                         <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"5vw"}}>{motif.label} </label>
                                     </div>    
                                 )                                
@@ -1148,7 +1181,7 @@ function AddDisciplinMeeting(props) {
     function updateEleve(e,rowIndex){
         eleves_data = [...tabElevesDecisions];
 
-        console.log("ffffft",tabElevesDecisions);
+        console.log("ffffft",tabElevesDecisions, elevesSanctions);
        
         var cur_eleveId= e.target.id;
         var index = eleves_data.findIndex((eleve)=>eleve.id == cur_eleveId);
@@ -1158,7 +1191,7 @@ function AddDisciplinMeeting(props) {
         var sanctionId = sanctions.find((elt)=>elt > 0)
 
         cur_eleve.etat = 1;
-        cur_eleve.decisionsId   = sanctionId;
+        cur_eleve.decisionId   = sanctionId;
         cur_eleve.decisionLabel = tabSanctions.find((elt)=>elt.value == sanctionId).label;
 
         console.log('curentEleve', cur_eleve);
@@ -1170,10 +1203,21 @@ function AddDisciplinMeeting(props) {
 
 
     function updateSanction(e, row, index){
+        var lastCheckedPos ;
+        console.log("types sanctions",tabSanctions)
         var sanctionEleves = [...elevesSanctions];
-        if( sanctionEleves[row][index]== -1 )
+        var sanctionRow    = [...sanctionEleves[row]];
+
+        lastCheckedPos = sanctionRow.findIndex((elt)=> elt > 0);
+        console.log("lastPos", lastCheckedPos);
+        if(lastCheckedPos >= 0 && lastCheckedPos!=index ){
+            sanctionEleves[row][lastCheckedPos] = -1;
             sanctionEleves[row][index] = tabSanctions[index].value;
-        else  sanctionEleves[row][index] = -1;
+
+        }else{
+            if(lastCheckedPos < 0) sanctionEleves[row][index] = tabSanctions[index].value;
+        }
+        
         setElevesSanctions(sanctionEleves);     
     }
 
@@ -1204,8 +1248,8 @@ function AddDisciplinMeeting(props) {
                             {tabSanctions.map((sanction, index)=>{
                                 return (
                                     <div> 
-                                        <input type='radio' id={'sanction'+props.rowIndex+'_'+index} style={{width:'0.8vw', height:'1.57vh'}} checked={elevesSanctions[props.rowIndex][index]>0}  value={0} name={'eleveDecision'+props.rowIndex} onClick={(e)=>{updateSanction(e,props.rowIndex,index)}}/>
-                                        <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"5vw"}}> {sanction.label}</label>
+                                        <input type='radio' id={'sanction'+props.rowIndex+'_'+index} style={{marginLeft:'0.45vw',width:'0.8vw', height:'1.57vh'}} checked={elevesSanctions[props.rowIndex][index]>0}  value={0} name={'eleveDecision'+props.rowIndex} onClick={(e)=>{updateSanction(e,props.rowIndex,index)}}/>
+                                        <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"5vw", display:"contents"}}>{sanction.label}</label>
                                    </div>
 
                                 )
@@ -1215,16 +1259,6 @@ function AddDisciplinMeeting(props) {
                     }
               
                 <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {/*(props.formMode!='consult')&&
-                        <img src="images/cancel_trans.png"
-                            id={props.eleveId}  
-                            width={25} 
-                            height={33} 
-                            className={classes.cellPointer} 
-                            onClick={deleteEleve}                         
-                            alt=''
-                        />*/
-                    }
                    
                 {(props.etat!=1)&&
                     <img src="images/checkp_trans.png"  
@@ -1326,13 +1360,13 @@ function AddDisciplinMeeting(props) {
                     {t("etape")+' 1'}: {t("conseil_class_prepa")}
                         {(props.formMode=='consult')&&
                             <div style={{display:'flex', flexDirection:'row', position:'absolute', right:0, top:'-0.7vh' }}>
-                                {(currentUiContext.formInputs[9]==1) ?  //conseil cloture
+                                {(currentUiContext.formInputs[8]==1) ?  //conseil cloture
                                     <CustomButton
                                         btnText= {t("print_pv")} 
                                         buttonStyle={getSmallButtonStyle()}
                                         style={{marginBottom:'-0.3vh', marginRight:'1vw'}}
                                         btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler={props.cancelHandler}
+                                        btnClickHandler={printReportHandler}
                                     />
                                     :null
                                 }
@@ -1477,8 +1511,8 @@ function AddDisciplinMeeting(props) {
 
                                 {(props.formMode =='consult') ?
                                     <div> 
-                                        <input id="periodeLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        <input id="periodeId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="periodeLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[5]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                        <input id="periodeId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[4]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
                                     </div>  
                                     :
                                     <div>                                     
