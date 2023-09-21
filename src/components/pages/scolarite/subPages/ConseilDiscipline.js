@@ -1016,7 +1016,8 @@ const columnsFr = [
                     msgTitle:"", 
                     message:""
                 }) 
-                //getClassStudentList(CURRENT_CLASSE_ID); 
+                getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab); 
+                setModalOpen(0);
                 return 1;
             }
 
