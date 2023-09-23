@@ -69,6 +69,7 @@ function AddClassMeeting(props) {
     const [presents, setPresents]= useState([]);
 
     const [optDecisions, setOptDecisions] = useState([]);
+    const [optVerdict, setOptVerdict] = useState([]);
     const [optPromuEn, setOptPromuEn] = useState([]);
     const [infosEleves, setInfosEleves] = useState([]);
 
@@ -80,6 +81,11 @@ function AddClassMeeting(props) {
     var firstSelectItem2 = {
         value: undefined,   
         label:'-----'+ t('choisir') +'-----'
+    }
+
+    var firstSelectItem3 = {
+        value: 0,   
+        label:'--'+ t('choisir') +'--'
     }
 
     const nonDefini=[        
@@ -103,6 +109,14 @@ function AddClassMeeting(props) {
         console.log("valeure", props.defaultMembres);
         getClassStudentList(props.currentClasseId);
         setOptPeriode(nonDefini);
+
+        var tabPromu = [];
+        tabPromu.push(firstSelectItem3);
+        setOptPromuEn(tabPromu);
+
+        var tabDecision = [];
+        tabDecision.push(firstSelectItem3);
+        setOptVerdict(tabDecision);
        
         if (props.formMode == 'creation'){
 
@@ -662,19 +676,21 @@ function AddClassMeeting(props) {
                 case 'annuel'      : {tabPeriode = [...props.anneDispo]; setIsBilan(true); break;}
                 default: tabPeriode = nonDefini;
             }
-            console.log("periode choisie",tabPeriode, typeConseil, props.sequencesDispo)
             
-            setOptPeriode(tabPeriode.filter((elt)=>elt.deja_tenu == 0));
-            
+            if(typeConseil=='sequentiel'|| typeConseil=='trimestriel'){
+                setOptPeriode(tabPeriode.filter((elt)=>elt.deja_tenu == 0));
+            } else setOptPeriode(tabPeriode);
+
+            console.log("periode choisie",tabPeriode, typeConseil);
+
             var meeting = tabTypeConseil.find((meetg)=>meetg.value == typeConseil);
 
             MEETING_OBJET_ID    = meeting.value;
             MEETING_OBJET_LABEL = meeting.label;
 
-            if(tabPeriode.length>0){
+            if(tabPeriode.length>0){                
                 PERIODE_ID    = tabPeriode[0].value;
                 PERIODE_LABEL = tabPeriode[0].label;
-
             }else{
                 PERIODE_ID    = undefined;
                 PERIODE_LABEL = undefined;
@@ -935,39 +951,39 @@ function AddClassMeeting(props) {
 
     const LigneEleveHeader=(props)=>{
         return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'3vw'}}>{t("age")}</div>
-                <div style={{width:'7vw'}}>{t("redouble")}?</div>
-                <div style={{width:'7vw'}}>{t("absence NJ")}</div>
-                <div style={{width:'7vw'}}>{t("absence J")}</div>
-                <div style={{width:'10vw'}}>{t("convocation CD")}</div>
-                <div style={{width:'10vw'}}>{t("moyenne")}</div>
-                <div style={{width:'13vw'}}>{t("decision")}</div>
-                <div style={{width:'13vw'}}>{t("promu en")}</div>
+            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'50vw', fontSize:'0.77vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+                <div style={{width:'17vw'}}> {t("nom")}               </div> 
+                <div style={{width:'3vw'}}>  {t("age")}               </div>   
+                <div style={{width:'7vw'}}>  {t("redouble")}?         </div>
+                <div style={{width:'5.3vw'}}>{t("Abs. NJ")}           </div> 
+                <div style={{width:'5.3vw'}}>{t("Abs. J")}            </div>
+                <div style={{width:'10.7vw'}}> {t("Convocation CD.")}   </div>
+                <div style={{width:'10vw'}}>  {t("Moyenne")}          </div>
+                <div style={{width:'10vw'}}> {t("decision")}          </div>
+                <div style={{width:'10vw'}}> {t("promu en")}          </div>
             </div>
         );
     }
 
     const LigneEleve=(props)=>{
         return(
-            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>  {props.nom}           </div>               
-                <div style={{width:'3vw'}}>   {props.age}           </div>
-                <div style={{width:'7vw'}}>   {props.redouble}      </div>
-                <div style={{width:'7vw'}}>   {props.absences_nj}   </div>
-                <div style={{width:'7vw'}}>   {props.absences_j}    </div>
-                <div style={{width:'10vw'}}>  {props.convocations}  </div>
-                <div style={{width:'10vw'}} > {props.moyenne}       </div>
+            <div style={{display:'flex', color:'black', backgroundColor: (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf', flexDirection:'row', height: '4.3vh', width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+                <div style={{width:'17vw', fontSize:"0.67vw"}}>         {props.nom}                     </div>               
+                <div style={{width:'3vw'}}>                             {props.age}                     </div>
+                <div style={{width:'7vw',   fontSize:"0.77vw",  textAlign:"center"}}>                                         {props.redouble}                </div>
+                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"red"}}>       {props.absences_nj}             </div>
+                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"green"}}>     {props.absences_j}              </div>
+                <div style={{width:'13vw'}}>                            {props.convocations}            </div>
+                <div style={{width:"7vw"}} >                            {props.moyenne}                 </div>
  
                 {(props.formMode == 'consult')?
                     <div style={{width:'13vw'}}>{props.decision_finale}</div>
 
                     :
 
-                    <div style={{width:'13vw'}}>
-                        <select id={'decision'+ props.eleveId} style={{height:'3.5vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>decisionChangeHandler(e,props.rowIndex)}>
-                            {(optDecisions||[]).map((option)=> {
+                    <div /*style={{width:'13vw'}}*/>
+                        <select id={'decision'+ props.eleveId} style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.77vw', width:'7.7vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>decisionChangeHandler(e,props.rowIndex)}>
+                            {(optVerdict||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
                                 );
@@ -983,8 +999,8 @@ function AddClassMeeting(props) {
 
                     :
 
-                    <div style={{width:'13vw'}}>
-                        <select id={'promuEn'+ props.eleveId} style={{height:'3.5vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>promotionChangeHandler(e,props.rowIndex)}>
+                    <div /*style={{width:'13vw'}}*/>
+                        <select id={'promuEn'+ props.eleveId} style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.77vw', width:'7.7vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>promotionChangeHandler(e,props.rowIndex)}>
                             {(optPromuEn||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
@@ -995,32 +1011,6 @@ function AddClassMeeting(props) {
                 }
                
               
-                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {(props.formMode!='consult')&&
-                        <img src="images/cancel_trans.png"
-                            id={props.eleveId}  
-                            width={ isMobile? '10vw':25} 
-                            height={isMobile? '13.7vw':33} 
-                            className={classes.cellPointer} 
-                            onClick={deleteEleve}                         
-                            alt=''
-                        />
-                    }
-                  
-                    {(props.etat!=1)&&
-                        <img src="images/checkp_trans.png"  
-                           // width={19} 
-                           // height={19} 
-                            width={ isMobile? '7.7vw':19} 
-                            height={isMobile? '7.7vw':19} 
-                            className={classes.cellPointer} 
-                            onClick={addEleve}                         
-                            alt=''
-                            style={{marginLeft:'1vw', marginTop:isMobile? '0.97vh':'1.2vh'}}
-                        />
-                    }
-                </div>
-
             </div>
         );
     }
@@ -1534,15 +1524,16 @@ function AddClassMeeting(props) {
                                         */}                    
                                     </div>
 
-                                    <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh',overflowY:'scroll', justifyContent:'flex-start'}}>
+                                    <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh', width:'40vw', overflowX:'scroll', justifyContent:'flex-start'}}>
                                         <LigneEleveHeader/>
+                                    
                                         {(infosEleves||[]).map((eleve, index)=>{
                                             return (
                                                 <LigneEleve  
                                                     eleveId         =  {eleve.id} 
                                                     rowIndex        =  {index} 
                                                     nom             =  {eleve.nom} 
-                                                    redouble        =  {eleve.redouble} 
+                                                    redouble        =  {eleve.redouble==false ? t("no"):t("yes")} 
                                                     absences_nj     =  {eleve.absences_nj} 
                                                     absences_j      =  {eleve.absences_j} 
                                                     convocations    =  {eleve.convocations}
@@ -1579,7 +1570,7 @@ function AddClassMeeting(props) {
                                                    
                                 </div>
 
-                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh',overflowY:'scroll', justifyContent:'flex-start'}}>
+                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh', minWidth:'40vw', overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LignePresentsHeader/>
                                     {(tabProfsPresents||[]).map((participant, index)=>{
                                         return <LignePresent id={participant.value} rowIndex={index} nom={participant.label}/>

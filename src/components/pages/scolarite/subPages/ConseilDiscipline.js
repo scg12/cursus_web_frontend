@@ -238,7 +238,7 @@ function ConseilDiscipline(props) {
     function createListElevesSanctions(sanctionsList, etat){
         var ElevesList = [];
         (sanctionsList||[]).map((elt) => {
-            ElevesList.push({id:elt.id_eleve, nom:elt.nom, decisionsId:elt.id, decisionsLabel:elt.libelle, etat:etat})
+            ElevesList.push({id:elt.id_eleve, nom:elt.nom, decisionsId:elt.id, decisionLabel:elt.libelle, etat:etat})
         })
         return ElevesList;
     }
