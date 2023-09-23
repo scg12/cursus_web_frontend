@@ -109,6 +109,15 @@ function SideContent(props) {
         return newTab;
     }
 
+    function onChangeAnneeHandler2(e){
+        console.log("annee changée: ",e.target.value)
+        currentAppContext.setCurrentYear(e.target.value);
+    }
+    function onChangeEtabHandler(e){
+        console.log("s_etab changé: ",e.target.value)
+        currentAppContext.setCurrentEtab(e.target.value);
+    }
+
     function onChangeAnneeHandler(e){
         setIdAnnee(idAnnee);
         setOpAnnee(null);
@@ -181,7 +190,7 @@ function SideContent(props) {
 
                 <div id='annee' > 
                     <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'9.3vw',borderColor:getSelectDropDownTextColr()}}
-                    // onChange={onChangeAnneeHandler} 
+                    onChange={onChangeAnneeHandler2} 
                     >
                         {(optAnnee||[]).map((option)=> {
                             return(
@@ -197,7 +206,8 @@ function SideContent(props) {
                     </label> 
                 </div>
                 <div id='section'>
-                    <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'14.3vw',borderColor:getSelectDropDownTextColr()}}>
+                    <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'14.3vw',borderColor:getSelectDropDownTextColr()}}
+                    onChange={onChangeEtabHandler} >
                         {(optEtab||[]).map((option)=> {
                             return(
                                 <option style={{color:'black'}} value={option.value}>{option.label}</option>
@@ -208,10 +218,10 @@ function SideContent(props) {
 
                 <div> 
                     <label className= {getCurrentThemeSideLabel() +' '+ classes.upperCase}> 
-                        {t("trimestre")} 
+                        {t("trimestre")} 1
                     </label> 
                 </div>
-                <div id='trimestre'>
+                {/* <div id='trimestre'>
                     <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'14.3vw',borderColor:getSelectDropDownTextColr()}}>
                         {(optCycle||[]).map((option)=> {
                             return(
@@ -219,7 +229,7 @@ function SideContent(props) {
                             );
                         })}
                     </select>
-                </div>
+                </div> */}
 
                {/* <div> 
                     <label className= {getCurrentThemeSideLabel() +' '+ classes.upperCase}> 
