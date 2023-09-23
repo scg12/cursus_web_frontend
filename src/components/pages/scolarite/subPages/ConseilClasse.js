@@ -122,7 +122,7 @@ function ConseilClasse(props) {
 
                 SEQUENCES_DISPO   =  createLabelValueTableDejaTenu(res.data.seqs_dispo);
                 TRIMESTRES_DISPO  =  createLabelValueTableDejaTenu(res.data.trims_dispo);
-                ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
+                ANNEE_DISPO       = [{value:-1,label:t("annee")+' '+new Date().getFullYear()}];
 
                 listConseils = [...formatList(res.data.conseil_classes,res.data.prof_principal,res.data.seqs_dispo, res.data.trims_dispo)]
                 console.log(listConseils);                
