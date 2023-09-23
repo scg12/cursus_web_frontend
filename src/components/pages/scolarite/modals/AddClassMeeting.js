@@ -957,7 +957,7 @@ function AddClassMeeting(props) {
                 <div style={{width:'7vw'}}>  {t("redouble")}?         </div>
                 <div style={{width:'5.3vw'}}>{t("Abs. NJ")}           </div> 
                 <div style={{width:'5.3vw'}}>{t("Abs. J")}            </div>
-                <div style={{width:'13vw'}}> {t("Convocation CD.")}   </div>
+                <div style={{width:'10.7vw'}}> {t("Convocation CD.")}   </div>
                 <div style={{width:'10vw'}}>  {t("Moyenne")}          </div>
                 <div style={{width:'10vw'}}> {t("decision")}          </div>
                 <div style={{width:'10vw'}}> {t("promu en")}          </div>
@@ -1524,8 +1524,9 @@ function AddClassMeeting(props) {
                                         */}                    
                                     </div>
 
-                                    <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh', width:"40vw", overflowY:'scroll', overflowX:'scroll', justifyContent:'flex-start'}}>
+                                    <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh', width:'40vw', overflowX:'scroll', justifyContent:'flex-start'}}>
                                         <LigneEleveHeader/>
+                                    
                                         {(infosEleves||[]).map((eleve, index)=>{
                                             return (
                                                 <LigneEleve  
@@ -1569,7 +1570,7 @@ function AddClassMeeting(props) {
                                                    
                                 </div>
 
-                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh',overflowY:'scroll', justifyContent:'flex-start'}}>
+                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh', minWidth:'40vw', overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LignePresentsHeader/>
                                     {(tabProfsPresents||[]).map((participant, index)=>{
                                         return <LignePresent id={participant.value} rowIndex={index} nom={participant.label}/>
