@@ -44,6 +44,7 @@ var PRESENTS_MEMBERS_ADD = [];
 var OTHER_MEMBERS_ADD = [];
 
 var INFO_ELEVES = [];
+var LIST_NEXT_CLASSES = '';
 
 var LIST_CONSEILS_INFOS =[];
 
@@ -100,6 +101,17 @@ function ConseilClasse(props) {
                 console.log(tempTable);
            })         
         }) 
+    }
+
+    const getNextClassPossibles =(classeId) =>{
+        axiosInstance.post(`list-classes-prochaines/`, {
+            id_classe: classeId,
+        }).then((res)=>{
+            console.log(res.data);
+            LIST_NEXT_CLASSES = createLabelValueTable(res.data.next_classes);
+               
+        }) 
+
     }
 
     const getListConseilClasse =(classeId,sousEtabId)=>{
@@ -225,7 +237,8 @@ function ConseilClasse(props) {
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
             setIsloading(true);
-            getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
+            getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
+            getNextClassPossibles(CURRENT_CLASSE_ID);  
             
               
         } else {
@@ -596,7 +609,7 @@ const columnsFr = [
     function handleEditRow(row){       
         var inputs=[];       
         var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
-        console.log("hhhjki",CURRENT_CC.membres_presents);
+        console.log("hhhjki",CURRENT_CC.membres_presents, CURRENT_CC.info_eleves);
       
         DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
         OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
@@ -760,8 +773,8 @@ const columnsFr = [
             roles_membres                  : meeting.roles_membres,
             
             id_eleves                      : meeting.id_eleves,
-            list_decisions_conseil_eleves  : meeting.id_eleves,
-            list_classes_promotions_eleves : meeting.id_eleves,
+            list_decisions_conseil_eleves  : meeting.list_decisions_conseil_eleves,
+            list_classes_promotions_eleves : meeting.list_classes_promotions_eleves,
             resume_general_decisions       : meeting.resume_general_decisions,
             membre_presents                : meeting.membre_presents,
             to_close                       : meeting.to_close
@@ -1080,6 +1093,7 @@ const columnsFr = [
                     currentPpLabel     = {CURRENT_PROF_PP_LABEL} 
                     currentClasseLabel = {CURRENT_CLASSE_LABEL} 
                     currentClasseId    = {CURRENT_CLASSE_ID} 
+                    nextClasses        = {LIST_NEXT_CLASSES}
                     formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
                     actionHandler      = {(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
                     printReportHandler = {printReport}

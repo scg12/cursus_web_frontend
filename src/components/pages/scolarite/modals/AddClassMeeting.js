@@ -29,12 +29,17 @@ var PERIODE_ID = undefined;
 var PERIODE_LABEL = "";
 var MEETING_GEN_DECISION = undefined
 
+var LIST_NEXT_CLASSES ='';
+
 
 var participant_data = [];
 
 var eleves_data=[];
 var MEETING = {};
 var dateDeb, heureDeb;
+
+var list_decisions_conseil_eleves  = [];
+var list_classes_promotions_eleves = [];
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -72,6 +77,7 @@ function AddClassMeeting(props) {
     const [optVerdict, setOptVerdict] = useState([]);
     const [optPromuEn, setOptPromuEn] = useState([]);
     const [infosEleves, setInfosEleves] = useState([]);
+    const [formMode, setFormMode] = useState(props.formMode);
 
     var firstSelectItem1 = {
         value: 0,   
@@ -84,7 +90,7 @@ function AddClassMeeting(props) {
     }
 
     var firstSelectItem3 = {
-        value: 0,   
+        value: undefined,   
         label:'--'+ t('choisir') +'--'
     }
 
@@ -102,21 +108,33 @@ function AddClassMeeting(props) {
         {value:"trimestriel", label:"Conseil bilan trimestriel"},
         {value:"annuel",      label:"Conseil bilan annuel"     },
     ];
+
+    const verdictAnnuel = [
+        {value:"admis",        label:t("Admis") },
+        {value:"admis_sdc",    label:t("Admis SDC.") },
+        {value:"redouble",     label:t("Redouble")},
+        {value:"redouble_sdc", label:t("Redouble SDC.")},
+        {value:"exclu",        label:t("Exclu")},
+        {value:"Exclu_sdc",    label:t("Exclu SDC.")},
+    ];
     
     
     
     useEffect(()=> {
         console.log("valeure", props.defaultMembres);
         getClassStudentList(props.currentClasseId);
+        
+
+        
         setOptPeriode(nonDefini);
 
-        var tabPromu = [];
-        tabPromu.push(firstSelectItem3);
+        var tabPromu = [...props.nextClasses];
+        tabPromu.unshift(firstSelectItem3);
         setOptPromuEn(tabPromu);
 
-        var tabDecision = [];
-        tabDecision.push(firstSelectItem3);
-        setOptVerdict(tabDecision);
+       
+        verdictAnnuel.unshift(firstSelectItem3);
+        setOptVerdict(verdictAnnuel);
        
         if (props.formMode == 'creation'){
 
@@ -190,6 +208,8 @@ function AddClassMeeting(props) {
 
             MEETING_GEN_DECISION = MEETING.resume_general_decisions;
 
+            if(MEETING.type_conseil=="annuel") setIsBilan(true);
+
             console.log("meeting",MEETING);
 
             if (props.formMode == 'modif') {
@@ -246,9 +266,26 @@ function AddClassMeeting(props) {
             console.log(res.data);
             console.log(listEleves);
             LIST_ELEVES= [...getElevesTab(res.data)];
-            console.log(LIST_ELEVES) ;          
+            console.log(LIST_ELEVES) ;  
+            if(LIST_ELEVES.length>0){
+                LIST_ELEVES.map((elt)=>{
+                    list_decisions_conseil_eleves.push("");
+                    list_classes_promotions_eleves.push(-1);
+                }) 
+            }       
         })  
         return listEleves;     
+    }
+
+    const getNextClassPossibles =(classeId) =>{
+        axiosInstance.post(`list-classes-prochaines/`, {
+            id_classe: classeId,
+        }).then((res)=>{
+            console.log(res.data);
+            LIST_NEXT_CLASSES = res.data.classes;
+               
+        }) 
+
     }
 
     function getElevesTab(elevesTab){
@@ -518,8 +555,8 @@ function AddClassMeeting(props) {
 
         //----- 2ieme partie du formulaire2 -----
         MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
-        MEETING.list_decisions_conseil_eleves  = getListElementByFields(infosEleves, "decision_final_conseil_classe"); //Liste des decisions pour chaque eleves separe par²²
-        MEETING.list_classes_promotions_eleves = getListElementByFields(infosEleves, "classe_annee_prochaine_id");     //Promotions
+        MEETING.list_decisions_conseil_eleves  = list_decisions_conseil_eleves;
+        MEETING.list_classes_promotions_eleves = list_classes_promotions_eleves;
 
         //----- 3ieme partie du formulaire2 -----
         MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
@@ -627,7 +664,18 @@ function AddClassMeeting(props) {
     
     function formDataCheck2(){       
         var errorMsg='';
-     
+        
+
+        if(list_decisions_conseil_eleves.find((elt)=>elt=="")!= undefined){
+            errorMsg = t("decision_not_set");
+            return errorMsg;
+        }
+
+        if(list_classes_promotions_eleves.find((elt)=>elt==-1)!= undefined){
+            errorMsg = t("next_class_not_set");
+            return errorMsg;
+        }
+
         if(MEETING.resume_general_decisions.length == 0 ){
             errorMsg=t("type_meeting_decision");
             return errorMsg;
@@ -864,24 +912,24 @@ function AddClassMeeting(props) {
 
     function decisionChangeHandler(e,rowIndex){
         var selectedDecision = e.target.value;  //initialiser les selects avec undefined
-        var Eleves_data = [...infosEleves];
-
         if(selectedDecision != undefined){
-            Eleves_data[rowIndex].decision_final_conseil_classe = selectedDecision;
-            setInfosEleves(Eleves_data);
-        }
-
+            list_decisions_conseil_eleves[rowIndex] = selectedDecision;
+        } else {
+            list_decisions_conseil_eleves[rowIndex] = "";
+        }        
+        console.log("class decision",list_decisions_conseil_eleves);
     }
 
 
     function promotionChangeHandler(e,rowIndex){
-        var classePromotion = e.target.value;  //initialiser les selects avec undefined
-        var Eleves_data = [...infosEleves];
-
-        if(classePromotion != undefined){
-            Eleves_data[rowIndex].classe_annee_prochaine_id = classePromotion;
-            setInfosEleves(Eleves_data);
+        var selectedclassePromotion = e.target.value;  //initialiser les selects avec undefined
+       
+        if(selectedclassePromotion != undefined){
+            list_classes_promotions_eleves[rowIndex] = selectedclassePromotion;
+        } else {
+            list_classes_promotions_eleves[rowIndex] = -1;
         }
+        console.log("class prom",list_classes_promotions_eleves);
     }
 
 
@@ -960,7 +1008,7 @@ function AddClassMeeting(props) {
                 <div style={{width:'10.7vw'}}> {t("Convocation CD.")}   </div>
                 <div style={{width:'10vw'}}>  {t("Moyenne")}          </div>
                 <div style={{width:'10vw'}}> {t("decision")}          </div>
-                <div style={{width:'10vw'}}> {t("promu en")}          </div>
+                <div style={{width:'10vw'}}> {t("Promu en")}          </div>
             </div>
         );
     }
@@ -976,8 +1024,8 @@ function AddClassMeeting(props) {
                 <div style={{width:'13vw'}}>                            {props.convocations}            </div>
                 <div style={{width:"7vw"}} >                            {props.moyenne}                 </div>
  
-                {(props.formMode == 'consult')?
-                    <div style={{width:'13vw'}}>{props.decision_finale}</div>
+                {(formMode=="consult")?
+                    <div style={{width:'13vw', fontSize:"0.77vw",  textAlign:"center"}}>{ (MEETING.status == 1) ? props.decision_finale : t("not_set")}</div>
 
                     :
 
@@ -994,8 +1042,8 @@ function AddClassMeeting(props) {
                 }
            
 
-                {(props.formMode == 'consult')?
-                    <div style={{width:'13vw'}}>{props.promuEn}</div>
+                {(formMode=="consult")?
+                    <div style={{width:'13vw', fontSize:"0.77vw",  textAlign:"center"}}>{(MEETING.status == 1) ? props.promuEn : t("not_set")}</div>
 
                     :
 

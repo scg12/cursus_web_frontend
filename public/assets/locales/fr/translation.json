@@ -1,4 +1,7 @@
-{   "some_meeting_decision_not_set" : "Certaines decisions n'ont pas été validée pour des élèves. Veuillez les valider avant de continuer!",
+{   "not_set":"Non défini",
+    "next_class_not_set":"Certaines classes de promotion n'ont pas ete fixees. veuillez les fixer avent de terminer!!!",
+    "decision_not_set"  :"Certaines décisions n'ont pas été fixées. Veuillez les fixer avant de terminer!!!",
+    "some_meeting_decision_not_set" : "Certaines decisions n'ont pas été validée pour des élèves. Veuillez les valider avant de continuer!",
     "student_not_selected" : "Vous n'avez pas sélectionné d'élève pour convocation!",
     "non_defini":"Non défini",
     "delete_pp_question":"Cette opération va entrainer la suppression de l'enseignant principal de la classe. Voulez-vous vraiment continuer?",

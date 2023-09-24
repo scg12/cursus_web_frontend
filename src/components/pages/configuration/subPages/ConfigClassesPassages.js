@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddClassesPassages from "../modals/AddClassesPassages";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from "react-i18next";
 
 
 var classes = [];  
 
 function ConfigClassesPassages(props) {
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -328,15 +330,15 @@ function ConfigClassesPassages(props) {
                         LISTE DES CLASSES POUR L'ANNEE PROCHAINE
                     </div>
                                 
-                    {/* <div className={classess.gridAction}> 
+                    <div className={classess.gridAction}> 
                         <CustomButton
-                            btnText='+' 
+                            btnText= {t('add')} 
                             buttonStyle={getButtonStyle()}
                             btnTextStyle = {classess.btnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
                             disable={(modalOpen==1||modalOpen==2)}   
                         />
-                    </div> */}
+                    </div> 
                     
                 </div>
                 : null

@@ -1,4 +1,8 @@
-{   "some_meeting_decision_not_set" : "Some meeting decisions are note set. please set them before end process!",
+{   
+    "not_set":"Not set",
+    "next_class_not_set":"Some class promotion were not set for some students. please set them before finish process !!!",
+    "decision_not_set":"Some decisions were not set.Please set them before finish process !!!",
+    "some_meeting_decision_not_set" : "Some meeting decisions are note set. please set them before end process!",
     "student_not_selected" : "No student have been selected. select student to convocate!",
     "non_defini":"Not défined",
     "delete_pp_question":"This operation will cause the deletion of the class main teacher. Do you want to continue?",
