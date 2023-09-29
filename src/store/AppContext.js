@@ -61,7 +61,8 @@ export function AppContextProvider(props)
     const [usrLogin, setUserLogin]= useState('');
     const [isDataLoaded,setIsDataLoaded] = useState(false);
     const [userProfile, setUserProfile] = useState('');
-    const [enableProfiles, setEnableProfiles] = useState(FeaturesCode);
+    // const [enableProfiles, setEnableProfiles] = useState(FeaturesCode);
+    const [enableProfiles, setEnableProfiles] = useState([]);
     const [idUser, setIdUser] = useState(0);
     const [currentYear, setCurrentYear] = useState(0);
     const [currentEtab, setCurrentEtab] = useState(0);

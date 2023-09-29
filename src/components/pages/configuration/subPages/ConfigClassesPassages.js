@@ -329,17 +329,7 @@ function ConfigClassesPassages(props) {
                     <div className={classess.gridTitle}>
                         LISTE DES CLASSES POUR L'ANNEE PROCHAINE
                     </div>
-                                
-                    <div className={classess.gridAction}> 
-                        <CustomButton
-                            btnText= {t('add')} 
-                            buttonStyle={getButtonStyle()}
-                            btnTextStyle = {classess.btnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(modalOpen==1||modalOpen==2)}   
-                        />
-                    </div> 
-                    
+                                                    
                 </div>
                 : null
             }

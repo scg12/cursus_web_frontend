@@ -141,7 +141,8 @@ function HeadAndNav(props) {
     function toggleActiveMenu(NewActiveMenuId) {
        
         const currentActiveDiv = document.querySelector('#'+currentUiContext.selectedTab);
-        currentActiveDiv.classList.remove('active');
+        if(currentActiveDiv!= null)
+            currentActiveDiv.classList.remove('active');
 
         const NewActiveDiv = document.querySelector('#'+NewActiveMenuId);
         NewActiveDiv.classList.add('active');
@@ -321,35 +322,35 @@ function HeadAndNav(props) {
                                 <Link to='dashBoardPage' className={classes.rowDisplay} onClick={()=>toggleActiveMenu('menuLi0')}> < img src="images/monitoring1.png"  className={classes.imageMargin2}  alt="my image"/>{t("supervisionM")} </Link>
                             </li>
                         
-                        
-                            <li id='menuLi1' className={classes.menuLi1 +' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi1')}>
+
+                            {currentAppContext.enableProfiles["SCOLARITE"]=='1'&&<li id='menuLi1' className={classes.menuLi1 +' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi1')}>
                                 <Link to='scolarite' className={classes.rowDisplay} onClick={()=>toggleActiveMenu('menuLi1')} > < img src="images/scolariteP.png"  className={classes.imageMargin0}  alt="my image"/> {t("scolariteM")} </Link>
-                            </li>
+                            </li>}
                         
                         
-                            <li id='menuLi2' className={classes.menuLi1 +' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi2')}>
+                            {currentAppContext.enableProfiles["FINANCE"]=='1'&&<li id='menuLi2' className={classes.menuLi1 +' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi2')}>
                                 <Link to='economat-et-financePage' className={classes.rowDisplay} onClick={()=>toggleActiveMenu('menuLi2')}> < img src="images/monei.png"  className={classes.imageMargin01} alt="my image"/>{t("eco_and_financeM")} </Link>
-                            </li>
+                            </li>}
                         
 
-                            <li id='menuLi3' className={classes.menuLi2 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi3')}>
+                            {currentAppContext.enableProfiles["STATS"]=='1'&&<li id='menuLi3' className={classes.menuLi2 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi3')}>
                                 <Link to='stats-et-monitoringPage' className={classes.rowDisplay} onClick={()=>toggleActiveMenu('menuLi3')}>< img src="images/monitoring.png" className={classes.imageMargin01}  alt="my image"/>{t("stats_and_monitoringM")} </Link>
-                            </li >                         
+                            </li >}                         
                         
 
-                            <li id='menuLi4' className={classes.menuLi3 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi4')}>
+                            {currentAppContext.enableProfiles["COMM_PARENT"]=='1'&&<li id='menuLi4' className={classes.menuLi3 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi4')}>
                                 <Link to='comm-avec-parentPage' className={classes.rowDisplay} onClick={()=>toggleActiveMenu('menuLi4')}> < img src="images/CommunicationP3.png"   className={classes.imageMargin02} alt="my image"/>{t("comm_with_parentsM")} </Link>
-                            </li>
+                            </li>}
                         
 
-                            <li id='menuLi5' className={classes.menuLi1 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi5')}>
+                            {currentAppContext.enableProfiles["EXTRAS"]=='1'&&<li id='menuLi5' className={classes.menuLi1 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi5')}>
                                 <Link to='extrasPages' className={classes.rowDisplay} onClick={()=>toggleActiveMenu('menuLi5')}> < img src="images/extraFeature.png"  className={classes.imageMargin4}  alt="my image"/> {t("extrasM")} </Link>
-                            </li>
+                            </li>}
                             
                         
-                            <li id='menuLi6' className={classes.menuLi3 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi6')}>
+                            {currentAppContext.enableProfiles["CONFIG"]=='1'&&<li id='menuLi6' className={classes.menuLi3 + ' '+ getCurrentThemeActiveMenuBgClr() + putActiveClass('menuLi6')}>
                                 <Link to='configuration' className={classes.rowDisplay} onClick={()=>toggleActiveMenu('menuLi6')} ><img src="images/configuration4.png"  className={classes.imageMargin3}  alt="my image"/>{t("configurationM")} </Link>
-                            </li>
+                            </li>}
                               
                             
                         </ul>

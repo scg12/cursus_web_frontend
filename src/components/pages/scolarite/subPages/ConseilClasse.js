@@ -104,10 +104,10 @@ function ConseilClasse(props) {
     }
 
     const getNextClassPossibles =(classeId) =>{
-        axiosInstance.post(`list-classes-prochaines/`, {
+        axiosInstance.post(`get-classes-prochaines/`, {
             id_classe: classeId,
         }).then((res)=>{
-            console.log(res.data);
+            console.log("classes prochaines",res.data);
             LIST_NEXT_CLASSES = createLabelValueTable(res.data.next_classes);
                
         }) 
