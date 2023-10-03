@@ -12,8 +12,9 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate,changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,changeDateIntoMMJJAAAA, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
+import DecisionCCAnnuel from './DecisionCCAnnuel';
 
 
 var LIST_ELEVES = undefined;
@@ -40,6 +41,9 @@ var dateDeb, heureDeb;
 
 var list_decisions_conseil_eleves  = [];
 var list_classes_promotions_eleves = [];
+
+var listDecisions  = [];
+var listPromotions = [];
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -78,6 +82,12 @@ function AddClassMeeting(props) {
     const [optPromuEn, setOptPromuEn] = useState([]);
     const [infosEleves, setInfosEleves] = useState([]);
     const [formMode, setFormMode] = useState(props.formMode);
+    const [LargeViewOpen, setLargeViewOpen] = useState(false);
+
+    const[listDecisions, setListDecisions]   = useState([]);
+    const[listPromotions, setListPromotions] = useState([]);
+
+
 
     var firstSelectItem1 = {
         value: 0,   
@@ -87,6 +97,11 @@ function AddClassMeeting(props) {
     var firstSelectItem2 = {
         value: undefined,   
         label:'-----'+ t('choisir') +'-----'
+    }
+
+    var RAS = {
+        value: -1,
+        label: "R.A.S"
     }
 
     var firstSelectItem3 = {
@@ -120,22 +135,14 @@ function AddClassMeeting(props) {
     
     
     
+    
     useEffect(()=> {
         console.log("valeure", props.defaultMembres);
         getClassStudentList(props.currentClasseId);
         
-
-        
         setOptPeriode(nonDefini);
 
-        var tabPromu = [...props.nextClasses];
-        tabPromu.unshift(firstSelectItem3);
-        setOptPromuEn(tabPromu);
-
-       
-        verdictAnnuel.unshift(firstSelectItem3);
-        setOptVerdict(verdictAnnuel);
-       
+        
         if (props.formMode == 'creation'){
 
             var tempTab = [...tabTypeConseil];
@@ -153,6 +160,20 @@ function AddClassMeeting(props) {
             console.log("les tableaux", optMembres,optAutresMembres);
 
         } else {
+
+            //---------- liste des promotions possibles ----------
+            var tabPromu = [...props.nextClasses];
+            tabPromu.unshift(RAS);
+            tabPromu.unshift(firstSelectItem3);
+            setOptPromuEn(tabPromu);
+
+
+            //---------- liste des Decisions possibles----------
+            var tabVerdict = [...verdictAnnuel];
+            tabVerdict.unshift(firstSelectItem3);
+            setOptVerdict(tabVerdict);
+
+
  
             var tempTab = [...props.defaultMembres];
             //tempTab.unshift(firstSelectItem1);
@@ -165,8 +186,6 @@ function AddClassMeeting(props) {
             tempTab = [...props.presentsMembres];
             setTabProfsPresents(tempTab);
 
-
-
             tempTab = []; // a initialiser d'abord...
             tempTab.unshift(choisir);
             setOptDecisions(tempTab);
@@ -178,6 +197,17 @@ function AddClassMeeting(props) {
 
             var infos_eleves = currentUiContext.formInputs[10];
             setInfosEleves(infos_eleves);
+
+            var listDecisions = [];
+            var listpromotions = [];
+            infos_eleves.map((elt)=>{
+                //listDecisions.push(elt.decision_final_conseil_classe);
+                listDecisions.push("admis");
+                listpromotions.push(5)
+                //listpromotions.push(elt.classe_annee_prochaine_id);
+            })
+            setListDecisions(listDecisions);
+            setListPromotions(listpromotions);
 
             console.log("les tableaux",optMembres,optAutresMembres);
 
@@ -197,9 +227,15 @@ function AddClassMeeting(props) {
             MEETING.periode      = putToEmptyStringIfUndefined(currentUiContext.formInputs[5]); //Mettre la periode 
             MEETING.id_periode   = putToEmptyStringIfUndefined(currentUiContext.formInputs[4]); //Mettre la periode              
 
+            PERIODE_ID    = MEETING.id_periode;
+            PERIODE_LABEL = MEETING.periode;
+
             
             MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
             MEETING.alerter_membres = true;
+            
+            MEETING_OBJET_ID    = putToEmptyStringIfUndefined(currentUiContext.formInputs[4]);
+            MEETING_OBJET_LABEL =  MEETING.type_conseil;
             
             //----- 2ieme partie du formulaire1 ----- 
             MEETING.resume_general_decisions = putToEmptyStringIfUndefined(currentUiContext.formInputs[11]); 
@@ -269,8 +305,8 @@ function AddClassMeeting(props) {
             console.log(LIST_ELEVES) ;  
             if(LIST_ELEVES.length>0){
                 LIST_ELEVES.map((elt)=>{
-                    list_decisions_conseil_eleves.push("");
-                    list_classes_promotions_eleves.push(-1);
+                    list_decisions_conseil_eleves.push(undefined);
+                    list_classes_promotions_eleves.push(undefined);
                 }) 
             }       
         })  
@@ -540,13 +576,14 @@ function AddClassMeeting(props) {
             MEETING.heure        = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
         }
 
+        MEETING.date_effective   = getTodayDate();
             
-         //----- 2ieme partie du formulaire1 ----- 
-         MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
+        //----- 2ieme partie du formulaire1 ----- 
+        MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
 
-         //----- 3ieme partie du formulaire1 ----- 
-         MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
-         MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
+        //----- 3ieme partie du formulaire1 ----- 
+        MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
+        MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
         //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
         
         
@@ -555,18 +592,19 @@ function AddClassMeeting(props) {
 
         //----- 2ieme partie du formulaire2 -----
         MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
-        MEETING.list_decisions_conseil_eleves  = list_decisions_conseil_eleves;
-        MEETING.list_classes_promotions_eleves = list_classes_promotions_eleves;
+        MEETING.list_decisions_conseil_eleves  = [...listDecisions].join("²²");
+        MEETING.list_classes_promotions_eleves = [...listPromotions].join("²²");
 
         //----- 3ieme partie du formulaire2 -----
         MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
-
         MEETING.to_close = false;
 
-         //-------------- Pour les besoin d'impression -------------
-        //  MEETING.listConvoques    = [...tabElevesMotifs];
-        //  MEETING.listCaspasCas    = [...tabElevesDecisions];
-         MEETING.listParticipants = [...tabProfsPresents];
+        //-------------- Pour les besoin d'impression -------------
+        MEETING.listDecisions        = [...listDecisions];
+        MEETING.listPromotions       = [...listPromotions];
+        MEETING.classProm            = [...props.nextClasses];
+        MEETING.infoGeneralesEleves  = [...infosEleves];
+        MEETING.listParticipants     = [...tabProfsPresents];
        
         console.log(MEETING);       
     }
@@ -666,21 +704,25 @@ function AddClassMeeting(props) {
         var errorMsg='';
         
 
-        if(list_decisions_conseil_eleves.find((elt)=>elt=="")!= undefined){
-            errorMsg = t("decision_not_set");
-            return errorMsg;
-        }
-
-        if(list_classes_promotions_eleves.find((elt)=>elt==-1)!= undefined){
-            errorMsg = t("next_class_not_set");
-            return errorMsg;
-        }
-
         if(MEETING.resume_general_decisions.length == 0 ){
             errorMsg=t("type_meeting_decision");
             return errorMsg;
         }
 
+        if(MEETING.type_conseilId == "annuel"){
+            
+            if(list_decisions_conseil_eleves.find((elt)=>elt==undefined)!= undefined){
+                errorMsg = t("decision_not_set");
+                return errorMsg;
+            }
+    
+            if(list_classes_promotions_eleves.find((elt)=>elt==undefined)!= undefined){
+                errorMsg = t("next_class_not_set");
+                return errorMsg;
+            }
+
+        }
+       
         return errorMsg;  
     }
 
@@ -762,6 +804,19 @@ function AddClassMeeting(props) {
     function moveToLeft(){
         if(isButtonClicked) 
         document.getElementById("etape1").classList.add('gotoRight');
+    }
+
+    function agrandirView(){
+        setLargeViewOpen(true);
+    }
+
+    function quitPreview(List_Decisions, List_promotions){
+        console.log("donnnee",List_Decisions, List_promotions);
+        
+        setListDecisions(List_Decisions);
+        setListPromotions(List_promotions);
+        
+        setLargeViewOpen(false);
     }
 
     /************************************ JSX Code ************************************/
@@ -912,24 +967,27 @@ function AddClassMeeting(props) {
 
     function decisionChangeHandler(e,rowIndex){
         var selectedDecision = e.target.value;  //initialiser les selects avec undefined
+        list_decisions_conseil_eleves = [...listDecisions];
         if(selectedDecision != undefined){
             list_decisions_conseil_eleves[rowIndex] = selectedDecision;
         } else {
-            list_decisions_conseil_eleves[rowIndex] = "";
+            list_decisions_conseil_eleves[rowIndex] = undefined;
         }        
         console.log("class decision",list_decisions_conseil_eleves);
+        setListDecisions(list_decisions_conseil_eleves);
     }
 
 
     function promotionChangeHandler(e,rowIndex){
         var selectedclassePromotion = e.target.value;  //initialiser les selects avec undefined
-       
+        list_classes_promotions_eleves = [...listPromotions];
         if(selectedclassePromotion != undefined){
             list_classes_promotions_eleves[rowIndex] = selectedclassePromotion;
         } else {
-            list_classes_promotions_eleves[rowIndex] = -1;
+            list_classes_promotions_eleves[rowIndex] = undefined;
         }
         console.log("class prom",list_classes_promotions_eleves);
+        setListPromotions(list_classes_promotions_eleves);
     }
 
 
@@ -1005,31 +1063,82 @@ function AddClassMeeting(props) {
                 <div style={{width:'7vw'}}>  {t("redouble")}?         </div>
                 <div style={{width:'5.3vw'}}>{t("Abs. NJ")}           </div> 
                 <div style={{width:'5.3vw'}}>{t("Abs. J")}            </div>
-                <div style={{width:'10.7vw'}}> {t("Convocation CD.")}   </div>
-                <div style={{width:'10vw'}}>  {t("Moyenne")}          </div>
-                <div style={{width:'10vw'}}> {t("decision")}          </div>
-                <div style={{width:'10vw'}}> {t("Promu en")}          </div>
+                <div style={{width:'17vw'}}> {t("Convocation CD.")}   </div>
+                <div style={{width:'7vw'}}>  {t("Moyenne")}          </div>
+                <div style={{width:'13vw'}}> {t("decision")}          </div>
+                <div style={{width:'13vw'}}> {t("Promu en")}          </div>
             </div>
         );
     }
 
     const LigneEleve=(props)=>{
+        var taille;
+        useEffect(()=> {
+            if(formMode!="consult"){            
+           
+                (listDecisions.length>0) ? taille = listDecisions.length : (listPromotions.length>0) ? taille = listPromotions.length : taille=0
+                if(taille > 0 ){
+                    if(props.rowIndex < taille){
+                        console.log("infos",props.rowIndex)
+                        var selectedIndex = optVerdict.findIndex((elt)=>elt.value == listDecisions[props.rowIndex]);
+                        if(selectedIndex >=0){
+                            document.getElementById('decision'+ props.eleveId).options[selectedIndex].selected = true;
+                        }
+
+                        var selectedIndex = optPromuEn.findIndex((elt)=>elt.value == listPromotions[props.rowIndex]);
+                        if(selectedIndex >=0){
+                            document.getElementById('promuEn'+ props.eleveId).options[selectedIndex].selected  = true;
+                        }
+                        
+                    }
+                }
+            }
+        },[]);
+
+
         return(
-            <div style={{display:'flex', color:'black', backgroundColor: (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf', flexDirection:'row', height: '4.3vh', width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw', fontSize:"0.67vw"}}>         {props.nom}                     </div>               
-                <div style={{width:'3vw'}}>                             {props.age}                     </div>
-                <div style={{width:'7vw',   fontSize:"0.77vw",  textAlign:"center"}}>                                         {props.redouble}                </div>
-                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"red"}}>       {props.absences_nj}             </div>
-                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"green"}}>     {props.absences_j}              </div>
-                <div style={{width:'13vw'}}>                            {props.convocations}            </div>
-                <div style={{width:"7vw"}} >                            {props.moyenne}                 </div>
+            <div style={{display:'flex', color:'black', backgroundColor: (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf', flexDirection:'row', height: 'fit-content',width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+                <div style={{width:'17vw', fontSize:"0.77vw", fontWeight:'bold'}}>         
+                    {props.nom}                     
+                </div>
+
+                <div style={{width:'3vw', textAlign:'center'}}>                             
+                    {props.age}                     
+                </div>
+                
+                <div style={{width:'7vw',   fontSize:"0.77vw",  textAlign:"center"}}>                                         
+                    {props.redouble}                
+                </div>
+                
+                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"red"}}>       
+                    {props.absences_nj}             
+                </div>
+                
+                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"green"}}>     
+                    {props.absences_j}             
+                </div>
+                
+                <div style={{width:'17vw', fontSize:'0.67vw', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', paddingTop:"0.7vh"}}>                            
+                    {(props.convocations.split('_')||[]).map((elt)=>{                        
+                        return (
+                            <div style ={{width:'100%', display:'flex', flexDirection:'row'}}> 
+                                <div style={{fontWeight:'bold', marginRight:"0.3vw"}}>  
+                                    {elt.split(' ')[0]} 
+                                </div>
+                                <div>  {elt.split(' ')[1]} </div>                              
+                            </div>
+                        );                        
+                    })}
+                </div>
+                
+                <div style={{width:"7vw"}} > 
+                    {props.moyenne}                 
+                </div>
  
                 {(formMode=="consult")?
                     <div style={{width:'13vw', fontSize:"0.77vw",  textAlign:"center"}}>{ (MEETING.status == 1) ? props.decision_finale : t("not_set")}</div>
-
                     :
-
-                    <div /*style={{width:'13vw'}}*/>
+                    <div style={{width:'13vw'}}>
                         <select id={'decision'+ props.eleveId} style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.77vw', width:'7.7vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>decisionChangeHandler(e,props.rowIndex)}>
                             {(optVerdict||[]).map((option)=> {
                                 return(
@@ -1047,7 +1156,7 @@ function AddClassMeeting(props) {
 
                     :
 
-                    <div /*style={{width:'13vw'}}*/>
+                    <div style={{width:'13vw'}}>
                         <select id={'promuEn'+ props.eleveId} style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.77vw', width:'7.7vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>promotionChangeHandler(e,props.rowIndex)}>
                             {(optPromuEn||[]).map((option)=> {
                                 return(
@@ -1064,30 +1173,6 @@ function AddClassMeeting(props) {
     }
 
     //----------------- ENSEIGNANTS PRESENTS ------------
-
-    function addPresent(id){
-      /*  var presents=[];
-        presents = [...tabPresents];
-        var profPresent = tabParticipant.find((prof)=>prof.id==id)
-        var index = presents.findIndex((prof)=>prof.id==id)
-        if(index<0){
-            presents.push(profPresent);
-            setTabPresents(presents);
-        }
-
-        console.log('liste des presents:', tabPresents);*/
-    }
-
-    function removePresent(id){
-      /*  var presents=[];
-        presents = [...tabPresents];
-        var index = presents.findIndex((prof)=>prof.id==id)
-        if(index>=0){
-            presents.splice(index,1);
-            setTabPresents(presents);
-        }*/
-
-    }
 
     function managePresent(e){
         e.preventDefault();
@@ -1139,7 +1224,18 @@ function AddClassMeeting(props) {
 
     return (
         <div className={'card '+ classes.formContainerP}>
-           
+            {LargeViewOpen && 
+                <DecisionCCAnnuel 
+                    infosEleves    = {infosEleves} 
+                    nextClasses    = {props.nextClasses}
+                    listDecisions  = {listDecisions}
+                    listPromotions = {listPromotions}
+                    closePreview   = {quitPreview}
+                    formMode       = {formMode}
+                    MEETING        = {MEETING}
+                />
+            }
+            
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg} src='images/ConseilClasse.png'/>
@@ -1188,24 +1284,7 @@ function AddClassMeeting(props) {
                                 />
                             </div>
                         }
-                        
-                        {/*
-                            notifVisible &&
-                            <div style={{position:'absolute', right:0, top:'-0.7vh' }}>
-                             
-                                <CustomButton
-                                    btnText={t('alert_profs')}
-                                    hasIconImg= {true}
-                                    imgSrc='images/alarme.png'
-                                    imgStyle = {classes.grdBtnImgStyle}  
-                                    buttonStyle={getNotifButtonStyle()}
-                                    btnTextStyle = {classes.notifBtnTextStyle}
-                                    btnClickHandler={props.cancelHandler}
-                                    
-                                />
-                            </div>
-                        */}
-
+                 
                     </div>
                     <div style={{fontSize:'1vw', fontWeight:'bold', marginBottom:'2vh', marginLeft:'0vw'}}>
                         <FormPuce menuItemId ='1' 
@@ -1232,30 +1311,7 @@ function AddClassMeeting(props) {
                                     <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                                 </div>
                             </div>
-                            {/*<div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
-                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                    {t("presi_conseil")}:  
-                                </div>
-
-                                {(props.formMode =='consult') ?
-                                    <div> 
-                                        <input id="responsableLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[10]}    style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                        <input id="responsableId" type="hidden"   className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]}   style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                    </div>  
-                                    :
-                                    <div>                                     
-                                        <select id='responsable' defaultValue={MEETING.responsableId} onChange={responsableChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
-                                            {(optResponsable||[]).map((option)=> {
-                                                return(
-                                                    <option  value={option.value}>{option.label}</option>
-                                                );
-                                            })}
-                                        </select> 
-                                    </div>
-                                }
-                            </div>*/}
-
+                           
                             <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                                     {t("prof_principal")}:
@@ -1334,13 +1390,6 @@ function AddClassMeeting(props) {
                                     </select>
                                 }
 
-                                {/*(seeDetail==true) ?
-                                    <div> 
-                                        <input id="autre_conseilC" type="text" className={classes.inputRowControl } Placeholder={'  precider les details '} defaultValue={currentUiContext.formInputs[3]} style={{marginLeft:'1.3vw', height:'1.7rem', width:'13vw', fontSize:'1.13vw'}}/>
-                                    </div>
-                                    :
-                                    null
-                            */}
                                
                             </div>
 
@@ -1451,7 +1500,7 @@ function AddClassMeeting(props) {
                                         buttonStyle={getSmallButtonStyle()}
                                         style={{marginBottom:'-0.3vh', marginRight:'1vw'}}
                                         btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler={props.cancelHandler}
+                                        btnClickHandler={printReportHandler}
                                     />
                                     :null
                                 }
@@ -1465,23 +1514,7 @@ function AddClassMeeting(props) {
                             </div>
                         }
                         
-                        {/*
-                            notifVisible &&
-                            <div style={{position:'absolute', right:0, top:'-0.7vh' }}>
-                             
-
-                                <CustomButton
-                                    btnText={t('alert_profs')}
-                                    hasIconImg= {true}
-                                    imgSrc='images/alarme.png'
-                                    imgStyle = {classes.grdBtnImgStyle}  
-                                    buttonStyle={getNotifButtonStyle()}
-                                    btnTextStyle = {classes.notifBtnTextStyle}
-                                    btnClickHandler={props.cancelHandler}
-                                    
-                                />
-                            </div>*/
-                        }
+                      
 
                     </div>
 
@@ -1501,41 +1534,7 @@ function AddClassMeeting(props) {
                             </div>
 
                         </div>
-                            {/* {(isBilan==true)&&
-                                <div className={classes.inputRowLeft} style={{height:'3.7vh'}}> 
-                                    <div style={{display:'flex', flexDirection:'row', marginLeft:'0vw'}}>
-                                        <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                            {t("moy_passage")}:  
-                                        </div>
-                                            
-                                        <div> 
-                                            <input id="note_passage" type="number" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[7]} style={{marginLeft:'-3vw', height:'1rem', width:'3.7vw', fontSize:'1.13vw'}} />
-                                        </div>
-                                    </div>
-
-                                    <div style={{display:'flex', flexDirection:'row', marginLeft:'2vw', marginRight:'2vw'}}>
-                                        <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
-                                            {t("moy_exclusion")}:  
-                                        </div>
-                                            
-                                        <div> 
-                                            <input id="note_exclusion" type='number' className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[8]} style={{marginLeft:'-3vw', height:'1rem', width:'3.7vw', fontSize:'1.13vw'}}/>
-                                                
-                                        </div>
-                                    </div>
-
-                                    <CustomButton
-                                        btnText={t("voir_stats")} 
-                                        buttonStyle={getSmallButtonStyle()}
-                                        style={{marginBottom:'2.3vh', marginRight:'4.3vw'}}
-                                        btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {addEleveRow()}}
-                                    />     
-                               
-                                </div>
-                          
-                            } */}
-
+                     
                         <div className={classes.inputRowLeft} style={{height:'11.7vh'}}> 
                             <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                                 {t("dicision_resume")}:  
@@ -1548,7 +1547,7 @@ function AddClassMeeting(props) {
                         
                         { isBilan==true &&                        
                             <div className={classes.inputRowLeft}> 
-                                <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'23vh', marginLeft:'-2vw'}}>
+                                <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'30vh', marginLeft:'-2vw'}}>
                                     <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
                                         <FormPuce menuItemId ='1' 
                                             isSimple={true} 
@@ -1561,18 +1560,18 @@ function AddClassMeeting(props) {
                                             style={{marginBottom:'-1vh'}}
                                             puceImgStyle={{marginRight:'-0.3vw', marginTop:'1vh'}}
                                         />
-                                        {/*(props.formMode!='consult')&&  
-                                            <CustomButton
-                                                btnText={t("add")} 
-                                                buttonStyle={getSmallButtonStyle()}
-                                                style={{marginBottom:'-0.3vh', marginRight:'0.3vw'}}
-                                                btnTextStyle = {classes.btnSmallTextStyle}
-                                                btnClickHandler = {() => {addEleveRow()}}
-                                            />  
-                                        */}                    
+                                       
+                                        <CustomButton
+                                            btnText={t("agrandir_grille")} 
+                                            buttonStyle={getSmallButtonStyle()}
+                                            style={{marginBottom:'-0.3vh', marginRight:'0.3vw'}}
+                                            btnTextStyle = {classes.btnSmallTextStyle}
+                                            btnClickHandler = {() => {agrandirView()}}
+                                        />  
+                                                           
                                     </div>
 
-                                    <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'23vh', width:'40vw', overflowX:'scroll', justifyContent:'flex-start'}}>
+                                    <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'30vh', width:'40vw', overflowX:'scroll', justifyContent:'flex-start'}}>
                                         <LigneEleveHeader/>
                                     
                                         {(infosEleves||[]).map((eleve, index)=>{
@@ -1581,6 +1580,7 @@ function AddClassMeeting(props) {
                                                     eleveId         =  {eleve.id} 
                                                     rowIndex        =  {index} 
                                                     nom             =  {eleve.nom} 
+                                                    age             =  {eleve.age}
                                                     redouble        =  {eleve.redouble==false ? t("no"):t("yes")} 
                                                     absences_nj     =  {eleve.absences_nj} 
                                                     absences_j      =  {eleve.absences_j} 

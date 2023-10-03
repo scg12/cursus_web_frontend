@@ -1,4 +1,7 @@
-{   
+{   "redouble":"Repeating",
+    "agrandir_grille":"Zoom on grid",
+    "promuEn": "Promu en",
+    "moy_annuelle":"Annual note",
     "not_set":"Not set",
     "next_class_not_set":"Some class promotion were not set for some students. please set them before finish process !!!",
     "decision_not_set":"Some decisions were not set.Please set them before finish process !!!",
@@ -190,6 +193,7 @@
     "voir_stats":"See stats",
     "dicision_resume":"Decisions Resume",
     "decision_cas_par_cas":"Individuals decisions",
+    "decision_cas_par_cas_M":"MEETING INDIVIDUAL DECISIONS",
     "presence_effective":"Effective participation",
     "info_prelim":"First hand informations",
     "decision_conseil":"Meeting decisions",

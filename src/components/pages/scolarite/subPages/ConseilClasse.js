@@ -49,6 +49,7 @@ var LIST_NEXT_CLASSES = '';
 var LIST_CONSEILS_INFOS =[];
 
 
+
 var listElt ={};
 
 var MEETING = {};
@@ -65,8 +66,11 @@ var chosenMsgBox;
 const MSG_SUCCESS_CREATE       = 1;
 const MSG_SUCCESS_UPDATE       = 2;
 const MSG_SUCCESS_UPDATE_PRINT = 3;
-const MSG_WARNING        = 4;
-const ROWS_PER_PAGE= 40;
+const MSG_WARNING              = 4;
+
+const ROWS_PER_PAGE            = 40;
+const FIRST_PAGE_ROWS_COUNT    = 20;
+
 var CCPageSet=[];
 
 
@@ -197,7 +201,7 @@ function ConseilClasse(props) {
             listElt.status = elt.status; 
             listElt.resume_general_decisions = elt.resume_general_decisions;
             listElt.periodeId = elt.id_type_conseil;
-            listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos,trimInfos);
+            listElt.periode = (elt.type_conseil=='annuel')? t('annee') +' '+ elt.date_prevue.split('/')[2]:getPeriodeLabel(listElt.periodeId,seqInfos,trimInfos);
             listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);            
@@ -660,7 +664,8 @@ const columnsFr = [
         inputs[9]  = row.statusLabel;
         inputs[10] = [...INFO_ELEVES];
         inputs[11] = row.resume_general_decisions;
-  
+
+        console.log("laligne",row, currentUiContext.formInputs);  
         currentUiContext.setFormInputs(inputs)
         setModalOpen(3);
     }
@@ -767,6 +772,7 @@ const columnsFr = [
             type_conseil                   : meeting.type_conseilId,
             date_prevue                    : meeting.date,
             heure_prevue                   : meeting.heure,
+            date_effective                 : meeting.date_effective,
             id_periode                     : meeting.id_periode,
             alerter_membres                : meeting.alerter_membres,
             id_membres                     : meeting.id_membres,
@@ -989,31 +995,94 @@ const columnsFr = [
         printMeetingReport();
     }
 
-    const printMeetingReport=()=>{
-       
-        if(CURRENT_CLASSE_ID != undefined){
-            var PRINTING_DATA ={
-                date:'27/04/2023',
-                time:'17h45',
-                schoolName:'College FX Vogt',
-                quartier:'Mvolye',
-                ville:'Yaounde',
-                
-                typeMeeting     : CURRENT_MEETING.objetLabel,
-                compteRendu     : CURRENT_MEETING.decision,
-                successMark     : '', //CURRENT_MEETING.note_passage,
-                exclusionMark   : '', //CURRENT_MEETING.note_exclusion,
-                elevesDecisions : [], // pour le moment [...CURRENT_MEETING.listCaspasCas],
-                participants    : [...CURRENT_MEETING.listParticipants],
+    function createSudentDecison(ElevesList, eltsPerPage){
+        var pagNumber = 1;
+        for(var i = 0; i < ElevesList.length; i+eltsPerPage){
+            var subTable = ElevesList.splice(i,i+eltsPerPage);
+            page.pageRows = [...subTable];
+            page.pageNumber = pagNumber;
+            pageSet.push(page);
+            // index = index + eltsPerPage
+            pagNumber++;
+        }
+    
+    }
 
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,
+    const printMeetingReport=()=>{
+        var Page_data, countOtherPage;
+        var tabPagesData = [];
+        var firstElts, firstDecisions, firstPromotions;
+        var infosEleves, elevesDecisions, elevesPromotions;
+
+       
+
+        if(CURRENT_CLASSE_ID != undefined){
+            if(CURRENT_MEETING.type_conseil=='annuel'){
+                infosEleves      = [...CURRENT_MEETING.infoGeneralesEleves];
+                elevesDecisions  = [...CURRENT_MEETING.listDecisions];
+                elevesPromotions = [...CURRENT_MEETING.listPromotions];
+        
+        
+                countOtherPage   =  (infosEleves.length-FIRST_PAGE_ROWS_COUNT)/ROWS_PER_PAGE;
+                firstElts        =  infosEleves.splice(0,FIRST_PAGE_ROWS_COUNT);
+                firstDecisions   =  elevesDecisions.splice(0,FIRST_PAGE_ROWS_COUNT);
+                firstPromotions  =  elevesPromotions.splice(0,FIRST_PAGE_ROWS_COUNT);
+
+                for (var i=0; i<countOtherPage; i++){
+                    Page_data = {}
+                   
+                    Page_data.otherPageElts       = [...infosEleves.splice(0,ROWS_PER_PAGE)];
+                    Page_data.otherPageDecisions  = [...elevesDecisions.splice(0,ROWS_PER_PAGE)];
+                    Page_data.otherPagePromotions = [...elevesPromotions.splice(0,ROWS_PER_PAGE)];
+    
+                    tabPagesData.push(Page_data);
+    
+                }
+
+            } else {
+                countOtherPage   = 1;
+                infosEleves      = [];
+                firstElts        = [];
+                firstDecisions   = [];
+                firstPromotions  = [];
+                elevesDecisions  = [];
+                elevesPromotions = [];
+            }
+           
+
+            var PRINTING_DATA = {
+                date                :'27/04/2023',
+                time                :'17h45',
+                schoolName          :'College FX Vogt',
+                quartier            :'Mvolye',
+                ville               :'Yaounde',
+
+                leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders       : ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+                pageImages          : ["images/collegeVogt.png"],
+                pageTitle           : "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,
+                tableHeaderModel    : [t('form_nom'), t('form_dateNaiss'), t("form_lieuNaiss"), t('moyenne'), t("redoublant"), t("decision_conseil"), t("promotion")],
+                
+                typeMeeting         : CURRENT_MEETING.type_conseil,
+                compteRendu         : CURRENT_MEETING.resume_general_decisions,
                
-                numberEltPerPage:ROWS_PER_PAGE  
+                eleveGeneralInfos   : [...CURRENT_MEETING.infoGeneralesEleves], 
+                elevesDecisions     : [...CURRENT_MEETING.listDecisions],
+                elevesPromotions    : [...CURRENT_MEETING.listPromotions],
+
+                firstPageElt        : firstElts,
+                firstPageDecisions  : firstDecisions,
+                firstPagePromotions : firstPromotions,
+
+                participants        : [...CURRENT_MEETING.listParticipants],
+                nextClasses         : [...CURRENT_MEETING.classProm ],
+                              
+                numberEltPerPage    : ROWS_PER_PAGE,
+                otherPageCount      : countOtherPage,
+                pagesElt            : [...tabPagesData]               
             };
+
             printedETFileName = "PV_Conseil_classe("+CURRENT_CLASSE_LABEL+").pdf"
             setModalOpen(4);
             CCPageSet={...PRINTING_DATA};
@@ -1200,7 +1269,15 @@ const columnsFr = [
                         <StripedDataGrid
                             rows={gridMeeting}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='etatLabel' && params.row.status==1)?  classes.clotureStyle: (params.field==='etatLabel' && params.row.status==0) ? classes.enCoursStyle : classes.gridRowStyle }
+                            getCellClassName={(params) => 
+                                (params.field==='etatLabel' && params.row.status==1)?  
+                                classes.clotureStyle 
+                                : (params.field==='etatLabel' && params.row.status==0) ? 
+                                classes.enCoursStyle 
+                                : (params.field==='type_conseil'|| params.field==='date_effective') ? 
+                                classes.gridRowStyleBOLD :
+                                classes.gridRowStyle 
+                            }
                             onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {

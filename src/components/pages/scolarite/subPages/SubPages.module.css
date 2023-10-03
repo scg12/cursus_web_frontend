@@ -1078,6 +1078,14 @@ max-height: 5vh !important;
 font-size: 0.9vw;
 }
 
+.gridRowStyleBOLD{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-size: 0.9vw;   
+    font-weight: bolder; 
+}
+    
+
 .gridAddedRows{
 min-height: 5vh !important;
 max-height: 5vh !important;

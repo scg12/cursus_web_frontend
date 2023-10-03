@@ -831,6 +831,7 @@ const columnsFr = [
             id_eleves                        : meeting.id_eleves,
             type_conseil                     : meeting.type_conseilId,
             date_prevue                      : meeting.date,
+            date_effective                   : meeting.date_effective,
             heure_prevue                     : meeting.heure,
             id_periode                       : meeting.id_periode,
             alerter_membres                  : meeting.alerter_membres,
@@ -1256,7 +1257,15 @@ const columnsFr = [
                         <StripedDataGrid
                             rows={gridMeeting}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='etatLabel' && params.row.status==1)?  classes.clotureStyle: (params.field==='etatLabel' && params.row.status==0) ? classes.enCoursStyle : classes.gridRowStyle }
+                            getCellClassName={(params) => 
+                                (params.field==='etatLabel' && params.row.status==1)?  
+                                classes.clotureStyle 
+                                : (params.field==='etatLabel' && params.row.status==0) ? 
+                                classes.enCoursStyle 
+                                : (params.field==='type_conseil'|| params.field==='date_effective') ? 
+                                classes.gridRowStyleBOLD :
+                                classes.gridRowStyle 
+                            }
                             onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {
