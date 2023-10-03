@@ -329,7 +329,7 @@ function ConfigClassesPassages(props) {
                     <div className={classess.gridTitle}>
                         LISTE DES CLASSES POUR L'ANNEE PROCHAINE
                     </div>
-                    
+                                                    
                 </div>
                 : null
             }

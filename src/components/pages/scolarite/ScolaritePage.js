@@ -245,7 +245,8 @@ function ScolaritePage(){
       </div>
 
       <div className= {getCurrentContaintTheme()}>
-        {(currentAppContext.enableProfiles["SCOLARITE_A"]=='1') ? 
+        {
+        (currentAppContext.enableProfiles["SCOLARITE_A"]=='1') ? 
           <MenuItemListP minWtdhStyle={classes.size72Vw}  libelle= {t("enreg_admis")} theme={selectedTheme}>
             {(currentAppContext.enableProfiles["SCOLARITE_A1"]=='1') ?   <MenuItemP menuItemId ='100'  imgSource='images/NewStudent.png'        libelle={t("add_student")}         itemSelected={showSideMenu}>                                                           </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_A2"]=='1') ?   <MenuItemP menuItemId ='101'  imgSource='images/ListStudent.png'       libelle={t("consult_lists")}       itemSelected={showSideMenu}>                                                           </MenuItemP> : null}

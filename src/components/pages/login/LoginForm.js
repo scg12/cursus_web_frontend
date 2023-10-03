@@ -12,7 +12,7 @@ import AppContext from '../../../store/AppContext';
 import { useHistory } from 'react-router-dom';
 
 import {initFeaturesCode,initAppFeatureTable} from '../../Features/FeaturesCode';
-import FeaturesCode from '../../Features/FeaturesCode';
+// import FeaturesCode from '../../Features/FeaturesCode';
 
 
 
@@ -21,6 +21,119 @@ import FeaturesCode from '../../Features/FeaturesCode';
 var userProfile = ''
 var profileAuthorisationString = ''
 var ERROR_CODE;
+// let FeaturesCode = {
+//     "SCOLARITE": "1",
+//     "SCOLARITE_A": "1",
+//     "SCOLARITE_A1": "1",
+//     "SCOLARITE_A2": "1",
+//     "SCOLARITE_A3": "1",
+//     "SCOLARITE_A4": "1",
+//     "SCOLARITE_A5": "1",
+//     "SCOLARITE_A6": "1",
+//     "SCOLARITE_B": "1",
+//     "SCOLARITE_B1": "1",
+//     "SCOLARITE_B2": "1",
+//     "SCOLARITE_B3": "1",
+//     "SCOLARITE_B4": "1",
+//     "SCOLARITE_B5": "1",
+//     "SCOLARITE_B6": "1",
+//     "SCOLARITE_C": "1",
+//     "SCOLARITE_C1": "1",
+//     "SCOLARITE_C2": "1",
+//     "SCOLARITE_C3": "1",
+//     "SCOLARITE_C4": "1",
+//     "SCOLARITE_C5": "1",
+//     "SCOLARITE_D": "1",
+//     "SCOLARITE_D1": "1",
+//     "SCOLARITE_D2": "1",
+//     "SCOLARITE_D3": "1",
+//     "SCOLARITE_D4": "1",
+//     "SCOLARITE_D5": "1",
+//     "SCOLARITE_D6": "1",
+//     "SCOLARITE_E": "1",
+//     "SCOLARITE_E1": "1",
+//     "SCOLARITE_E2": "1",
+//     "SCOLARITE_E3": "1",
+//     "FINANCE": "1",
+//     "FINANCE_A": "1",
+//     "FINANCE_A1": "1",
+//     "FINANCE_A2": "1",
+//     "FINANCE_B": "1",
+//     "FINANCE_B1": "1",
+//     "FINANCE_B2": "1",
+//     "FINANCE_B3": "1",
+//     "FINANCE_B4": "1",
+//     "FINANCE_C": "1",
+//     "FINANCE_C1": "1",
+//     "FINANCE_C2": "1",
+//     "STATS": "1",
+//     "STATS_A": "1",
+//     "STATS_A1": "1",
+//     "STATS_A2": "1",
+//     "STATS_A3": "1",
+//     "STATS_A4": "1",
+//     "STATS_B": "1",
+//     "STATS_B1": "1",
+//     "STATS_B2": "1",
+//     "STATS_B3": "1",
+//     "COMM_PARENT": "1",
+//     "COMM_PARENT_A": "1",
+//     "COMM_PARENT_A1": "1",
+//     "COMM_PARENT_A2": "1",
+//     "COMM_PARENT_B": "1",
+//     "COMM_PARENT_B1": "1",
+//     "COMM_PARENT_B2": "1",
+//     "COMM_PARENT_B3": "1",
+//     "CONFIG": "1",
+//     "CONFIG_A": "1",
+//     "CONFIG_A1": "1",
+//     "CONFIG_A2": "1",
+//     "CONFIG_A3": "1",
+//     "CONFIG_A4": "1",
+//     "CONFIG_A5": "1",
+//     "CONFIG_A6": "1",
+//     "CONFIG_B": "1",
+//     "CONFIG_B1": "1",
+//     "CONFIG_B2": "1",
+//     "CONFIG_B3": "1",
+//     "CONFIG_B4": "1",
+//     "CONFIG_B5": "1",
+//     "CONFIG_B6": "1",
+//     "CONFIG_B7": "1",
+//     "CONFIG_B8": "1",
+//     "CONFIG_B9": "1",
+//     "CONFIG_B10": "1",
+//     "CONFIG_B11": "1",
+//     "CONFIG_B12": "1",
+//     "CONFIG_B13": "1",
+//     "CONFIG_B14": "1",
+//     "CONFIG_B15": "1",
+//     "CONFIG_B16": "1",
+//     "CONFIG_B17": "1",
+//     "CONFIG_B18": "1",
+//     "CONFIG_B19": "1",
+//     "CONFIG_B20": "1",
+//     "CONFIG_B21": "1",
+//     "CONFIG_B22": "1",
+//     "CONFIG_B23": "1",
+//     "CONFIG_B24": "1",
+//     "CONFIG_B25": "1",
+//     "CONFIG_B26": "1",
+//     "CONFIG_C": "1",
+//     "CONFIG_C1": "1",
+//     "CONFIG_C2": "1",
+//     "CONFIG_C3": "1",
+//     "CONFIG_D": "1",
+//     "CONFIG_D1": "1",
+//     "CONFIG_D2": "1",
+//     "CONFIG_D3": "1",
+//     "CONFIG_D4": "1",
+//     "CONFIG_E": "1",
+//     "CONFIG_E1": "1",
+//     "CONFIG_E2": "1",
+//     "EXTRAS": "1"
+// }
+let FeaturesCode = {}
 function LoginForm(props){
 
     const currentUiContext = useContext(UiContext);
@@ -116,7 +229,7 @@ function LoginForm(props){
     }
    
     const getRightsStringFromProfile = (profile) => {
-     
+        console.log("profile:",profile)
         switch(profile) {
             
             case 'admin': { initFeaturesCode('1'); return('');} 
@@ -159,6 +272,125 @@ function LoginForm(props){
             case 500: return "server_error";
             default: return "incorrectPwd";
         }
+    }
+
+    function generateFeaturesCodeFromString(string){
+        console.log(string.length)
+        let codes = string.split('');
+        FeaturesCode["SCOLARITE"] = codes[0];
+        FeaturesCode["SCOLARITE_A"] = codes[1];
+        FeaturesCode["SCOLARITE_A1"] = codes[2];
+        FeaturesCode["SCOLARITE_A2"] = codes[3];
+        FeaturesCode["SCOLARITE_A3"] = codes[4];
+        FeaturesCode["SCOLARITE_A4"] = codes[5];
+        FeaturesCode["SCOLARITE_A5"] = codes[6];
+        FeaturesCode["SCOLARITE_A6"] = codes[7];
+        FeaturesCode["SCOLARITE_B"] = codes[8];
+        FeaturesCode["SCOLARITE_B1"] = codes[9];
+        FeaturesCode["SCOLARITE_B2"] = codes[10];
+        FeaturesCode["SCOLARITE_B3"] = codes[11];
+        FeaturesCode["SCOLARITE_B4"] = codes[12];
+        FeaturesCode["SCOLARITE_B5"] = codes[13];
+        FeaturesCode["SCOLARITE_B6"] = codes[14];
+        FeaturesCode["SCOLARITE_C"] = codes[15];
+        FeaturesCode["SCOLARITE_C1"] = codes[16];
+        FeaturesCode["SCOLARITE_C2"] = codes[17];
+        FeaturesCode["SCOLARITE_C3"] = codes[18];
+        FeaturesCode["SCOLARITE_C4"] = codes[19];
+        FeaturesCode["SCOLARITE_C5"] = codes[20];
+        FeaturesCode["SCOLARITE_D"] = codes[21];
+        FeaturesCode["SCOLARITE_D1"] = codes[22];
+        FeaturesCode["SCOLARITE_D2"] = codes[23];
+        FeaturesCode["SCOLARITE_D3"] = codes[24];
+        FeaturesCode["SCOLARITE_D4"] = codes[25];
+        FeaturesCode["SCOLARITE_D5"] = codes[26];
+        FeaturesCode["SCOLARITE_D6"] = codes[27];
+        FeaturesCode["SCOLARITE_E"] = codes[28];
+        FeaturesCode["SCOLARITE_E1"] = codes[29];
+        FeaturesCode["SCOLARITE_E2"] = codes[30];
+        FeaturesCode["SCOLARITE_E3"] = codes[31];
+        FeaturesCode["FINANCE"] = codes[32];
+        FeaturesCode["FINANCE_A"] = codes[33];
+        FeaturesCode["FINANCE_A1"] = codes[34];
+        FeaturesCode["FINANCE_A2"] = codes[35];
+        FeaturesCode["FINANCE_B"] = codes[36];
+        FeaturesCode["FINANCE_B1"] = codes[37];
+        FeaturesCode["FINANCE_B2"] = codes[38];
+        FeaturesCode["FINANCE_B3"] = codes[39];
+        FeaturesCode["FINANCE_B4"] = codes[40];
+        FeaturesCode["FINANCE_C"] = codes[41];
+        FeaturesCode["FINANCE_C1"] = codes[42];
+        FeaturesCode["FINANCE_C2"] = codes[43];
+        FeaturesCode["STATS"] = codes[44];
+        FeaturesCode["STATS_A"] = codes[45];
+        FeaturesCode["STATS_A1"] = codes[46];
+        FeaturesCode["STATS_A2"] = codes[47];
+        FeaturesCode["STATS_A3"] = codes[48];
+        FeaturesCode["STATS_A4"] = codes[49];
+        FeaturesCode["STATS_B"] = codes[50];
+        FeaturesCode["STATS_B1"] = codes[51];
+        FeaturesCode["STATS_B2"] = codes[52];
+        FeaturesCode["STATS_B3"] = codes[53];
+        FeaturesCode["COMM_PARENT"] = codes[54];
+        FeaturesCode["COMM_PARENT_A"] = codes[55];
+        FeaturesCode["COMM_PARENT_A1"] = codes[56];
+        FeaturesCode["COMM_PARENT_A2"] = codes[57];
+        FeaturesCode["COMM_PARENT_B"] = codes[58];
+        FeaturesCode["COMM_PARENT_B1"] = codes[59];
+        FeaturesCode["COMM_PARENT_B2"] = codes[60];
+        FeaturesCode["COMM_PARENT_B3"] = codes[61];
+        FeaturesCode["CONFIG"] = codes[62];
+        FeaturesCode["CONFIG_A"] = codes[63];
+        FeaturesCode["CONFIG_A1"] = codes[64];
+        FeaturesCode["CONFIG_A2"] = codes[65];
+        FeaturesCode["CONFIG_A3"] = codes[66];
+        FeaturesCode["CONFIG_A4"] = codes[67];
+        FeaturesCode["CONFIG_A5"] = codes[68];
+        FeaturesCode["CONFIG_A6"] = codes[69];
+        FeaturesCode["CONFIG_B"] = codes[70];
+        FeaturesCode["CONFIG_B1"] = codes[71];
+        FeaturesCode["CONFIG_B2"] = codes[72];
+        FeaturesCode["CONFIG_B3"] = codes[73];
+        FeaturesCode["CONFIG_B4"] = codes[74];
+        FeaturesCode["CONFIG_B5"] = codes[75];
+        FeaturesCode["CONFIG_B6"] = codes[76];
+        FeaturesCode["CONFIG_B7"] = codes[77];
+        FeaturesCode["CONFIG_B8"] = codes[78];
+        FeaturesCode["CONFIG_B9"] = codes[79];
+        FeaturesCode["CONFIG_B10"] = codes[80];
+        FeaturesCode["CONFIG_B11"] = codes[81];
+        FeaturesCode["CONFIG_B12"] = codes[82];
+        FeaturesCode["CONFIG_B13"] = codes[83];
+        FeaturesCode["CONFIG_B14"] = codes[84];
+        FeaturesCode["CONFIG_B15"] = codes[85];
+        FeaturesCode["CONFIG_B16"] = codes[86];
+        FeaturesCode["CONFIG_B17"] = codes[87];
+        FeaturesCode["CONFIG_B18"] = codes[88];
+        FeaturesCode["CONFIG_B19"] = codes[89];
+        FeaturesCode["CONFIG_B20"] = codes[90];
+        FeaturesCode["CONFIG_B21"] = codes[91];
+        FeaturesCode["CONFIG_B22"] = codes[92];
+        FeaturesCode["CONFIG_B23"] = codes[93];
+        FeaturesCode["CONFIG_B24"] = codes[94];
+        FeaturesCode["CONFIG_B25"] = codes[95];
+        FeaturesCode["CONFIG_B26"] = codes[96];
+        FeaturesCode["CONFIG_C"] = codes[97];
+        FeaturesCode["CONFIG_C1"] = codes[98];
+        FeaturesCode["CONFIG_C2"] = codes[99];
+        FeaturesCode["CONFIG_C3"] = codes[100];
+        FeaturesCode["CONFIG_D"] = codes[101];
+        FeaturesCode["CONFIG_D1"] = codes[102];
+        FeaturesCode["CONFIG_D2"] = codes[103];
+        FeaturesCode["CONFIG_D3"] = codes[104];
+        FeaturesCode["CONFIG_D4"] = codes[105];
+        FeaturesCode["CONFIG_E"] = codes[106];
+        FeaturesCode["CONFIG_E1"] = codes[107];
+        FeaturesCode["CONFIG_E2"] = codes[108];
+        FeaturesCode["EXTRAS"] = codes[109];
+
+
+        console.log("fct FeaturesCode: ",FeaturesCode)
+        
     }
 
     function loadEmploiDetemps(etabId){
@@ -219,7 +451,9 @@ function LoginForm(props){
             console.log(res.data);
             userProfile = 'admin';
             profileAuthorisationString = getRightsStringFromProfile(userProfile)
-
+            // generateFeaturesCodeFromString("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+            // console.log("***FeaturesCode: ",FeaturesCode);
+            generateFeaturesCodeFromString(res.data.FeaturesCode)
             currentAppContext.setInfoAnnees(res.data.info_annees);
             currentAppContext.setUsrConnected(loginText,userProfile);
             currentAppContext.setEnableProfiles(FeaturesCode);
@@ -237,7 +471,7 @@ function LoginForm(props){
             
             //Pour les MsgBoxes
             currentUiContext.setIsParentMsgBox(true);            
-            profileAuthorisationString = getRightsStringFromProfile(userProfile);
+            // profileAuthorisationString = getRightsStringFromProfile(userProfile);
             //console.log(currentAppContext.infoCours);
             currentUiContext.setIsDashboardNav(true);
 

@@ -1,4 +1,4 @@
-const FeaturesCode = {};
+let FeaturesCode = {};
 export default FeaturesCode;
 
 export function initFeaturesCode(val) {

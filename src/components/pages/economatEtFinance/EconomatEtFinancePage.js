@@ -108,7 +108,7 @@ function EconomatEtFinancePage() {
 
                 {(currentAppContext.enableProfiles["FINANCE_C"]=='1') ? 
                     <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("bilan_financier")} theme={selectedTheme}>
-                        {(currentAppContext.enableProfiles["FINANCE_C2"]=='1') ? <MenuItemP menuItemId ='206' imgSource='images/EvolutionBudget.png'        libelle={t("budget_evolution")} itemSelected={showSideMenu}></MenuItemP> :null}
+                        {(currentAppContext.enableProfiles["FINANCE_C1"]=='1') ? <MenuItemP menuItemId ='206' imgSource='images/EvolutionBudget.png'        libelle={t("budget_evolution")} itemSelected={showSideMenu}></MenuItemP> :null}
                         {(currentAppContext.enableProfiles["FINANCE_C2"]=='1') ? <MenuItemP menuItemId ='207' imgSource='images/EtatPaiement.png'           libelle={t("total_percu")}itemSelected={showSideMenu}></MenuItemP> : null}
                     </MenuItemListP>
                     :
