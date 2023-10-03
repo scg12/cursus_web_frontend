@@ -12,7 +12,7 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate, changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, changeDateIntoMMJJAAAA, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 var MEETING = {};
@@ -173,8 +173,6 @@ function AddDisciplinMeeting(props) {
             var ListElevesDecision = [...currentUiContext.formInputs[10]];
             var ListElevesSanction = [...currentUiContext.formInputs[11]];
 
-
-           
             setTabElevesMotifs(ListElevesDecision);
 
             if(ListElevesSanction.length > 0){
@@ -592,6 +590,9 @@ function AddDisciplinMeeting(props) {
             MEETING.date                = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
             MEETING.heure               = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
         }
+
+        MEETING.date_effective          = getTodayDate();       
+
         //----- 2ieme partie du formulaire1 ----- 
         MEETING.id_eleves               = getListElementByFields(tabElevesMotifs, "id");  //Mettre la chaine des eleves separe par²²
         MEETING.is_all_class_convoke    = ALL_STUDENTS_CONVOCATED;       //Mettre la bonne valeur
