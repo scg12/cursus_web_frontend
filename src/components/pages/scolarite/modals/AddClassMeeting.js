@@ -1562,7 +1562,7 @@ function AddClassMeeting(props) {
                                         />
                                        
                                         <CustomButton
-                                            btnText={t("Agrandir la grille")} 
+                                            btnText={t("agrandir_grille")} 
                                             buttonStyle={getSmallButtonStyle()}
                                             style={{marginBottom:'-0.3vh', marginRight:'0.3vw'}}
                                             btnTextStyle = {classes.btnSmallTextStyle}

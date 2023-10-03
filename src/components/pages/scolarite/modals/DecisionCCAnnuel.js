@@ -354,7 +354,7 @@ function DecisionCCAnnuel(props) {
                 </div>
 
                 <div className={classes.formMainTitle} >
-                    {t("Decisions au cas par cas")}
+                    {t("decision_cas_par_cas_M")}
                 </div>
                 
                 
