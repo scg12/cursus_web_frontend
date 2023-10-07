@@ -22,6 +22,8 @@ export function changeDateIntoMMJJAAAA(date){
     return dateTab[1]+'/'+dateTab[0]+'/'+dateTab[2];
 }
 
+
+
 export function getTodayDate(){
     var jour  = new Date().getDate();
     var mois  = new Date().getMonth()+1;

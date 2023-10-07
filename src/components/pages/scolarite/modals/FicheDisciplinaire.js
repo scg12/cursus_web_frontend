@@ -199,15 +199,6 @@ function FicheDisciplinaire(props) {
     }
 
 
-    /*------------------------------ End Design Fonctions -------------------------------*/
-
-    const absences_data =[
-        {id:1, date:'12/05/2023', nbre_heure:'3', heure_justifie:'1', heure_nonJustifie:'2' },
-        {id:2, date:'08/07/2023', nbre_heure:'7', heure_justifie:'2', heure_nonJustifie:'5' },
-        {id:3, date:'18/07/2023', nbre_heure:'3', heure_justifie:'2', heure_nonJustifie:'1' },
-    ];
- 
-
     /************************************ JSX Code ************************************/
     const LigneAbsence=(props)=>{
         return(
@@ -246,12 +237,21 @@ function FicheDisciplinaire(props) {
         return(
             <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
                 <div style={{width:'5.7vw', height:'1.4rem', fontSize:'0.87vw', fontWeight:"bold", color:'#075588'}}>{props.date}</div>
-                <div style={{width:'15vw',  height:'1.4rem', fontSize:'0.87vw', fontWeight:"bold", color:'#075588'}}>{(props.libelle.length==0)? "R.A.S":props.libelle}</div>
+                <div style={{width:'15vw',  height:'1.4rem', fontSize:'0.87vw', fontWeight:"bold", color:'#075588'}}>{props.libelle}</div>
                 <div style={{width:'5vw',   height:'1.4rem', fontSize:'0.87vw', fontWeight:"bold", color:'black'}}>{props.duree} {props.unite}</div>
                 {/* <div style={{height:'1.4rem', fontSize:'0.87vw', paddingTop:'1.3vh'}}>{props.motif}</div> */}
             </div>
         );
     }
+
+    const EmptyRow=(props)=>{
+        return(
+            <div style={{display:'flex', justifyContent:"center", color: 'black', backgroundColor:'white', flexDirection:'row', height: '3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+                <div style={{width:'5.7vw', height:'1.4rem', fontSize:'0.87vw', fontWeight:"bold", color:'#075588'}}>R.A.S</div>
+            </div>
+        );
+    }
+
 
    
 
@@ -349,6 +349,7 @@ function FicheDisciplinaire(props) {
                         
                         <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw',overflowY:'scroll', justifyContent:'center'}}>
                             <LigneAbsence date={t('date')} nbreHeures={t('nbre_hour')} nbreJustifie={t('justify')} nonJustifie={t('not_justify')} isHeader={true}/>
+                            {gridAbsences.length==0 && <EmptyRow/>}
                             {(gridAbsences||[]).map((absence)=>{
                                 return <LigneAbsence date={absence.date} nbreHeures={absence.nb_heures} nbreJustifie={absence.justifie} nonJustifie={absence.non_justifie} isHeader={false}/>
                                 })
@@ -381,6 +382,7 @@ function FicheDisciplinaire(props) {
 
                         <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', width:'93%',overflowY:'scroll', justifyContent:'center'}}>
                             <LignePunitionHeader punitionCode={0}/>
+                            {gridSanctions.length==0 && <EmptyRow/>}
                             {(gridSanctions||[]).map((sanction,index)=>{
                                 return <LignePunition punitionId={sanction.id} rowIndex={index} date={sanction.date} libelle={sanction.libelle} duree={sanction.duree} unite={sanction.unite}  isHeader={false} /*EnregPunition={EnregConsigne} doPunition={doConsigne} deletePunition={deleteConsigne}*//>
                                 })

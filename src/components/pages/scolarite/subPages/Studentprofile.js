@@ -134,8 +134,8 @@ function Studentprofile(props) {
             date_fin   : dateFin
         }).then((res)=>{
             console.log("les donnees",res.data);
-            LIST_ABSENCES  = [...res.data.absences];
-            LIST_SANCTIONS = [...res.data.sanctions];
+            LIST_ABSENCES  = [...arrangeDates(res.data.absences)];
+            LIST_SANCTIONS = [...arrangeDates(res.data.sanctions)];
 
             listEleves = [...formatList(LIST_ELEVES, LIST_ABSENCES, LIST_SANCTIONS)]
             console.log(listEleves);
@@ -143,6 +143,22 @@ function Studentprofile(props) {
             console.log(gridRows);
         })  
         return listEleves; 
+    }
+
+    function ChangeDateIntoJJMMAAAA(date){
+        var dateTab = date.split("-");
+        if(dateTab.length==3){
+            return(dateTab[2]+'-'+dateTab[1]+'-'+dateTab[0]);
+        }else return date;
+        
+    }
+
+    function arrangeDates(list){
+        if(list.length>0){
+            list.map((elt)=>elt.date = ChangeDateIntoJJMMAAAA(elt.date))
+        }
+        console.log("la liste la",list);
+        return list;
     }
 
 
@@ -366,8 +382,7 @@ function Studentprofile(props) {
     }
 
 
-    function dropDownHandler(e){
-        
+    function dropDownHandler(e){        
         if(e.target.value != optClasse[0].value){
             LIST_ABSENCES  = [];
             LIST_SANCTIONS = [];
@@ -582,7 +597,8 @@ const columnsFr = [
         SELECTED_ELEVE  = {};
         SELECTED_ELEVE  = LIST_ELEVES.find((elt)  =>   elt.id  == row.id);
         ELEVE_ABSENCES  = LIST_ABSENCES.filter((elt)=> elt.id  == row.id);
-        ELEVE_SANCTIONS = LIST_SANCTIONS.filter((elt)=>(elt.id == row.id));
+        ELEVE_SANCTIONS = LIST_SANCTIONS.filter((elt)=>(elt.id == row.id && elt.libelle.length>0));
+        console.log("dgdgd",ELEVE_SANCTIONS)
         setModalOpen(3);
     }
 
@@ -697,9 +713,9 @@ const columnsFr = [
             pageImages          :["images/collegeVogt.png"],
             pageTitle           : "Fiche disciplinaire",            
             absencesHeaderModel :[t('date'), t('nbre_hour'), t('justify'), t('not_justify')],
-            absencesData        :[...LIST_ABSENCES],
+            absencesData        :[...ELEVE_ABSENCES],
             sanctionsHeaderModel:[t('date'), t('libelle'), t('duree')],
-            sanctionsData       :[...LIST_SANCTIONS],
+            sanctionsData       :[...ELEVE_SANCTIONS],
             eleveInfo           :SELECTED_ELEVE,
             classeLabel         :CURRENT_CLASSE_LABEL,
 
