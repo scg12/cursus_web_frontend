@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
@@ -26,84 +26,26 @@ let CURRENT_CLASSE_LABEL;
 let CURRENT_PROF_PP_ID;
 let CURRENT_PROF_PP_LABEL;
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"",
-    displayedName:'',
-    nom: '',
-    prenom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    nom_mere : '',
-    tel_pere : '',
-    tel_mere : '',
-    email_pere : '',
-    email_mere : '',
-    etab_provenance:'',
-    id:1,
-    redouble: '',
-    sexe:'M', 
-    
-    nom_parent      : '', 
-    tel_parent      : '', 
-    email_parent    : '',
-   
-}
+var JOUR_DEB, MOIS_DEB, YEAR_DEB, DATEDEB_RECH ='';
+var JOUR_FIN, MOIS_FIN, YEAR_FIN, DATEFIN_RECH ='';
 
-var MEETING = {
-    //---Infos Generales 
-    id:-1,
-    classId : 0,
-    classeLabel:'',
+var LIST_ELEVES     = [];
+var LIST_ABSENCES   = [];
+var LIST_SANCTIONS  = [];
 
-    responsableId:0,
-    responsableLabel:'',
+var SELECTED_ELEVE  = {};
+var ELEVE_ABSENCES  = [];
+var ELEVE_SANCTIONS = [];
 
-    profPrincipalId :0,
-    profPrincipalLabel : '',
-
-    date:'',
-    heure:'',
-
-    objetId:0,
-    objetLabel:'',
-
-    autreObjet:'',
-
-    etat:0,
-    etatLabel:'En cours',
-
-    decision:'',
-    note_passage:0,
-
-    note_exclusion:0,
-    //---participants
-    listParticipants : [],  
-   
-    //---prof presents
-    listPresents : [],
-
-     //---decisions cas par cas
-     listCaspasCas : [],
-};
-
-
-
-
-var pageSet = [];
-
-var page = {
-    pageTitle:'',
-    pageRows:[],
-    pageNumber:0,
-}
+var listElt         = {};
+var pageSet         = [];
+var page            = {};
 
 var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
+const MSG_SUCCESS_FD = 1;
+const MSG_WARNING_FD = 2;
+const MSG_ERROR_FD   = 3;
+
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 
@@ -112,14 +54,12 @@ function Studentprofile(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-
     const [isValid, setIsValid] = useState(false);
-    const [gridMeeting, setGridMeeting]= useState([]);
+
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
     const selectedTheme = currentUiContext.theme;
-    const [optPeriode, setOpPeriode] = useState([]);
    
 
     const tabPeriode =[
@@ -131,17 +71,10 @@ function Studentprofile(props) {
     ]
 
     useEffect(()=> {
-        setOpPeriode(tabPeriode);
-
         if(gridRows.length==0){
             CURRENT_CLASSE_ID = undefined;
         }
-
         getEtabListClasses();
-
-        setGridMeeting(conseil_data);
-        
-        
     },[]);
 
     const getEtabListClasses=()=>{
@@ -158,103 +91,323 @@ function Studentprofile(props) {
         }) 
     }
 
-    const  getClassStudentList=(classId)=>{
-        var listEleves = []
+    function changeDateIntoMMJJAAAA(date){
+        var dateTab = date.split('/');
+        return dateTab[1]+'/'+dateTab[0]+'/'+dateTab[2];
+    }
+
+    function changeDateIntoAAAAMMJJ(date){
+        var dateTab = date.split('/');
+        return dateTab[2]+'-'+dateTab[1]+'-'+dateTab[0];
+    }
+
+    const  getClassStudentList=(classeId)=>{
+        var listEleves = [];
         axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
+            id_classe: classeId,
         }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data)]
+            console.log(res.data);            
+            LIST_ELEVES = res.data;           
+            listEleves = [...formatList(LIST_ELEVES, LIST_ABSENCES, LIST_SANCTIONS)]
             console.log(listEleves);
-            setGridRows(listEleves);
+
+            if(DATEDEB_RECH.length==0 && DATEFIN_RECH.length==0){
+                setGridRows(listEleves);
+            }
+            
             console.log(gridRows);
         })  
         return listEleves;     
     }
 
-    const getProfPrincipal=(classeId, setabId)=>{
-        /*axiosInstance.post(`get-profPrincipal/`, {
-            id_classe : classeId,
-            id_sousetab:setabId,
-                        
+    const getStudentFiches=(dateDeb, dateFin)=>{
+        var listEleves = []
+        axiosInstance.post(`list-fiche-disciplinaires/`, {
+            id_sousetab: currentAppContext.currentEtab,
+            id_classe  : CURRENT_CLASSE_ID,
+            date_deb   : dateDeb,
+            date_fin   : dateFin
         }).then((res)=>{
-            console.log(res.data);
+            console.log("les donnees",res.data);
+            LIST_ABSENCES  = [...res.data.absences];
+            LIST_SANCTIONS = [...res.data.sanctions];
 
-            CURRENT_PROF_PP_ID = res.data.id ;
-            CURRENT_PROF_PP_LABEL = res.data.label
-            
-        })*/     
-
-        CURRENT_PROF_PP_ID = 12 ;
-        CURRENT_PROF_PP_LABEL = 'MBAMI Thomas'
+            listEleves = [...formatList(LIST_ELEVES, LIST_ABSENCES, LIST_SANCTIONS)]
+            console.log(listEleves);
+            setGridRows(listEleves);
+            console.log(gridRows);
+        })  
+        return listEleves; 
     }
 
+
+    function searchStudent(){
+        var errorMsg = givenDateOk();
+        if(errorMsg.length==0){
+            getStudentFiches(changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH));
+        } else {
+            //Produire un message d'erreur....
+            chosenMsgBox = MSG_ERROR_FD;
+            currentUiContext.showMsgBox({
+                visible :true, 
+                msgType :"info", 
+                msgTitle: t("date_error_M"), 
+                message : errorMsg
+            })
+        }
+    }
+
+    function givenDateOk(){       
+
+        if(!((isNaN(changeDateIntoMMJJAAAA(DATEDEB_RECH)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(DATEDEB_RECH))))))){
+            return t('start_date_error');
+        }
+
+        if(!((isNaN(changeDateIntoMMJJAAAA(DATEFIN_RECH)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(DATEFIN_RECH))))))){
+            return t('end_date_error');
+        }
+
+        if(new Date(changeDateIntoMMJJAAAA(DATEDEB_RECH)) > new Date(changeDateIntoMMJJAAAA(DATEFIN_RECH))) {
+            return t('start_date_greater_than_end_date');
+        } 
+        return '';
+    }
+
+
+    function getJourDebAndFilter(e){
+        setGridRows([]);
+        JOUR_DEB = e.target.value;
+        DATEDEB_RECH = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+        if(DATEDEB_RECH=='//') DATEDEB_RECH = ''; 
+        
+        if(DATEDEB_RECH=='' && DATEFIN_RECH=='') {
+            LIST_ELEVES    = [];
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            getClassStudentList(CURRENT_CLASSE_ID);
+        }
+
+        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        else setIsValid(false);
+        // if(DATEDEB_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
+        // else filterAuthSortie(listAutorisations,'',DATEFIN_RECH);
+
+    }
+
+    function getJourFinAndFilter(e){
+        setGridRows([]);
+        JOUR_FIN = e.target.value;
+        DATEFIN_RECH = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+        if(DATEFIN_RECH=='//') DATEFIN_RECH = ''; 
+        
+        if(DATEDEB_RECH=='' && DATEFIN_RECH=='') {
+            LIST_ELEVES    = [];
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            getClassStudentList(CURRENT_CLASSE_ID);
+        }
+
+        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        else setIsValid(false);
+        // if(DATEFIN_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
+        // else filterAuthSortie(listAutorisations, '', DATEDEB_RECH);
+
+    }
+
+    function getMoisDebAndFilter(e, dateFin){
+        setGridRows([]);
+        MOIS_DEB = e.target.value;
+        DATEDEB_RECH = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+        if(DATEDEB_RECH=='//') DATEDEB_RECH = ''; 
+        console.log("date verif",DATEDEB_RECH);
+        
+        if(DATEDEB_RECH=='' && DATEFIN_RECH=='') {
+            LIST_ELEVES    = [];
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            getClassStudentList(CURRENT_CLASSE_ID);
+        }
+
+        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        else setIsValid(false);
+
+        // if(DATEDEB_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
+        // else filterAuthSortie(listAutorisations, '', DATEFIN_RECH);
+    }
+
+    function getMoisFinAndFilter(e){
+        setGridRows([]);
+        MOIS_FIN = e.target.value;
+        DATEFIN_RECH = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+        if(DATEFIN_RECH=='//') DATEFIN_RECH = ''; 
+        
+        if(DATEDEB_RECH=='' && DATEFIN_RECH=='') {
+            LIST_ELEVES    = [];
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            getClassStudentList(CURRENT_CLASSE_ID);
+        }   
+
+        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        else setIsValid(false);
+
+        // if(DATEFIN_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
+        // else filterAuthSortie(listAutorisations, DATEDEB_RECH, '');
+    }
+
+
+    function getYearDebAndFilter(e){
+        setGridRows([]);
+        YEAR_DEB = e.target.value;
+        DATEDEB_RECH = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+        if(DATEDEB_RECH=='//') DATEDEB_RECH = ''; 
+        
+        if(DATEDEB_RECH=='' && DATEFIN_RECH=='') {
+            LIST_ELEVES    = [];
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            getClassStudentList(CURRENT_CLASSE_ID);
+        }
+
+        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        else setIsValid(false);
+        
+        console.log("date verif",DATEDEB_RECH);
+        // if(DATEDEB_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
+        // else filterAuthSortie(listAutorisations, '', DATEFIN_RECH);
+    }
+
+    function getYearFinAndFilter(e){
+        setGridRows([]);
+        YEAR_FIN = e.target.value;
+        DATEFIN_RECH = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+        if(DATEFIN_RECH=='//') DATEFIN_RECH = ''; 
+
+        if(DATEDEB_RECH=='' && DATEFIN_RECH=='') {
+            LIST_ELEVES    = [];
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            getClassStudentList(CURRENT_CLASSE_ID);
+        }
+
+        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        else setIsValid(false);
+
+        // if(DATEFIN_RECH.length==10) filterAuthSortie(listAutorisations,'',DATEFIN_RECH);
+        // else filterAuthSortie(listAutorisations, '', '');
+    }
+
+    function moveOnMax(e,currentField, nextField){
+        if(nextField!=null){
+            e = e || window.event;
+            if(e.keyCode != 9){
+                if(currentField.value.length >= currentField.maxLength){
+                    nextField.focus();
+                }
+            }
+        }
+     
+    }
    
 
-    const formatList=(list) =>{
+    const formatList=(list,absences,sanctions) =>{
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
-            listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
-
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
-
-            
+            listElt.rang           = rang;
+            listElt.id             = elt.id;
+            listElt.matricule      = elt.matricule;
+            listElt.displayedName  = elt.nom + ' '+elt.prenom;             
+            listElt.nb_heures      = getEleveAbsences(elt.id, absences);
+            listElt.nb_sanctions   = getEleveSanctions(elt.id,sanctions);
             formattedList.push(listElt);
             rang ++;
         })
         return formattedList;
     }
 
+    function getEleveAbsences(id_eleve, listAbsences){
+        var countAbsences = 0;
+        console.log("absences",listAbsences);
+        if(listAbsences.length>0){
+            var eleveAbs = listAbsences.filter((elv)=>elv.id == id_eleve);
+            if(eleveAbs.length>0){
+                eleveAbs.map((elv)=>{
+                    countAbsences += elv.nb_heures;
+                })
+            }
+        }
+        
+        return countAbsences;
+    }
+
+    function getEleveSanctions(id_eleve, listSanctions){
+        var countSanctions = 0;
+        console.log("sanctions",listSanctions);
+        if(listSanctions.length > 0){
+            var eleveSanc = listSanctions.filter((elv)=>elv.id == id_eleve && elv.libelle.length >0);         
+            countSanctions = eleveSanc.length;
+        }
+        return countSanctions;
+    }
+
 
     function dropDownHandler(e){
-        //console.log(e.target.value)
-        var grdRows;
+        
         if(e.target.value != optClasse[0].value){
-            setIsValid(true);
-            CURRENT_CLASSE_ID = e.target.value; 
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            LIST_ELEVES    = [];
+
+            CURRENT_CLASSE_ID    = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
-            getClassStudentList(CURRENT_CLASSE_ID);  
-            getProfPrincipal(currentAppContext.currentEtab, CURRENT_CLASSE_ID); 
-            console.log(CURRENT_CLASSE_LABEL)          
+            getClassStudentList(CURRENT_CLASSE_ID);
+            
+            if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) {
+                var errorMsg = givenDateOk();
+                if(errorMsg.length==0){
+                    console.log("jjjj",changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH))
+                    getStudentFiches(changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH));
+                } else {
+                    //Mesage d'erreur
+                    chosenMsgBox = MSG_ERROR_FD;
+                    currentUiContext.showMsgBox({
+                        visible :true, 
+                        msgType :"info", 
+                        msgTitle: t("date_error_M"), 
+                        message : errorMsg
+                    })
+                }
+            }            
+            else{
+                //if(DATEDEB_RECH.length==0 && DATEFIN_RECH.length==0)  getClassStudentList(CURRENT_CLASSE_ID); 
+
+                if(DATEDEB_RECH.length==10){
+                    var dateFin = getTodayDate();
+                    getStudentFiches(changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(dateFin));
+                }
+
+                if(DATEFIN_RECH.length==10){
+                    //var dateFin = getTodayDate();
+                    getStudentFiches(changeDateIntoAAAAMMJJ(DATEFIN_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH));
+                }
+            }
+          
         }else{
+            initDateFields();
+            LIST_ABSENCES  = [];
+            LIST_SANCTIONS = [];
+            LIST_ELEVES    = [];
+
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
             setGridRows([]);
-            setIsValid(false);
         }
     }
 
 /*************************** DataGrid Declaration ***************************/ 
 
-const conseil_data =[
-    {id:1, date:'12/05/2023', heure:'4eA1', objetId:1, objetLabel:'Bilan sequentiel', responsableId:1, responsableLabel:'Mr MBALLA Alfred', profPrincipalLabel:'Mr MBARGA Alphonse',     etat:0,  etatLabel:  'En cours' },
-    {id:2, date:'18/05/2023', heure:'4eA1', objetId:1, objetLabel:'Bilan sequentiel', responsableId:2, responsableLabel:'Mr TOWA Luc', profPrincipalLabel:'Mr MBARGA Alphonse',          etat:0,  etatLabel:  'En cours' },
-    {id:3, date:'02/05/2023', heure:'4eA1', objetId:1, objetLabel:'Bilan sequentiel', responsableId:3, responsableLabel:'Mr OBATE Simplice', profPrincipalLabel:'Mr MBARGA Alphonse',    etat:0,  etatLabel:  'En cours' },
-    {id:4, date:'17/05/2023', heure:'4eA1', objetId:1, objetLabel:'Bilan sequentiel', responsableId:4, responsableLabel:'Mr TSALA Pascal', profPrincipalLabel:'Mr MBARGA Alphonse',      etat:1,  etatLabel:  'Cloture'  },
-    {id:5, date:'03/05/2023', heure:'4eA1', objetId:1, objetLabel:'Bilan sequentiel', responsableId:5, responsableLabel:'Mr TCHIALEU Hugues', profPrincipalLabel:'Mr MBARGA Alphonse',   etat:1,  etatLabel:  'Cloture'  }
-];
 const columnsFr = [
 
     {
@@ -265,33 +418,25 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
+
+    {
+        field: 'matricule',
+        headerName: 'MATRICULE',
+        width: 110,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
        
     {
-        field: 'responsableLabel',
+        field: 'displayedName',
         headerName: 'NOM(S) ET PRENOM(S)',
         width: 250,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
-    {
-        field: 'heure',
-        headerName: 'CLASSE',
-        width: 80,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
     
     {
-        field: 'etatLabel',
-        headerName: 'PERIODE',
-        width: 100,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'objetId',
+        field: 'nb_heures',
         headerName: 'ABSENCES',
         width: 80,
         editable: false,
@@ -299,43 +444,26 @@ const columnsFr = [
     },    
 
     {
-        field: 'responsableId',
-        headerName: 'CONSIGNES',
-        width: 80,
+        field: 'nb_sanctions',
+        headerName: 'SANCTIONS',
+        width: 100,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
-
-    {
-        field: 'etat',
-        headerName: 'EXCLUSION',
-        width: 80,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-  
-    {
-        field: 'profPrincipalLabel',
-        headerName: 'AUTRE PUNITION',
-        width: 200,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
     {
         field: '',
-        headerName: '',
-        width: 150,
+        headerName: 'ACTION',
+        width: 100,
         editable: false,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
             
             return(
                 
-                <div className={classes.inputRow}>
-                    <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
+                <div className={classes.inputRowLeft} style={{marginLeft:"0.3vw"}}>
+                    <img src="images/lunette.png"  
+                        width={30} 
+                        height={20} 
                         className={classes.cellPointer} 
                         onClick={(event)=> {
                             event.ignore = true;
@@ -360,81 +488,52 @@ const columnsFr = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
         {
-            field: 'responsableLabel',
+            field: 'matricule',
+            headerName: 'STUDENT ID',
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+           
+        {
+            field: 'displayedName',
             headerName: 'NAME(S) AND SURNAME(S)',
             width: 250,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-    
+        
         {
-            field: 'heure',
-            headerName: 'CLASS',
+            field: 'nb_heures',
+            headerName: 'ABSENCES',
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
-        },   
-        
+        },    
+    
         {
-            field: 'etatLabel',
-            headerName: 'PERIOD',
+            field: 'nb_sanctions',
+            headerName: 'SANCTIONS',
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-       
-
-        {
-            field: 'objetId',
-            headerName: 'ABSENCES',
-            width: 80,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },
-        
-        {
-            field: 'responsableId',
-            headerName: 'LABOUR PUNITION',
-            width: 80,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },
-
-        {
-            field: 'etat',
-            headerName: 'EXCLUSION',
-            width: 80,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-
-    
-        {
-            field: 'profPrincipalLabel',
-            headerName: 'OTHER PUNITION',
-            width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-
-        
-    
         {
             field: '',
-            headerName: '',
-            width: 150,
+            headerName: 'ACTION',
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{                
-                return(
+            renderCell: (params)=>{
                 
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
+                return(
+                    
+                    <div className={classes.inputRowLeft} style={{marginLeft:"0.3vw"}}>
+                        <img src="images/lunette.png"  
+                            width={30} 
+                            height={20} 
                             className={classes.cellPointer} 
                             onClick={(event)=> {
                                 event.ignore = true;
@@ -444,9 +543,9 @@ const columnsFr = [
                       
                     </div>
                    
-                )}        
+                )}           
                 
-        },
+            },   
     
        
     ];
@@ -466,225 +565,26 @@ const columnsFr = [
     }
     
 /*************************** Handler functions ***************************/
-    
-
-    function handleDeleteRow(params){
-        if(params.field=='id'){
-            //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
-        }
-    }
-
-    function initFormInputs(){
-        var inputs=[];
-        inputs[0] = '';
-        inputs[1] = '';
-        inputs[2] = '';
-        inputs[3] = '';
-        inputs[4] = '';
-        inputs[5] = '';       
-        inputs[6] = '';
-        inputs[7] = '';        
-        inputs[8] = '';
-        inputs[9] = '';
-        inputs[10]= '';
-        inputs[11]= '';
-        inputs[12]='';
-        inputs[13]= '';
-       
-        currentUiContext.setFormInputs(inputs)
-    }
-
-    function handleEditRow(row){       
-        var inputs=[];
-        
-        inputs[0]= row.id;
-        inputs[1]= row.responsableId;
-        inputs[2]= row.date;
-        inputs[3]= row.heure;
-        inputs[4]= row.objetId;
-
-        inputs[5]= row.autreObjet;
-        inputs[6]= row.decision;
-        inputs[7]= row.note_passage;
-
-        inputs[8] = row.note_exclusion;
-        inputs[9] = row.etat;
-        /*inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;*/
-
-        
-        currentUiContext.setFormInputs(inputs);
-        console.log("laligne",row, currentUiContext.formInputs);
-        setModalOpen(2);
-       
-       
-        
-
-    }
-
     function consultRowData(row){
-        var inputs=[];
-       
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
-     
-        currentUiContext.setFormInputs(inputs)
+        SELECTED_ELEVE  = {};
+        SELECTED_ELEVE  = LIST_ELEVES.find((elt)  =>   elt.id  == row.id);
+        ELEVE_ABSENCES  = LIST_ABSENCES.filter((elt)=> elt.id  == row.id);
+        ELEVE_SANCTIONS = LIST_SANCTIONS.filter((elt)=>(elt.id == row.id));
         setModalOpen(3);
-
     }
-
-    function addClassMeeting(meeting) {       
-        console.log('Ajout',meeting);
-        conseil_data.push(meeting);
-        setGridMeeting(conseil_data);
-           
-        /*axiosInstance.post(`create-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id_sousetab:currentAppContext.currentEtab,
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance,            
-        }).then((res)=>{
-            console.log(res.data);
-
-            setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_modif"), 
-                message:t("success_modif_M")
-            })
-        })  */    
-    }
-    
-    function modifyClassMeeting(meeting) {
-        console.log('Modif',meeting);
-     
-        /*axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id : eleve.id, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance, 
-
-        }).then((res)=>{
-            console.log(res.data);
-            setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_modif_M"), 
-                message:t("success_modif")
-            })
-           
-            
-        })*/
-    }
-
-    function deleteRow(rowId) {
-       // alert(rowId);
-        //Message de confirmation
-        /*if(window.confirm('Voulez-vous vraiment supprimer la section selectionnée?')){
-            //requete  axios de suppression de l'eatab qui a cet id
-            axiosInstance
-            .post(`delete-etab/`, {
-                id:rowId,
-            }).then((res)=>{
-                console.log(res.data.status)
-                 //Mise a jour du tableau
-                //setDataState(result)
-            })              
-        }*/
-    } 
 
     function quitForm() {
         //ClearForm();
         setModalOpen(0)
     }
    
-    function AddNewMeetingHandler(e){
-        if(CURRENT_CLASSE_ID != undefined){
-            setModalOpen(1); 
-            initFormInputs();
-        } else{
-            chosenMsgBox = MSG_WARNING;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("ATTENTION!"), 
-                message  : t("must_select_class")
-            })            
-        }
-    }
+  
 
     const acceptHandler=()=>{
         
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS: {
+            case MSG_SUCCESS_FD: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -695,7 +595,7 @@ const columnsFr = [
                 return 1;
             }
 
-            case MSG_WARNING: {
+            case MSG_WARNING_FD: {
                     currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -704,6 +604,16 @@ const columnsFr = [
                 })  
                 return 1;
             }
+
+            case MSG_ERROR_FD: {
+                currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            })  
+            return 1;
+        }
             
            
             default: {
@@ -720,7 +630,7 @@ const columnsFr = [
     const rejectHandler=()=>{
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS: {
+            case MSG_SUCCESS_FD: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -731,7 +641,7 @@ const columnsFr = [
                 return 1;
             }
 
-            case MSG_WARNING: {
+            case MSG_WARNING_FD: {
                     currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -740,6 +650,16 @@ const columnsFr = [
                 })  
                 return 1;
             }
+
+            case MSG_ERROR_FD: {
+                currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            })  
+            return 1;
+        }
             
            
             default: {
@@ -776,7 +696,7 @@ const columnsFr = [
             ElevePageSet = createPrintingPages(PRINTING_DATA);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
-            chosenMsgBox = MSG_WARNING;
+            chosenMsgBox = MSG_WARNING_FD;
             currentUiContext.showMsgBox({
                 visible  : true, 
                 msgType  : "warning", 
@@ -793,6 +713,19 @@ const columnsFr = [
 
     function dropDownPeriodHandler(e){
 
+    }
+
+    function initDateFields(){
+        document.getElementById("jour_deb").value = "";
+        document.getElementById("mois_deb").value = "";
+        document.getElementById("anne_deb").value = "";
+
+        document.getElementById("jour_fin").value = "";
+        document.getElementById("mois_fin").value = "";
+        document.getElementById("anne_fin").value = "";  
+        DATEDEB_RECH ='';
+        DATEFIN_RECH ='';
+        setIsValid(false);                              
     }
     
 
@@ -838,7 +771,19 @@ const columnsFr = [
             
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen==4) &&  <PDFTemplate previewCloseHandler={closePreview}><PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}><StudentListTemplate pageSet={ElevePageSet}/></PDFViewer></PDFTemplate>} 
-            {(modalOpen >0 && modalOpen<4) && <FicheDisciplinaire currentPpId={CURRENT_PROF_PP_ID} currentPpLabel={CURRENT_PROF_PP_LABEL} currentClasseLabel={'6eA'} currentClasseId={2} formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addClassMeeting : modifyClassMeeting} cancelHandler={quitForm} />}
+            {(modalOpen >0 && modalOpen<4) && 
+                <FicheDisciplinaire 
+                    currentClasseLabel = {CURRENT_CLASSE_LABEL} 
+                    currentClasseId    = {CURRENT_CLASSE_ID} 
+                    eleve              = {SELECTED_ELEVE} 
+                    absences           = {ELEVE_ABSENCES} 
+                    sanctions          = {ELEVE_SANCTIONS} 
+                    dateDeb            = {DATEDEB_RECH}
+                    dateFin            = {DATEFIN_RECH}
+                    formMode           = {'consult'}   
+                    cancelHandler      = {quitForm} 
+                />
+            }
             
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
@@ -850,8 +795,8 @@ const columnsFr = [
                     customStyle={true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {"oui"}
-                    buttonRejectText = {"non"}  
+                    buttonAcceptText = {(currentUiContext.msgBox.msgType == 'info')? t("oK"):t("yes")}
+                    buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
                 />               
@@ -870,11 +815,11 @@ const columnsFr = [
             <div className={classes.formGridContent}>
               
                 <div className={classes.gridTitleRow}> 
-                    <div className={classes.gridTitle} style={{width:"72vw"}}>                  
+                    <div className={classes.gridTitle} style={{width:"23vw"}}>                  
                         <div className={classes.gridTitleText}>
-                            {t('class_disciplinary_sit_M')}  :
+                            {t('class_M')}  :
                         </div>
-                      
+                    
                         <div className={classes.selectZone}>
                             <select id='selectClass1' onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                                 {(optClasse||[]).map((option)=> {
@@ -884,38 +829,49 @@ const columnsFr = [
                                 })}
                             </select>                          
                         </div>
+                    </div>
 
-                        <div className={classes.gridTitleText} style={{marginLeft:'3vw'}}>
-                            {t('period_M')} :
+                    <div className={classes.gridTitle} style={{width:"27vw",marginLeft:"0.3vw"}}>                  
+                        <div className={classes.gridTitleText}>
+                            {t('date_deb')} :
                         </div>
-                      
+                    
                         <div className={classes.selectZone}>
-                            <select onChange={dropDownPeriodHandler} id='selectPeriod1' className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
-                                {(optPeriode||[]).map((option)=> {
-                                    return(
-                                        <option  value={option.value}>{option.label}</option>
-                                    );
-                                })}
-                            </select>                          
+                            <div style ={{display:'flex', flexDirection:'row', marginLeft:'2.3vw', marginBottom:'-1vh'}}> 
+                                <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourDebAndFilter} style={{width:'1.3vw', fontSize:'1.17vw', height:'1.3vw',  marginLeft:'-2vw',   color:'#065386', fontWeight:'bold'}}/>/
+                                <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisDebAndFilter} style={{width:'1.4vw', fontSize:'1.17vw', height:'1.3vw',  marginLeft:'0vw',    color:'#065386', fontWeight:'bold'}}/>/
+                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}      maxLength={4}     className={classes.inputRowControl }  onChange={getYearDebAndFilter} style={{width:'2.7vw', fontSize:'1vw',    height:'1.17vw', marginRight:'1.3vw', color:'#065386', fontWeight:'bold'}}/>
+                            </div>  
+                        </div>
+                    </div>
+
+
+                    <div className={classes.gridTitle} style={{width:"17vw", marginLeft:"2vw"}}>                  
+                        <div className={classes.gridTitleText}>
+                            {t('date_fin')} :
+                        </div>
+                    
+                        <div className={classes.selectZone}>
+                            <div style ={{display:'flex', flexDirection:'row', marginLeft:'2.3vw', marginBottom:'-1vh'}}> 
+                                <input id="jour_fin"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_fin"), document.getElementById("mois_fin"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourFinAndFilter} style={{width:'1.3vw', fontSize:'1.17vw', height:'1.3vw',  marginLeft:'-2vw',   color:'#065386', fontWeight:'bold'}}/>/
+                                <input id="mois_fin"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_fin"), document.getElementById("anne_fin"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisFinAndFilter} style={{width:'1.4vw', fontSize:'1.17vw', height:'1.3vw',  marginLeft:'0vw',    color:'#065386', fontWeight:'bold'}}/>/
+                                <input id="anne_fin"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_fin"), null)}}                                     maxLength={4}     className={classes.inputRowControl }  onChange={getYearFinAndFilter} style={{width:'2.7vw', fontSize:'1vw',    height:'1.17vw', marginRight:'1.3vw', color:'#065386', fontWeight:'bold'}}/>
+                            </div>  
                         </div>
                     </div>
                     
                                 
                     <div className={classes.gridAction}> 
-                        {(props.formMode=='ajout')?
-                            <CustomButton
-                                btnText={t('New_one')}
-                                hasIconImg= {false}
-                                //imgSrc='images/addNewUserOrg.png'
-                                //imgStyle = {classes.grdBtnImgStyle}  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyleP}
-                                btnClickHandler={AddNewMeetingHandler}
-                                disable={(isValid==false)}   
-                            />
-                            :
-                            null
-                        }
+                        <CustomButton
+                            btnText={t('rechercher')}
+                            hasIconImg= {true}
+                            imgSrc='images/loupe_trans.png'
+                            imgStyle = {classes.searchImgStyle}  
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.gridBtnTextStyle}
+                            btnClickHandler={()=>{searchStudent()}}
+                            disable={(isValid==false)}   
+                        />
 
                        {<CustomButton
                             btnText={t('imprimer')}
@@ -927,26 +883,24 @@ const columnsFr = [
                             btnClickHandler={printStudentList}
                             //disable={(isValid==false)}   
                         />}
-
-                       
+   
                     </div>
                         
-                    </div>
+                </div>
                     
                 
 
                 {/*(modalOpen==0) ?*/
                     <div className={classes.gridDisplay} >
                         <StripedDataGrid
-                            //rows={gridRows}
-                            rows={gridMeeting}
+                            rows={gridRows}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='responsableLabel')? classes.gridMainRowStyle : classes.gridRowStyle }
-                            onCellClick={handleDeleteRow}
+                            getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                            // onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {
                                     //console.log(params.row);
-                                    handleEditRow(params.row)
+                                    consultRowData(params.row)
                                 }
                             }}  
                             

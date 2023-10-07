@@ -594,7 +594,7 @@ function SearchAcademicHistory(props) {
 
                             <div style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'flex-end', marginRight:'1.3vw', marginTop:'-3vh', width:'100%'}}>
                                 <CustomButton
-                                    btnText={t('Rechercher')}
+                                    btnText={t('rechercher')}
                                     hasIconImg= {true}
                                     imgSrc='images/loupe_trans.png'
                                     imgStyle = {classes.searchImgStyle}  

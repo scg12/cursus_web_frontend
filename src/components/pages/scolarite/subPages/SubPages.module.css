@@ -573,6 +573,14 @@ align-self: center;
 width:100%;
 }
 
+.inputRowCenter {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    width:100%;
+}
+
 .inputRowRight {
 display:flex;
 flex-direction: row;
@@ -1146,7 +1154,7 @@ width:10px;
 }
 
 .cellPointer {
-cursor: pointer;
+    cursor: pointer;
 }
 
 .gridColumn{
