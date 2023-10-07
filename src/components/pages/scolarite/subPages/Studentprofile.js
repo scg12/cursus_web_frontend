@@ -26,8 +26,8 @@ let CURRENT_CLASSE_LABEL;
 let CURRENT_PROF_PP_ID;
 let CURRENT_PROF_PP_LABEL;
 
-var JOUR_DEB, MOIS_DEB, YEAR_DEB, DATEDEB_RECH ='';
-var JOUR_FIN, MOIS_FIN, YEAR_FIN, DATEFIN_RECH ='';
+var JOUR_DEB='', MOIS_DEB='', YEAR_DEB='', DATEDEB_RECH ='';
+var JOUR_FIN='', MOIS_FIN='', YEAR_FIN='', DATEFIN_RECH ='';
 
 var LIST_ELEVES     = [];
 var LIST_ABSENCES   = [];
@@ -157,13 +157,21 @@ function Studentprofile(props) {
         }
     }
 
-    function givenDateOk(){       
-
-        if(!((isNaN(changeDateIntoMMJJAAAA(DATEDEB_RECH)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(DATEDEB_RECH))))))){
+    function givenDateOk(){ 
+       
+        if(DATEDEB_RECH.length>0 && DATEDEB_RECH.length<10){
             return t('start_date_error');
         }
 
-        if(!((isNaN(changeDateIntoMMJJAAAA(DATEFIN_RECH)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(DATEFIN_RECH))))))){
+        if(DATEFIN_RECH.length>0 && DATEFIN_RECH.length<10){
+            return t('end_date_error');
+        }
+
+        if(DATEDEB_RECH.length>0 && !((isNaN(changeDateIntoMMJJAAAA(DATEDEB_RECH)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(DATEDEB_RECH))))))){
+            return t('start_date_error');
+        }
+
+        if(DATEFIN_RECH.length>0 && !((isNaN(changeDateIntoMMJJAAAA(DATEFIN_RECH)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(DATEFIN_RECH))))))){
             return t('end_date_error');
         }
 
@@ -187,7 +195,7 @@ function Studentprofile(props) {
             getClassStudentList(CURRENT_CLASSE_ID);
         }
 
-        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        if(DATEDEB_RECH.length==10 || DATEFIN_RECH.length==10) setIsValid(true);
         else setIsValid(false);
         // if(DATEDEB_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
         // else filterAuthSortie(listAutorisations,'',DATEFIN_RECH);
@@ -207,7 +215,7 @@ function Studentprofile(props) {
             getClassStudentList(CURRENT_CLASSE_ID);
         }
 
-        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        if(DATEDEB_RECH.length==10 || DATEFIN_RECH.length==10) setIsValid(true);
         else setIsValid(false);
         // if(DATEFIN_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
         // else filterAuthSortie(listAutorisations, '', DATEDEB_RECH);
@@ -228,7 +236,7 @@ function Studentprofile(props) {
             getClassStudentList(CURRENT_CLASSE_ID);
         }
 
-        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        if(DATEDEB_RECH.length==10 || DATEFIN_RECH.length==10) setIsValid(true);
         else setIsValid(false);
 
         // if(DATEDEB_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
@@ -248,7 +256,7 @@ function Studentprofile(props) {
             getClassStudentList(CURRENT_CLASSE_ID);
         }   
 
-        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        if(DATEDEB_RECH.length==10 || DATEFIN_RECH.length==10) setIsValid(true);
         else setIsValid(false);
 
         // if(DATEFIN_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
@@ -269,7 +277,7 @@ function Studentprofile(props) {
             getClassStudentList(CURRENT_CLASSE_ID);
         }
 
-        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        if(DATEDEB_RECH.length==10 || DATEFIN_RECH.length==10) setIsValid(true);
         else setIsValid(false);
         
         console.log("date verif",DATEDEB_RECH);
@@ -290,7 +298,7 @@ function Studentprofile(props) {
             getClassStudentList(CURRENT_CLASSE_ID);
         }
 
-        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) setIsValid(true);
+        if(DATEDEB_RECH.length==10 || DATEFIN_RECH.length==10) setIsValid(true);
         else setIsValid(false);
 
         // if(DATEFIN_RECH.length==10) filterAuthSortie(listAutorisations,'',DATEFIN_RECH);
@@ -795,7 +803,7 @@ const columnsFr = [
                     customStyle={true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {(currentUiContext.msgBox.msgType == 'info')? t("oK"):t("yes")}
+                    buttonAcceptText = {(currentUiContext.msgBox.msgType == 'info')? t("ok"):t("yes")}
                     buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            

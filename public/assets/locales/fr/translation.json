@@ -1,6 +1,7 @@
 {   
+    "date_error_M":"ERREUR SUR LA DATE",
     "start_date_greater_than_end_date" : "La date de début est postérieure à la date de fin !!!",
-    "end_date_error"  :"Erreur sur la date de début !!!",
+    "end_date_error"  :"Erreur sur la date de fin !!!",
     "start_date_error":"Erreur sur la date de début !!!",
     "sanction_list":"Liste des sanctions",
     "to" : "Au",
