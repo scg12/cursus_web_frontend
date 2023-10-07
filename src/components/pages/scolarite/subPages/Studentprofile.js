@@ -11,11 +11,14 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import {isMobile} from 'react-device-detect';
 import {convertDateToUsualDate, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 
-import { PDFViewer } from '@react-pdf/renderer';
+import { PDFViewer,PDFDownloadLink } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
 import StudentList from '../reports/StudentList';
+import FicheDReport from '../reports/FicheDReport';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import StudentListTemplate from '../reports/StudentListTemplate';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
@@ -40,6 +43,8 @@ var ELEVE_SANCTIONS = [];
 var listElt         = {};
 var pageSet         = [];
 var page            = {};
+
+var  printedETFileName = "";
 
 var chosenMsgBox;
 const MSG_SUCCESS_FD = 1;
@@ -414,7 +419,7 @@ function Studentprofile(props) {
         }
     }
 
-/*************************** DataGrid Declaration ***************************/ 
+    /*************************** DataGrid Declaration ***************************/ 
 
 const columnsFr = [
 
@@ -681,10 +686,33 @@ const columnsFr = [
         }
         
     }
+   
+    
+    const printStudentProfille=()=>{       
+        var PRINTING_DATA ={
+            dateText            :'Yaounde, le 14/03/2023',
+            leftHeaders         :["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders       :["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+            rightHeaders        :["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+            pageImages          :["images/collegeVogt.png"],
+            pageTitle           : "Fiche disciplinaire",            
+            absencesHeaderModel :[t('date'), t('nbre_hour'), t('justify'), t('not_justify')],
+            absencesData        :[...LIST_ABSENCES],
+            sanctionsHeaderModel:[t('date'), t('libelle'), t('duree')],
+            sanctionsData       :[...LIST_SANCTIONS],
+            eleveInfo           :SELECTED_ELEVE,
+            classeLabel         :CURRENT_CLASSE_LABEL,
+
+            numberEltPerPage:ROWS_PER_PAGE  
+        };
+       
+        printedETFileName = "FD("+SELECTED_ELEVE.nom+").pdf"
+        setModalOpen(5);
+        ElevePageSet=PRINTING_DATA;
+        console.log("ici la",ElevePageSet,gridRows);                    
+    }
 
     const printStudentList=()=>{
-        
-        
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
                 dateText:'Yaounde, le 14/03/2023',
@@ -698,6 +726,7 @@ const columnsFr = [
                 numberEltPerPage:ROWS_PER_PAGE  
             };
 
+            printedETFileName = "ListeABsences("+CURRENT_CLASSE_LABEL+").pdf"
             setModalOpen(4);
             ElevePageSet=[];
             //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
@@ -778,7 +807,34 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen==4) &&  <PDFTemplate previewCloseHandler={closePreview}><PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}><StudentListTemplate pageSet={ElevePageSet}/></PDFViewer></PDFTemplate>} 
+            {(modalOpen==4) &&  
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    {   isMobile?
+                        <PDFDownloadLink  document ={ <StudentListTemplate pageSet={ElevePageSet}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "loading...":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>                    
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            <StudentListTemplate pageSet={ElevePageSet}/>
+                        </PDFViewer>
+
+                    }
+                    
+                </PDFTemplate>
+            } 
+            {(modalOpen==5) && 
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    { isMobile?
+                        <PDFDownloadLink  document ={ <FicheDReport pageSet={ElevePageSet}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "loading...":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>                    
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            <FicheDReport pageSet={ElevePageSet}/>
+                        </PDFViewer>
+                    }
+                </PDFTemplate>
+            } 
             {(modalOpen >0 && modalOpen<4) && 
                 <FicheDisciplinaire 
                     currentClasseLabel = {CURRENT_CLASSE_LABEL} 
@@ -790,6 +846,7 @@ const columnsFr = [
                     dateFin            = {DATEFIN_RECH}
                     formMode           = {'consult'}   
                     cancelHandler      = {quitForm} 
+                    printFDHandler     = {printStudentProfille}
                 />
             }
             

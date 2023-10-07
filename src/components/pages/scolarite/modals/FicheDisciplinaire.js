@@ -195,7 +195,7 @@ function FicheDisciplinaire(props) {
     }
 
     function printStudentFiche(){
-
+        props.printFDHandler();
     }
 
 
