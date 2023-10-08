@@ -51,7 +51,7 @@ function FicheDReport(props){
     const PageHeadCenter = (props) =>{
         return(
             <View style={props.style}>
-                <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:12, textTransform:'uppercase', fontWeight:'heavy'}}>{props.data.centerHeaders[0]}</Text>
+                <Text style={{fontFamily:"MyBold", fontSize:12, textTransform:'uppercase', fontWeight:'heavy'}}>{props.data.centerHeaders[0]}</Text>
                 <Text style={{fontFamily:"Times-Roman", fontSize:12}}>{props.data.centerHeaders[1]}</Text>
                 <Text style={{fontFamily:"Times-Roman", fontSize:8.7}}>{props.data.centerHeaders[2]}</Text>
             </View>
@@ -70,10 +70,10 @@ function FicheDReport(props){
     const AbsenceHeader = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'5vw',  justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.data.absencesHeaderModel[0]}</Text></View>
-                <View style={{width:'10vw', justifyContent:'flex-start',...styles.headercell}}>   <Text>{props.data.absencesHeaderModel[1]}</Text></View>
-                <View style={{width:'37vw', paddingLeft:'3vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.data.absencesHeaderModel[2]}</Text></View>
-                <View style={{width:'8vw',  justifyContent:'flex-end',...styles.headercell}}>   <Text>{props.data.absencesHeaderModel[3]}</Text></View>
+                <View style={{width:'5.7vw',  justifyContent:'flex-start',...styles.headercell}}> <Text style={{fontWeight:'heavy'}}>{props.data.absencesHeaderModel[0]}</Text></View>
+                <View style={{width:'20vw', justifyContent:'center',...styles.headercell}}>   <Text style={{fontWeight:'heavy'}}>{props.data.absencesHeaderModel[1]}</Text></View>
+                <View style={{width:'27vw', justifyContent:'flex-start',...styles.headercell}}>   <Text style={{fontWeight:'heavy'}}>{props.data.absencesHeaderModel[2]}</Text></View>
+                <View style={{width:'10vw',  justifyContent:'flex-end',...styles.headercell}}>    <Text style={{fontWeight:'heavy'}}>{props.data.absencesHeaderModel[3]}</Text></View>
             </View>
         );
     }
@@ -81,21 +81,23 @@ function FicheDReport(props){
     const AbsenceRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'5.7vw',  paddingLeft:'1.3vw', justifyContent:'center',...styles.cell}}>       <Text >{props.row.date}        </Text></View>
-                <View style={{width:'10vw', justifyContent:'center',...styles.cell}}>       <Text >{props.row.nb_heures}   </Text></View>
-                <View style={{width:'37vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.row.justifie}         </Text></View>
-                <View style={{width:'8vw',  justifyContent:'flex-start',...styles.cell}}>   <Text >{props.row.non_justifie}        </Text></View>               
+                <View style={{width:'5.7vw',justifyContent:'center',...styles.cell}}> <Text style={{textAlign:"left"}}>{props.row.date} </Text></View>
+                <View style={{width:'22vw', justifyContent:'center',...styles.cell}}> <Text style={{textAlign:"justify"}}>{props.row.nb_heures}    </Text></View>
+                <View style={{width:'28vw', justifyContent:'flex-start', marginLeft:"2vw",...styles.cell}}> <Text style={{textAlign:"justify"}}>{props.row.justifie}     </Text></View>
+                <View style={{width:'10vw', justifyContent:'center',...styles.cell}}> <Text style={{textAlign:"justify"}} >{props.row.non_justifie} </Text></View>               
            </View>
         );        
 
     }
 
+    
+
     const SanctionHeader = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'5vw',  justifyContent:'flex-start',...styles.headercell}}>   <Text>{props.data.sanctionsHeaderModel[0]}</Text></View>
-                <View style={{width:'10vw', justifyContent:'flex-start',...styles.headercell}}>   <Text>{props.data.sanctionsHeaderModel[1]}</Text></View>
-                <View style={{width:'37vw', paddingLeft:'3vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.data.sanctionsHeaderModel[2]}</Text></View>
+                <View style={{width:'10.7vw', marginLeft:"-7.9vw", justifyContent:'flex-start',...styles.headercell}}>   <Text style={{fontWeight:'heavy'}}>{props.data.sanctionsHeaderModel[0]}</Text></View>
+                <View style={{width:'25vw', justifyContent:'flex-start',...styles.headercell}}>   <Text style={{fontWeight:'heavy'}}>{props.data.sanctionsHeaderModel[1]}</Text></View>
+                <View style={{width:'8vw', paddingLeft:'3vw', justifyContent:'flex-start',...styles.headercell}}>  <Text style={{fontWeight:'heavy'}}>{props.data.sanctionsHeaderModel[2]}</Text></View>
             </View>
         );
     }
@@ -103,10 +105,19 @@ function FicheDReport(props){
     const SanctionRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'10vw', justifyContent:'center',...styles.cell}}>      <Text>{props.row.date}   </Text></View>
-                <View style={{width:'37vw', justifyContent:'flex-start',...styles.cell}}>  <Text> {props.row.libelle}         </Text></View>
-                <View style={{width:'8vw',  justifyContent:'flex-start',...styles.cell}}>  <Text>{props.row.duree}{props.row.unite} </Text></View>               
+                <View style={{width:'5.7vw', marginLeft:"-5.7vw", justifyContent:'center',...styles.cell}}>      <Text style={{textAlign:"left"}}>{props.row.date}   </Text></View>
+                <View style={{width:'37vw',  marginLeft:"-3vw",  justifyContent:'center',...styles.cell}}>  <Text style={{textAlign:"justify"}}> {props.row.libelle}         </Text></View>
+                <View style={{width:'8vw',  marginLeft:"7vw",   justifyContent:'flex-start',...styles.cell}}>  <Text style={{textAlign:"justify"}}>{props.row.duree}{props.row.unite} </Text></View>               
            </View>
+        );        
+
+    }
+
+    const EmptyRow = (props) =>{
+        return(
+            <View style={{display:"flex", flexDirection:"row", justifyContent:"center",alignItems:"center", borderBottom: "1px solid black", width:"97%"}}>
+               <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"Times-Roman"}}> R. A.S </Text>
+            </View>
         );        
 
     }
@@ -120,23 +131,40 @@ function FicheDReport(props){
 
     const EleveInfo = (props) =>{
         return(
-            <View style={{display:"flex", flexDirection:"row", width:"80%"}}>
-                <Photo photoStyle ={styles.photoStyle} imageSrc={'images/profile.png'}/>
-                <View style={{display:"flex", flexDirection:"column"}}>
-                    <Text>{props.eleve.nom}</Text>
-                    <Text>{props.classeLabel}</Text>
-                    <Text>{props.eleve.age}</Text>
+            <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-start",marginBottom:"3vh", width:'100%'}}>
+                <Photo photoStyle ={{...styles.photoStyle,borderStyle:"solid", borderWidth:"1px", marginRight:"2vw", borderRadius:3}} imageSrc={'images/profile.png'}/>
+                
+                <View style={{display:"flex", flexDirection:"row", backgroundColor:"lightgray", padding:7, borderRadius:3, width:"100%", marginRight:"3vw"}}> 
+                    <View style={{display:"flex", flexDirection:"column", height:"5vh"}}>
+                        <View style={{display:"flex",flexDirection:"row"}}>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>NOM :</Text>
+                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.nom+' '+props.eleve.prenom}  </Text>
+                        </View>
+                    
+                        <View style={{display:"flex",flexDirection:"row", marginTop:"2vh"}}>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>CLASSE :</Text>
+                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.classeLabel}  </Text>
+                        </View>
+                        <View style={{display:"flex",flexDirection:"row", marginTop:"2vh"}}>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>AGE :</Text>
+                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.age}  </Text>
+                        </View>                   
+                    </View>
+                
+                    <View style={{display:"flex", flexDirection:"column", height:"2vh", marginLeft:"2vw", paddingBottom:"2.7vh", alignSelf:"flex-end"}}>
+                        <View style={{display:"flex",flexDirection:"row"}}>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>MATRICULE :</Text>
+                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.matricule}</Text>
+                        </View>
+                        <View style={{display:"flex",flexDirection:"row", marginTop:"2vh"}}>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy' , fontFamily:"MyBold"}}>REDOUBLANT :</Text>
+                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{(props.eleve.redouble)?"Oui":"Non"}</Text>
+                        </View>                    
+                    </View>
                 </View>
-                <View style={{display:"flex", flexDirection:"column"}}>
-                    <Text>{props.eleve.matricule}</Text>
-                    <Text>{props.eleve.redouble}</Text>
-                </View>
-                {/* <View style={{width:'5.7vw',  paddingLeft:'1.3vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.rang}        </Text></View>
-                <View style={{width:'10vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.matricule}   </Text></View>
-                <View style={{width:'37vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.eleve.nom}         </Text></View>
-                <View style={{width:'8vw',  justifyContent:'flex-start',...styles.cell}}>   <Text >{props.eleve.note}        </Text></View>                */}
-           </View>
-        );        
+                
+            </View>
+        );     
 
     }
 
@@ -160,33 +188,30 @@ function FicheDReport(props){
                     <Text style={styles.titleStyle}>{props.pageSet.pageTitle}</Text>
                 </View>
 
-                <View style={styles.eleveInfoContainer}>
-                    <EleveInfo eleve={props.pageSet.eleveInfo} classeLabel={props.pageSet.classeLabel}></EleveInfo>
-                </View>
-
-                <AbsenceHeader style={styles.headerColumnStyle} data={props.pageSet}/>
-               
-                <View style={styles.main}>
-                   { Array.from(props.pageSet.absencesData,
+                <View style={styles.main}>                    
+                    <EleveInfo eleve={props.pageSet.eleveInfo} classeLabel={props.pageSet.classeLabel}/>
+                   
+                    <AbsenceHeader style={styles.headerColumnStyle} data={props.pageSet}/> 
+                    {(props.pageSet.absencesData.length ==0)&&<EmptyRow/>}                       
+                    
+                    { Array.from(props.pageSet.absencesData,
                         (absence, index) => (
                             <AbsenceRow style={styles.row} row={absence}/>
                         ))
-                   } 
-                </View>
+                    } 
 
-
-                <SanctionHeader style={styles.headerColumnStyle} data={props.pageSet}/>
-               
-                <View style={styles.main}>
-                   { Array.from(props.pageSet.sanctionsData,
+                    <SanctionHeader style={{...styles.headerColumnStyle,marginTop:"2vh"}} data={props.pageSet}/>              
+                    {(props.pageSet.sanctionsData.length ==0)&&<EmptyRow/>}
+                    { Array.from(props.pageSet.sanctionsData,
                         (sanction, index) => (
                             <SanctionRow style={styles.row} row={sanction}/>
                         ))
-                   } 
+                    } 
+               
                 </View>
               
                 <View style={styles.footer}> 
-                    <Text>{1} / {props.pageSet.length}</Text> 
+                    <Text>{1} / {1}</Text> 
                 </View>    
             </Page>
         
@@ -283,7 +308,7 @@ const styles = StyleSheet.create({
     }, 
 
     photoStyle:{
-        width:'10vw',
+        width:'13vw',
         height:'10vw',
         borderRadius:3
     },
@@ -297,7 +322,8 @@ const styles = StyleSheet.create({
         width:'auto',
         height:'2%',
         borderBottom: "1.3px solid black",
-        marginBottom:"3vh",       
+        marginBottom:"3vh",   
+            
     },
 
     titleStyle:{
@@ -305,6 +331,11 @@ const styles = StyleSheet.create({
         fontWeight:'ultrabold',
         textTransform:'uppercase',
         fontFamily:"Times-Roman",
+        fontFamily:"Times-Roman", 
+        fontFamily:"MyBold", 
+        fontSize:12, 
+        textTransform:'uppercase', 
+        fontWeight:'heavy'
     },
 
     headerColumnStyle:{
@@ -312,8 +343,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-evenly',
         alignItems:'center',
-        width:'87%',
-        height:'2.7vh',
+        width:'97%',
+        height:'2.3vh',
         backgroundColor:'rgb(6, 83, 134)',
         textTransform:'uppercase',
         fontSize:8,
@@ -353,10 +384,14 @@ const styles = StyleSheet.create({
         fontSize:9,
         color:'black',
         justifyContent:'space-evenly',
-        alignItems:"center"
+        alignItems:"center",
+        borderBottom: "1px solid black",
+        width:"97%"
     }, 
 
     main: {
+        display:"flex",
+        flexDirection:"column",
         textAlign: "center",
         backgroundColor: "white",
         height: "70%",
