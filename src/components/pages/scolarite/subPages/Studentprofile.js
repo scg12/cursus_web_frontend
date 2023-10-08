@@ -126,6 +126,8 @@ function Studentprofile(props) {
     }
 
     const getStudentFiches=(dateDeb, dateFin)=>{
+        dateDeb = dateDeb.includes("undefined")?"":dateDeb;
+        dateFin = dateFin.includes("undefined")?"":dateFin;
         var listEleves = []
         axiosInstance.post(`list-fiche-disciplinaires/`, {
             id_sousetab: currentAppContext.currentEtab,
