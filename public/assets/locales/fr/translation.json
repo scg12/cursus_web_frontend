@@ -30,6 +30,7 @@
     "principal_M":"ENSEIGNANT PRINCIPAL",
     "principal":"Enseignant principal",
     "exitdate_lower_than_today_error":"La date de sortie doit être postérieure à la date d'aujourd'hui !!!",
+    "meeting_date_lower_than_today_error":"La date prévue du conseil doit être postérieure à la date d'aujourd'hui !!!",
     "justify_authorization" : "Voulez-vous vraiment justifier cette autorisation de sortie?",
     "justyfy_authorization_M":"JUSTIFICATION D'AUTORISATION",
     "heure_deb" :"Heure début",

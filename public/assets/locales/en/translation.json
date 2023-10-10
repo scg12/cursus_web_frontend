@@ -29,6 +29,7 @@
     "principal_M":"MAIN TEACHER",
     "principal":"Main teacher",
     "exitdate_lower_than_today_error":"Exit date must be greater than today's date!!!",
+    "meeting_date_lower_than_today_error":"Meeting Planed date must be greater than today's date!!!",
     "justify_authorization" : "Do you really want to justify this exit autorisation?",
     "justyfy_authorization_M":"JUSTIFY AUTHORIZATION",
     "heure_deb" :"Start hour",

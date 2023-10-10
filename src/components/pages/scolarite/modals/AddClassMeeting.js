@@ -99,9 +99,9 @@ function AddClassMeeting(props) {
         label:'-----'+ t('choisir') +'-----'
     }
 
-    var RAS = {
+    var NDEF = {
         value: -1,
-        label: "R.A.S"
+        label: t("not_defined")
     }
 
     var firstSelectItem3 = {
@@ -110,7 +110,7 @@ function AddClassMeeting(props) {
     }
 
     const nonDefini=[        
-        {value: -1,   label:'-----'+ t('non defini') +'-----' },
+        {value: -1,   label:'-----'+ t('not_defined') +'-----' },
     ];
 
     const choisir = [        
@@ -138,12 +138,13 @@ function AddClassMeeting(props) {
     
     useEffect(()=> {
         console.log("valeure", props.defaultMembres);
-        getClassStudentList(props.currentClasseId);
-        
+        //getClassStudentList(props.currentClasseId);
+       
         setOptPeriode(nonDefini);
-
-        
+ 
         if (props.formMode == 'creation'){
+
+            LIST_ELEVES = props.eleves;
 
             var tempTab = [...tabTypeConseil];
             tempTab.unshift(firstSelectItem2);
@@ -163,7 +164,7 @@ function AddClassMeeting(props) {
 
             //---------- liste des promotions possibles ----------
             var tabPromu = [...props.nextClasses];
-            tabPromu.unshift(RAS);
+            tabPromu.unshift(NDEF);
             tabPromu.unshift(firstSelectItem3);
             setOptPromuEn(tabPromu);
 
@@ -200,12 +201,30 @@ function AddClassMeeting(props) {
 
             var listDecisions = [];
             var listpromotions = [];
-            infos_eleves.map((elt)=>{
-                //listDecisions.push(elt.decision_final_conseil_classe);
-                listDecisions.push("admis");
-                listpromotions.push(5)
-                //listpromotions.push(elt.classe_annee_prochaine_id);
-            })
+            if(props.nextClasses.length>0){
+                infos_eleves.map((elt)=>{
+                    if(elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
+                        listDecisions.push(elt.decision_final_conseil_classe);
+                        listpromotions.push(elt.classe_annee_prochaine_id);
+                    }else{
+                        listDecisions.push("admis");
+                        listpromotions.push(props.nextClasses[0].value);
+                    }
+              
+                })
+            } else {
+                infos_eleves.map((elt)=>{
+                    if(elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
+                        listDecisions.push(elt.decision_final_conseil_classe);
+                        listpromotions.push(elt.classe_annee_prochaine_id);
+                    }else{
+                        listDecisions.push("admis");
+                        listpromotions.push(NDEF);
+                    }
+                })
+
+            }
+            
             setListDecisions(listDecisions);
             setListPromotions(listpromotions);
 
@@ -694,7 +713,7 @@ function AddClassMeeting(props) {
 
         //Test de posteriorite a la date d'aujourd'hui
         if(new Date(changeDateIntoMMJJAAAA(MEETING.date)+' 23:59:59') < new Date()) {
-            errorMsg = t("exitdate_lower_than_today_error");
+            errorMsg = t("meeting_date_lower_than_today_error");
             return errorMsg;
         }
         return errorMsg;  
@@ -1224,6 +1243,33 @@ function AddClassMeeting(props) {
 
     return (
         <div className={'card '+ classes.formContainerP}>
+            {(currentUiContext.formIsloading) && <BackDrop/>}
+            {(currentUiContext.formIsloading) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:"60vh",  fontSize:'0.9vw', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-5.7vh'}}> 
+                    {t('loading')}...
+                </div>                    
+            }
+            {(currentUiContext.formIsloading) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'57vh',
+                    backgroundColor: 'white',
+                    zIndex: '1200',
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
+            }
+
             {LargeViewOpen && 
                 <DecisionCCAnnuel 
                     infosEleves    = {infosEleves} 

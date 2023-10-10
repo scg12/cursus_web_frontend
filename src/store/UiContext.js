@@ -69,6 +69,9 @@ const UiContext = createContext({
     //Emploi de temps Gestion des profs principaux
     currentPPList : [],
 
+    //gestion du loading lors chargement des formulaires
+    formIsloading : false, 
+
 
 
 
@@ -121,7 +124,10 @@ const UiContext = createContext({
     setIsMatiereEnable : (boolVal) => {}, 
 
     //Emploi de temps Gestion des profs principaux
-    setCurrentPPList : (tab) => {},
+    setCurrentPPList   : (tab) => {},
+
+    //gestion du loading lors chargement des formulaires
+    setFormIsloading  : (boolVal) => {}, 
     
 });
 
@@ -186,6 +192,9 @@ export function UiContextProvider(props)
     //Emploi de temps Gestion des profs principaux
     const [currentPPList, setCurrentPPList] = useState([]);
 
+    //gestion du loading lors chargement des formulaires
+    const [formIsloading, setFormIsloading] = useState(false);
+      
    
 
     
@@ -378,6 +387,12 @@ export function UiContextProvider(props)
     function currentPPlistHandler(tab){
         setCurrentPPList(tab)
     }
+
+    //gestion du loading lors chargement des formulaires
+    function formIsloadingHandler(boolVal){
+        setFormIsloading(boolVal)
+    }
+   
      
 
 
@@ -441,7 +456,9 @@ export function UiContextProvider(props)
 
         //Emploi de temps Gestion des profs principaux
         currentPPList : currentPPList,
-    
+
+        //gestion du loading lors chargement des formulaires
+        formIsloading : false,
 
 
 
@@ -514,7 +531,10 @@ export function UiContextProvider(props)
         setIsMatiereEnable:ETMatiereEnableHandler,
 
         //Emploi de temps Gestion des profs principaux
-        setCurrentPPList:currentPPlistHandler
+        setCurrentPPList:currentPPlistHandler,
+
+        //gestion du loading lors chargement des formulaires
+        setFormIsloading:formIsloadingHandler
 
     };
 

@@ -22,7 +22,7 @@ import PVCCMeeting from '../reports/PVCCMeeting';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 
-var CURRENT_MEETING={};
+var CURRENT_MEETING = {};
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
 
@@ -30,31 +30,32 @@ let CURRENT_PROF_PP_ID;
 let CURRENT_PROF_PP_USERID;
 let CURRENT_PROF_PP_LABEL;
 
-var printedETFileName='';
-var SEQUENCES_DISPO = [];
-var TRIMESTRES_DISPO  = [];
-var ANNEE_DISPO = [];
+var printedETFileName    ='';
+var SEQUENCES_DISPO      =[];
+var TRIMESTRES_DISPO     =[];
+var ANNEE_DISPO          =[];
 
-var DEFAULT_MEMBERS = []; 
-var OTHER_MEMBERS = [];
-var PRESENTS_MEMBERS = [];
+var DEFAULT_MEMBERS      =[]; 
+var OTHER_MEMBERS        =[];
+var PRESENTS_MEMBERS     =[];
 
-var DEFAULT_MEMBERS_ADD = []; 
-var PRESENTS_MEMBERS_ADD = [];
-var OTHER_MEMBERS_ADD = [];
+var DEFAULT_MEMBERS_ADD  =[]; 
+var PRESENTS_MEMBERS_ADD =[];
+var OTHER_MEMBERS_ADD    =[];
 
-var INFO_ELEVES = [];
-var LIST_NEXT_CLASSES = '';
+var INFO_ELEVES          =[];
+var LIST_NEXT_CLASSES    ='';
 
-var LIST_CONSEILS_INFOS =[];
+var LIST_CONSEILS_INFOS  =[];
+var LIST_ELEVES          =[];
 
 
 
 var listElt ={};
 
-var MEETING = {};
+var MEETING ={};
 
-var pageSet = [];
+var pageSet =[];
 
 var page = {
     pageTitle:'',
@@ -116,6 +117,36 @@ function ConseilClasse(props) {
                
         }) 
 
+    }
+
+    const  getClassStudentList=(classId)=>{
+        axiosInstance.post(`list-eleves/`, {
+            id_classe: classId,
+        }).then((res)=>{
+            console.log(res.data);
+            LIST_ELEVES = [...getElevesTab(res.data)];
+            currentUiContext.setFormIsloading(false);
+            // console.log(LIST_ELEVES) ;  
+            // if(LIST_ELEVES.length>0){
+            //     LIST_ELEVES.map((elt)=>{
+            //         list_decisions_conseil_eleves.push(undefined);
+            //         list_classes_promotions_eleves.push(undefined);
+            //     }) 
+            // }       
+        })  
+    }
+
+
+    function getElevesTab(elevesTab){
+        var tabEleves = [{value:0,label:"- Choisir un eleve -"}]
+        var new_eleve;
+        elevesTab.map((eleve)=>{
+            new_eleve = {};
+            new_eleve.value = eleve.id;
+            new_eleve.label = eleve.nom +' '+eleve.prenom;
+            tabEleves.push(new_eleve);       
+        })
+        return tabEleves;
     }
 
     const getListConseilClasse =(classeId,sousEtabId)=>{
@@ -240,9 +271,10 @@ function ConseilClasse(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
-            setIsloading(true);
+            currentUiContext.setFormIsloading(true);
             getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
-            getNextClassPossibles(CURRENT_CLASSE_ID);  
+            getNextClassPossibles(CURRENT_CLASSE_ID); 
+            getClassStudentList(CURRENT_CLASSE_ID); 
             
               
         } else {
@@ -842,14 +874,19 @@ const columnsFr = [
             DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,   true,   1);
             OTHER_MEMBERS     =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,     false, -1);
             PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD,  true,   0);
+
+            //setIsloading(true);
+            currentUiContext.setFormIsloading(true);
+           
+            setModalOpen(1); 
+            initFormInputs();
             
-            if(isLoading==false){
-                setModalOpen(1); 
-                initFormInputs();
-                setLoadingVisible(false);
-            }else{
-                setLoadingVisible(true);
-            }
+            // if(isLoading==false){
+               
+            //     setLoadingVisible(false);
+            // }else{
+            //     setLoadingVisible(true);
+            // }
           
         } else{
             chosenMsgBox = MSG_WARNING;
@@ -1143,11 +1180,7 @@ const columnsFr = [
 
     return (
         <div className={classes.formStyleP}>
-            {LoadingVisible && 
-                <div className={classes.formET} style={{alignItems:"center", width:'100%', height:'100%', backgroundColor:"white"}}>
-                    <img src='images/Loading_icon.gif' alt="loading..." />
-                </div>    
-            }
+            
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddClassMeeting 
@@ -1163,6 +1196,7 @@ const columnsFr = [
                     currentClasseLabel = {CURRENT_CLASSE_LABEL} 
                     currentClasseId    = {CURRENT_CLASSE_ID} 
                     nextClasses        = {LIST_NEXT_CLASSES}
+                    eleves             = {[...LIST_ELEVES]}
                     formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
                     actionHandler      = {(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
                     printReportHandler = {printReport}
