@@ -199,8 +199,9 @@ function AddClassMeeting(props) {
             var infos_eleves = currentUiContext.formInputs[10];
             setInfosEleves(infos_eleves);
 
-            var listDecisions = [];
+            var listDecisions  = [];
             var listpromotions = [];
+            
             if(props.nextClasses.length>0){
                 infos_eleves.map((elt)=>{
                     if(elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
@@ -209,8 +210,7 @@ function AddClassMeeting(props) {
                     }else{
                         listDecisions.push("admis");
                         listpromotions.push(props.nextClasses[0].value);
-                    }
-              
+                    }              
                 })
             } else {
                 infos_eleves.map((elt)=>{
@@ -222,7 +222,6 @@ function AddClassMeeting(props) {
                         listpromotions.push(NDEF);
                     }
                 })
-
             }
             
             setListDecisions(listDecisions);
