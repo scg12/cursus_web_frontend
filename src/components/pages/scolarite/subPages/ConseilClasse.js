@@ -642,7 +642,8 @@ const columnsFr = [
         currentUiContext.setFormInputs(inputs)
     }
 
-    function handleEditRow(row){       
+    function handleEditRow(row){   
+        //currentUiContext.setFormIsloading(false);    
         var inputs=[];       
         var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
         console.log("hhhjki",CURRENT_CC.membres_presents, CURRENT_CC.info_eleves);
@@ -669,11 +670,13 @@ const columnsFr = [
   
   
         currentUiContext.setFormInputs(inputs);
+
         console.log("laligne",row, currentUiContext.formInputs);
         setModalOpen(2);       
     }
 
     function consultRowData(row){
+        //currentUiContext.setFormIsloading(false); 
         var inputs=[];
         var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
       

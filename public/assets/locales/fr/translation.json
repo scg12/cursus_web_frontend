@@ -1,4 +1,4 @@
-{   
+{   "not_defined":"Non defini",
     "date_error_M":"ERREUR SUR LA DATE",
     "start_date_greater_than_end_date" : "La date de début est postérieure à la date de fin !!!",
     "end_date_error"  :"Erreur sur la date de fin !!!",

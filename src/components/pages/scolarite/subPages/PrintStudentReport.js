@@ -842,7 +842,12 @@ const columnsFr = [
                 {/*(modalOpen==0) ?*/
                     <div className={classes.gridDisplay} >
                         {(modalOpen!=0) && <BackDrop/>}
-                        {(modalOpen==3) &&  <CriteresGeneration classeId={CURRENT_CLASSE_ID}  cancelHandler={()=>setModalOpen(0)}/>} 
+                        {(modalOpen==3) &&  
+                            <CriteresGeneration 
+                                classeId={CURRENT_CLASSE_ID}  
+                                cancelHandler={()=>setModalOpen(0)}
+                            />
+                        } 
                         <StripedDataGrid
                             rows={gridRows}
                             columns={(i18n.language == 'fr') ? columnsFr : columnsEn}

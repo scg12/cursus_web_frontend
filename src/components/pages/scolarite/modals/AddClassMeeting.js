@@ -198,13 +198,14 @@ function AddClassMeeting(props) {
 
             var infos_eleves = currentUiContext.formInputs[10];
             setInfosEleves(infos_eleves);
+            console.log("infos Eleves",infos_eleves);
 
             var listDecisions  = [];
             var listpromotions = [];
-            
+
             if(props.nextClasses.length>0){
                 infos_eleves.map((elt)=>{
-                    if(elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
+                    if(elt.decision_final_conseil_classe != null && elt.classe_annee_prochaine_id != null){
                         listDecisions.push(elt.decision_final_conseil_classe);
                         listpromotions.push(elt.classe_annee_prochaine_id);
                     }else{
@@ -214,7 +215,7 @@ function AddClassMeeting(props) {
                 })
             } else {
                 infos_eleves.map((elt)=>{
-                    if(elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
+                    if(elt.decision_final_conseil_classe != null && elt.classe_annee_prochaine_id != null){
                         listDecisions.push(elt.decision_final_conseil_classe);
                         listpromotions.push(elt.classe_annee_prochaine_id);
                     }else{
@@ -1081,7 +1082,7 @@ function AddClassMeeting(props) {
                 <div style={{width:'7vw'}}>  {t("redouble")}?         </div>
                 <div style={{width:'5.3vw'}}>{t("Abs. NJ")}           </div> 
                 <div style={{width:'5.3vw'}}>{t("Abs. J")}            </div>
-                <div style={{width:'17vw'}}> {t("Convocation CD.")}   </div>
+                <div style={{width:'17vw', textAlign:"center"}}> {t("Convocation CD.")}   </div>
                 <div style={{width:'7vw'}}>  {t("Moyenne")}          </div>
                 <div style={{width:'13vw'}}> {t("decision")}          </div>
                 <div style={{width:'13vw'}}> {t("Promu en")}          </div>
@@ -1139,8 +1140,8 @@ function AddClassMeeting(props) {
                 <div style={{width:'17vw', fontSize:'0.67vw', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', paddingTop:"0.7vh"}}>                            
                     {(props.convocations.split('_')||[]).map((elt)=>{                        
                         return (
-                            <div style ={{width:'100%', display:'flex', flexDirection:'row'}}> 
-                                <div style={{fontWeight:'bold', marginRight:"0.3vw"}}>  
+                            <div style ={{width:'100%', display:'flex', flexDirection:'row', justifyContent:"center"}}> 
+                                <div style={{fontWeight:'bold', marginRight:"0.3vw", justifyContent:"center"}}>  
                                     {elt.split(' ')[0]} 
                                 </div>
                                 <div>  {elt.split(' ')[1]} </div>                              
