@@ -1,4 +1,5 @@
-{   "date_error_M":"DATE ERROR",
+{   "not_defined":"Not defined",
+    "date_error_M":"DATE ERROR",
     "start_date_greater_than_end_date" : "Start date is greater than end date !!! ",
     "end_date_error"  :"End date error !!!",
     "start_date_error":"Start date error !!!",

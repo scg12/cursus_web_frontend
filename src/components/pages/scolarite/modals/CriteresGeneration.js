@@ -29,14 +29,15 @@ function CriteresGeneration(props) {
     const [matieresSpe, setMatieresSpe] = useState([]);
    
     useEffect(()=> {
+        console.log("classe", props.classeId);
         getMatieresSpecialites(props.classeId);
         currentUiContext.setIsParentMsgBox(false);
     },[]);
 
-   var tabMatiereSpe =  [ "Maths", "PCT", "INFO","Maths", "PCT", "INFO" ];
 
     function getMatieresSpecialites(idClasse){
-        console.log("classeId",idClasse)
+        console.log("classeId",idClasse);
+        LIST_MATIERES_SPE = [];
         axiosInstance.post(`classe-matieres-specialite/`, {
             id_classe: idClasse,
         }).then((res)=>{      
@@ -209,8 +210,8 @@ function CriteresGeneration(props) {
             
             <div className={classes.searchFormContainer} style={{marginTop:'7vh'}}>               
               
-                <div className={classes.legend} style={{ marginRight:"0.3vw", top:'11.3vh'}}> <label style={{color:'#e0e06c',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("Les éleves vérifiants les criteres suivants seront selectionnés pour génération des bulletins")}</i></label></div>                    
-                <div className={classes.container} style={{marginTop:'1.3vw', borderRadius:'7px', marginLeft:"-0.77vw", border:"solid 1.87px gray", justifyContent:'center', alignItems:'center', width:'95%', height:'33vh', paddingLeft:"1vw"}}> 
+                <div className={classes.legend} style={{marginRight:"0.3vw", top:'11.3vh'}}> <label style={{/*color:'#e0e06c',*/ color:"white",  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("Les éleves vérifiants les criteres suivants seront selectionnés pour génération des bulletins")}</i></label></div>                    
+                <div className={classes.container} style={{marginTop:'1.3vw',  borderRadius:'7px', marginLeft:"-0.77vw", border:"solid 1.87px gray", justifyContent:'center', alignItems:'center', width:'95%', height:'33vh', paddingLeft:"1vw"}}> 
                     
                     <div className={classes.container} style={{marginBottom:'3.7vh', marginTop:'3.3vh',width:'100%'}}>
                         <div className={classes.inputRowLeft}>
@@ -219,7 +220,7 @@ function CriteresGeneration(props) {
                                     <div style={{width:'30.3vw',fontWeight:570}}>
                                         {t('Nbre Max de matières sans notes')}:  
                                     </div>
-                                    <input type='number' defaultValue={2} style={{textAlign:"center", width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  onClick={matieresSansNoteHandler}/>                                                                             
+                                    <input type='number' defaultValue={2} style={{fontSize:"1.03vw", textAlign:"center", width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  onClick={matieresSansNoteHandler}/>                                                                             
                                     
                                 </div>
 
@@ -227,7 +228,7 @@ function CriteresGeneration(props) {
                                     <div style={{width:'30.3vw',fontWeight:570}}>
                                         {t('Total min de coefficients pris en compte')}:  
                                     </div>
-                                    <input type='number' defaultValue={20} style={{textAlign:"center",width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  onClick={totalCoefMinHandler}/>                                       
+                                    <input type='number' defaultValue={20} style={{fontSize:"1.03vw", textAlign:"center",width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  onClick={totalCoefMinHandler}/>                                       
                                 </div>
 
                                 {(matieresSpe.length>0) &&
@@ -241,9 +242,9 @@ function CriteresGeneration(props) {
                                 <div className={classes.inputRowLeft} style={{marginTop:"0.35vh", marginBottom:"1vw"}}>
                                     {(matieresSpe||[]).map((elt)=>{
                                         return (
-                                            <div className={classes.inputRowLeft}>
-                                                <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}}   value={'presents'} name='matri' onClick={checkMatiereSpeHandler}/>
-                                                <div style={{width:'1vw',fontWeight:200, fontSize:"0.9vw", marginTop:'0.3vh'}}>
+                                            <div style={{width:"100%",display:"flex",flexDirection:"row", justifyContent:"center", alignItems:"center", flexWrap:"wrap" }}>
+                                                <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.3vh'}}   value={'presents'} name='matri' onClick={checkMatiereSpeHandler}/>
+                                                <div style={{width:'fit-content',fontWeight:200, fontSize:"0.9vw", marginTop:'0.3vh'}}>
                                                     {elt.label}
                                                 </div>
                                             </div>
@@ -252,12 +253,12 @@ function CriteresGeneration(props) {
                                 </div>
 
                                 <div className={classes.inputRowLeft}>
-                                    <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh', }} value={'presents'} name='matri' onClick={includeNCHandler}/>
+                                    <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.47vh', }} value={'presents'} name='matri' onClick={includeNCHandler}/>
                                     <div style={{width:'20vw',fontWeight:800, color:"#062686de", fontSize:"0.9vw"}}>
                                         {t('Inclure les élèves non classés')}
                                     </div>
 
-                                    <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}}  value={'presents'} name='matri' onClick={includeCoefManquntsHandler}/>
+                                    <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.47vh'}}  value={'presents'} name='matri' onClick={includeCoefManquntsHandler}/>
                                     <div style={{width:'30vw',fontWeight:800, color:"#062686de", fontSize:"0.9vw"}}>
                                         {t('Calculer les moyennes de élèves non classés en incluant les coefs manquants')}
                                     </div>
