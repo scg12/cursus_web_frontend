@@ -38,6 +38,12 @@ function HeadAndNav(props) {
     //const [msg, showMsg]= useState({constMsg});
     const changeLanguage = (event) => {
         i18n.changeLanguage(event.target.id);
+        axiosInstance.post(`save-langue/`, {
+            id_user: currentAppContext.idUser,
+            langue:event.target.id                
+        }).then((res)=>{
+            console.log(res.data);                                     
+        })  
     };
     currentUiContext.updateTab(getTheInitialActiveMenuId())
 
@@ -366,12 +372,12 @@ function HeadAndNav(props) {
             
             <div className= {getCurrentWidgetTemplateStyle()+ ' '+ getWidgetContentStyle() }>
             
-                <div id='fr' onClick={changeLanguage} className={classes.langButton}> 
-                    <img src="images/drapeauFrance.png" id='fr'  className={classes.widgetIcon}  alt="my image" onClick={changeLanguage}  />   
+                <div onClick={changeLanguage} className={classes.langButton}> 
+                    <img src="images/drapeauFrance.png" id='fr'  className={classes.widgetIcon}  alt="my image"  />   
                 </div>
                 
-                <div id='en' onClick={changeLanguage} className={classes.langButton}>
-                    < img src="images/drapeauAnglais.png" id='en'  className={classes.widgetIcon} alt="my image" onClick={changeLanguage}/>  
+                <div onClick={changeLanguage} className={classes.langButton}>
+                    < img src="images/drapeauAnglais.png" id='en'  className={classes.widgetIcon} alt="my image" />  
                 </div> 
 
                 <div className={classes.divider}/>

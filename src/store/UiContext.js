@@ -11,6 +11,7 @@ var constMsg ={
 const UiContext = createContext({
     logo :'',
     theme : 'Theme1',
+    langue : 'fr',
     selectedTab : 'menuLi0',
     firstLoad : true,
     modalOpen : false,
@@ -70,7 +71,9 @@ const UiContext = createContext({
     currentPPList : [],
 
     //gestion du loading lors chargement des formulaires
-    formIsloading : false, 
+    formIsloading : false,
+
+    // Langue de l'utilisateur
 
 
 
@@ -79,6 +82,7 @@ const UiContext = createContext({
           
     
     updateTheme: (newTheme)=> {},
+    updateLangue: (newLangue)=> {},
     updateLogo : (newLogo)=> {},
     updateTab : (newTab) => {},
     updateFirstLoad : (boolVal) => {},
@@ -134,6 +138,7 @@ const UiContext = createContext({
 export function UiContextProvider(props)
 {    
     const [ChangedTheme, setTheme]= useState('Theme1');
+    const [ChangedLangue, setLangue]= useState('fr');
     const [ChangedLogo, setLogo] = useState();
     const [ChangedTab, setTab] = useState('menuLi0');
     const [ChangedFirstLoad, setFirstLoad] = useState(true);
@@ -203,6 +208,9 @@ export function UiContextProvider(props)
 
     function updateThemeHandler(newTheme){
         setTheme(newTheme) 
+    }
+    function updateLangueHandler(langue){
+        setLangue(langue) 
     }
 
     function updateLogoHandler(newLogo){
@@ -399,6 +407,7 @@ export function UiContextProvider(props)
     const UI_Ctx = {
         logo : ChangedLogo,
         theme : ChangedTheme,
+        langue : ChangedLangue,
         selectedTab : ChangedTab,
         firstLoad : ChangedFirstLoad,
         modalOpen : modalOpen,
@@ -466,6 +475,7 @@ export function UiContextProvider(props)
        
 
         updateTheme: updateThemeHandler,
+        updateLangue: updateLangueHandler,
         updateLogo : updateLogoHandler,
         updateTab : updateTabHandler,
         updateFirstLoad: updateFirstLoadHandler,

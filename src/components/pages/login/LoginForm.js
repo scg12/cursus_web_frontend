@@ -274,6 +274,45 @@ function LoginForm(props){
         }
     }
 
+    function updateCalendarTheme(theme){
+        console.log("***theme.includes(3):",theme.includes("3"))
+        if (theme.includes("1")){
+            const calendarBorder = document.querySelector('.react-calendar__month-view__days');
+            calendarBorder.style.borderColor='rgb(60, 160, 21)';   
+            
+            const calendarWeekLabelStyle = document.querySelector('.react-calendar__month-view__weekdays');
+            calendarWeekLabelStyle.style.color= 'rgb(60, 160, 21)';
+
+            const calendarNowDate = document.querySelector('.react-calendar__tile--now')
+            calendarNowDate.style.backgroundColor = 'rgb(60, 160, 21)';
+            calendarNowDate.style.color = 'white';
+        }
+        else if(theme.includes("2")){
+            const calendarBorder = document.querySelector('.react-calendar__month-view__days');
+            calendarBorder.style.borderColor='rgb(35, 88, 187)';
+            
+            const calendarWeekLabelStyle = document.querySelector('.react-calendar__month-view__weekdays');
+            calendarWeekLabelStyle.style.color= 'rgb(35, 88, 187)';
+
+            const calendarNowDate = document.querySelector('.react-calendar__tile--now')
+            calendarNowDate.style.backgroundColor = 'rgb(35, 88, 187)';
+            calendarNowDate.style.color = 'white';
+        }
+        else{
+            const calendarBorder = document.querySelector('.react-calendar__month-view__days');
+            calendarBorder.style.borderColor='rgb(209, 30, 90)';
+            
+            const calendarWeekLabelStyle = document.querySelector('.react-calendar__month-view__weekdays');
+            calendarWeekLabelStyle.style.color= 'rgb(209, 30, 90)';
+
+            const calendarNowDate = document.querySelector('.react-calendar__tile--now')
+            calendarNowDate.style.backgroundColor = 'rgb(209, 30, 90)';
+            calendarNowDate.style.color = 'white';
+        }
+        
+
+    }
+
     function generateFeaturesCodeFromString(string){
         console.log(string.length)
         let codes = string.split('');
@@ -468,6 +507,9 @@ function LoginForm(props){
             currentAppContext.setInfoMatieres(res.data.info_matieres);
             currentAppContext.setInfoCours(res.data.info_cours);
             currentUiContext.updateFirstLoad(true);
+            currentUiContext.updateTheme(res.data.theme);
+            i18n.changeLanguage(res.data.langue);
+            updateCalendarTheme(res.data.theme);
             
             //Pour les MsgBoxes
             currentUiContext.setIsParentMsgBox(true);            

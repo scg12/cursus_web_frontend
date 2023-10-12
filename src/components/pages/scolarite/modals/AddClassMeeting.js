@@ -201,10 +201,11 @@ function AddClassMeeting(props) {
 
             var listDecisions  = [];
             var listpromotions = [];
-            
+            console.log("props.nextClasses: ",props.nextClasses)
             if(props.nextClasses.length>0){
                 infos_eleves.map((elt)=>{
-                    if(elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
+                    // console.log("elt:",elt,props.nextClasses[0].value);
+                    if(elt.decision_final_conseil_classe !== null && elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
                         listDecisions.push(elt.decision_final_conseil_classe);
                         listpromotions.push(elt.classe_annee_prochaine_id);
                     }else{
