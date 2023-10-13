@@ -48,7 +48,7 @@ function FicheDisciplinaire(props) {
         setGridAbsences(props.absences);
         setGridSanctions(props.sanctions);
         getTotauxAbsence();
-        console.log("absences,sanctions",props.absences, props.sanctions);
+        console.log("dates",props.dateDeb, props.dateFin);
         getClassStudentList(props.currentClasseId);
       
     },[]);

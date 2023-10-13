@@ -18,6 +18,8 @@ const MSG_SUCCESS_FP =11;
 const MSG_WARNING_FP =12;
 const MSG_ERROR_FP   =13;
 
+var CRITERIA = {};
+
 function CriteresGeneration(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
@@ -174,8 +176,11 @@ function CriteresGeneration(props) {
 
     }
     
-    function quitForm(){
-        setModalOpen(0);
+    
+
+    function generateSeqBulletin(){
+        props.cancelHandler();
+        props.generateHandler(CRITERIA)
     }
 
     /************************************ JSX Code ************************************/
@@ -285,10 +290,10 @@ function CriteresGeneration(props) {
                 />
 
                 <CustomButton
-                    btnText={t('Valider')}
+                    btnText= {t('generate')}
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={()=>{}}
+                    btnClickHandler={generateSeqBulletin}
                     //disable={(isActualStudent) ? !isActualStudent :!fileSelected}
                 />               
             </div>

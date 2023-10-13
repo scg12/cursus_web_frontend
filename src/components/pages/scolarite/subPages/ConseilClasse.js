@@ -46,8 +46,9 @@ var OTHER_MEMBERS_ADD    =[];
 var INFO_ELEVES          =[];
 var LIST_NEXT_CLASSES    ='';
 
-var LIST_CONSEILS_INFOS  =[];
-var LIST_ELEVES          =[];
+var LIST_CONSEILS_INFOS    = [];
+var LIST_ELEVES            = [];
+var CURRENT_ANNEE_SCOLAIRE = '';
 
 
 
@@ -89,6 +90,7 @@ function ConseilClasse(props) {
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
+        CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
         if(gridMeeting.length==0)  CURRENT_CLASSE_ID = undefined;
         getEtabListClasses();
     },[]);
@@ -169,7 +171,8 @@ function ConseilClasse(props) {
 
                 SEQUENCES_DISPO   =  createLabelValueTableDejaTenu(res.data.seqs_dispo);
                 TRIMESTRES_DISPO  =  createLabelValueTableDejaTenu(res.data.trims_dispo);
-                ANNEE_DISPO       = [{value:-1,label:t("annee")+' '+new Date().getFullYear()}];
+                
+                ANNEE_DISPO       = [{value:-1,label:t("annee")+' '+CURRENT_ANNEE_SCOLAIRE}];
 
                 listConseils = [...formatList(res.data.conseil_classes,res.data.prof_principal,res.data.seqs_dispo, res.data.trims_dispo)]
                 console.log(listConseils);                
@@ -232,7 +235,7 @@ function ConseilClasse(props) {
             listElt.status = elt.status; 
             listElt.resume_general_decisions = elt.resume_general_decisions;
             listElt.periodeId = elt.id_type_conseil;
-            listElt.periode = (elt.type_conseil=='annuel')? t('annee') +' '+ elt.date_prevue.split('/')[2]:getPeriodeLabel(listElt.periodeId,seqInfos,trimInfos);
+            listElt.periode = (elt.type_conseil=='annuel')? CURRENT_ANNEE_SCOLAIRE:getPeriodeLabel(listElt.periodeId,seqInfos,trimInfos);
             listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);            

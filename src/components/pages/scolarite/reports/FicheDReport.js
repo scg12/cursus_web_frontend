@@ -188,6 +188,13 @@ function FicheDReport(props){
                     <Text style={styles.titleStyle}>{props.pageSet.pageTitle}</Text>
                 </View>
 
+                <View style={{display:"flex", flexDirection:"row", marginBottom:"2vh" }}>
+                    <Text style={{fontSize:"1.3vh", textTransform:'uppercase', fontWeight:'heavy', fontFamily:"Times-Roman" /*fontFamily:"MyBold"*/}}>Periode du :</Text>
+                    <Text style={{fontSize:"1.3vh", textTransform:'uppercase', fontWeight:'heavy', fontFamily:"MyBold", marginRight:"0.7vw"}}>{props.pageSet.date_debut}</Text>
+                    <Text style={{fontSize:"1.3vh", textTransform:'uppercase', fontWeight:'heavy', fontFamily:"Times-Roman"/*fontFamily:"MyBold"*/}}>Au :</Text>
+                    <Text style={{fontSize:"1.3vh", textTransform:'uppercase', fontWeight:'heavy', fontFamily:"MyBold"}}>{props.pageSet.date_fin}</Text>
+                </View>
+
                 <View style={styles.main}>                    
                     <EleveInfo eleve={props.pageSet.eleveInfo} classeLabel={props.pageSet.classeLabel}/>
                    
@@ -322,7 +329,7 @@ const styles = StyleSheet.create({
         width:'auto',
         height:'2%',
         borderBottom: "1.3px solid black",
-        marginBottom:"3vh",   
+        marginBottom:"1vh",   
             
     },
 
