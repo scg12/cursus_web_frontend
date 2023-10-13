@@ -205,6 +205,7 @@ function AddClassMeeting(props) {
 
             if(props.nextClasses.length>0){
                 infos_eleves.map((elt)=>{
+                //  if(elt.decision_final_conseil_classe !== null && elt.decision_final_conseil_classe.length > 0 && elt.classe_annee_prochaine_id > 0){
                     if(elt.decision_final_conseil_classe != null && elt.classe_annee_prochaine_id != null){
                         listDecisions.push(elt.decision_final_conseil_classe);
                         listpromotions.push(elt.classe_annee_prochaine_id);

@@ -5,6 +5,8 @@ import { useContext, useState } from "react";
 import UiContext from  '../../../../store/UiContext';
 import AppContext from '../../../../store/AppContext';
 import { useTranslation } from "react-i18next";
+import axiosInstance from '../../../../axios';
+
 
 function ConfigTheme(props) {
 
@@ -56,57 +58,45 @@ function ConfigTheme(props) {
     }
 
     function toggleThemeChangeHandler1(){
-        //Mettre a jour le theme utilisateur
-        /*axiosInstance.post(`update_user/`, {
-            id: '', // a fournir
-            username:newLogin                
+        axiosInstance.post(`save-theme/`, {
+            id_user: currentAppContext.idUser, // a fournir
+            theme:"Theme1"                
         }).then((res)=>{
-            console.log(res.data);
-                //Retourner le statut de l'action
-            
+            console.log(res.data);           
             currentUiContext.updateTheme('Theme1');
             updateCalendarTheme1();
                           
-        }) */ 
-        
+        })  
         //Enlever ceci qd on va decommenter;
         currentUiContext.updateTheme('Theme1');
         updateCalendarTheme1();
     }
 
     function toggleThemeChangeHandler2(){
-        //Mettre a jour le theme utilisateur
-        /*axiosInstance.post(`update_user/`, {
-            id: '', // a fournir
-            username:newLogin                
+        axiosInstance.post(`save-theme/`, {
+            id_user: currentAppContext.idUser, // a fournir
+            theme:"Theme2"                
         }).then((res)=>{
-            console.log(res.data);
-                //Retourner le statut de l'action
-            
-            currentUiContext.updateTheme('Theme1');
-            updateCalendarTheme1();
+            console.log(res.data);           
+            currentUiContext.updateTheme('Theme2');
+            updateCalendarTheme2();
                           
-        }) */ 
-        
+        })  
         //Enlever ceci qd on va decommenter;
         currentUiContext.updateTheme('Theme2');
         updateCalendarTheme2();
     }
 
     function toggleThemeChangeHandler3(){
-        //Mettre a jour le theme utilisateur
-        /*axiosInstance.post(`update_user/`, {
-            id: '', // a fournir
-            username:newLogin                
+        axiosInstance.post(`save-theme/`, {
+            id_user: currentAppContext.idUser, // a fournir
+            theme:"Theme3"                
         }).then((res)=>{
-            console.log(res.data);
-                //Retourner le statut de l'action
-            
-            currentUiContext.updateTheme('Theme1');
-            updateCalendarTheme1();
+            console.log(res.data);           
+            currentUiContext.updateTheme('Theme3');
+            updateCalendarTheme3();
                           
-        }) */ 
-        
+        })  
         //Enlever ceci qd on va decommenter;
         currentUiContext.updateTheme('Theme3');
         updateCalendarTheme3();

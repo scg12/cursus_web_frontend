@@ -95,6 +95,18 @@ function ConseilClasse(props) {
         getEtabListClasses();
     },[]);
 
+    function updateCalendarTheme2(){
+        const calendarBorder = document.querySelector('.react-calendar__month-view__days');
+        calendarBorder.style.borderColor='rgb(35, 88, 187)';
+        
+        const calendarWeekLabelStyle = document.querySelector('.react-calendar__month-view__weekdays');
+        calendarWeekLabelStyle.style.color= 'rgb(35, 88, 187)';
+
+        const calendarNowDate = document.querySelector('.react-calendar__tile--now')
+        calendarNowDate.style.backgroundColor = 'rgb(35, 88, 187)';
+        calendarNowDate.style.color = 'white';
+    }
+
     
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
