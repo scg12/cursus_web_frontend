@@ -47,7 +47,11 @@ function Effectifs(props){
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-    const [barchartData, setBarChartData] = useState([]);
+    // const [barchartData, setBarChartData] = useState([]);
+    
+    // const [barchartData, setBarChartData] = useState(props.selectedNiveau!=''?props.BarChartData:props.BarchartClasseData);
+    const [barchartData, setBarChartData] = useState(props.BarChartData);
+    // const [BarchartClasseData, setBarchartClasseData] = useState(props.BarchartClasseData);
     
   useEffect(()=> {
     if(props.selectedNiveau!='') getDataNiveau(props.selectedNiveau, props.isInscrits);
@@ -57,26 +61,26 @@ function Effectifs(props){
 
   const state = (props.selectedNiveau!='') ? 
   {
-    labels: ['Total', 'Garcons','Filles' ],                
+    labels: ['Total', 'Garçons','Filles' ],                
     datasets: [{        
         label: (props.isInscrits) ? t('effectifs_inscrit')  : t('effectifs_total'),
         backgroundColor:  (props.isInscrits) ? ['grey','rgb(53, 119, 241)','rgb(222 8 51)']: ['grey','rgb(53, 119, 241)','rgb(222 8 51)'],
         borderColor: 'white',
         borderWidth: 1,
-        data: barchartData
+        data: props.BarchartData
     },
   ]}
   
     :
 
   {
-    labels: ['Total', 'Garcons','Filles' ],                
+    labels: ['Total', 'Garçons','Filles' ],                
     datasets: [{        
         label: (props.isInscrits) ? t('effectifs_inscrit')  : t('effectifs_total'),
         backgroundColor:  (props.isInscrits) ? ['grey','rgb(53, 119, 241)','rgb(222 8 51)']: ['grey','rgb(53, 119, 241)', 'rgb(222 8 51)'],
         borderColor: 'white',
         borderWidth: 1,
-        data: barchartData
+        data: props.BarchartData
     },
   ]};
 
@@ -90,7 +94,7 @@ const getDataClasse=(classeId,isInscrits)=>{
         console.log(res.data);
         setBarChartData(res.data);       
     }) */  
-    setBarChartData([6500, 3500, 3000]);
+    setBarChartData(props.BarchartClasseData);
 }
 
 const getDataNiveau=(niveauId,isInscrits)=>{
@@ -103,7 +107,7 @@ const getDataNiveau=(niveauId,isInscrits)=>{
        console.log(res.data);
        setBarChartData(res.data);       
    }) */  
-   setBarChartData([6500, 3500, 3000]);
+   setBarChartData(props.BarChartData);
 }
 
 
