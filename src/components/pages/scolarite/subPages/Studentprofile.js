@@ -32,6 +32,9 @@ let CURRENT_PROF_PP_LABEL;
 var JOUR_DEB='', MOIS_DEB='', YEAR_DEB='', DATEDEB_RECH ='';
 var JOUR_FIN='', MOIS_FIN='', YEAR_FIN='', DATEFIN_RECH ='';
 
+var DATE_DEBUT = '';
+var DATE_FIN   = '';
+
 var LIST_ELEVES     = [];
 var LIST_ABSENCES   = [];
 var LIST_SANCTIONS  = [];
@@ -163,13 +166,33 @@ function Studentprofile(props) {
         return list;
     }
 
+    function getStudentDisciplineInfo(){
+        if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10){   
+            DATE_DEBUT = DATEDEB_RECH;     DATE_FIN =  DATEFIN_RECH;
+            getStudentFiches(changeDateIntoAAAAMMJJ(DATE_DEBUT),changeDateIntoAAAAMMJJ(DATE_FIN));
+        }            
+        else{
+            if(DATEDEB_RECH.length==10){
+                DATE_DEBUT = DATEDEB_RECH;     DATE_FIN = getTodayDate();
+                getStudentFiches(changeDateIntoAAAAMMJJ(DATE_DEBUT),changeDateIntoAAAAMMJJ(DATE_FIN));
+            }
+
+            if(DATEFIN_RECH.length==10){
+                DATE_DEBUT = DATEFIN_RECH;     DATE_FIN = DATEFIN_RECH;
+                getStudentFiches(changeDateIntoAAAAMMJJ(DATE_DEBUT),changeDateIntoAAAAMMJJ(DATE_FIN));
+            }
+        }
+        
+    }
+
 
     function searchStudent(){
+        var errorMsg = givenDateOk();        
+        console.log("dateDeb", DATEDEB_RECH, DATEFIN_RECH);
         var errorMsg = givenDateOk();
         if(errorMsg.length==0){
-            getStudentFiches(changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH));
-        } else {
-            //Produire un message d'erreur....
+            getStudentDisciplineInfo();
+       } else {
             chosenMsgBox = MSG_ERROR_FD;
             currentUiContext.showMsgBox({
                 visible :true, 
@@ -181,7 +204,14 @@ function Studentprofile(props) {
     }
 
     function givenDateOk(){ 
-       
+        DATEDEB_RECH = document.getElementById("jour_deb").value+'/'+document.getElementById("mois_deb").value+'/'+document.getElementById("anne_deb").value
+        DATEFIN_RECH = document.getElementById("jour_fin").value+'/'+document.getElementById("mois_fin").value+'/'+document.getElementById("anne_fin").value
+        
+        if(DATEDEB_RECH == '//') DATEDEB_RECH = '';
+        if(DATEFIN_RECH == '//') DATEFIN_RECH = '';
+
+
+
         if(DATEDEB_RECH.length>0 && DATEDEB_RECH.length<10){
             return t('start_date_error');
         }
@@ -220,9 +250,6 @@ function Studentprofile(props) {
 
         if(DATEDEB_RECH.length==10 || DATEFIN_RECH.length==10) setIsValid(true);
         else setIsValid(false);
-        // if(DATEDEB_RECH.length==10) filterAuthSortie(listAutorisations,DATEDEB_RECH,DATEFIN_RECH);
-        // else filterAuthSortie(listAutorisations,'',DATEFIN_RECH);
-
     }
 
     function getJourFinAndFilter(e){
@@ -393,37 +420,7 @@ function Studentprofile(props) {
             CURRENT_CLASSE_ID    = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getClassStudentList(CURRENT_CLASSE_ID);
-            
-            if(DATEDEB_RECH.length==10 && DATEFIN_RECH.length==10) {
-                var errorMsg = givenDateOk();
-                if(errorMsg.length==0){
-                    console.log("jjjj",changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH))
-                    getStudentFiches(changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH));
-                } else {
-                    //Mesage d'erreur
-                    chosenMsgBox = MSG_ERROR_FD;
-                    currentUiContext.showMsgBox({
-                        visible :true, 
-                        msgType :"info", 
-                        msgTitle: t("date_error_M"), 
-                        message : errorMsg
-                    })
-                }
-            }            
-            else{
-                //if(DATEDEB_RECH.length==0 && DATEFIN_RECH.length==0)  getClassStudentList(CURRENT_CLASSE_ID); 
-
-                if(DATEDEB_RECH.length==10){
-                    var dateFin = getTodayDate();
-                    getStudentFiches(changeDateIntoAAAAMMJJ(DATEDEB_RECH),changeDateIntoAAAAMMJJ(dateFin));
-                }
-
-                if(DATEFIN_RECH.length==10){
-                    //var dateFin = getTodayDate();
-                    getStudentFiches(changeDateIntoAAAAMMJJ(DATEFIN_RECH),changeDateIntoAAAAMMJJ(DATEFIN_RECH));
-                }
-            }
-          
+            getStudentDisciplineInfo();
         }else{
             initDateFields();
             LIST_ABSENCES  = [];
@@ -720,6 +717,8 @@ const columnsFr = [
             sanctionsData       :[...ELEVE_SANCTIONS],
             eleveInfo           :SELECTED_ELEVE,
             classeLabel         :CURRENT_CLASSE_LABEL,
+            date_debut          :DATE_DEBUT,
+            date_fin            :DATE_FIN,
 
             numberEltPerPage:ROWS_PER_PAGE  
         };
@@ -766,9 +765,6 @@ const columnsFr = [
         setModalOpen(0);
     }
 
-    function dropDownPeriodHandler(e){
-
-    }
 
     function initDateFields(){
         document.getElementById("jour_deb").value = "";
@@ -860,8 +856,8 @@ const columnsFr = [
                     eleve              = {SELECTED_ELEVE} 
                     absences           = {ELEVE_ABSENCES} 
                     sanctions          = {ELEVE_SANCTIONS} 
-                    dateDeb            = {DATEDEB_RECH}
-                    dateFin            = {DATEFIN_RECH}
+                    dateDeb            = {DATE_DEBUT}
+                    dateFin            = {DATE_FIN}
                     formMode           = {'consult'}   
                     cancelHandler      = {quitForm} 
                     printFDHandler     = {printStudentProfille}

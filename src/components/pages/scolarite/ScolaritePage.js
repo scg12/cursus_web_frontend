@@ -26,6 +26,7 @@ import BilletEntreeSortie from "./subPages/BilletEntreeSortie";
 //import BilletSortie from "./subPages/BilletSortie";
 import NewEvaluation from "./subPages/NewEvaluation";
 import SaveNotes from "./subPages/SaveNotes";
+import GenStudentReport   from "./subPages/GenStudentReport";
 import PrintStudentReport from "./subPages/PrintStudentReport";
 import LookStudentPresence from "./subPages/LookStudentPresence";
 import ConsultEmploiTemps  from "./subPages/ConsultEmploiTemps";
@@ -331,8 +332,8 @@ function ScolaritePage(){
           {/*------SCOLARITE-3 : Suivi scolaire - examen de classe et Notes-----*/}
           {curentMenuItemPId== 120 && <SaveNotes noteMax={20}/>                   }
           {curentMenuItemPId== 121 && <ListingNotes/>                             }
-          {curentMenuItemPId== 122 && <PrintStudentReport formMode='generation'/> }
-          {curentMenuItemPId== 123 && <PrintStudentReport formMode='impression'/> }
+          {curentMenuItemPId== 122 && <GenStudentReport/>                         }
+          {curentMenuItemPId== 123 && <PrintStudentReport/>                       }
           {/*curentMenuItemPId== 121 && <SaveNotes noteMax={20}/>               */}
           
           {/*------------- SCOLARITE-4 : Discipline et assiduite --------------*/}

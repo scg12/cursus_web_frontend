@@ -282,15 +282,15 @@ margin-right: 5px;
 
 /****************************** <SCHOOL BOOK>  ****************************/
 .comboBoxStyle{
-font-weight: 600;
-font-size: 0.97vw;
-height:4.3vh;
-border-radius:1vh;
-border-style:solid;
-border-color: rgb(128, 180, 248);
-border-width: 0.47vh;
-padding-left: 0.7vh !important;
-padding-bottom: 0.7vh !important;  
+    font-weight: 600;
+    font-size: 0.97vw;
+    height:4.3vh;
+    border-radius:1vh;
+    border-style:solid;
+    border-color: rgb(128, 180, 248);
+    border-width: 0.47vh;
+    padding-left: 0.7vh !important;
+    padding-bottom: 0.7vh !important;  
 }
 
 .infoPresence{
@@ -1116,7 +1116,20 @@ background-color: rgb(6, 83, 134);
 color:white;
 height:5vh;
 min-width: 15px !important;
+
 font-size: 0.80vw;
+}
+
+.GridColumnStyleP{
+    background-color: rgb(6, 83, 134);
+    /*background-color: rgb(3, 48, 78);---pour tester la CNI*/
+    color:white;
+    height:5vh;
+    min-width: 15px !important;   
+    width: 20px;
+    text-overflow: clip;
+    font-size: 0.67vw;
+   
 }
 
 .GridRedColumnStyle{

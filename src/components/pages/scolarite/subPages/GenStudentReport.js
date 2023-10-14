@@ -29,7 +29,6 @@ var CURRENT_ANNEE_SCOLAIRE;
 
 let CURRENT_CLASSE_ID;
 let CURRENT_PERIOD_ID;
-let CURRENT_TYPE_BULLETIN_ID;
 let CURRENT_CLASSE_LABEL;
 var selectedElevesIds = new Array();
 
@@ -57,17 +56,20 @@ var LIST_SEQUENCE   = [];
 var LIST_TRIMESTRES = [];
 
 
-function PrintStudentReport(props) {
+function GenStudentReport(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const { t, i18n } = useTranslation();
-    const [isValid, setIsValid]     = useState(false);
+    const [isValid, setIsValid] = useState(false);
+    const [canGenerate, setCanGenerate] = useState(false);
     const [gridRows, setGridRows]   = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse]  = useState([]);
-    const [optPeriode, setOptPeriode]       = useState([]);
-    const [optTypeReport, setOptTypeReport] = useState([]);
+    const [optPeriode, setOptPeriode]     = useState([]);
     const [typeBulletin, setTypeBulletin] = useState(1);
+    const [seq1, setSeq1] = useState("1");
+    const [seq2, setSeq2] = useState("2");
+    const [optOuiNon,setOptOuiNon] = useState([]);
     const selectedTheme = currentUiContext.theme;
 
     const tabPeriode =[
@@ -78,16 +80,14 @@ function PrintStudentReport(props) {
 
     ]
 
-    const tabTypReport =[
-        {value:1, label:t('bulletin_sequentiel') },
-        {value:2, label:t('bulletin_trimestriel')},
-        {value:3, label:t('bulletin_annuel')     },
-
+    const tabOuiNon =[
+        {value:1, label: t('yes')},
+        {value:0, label: t('no') },
     ]
 
     useEffect(()=> {
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
-        setOptTypeReport(tabTypReport);
+        setOptOuiNon(tabOuiNon);
        
         getActivatedSequences();
         getActivatedTrimestres();
@@ -101,6 +101,7 @@ function PrintStudentReport(props) {
         }
 
         getEtabListClasses();
+      
         
     },[]);
 
@@ -134,10 +135,86 @@ function PrintStudentReport(props) {
             console.log(res.data);
             listEleves = [...formatList(res.data.eleves)]
             console.log(listEleves);
-            setGridRows(listEleves);
-            console.log(gridRows);
+            //setGridRows(listEleves);
+            //console.log(gridRows);
         })  
         return listEleves;     
+    }
+
+    function getClassNoteSequence(classId, periode){
+        // listEleves = []
+        // axiosInstance.post(`eleves-notes-sequence/`, {
+        //     id_classe: classId,
+        //     id_periode: periode
+
+        // }).then((res)=>{
+        //     console.log(res.data);
+        //     listEleves = [...formatList(res.data.eleves)]
+        //     console.log(listEleves);
+        //     //setGridRows(listEleves);
+        //     //console.log(gridRows);
+        // })  
+        // return listEleves;  
+        setGridRows(dataSeq);
+    }
+
+    function getClassNotesTrimestre(classId, periode){
+        // listEleves = []
+        // axiosInstance.post(`eleves-notes-trimestre/`, {
+        //     id_classe: classId,
+        //     id_periode: periode
+
+        // }).then((res)=>{
+        //     console.log(res.data);
+        //     listEleves = [...formatList(res.data.eleves)]
+        //     console.log(listEleves);
+        //     //setGridRows(listEleves);
+        //     //console.log(gridRows);
+        // })  
+        // return listEleves; 
+        setGridRows(dataTrim);
+    }
+
+    function getClassNotesAnnee(classId, periode){
+        // listEleves = []
+        // axiosInstance.post(`eleves-notes-annee/`, {
+        //     id_classe : classId,
+        //     id_periode: periode,
+            
+        // }).then((res)=>{
+        //     console.log(res.data);
+        //     listEleves = [...formatList(res.data.eleves)]
+        //     console.log(listEleves);
+        //     //setGridRows(listEleves);
+        //     //console.log(gridRows);
+        // })  
+        // return listEleves;         
+        setGridRows(dataAnnee);
+    }
+
+
+    function getStudentGenerationInfo(classeId, periode, typeBulletin){
+        if(classeId!=undefined && periode!=undefined) {
+            switch(typeBulletin){
+                case 1 : {
+                    getClassNoteSequence(classeId, periode);
+                    return;
+                }
+    
+                case 2 : {
+                    getClassNotesTrimestre(classeId, periode);
+                    return;
+                    
+                }
+    
+                case 3 : {
+                    getClassNotesAnnee(classeId, periode);
+                    return;
+                }
+            }
+
+        }
+       
     }
 
 
@@ -174,6 +251,7 @@ function PrintStudentReport(props) {
     function changeBulletinType(typeBulletin){
         setTypeBulletin(typeBulletin);
         getActivatedEvalPeriods(typeBulletin);
+        getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
     }
 
     function getActivatedSequences(){
@@ -208,7 +286,7 @@ function PrintStudentReport(props) {
                     tabTrimestres.push({value:seq.id, label:seq.libelle});
                     LIST_TRIMESTRES.push(seq);
                 }                              
-            })    
+            })
         })
     }
 
@@ -217,36 +295,34 @@ function PrintStudentReport(props) {
     }
 
 
-    function getActivatedEvalPeriods(typebultin){      
+    function getActivatedEvalPeriods(typebultin){       
         switch(typebultin){
-            case 1: {console.log("ici1"); setOptPeriode(tabSequences);    return;} 
-            case 2: {console.log("ici2"); setOptPeriode(tabTrimestres);   return;}
-            case 3: {console.log("ici3"); setOptPeriode(tabCurrentAnnee); return;}
+            case 1: {setOptPeriode(tabSequences);    return;} 
+            case 2: {setOptPeriode(tabTrimestres);   return;}
+            case 3: {setOptPeriode(tabCurrentAnnee); return;}
         }    
     }
 
-    function getTrimSequences(trimId){
-        var cur_trim = LIST_TRIMESTRES.find((trim)=> trim.id==trimId);
-        if(cur_trim != undefined){
-           var list_cur_seq = LIST_SEQUENCE.filter((seq)=>(seq.date_deb >= cur_trim.date_deb) && (seq.date_fin <= cur_trim.date_fin))
-            if(list_cur_seq!=undefined) return list_cur_seq;
-            else return [];
-        } else return [];
+    function getTrimSequences(trimestre){
+        console.log("trimestre",trimestre)
+       switch(trimestre){
+        case "Trimestre1": {setSeq1("1"); setSeq2("2");   return;} 
+        case "Trimestre2": {setSeq1("3"); setSeq2("4");   return;}
+        case "Trimestre3": {setSeq1("5"); setSeq2("6");   return;}
+       }
     }
 
 
     function dropDownHandler(e){
-       
-        var grdRows;
         if(e.target.value != optClasse[0].value){
+            setCanGenerate(true);
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
-            getClassStudentList(CURRENT_CLASSE_ID); 
-            setIsValid(true);
-            
-            console.log(CURRENT_CLASSE_LABEL)          
+            CURRENT_PERIOD_ID = optPeriode[0].value;
+            console.log("chargement",CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
+            getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
         }else{
-           
+            setCanGenerate(false);
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
             setIsValid(false);
@@ -254,88 +330,139 @@ function PrintStudentReport(props) {
         }
     }
 
-    function dropDownTypeReportHandler(e){
-        CURRENT_TYPE_BULLETIN_ID = parseInt(e.target.value);
-        console.log("type bulletin",CURRENT_TYPE_BULLETIN_ID)
-        changeBulletinType(CURRENT_TYPE_BULLETIN_ID);    
-    }
-
     
     function dropDownPeriodHandler(e){
-        if(e.target.value != optPeriode[0].value){
-            CURRENT_PERIOD_ID = e.target.value;            
-        }else{
-            CURRENT_PERIOD_ID = undefined;           
-        }
+        // if(e.target.value != optPeriode[0].value){
+            CURRENT_PERIOD_ID = e.target.value; 
+            if(typeBulletin==2){
+                var selected_periode = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
+                getTrimSequences(selected_periode);
+            }
+            getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
+           
+        // }else{
+        //     CURRENT_PERIOD_ID = undefined;
+        //     if(isValid)  setIsValid(false);
+        // }
     }
 
-   
+
+    function ClasserEleveAnnuelHandler(e){
+
+    }
+
+    function ClasserEleveTrimHandler(e){
+        
+    }
+
+
+    function updateSeq1(rang){
+
+    }
+
+    function updateSeq2(rang){
+        
+    }
+
+    function updateTrim1(rang){
+
+    }
+
+    function updateTrim2(rang){
+        
+    }
+
+    function updateTrim3(rang){
+        
+    }
     
 /*************************** DataGrid Declaration ***************************/    
-const columnsFr = [
-       
+/*---DATA*/
+
+var dataSeq   = [
+    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        moyenne:"11.75", nb_max_matieres_sans_note:"2", classserl:"1", classser:'2' },
+    {rang:2, id:124, matricule:"HT25647S3", nom:"Mbombo njoya armel",     moyenne:"11.75", nb_max_matieres_sans_note:"0", classserl:"3", classser:'2' },
+    {rang:3, id:125, matricule:"HT25645V7", nom:"Mndeng salome huguette", moyenne:"11.75", nb_max_matieres_sans_note:"1", classserl:"5", classser:'3'},
+];
+
+var dataTrim  = [
+    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        moy_seq1:"11.75", moy_seq2:"12.5",  enCompte:'1²²2', toBeClaased:true},
+    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     moy_seq1:"07.75", moy_seq2:"13.75", enCompte:'1²²2', toBeClaased:true},
+    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", moy_seq1:"15.75", moy_seq2:"12.75", enCompte:'1²²2', toBeClaased:true},
+];
+
+var dataAnnee = [
+    {rang:1, id:124, matricule:"HT25647R3", nom:"Mballa alphonse",        moy_trim1:"11.75", moy_trim2:"12.75", moy_trim3:"07.5", enCompte:'1²²2²²3', toBeClaased:true},
+    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     moy_trim1:"11.75", moy_trim2:"12.75", moy_trim3:"08.5", enCompte:'1²²2²²3', toBeClaased:true},
+    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", moy_trim1:"11.75", moy_trim2:"12.75", moy_trim3:"05.5", enCompte:'1²²2²²3', toBeClaased:true},
+];
+
+
+
+const columnsSeq = [
+    {
+        field: 'rang',
+        headerName: "N",
+        width: 80,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+
     {
         field: 'matricule',
-        headerName: 'MATRICULE',
+        headerName: t('matricule_short_M'),
         width: 100,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
+
     {
         field: 'nom',
-        headerName: 'NOM ET PRENOM(S)',
+        headerName: t('displayedName_M'),
         width: 200,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'date_naissance',
-        headerName: 'DATE NAISSANCE',
-        width: 110,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: 'lieu_naissance',
-        headerName: 'LIEU NAISANCE',
+        field: 'moyenne',
+        headerName: t('moyenne_M'),
         width: 120,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
     {
-        field: 'date_entree',
-        headerName: 'DATE ENTREE',
-        width: 110,
+        field: 'nb_max_matieres_sans_note',
+        headerName: t('matiere_sans_note_M'),
+        width: 170,
         editable: false,
-        headerClassName:classes.GridColumnStyle,
-            
+        headerClassName:classes.GridColumnStyleP,                
     },
 
     {
-        field: 'nom_parent',
-        headerName: 'NOM PARENT',
-        width: 200,
+        field: 'classserl',
+        headerName: t('coef_manquants_M'),
+        width: 170,
         editable: false,
-        headerClassName:classes.GridColumnStyle
+        headerClassName:classes.GridColumnStyleP,                
     },
+
+    {
+        field: 'classser',
+        headerName: t('matieres_spe_manquante_M'),
+        width: 170,
+        editable: false,
+        headerClassName:classes.GridColumnStyleP,                
+    },
+
     
-    {
-        field: 'en_regle_Header',
-        headerName: 'EN REGLES ?',
-        width: 110,
-        editable: false,
-        headerClassName:classes.GridColumnStyle,
-            
-    },
-
     {
         field: 'id',
         headerName: '',
         width: 15,
         editable: false,
-        hide : true,
-        headerClassName:classes.GridColumnStyle,
+        hide:true,
+        headerClassName:classes.GridColumnStyleP,
         renderCell: (params)=>{
             return(
                 <div className={classes.inputRow}>
@@ -349,70 +476,222 @@ const columnsFr = [
                         alt=''
                     />
                 </div>
-            )}           
+            )}         
             
         },
-
     ];
-    
 
-    const columnsEn = [
-       
+    const columnsTrim = [
+        {
+            field: 'rang',
+            headerName: "N",
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
         {
             field: 'matricule',
-            headerName: 'REG. CODE',
+            headerName: t('matricule_short_M'),
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
         {
             field: 'nom',
-            headerName: 'NAME AND SURNAME',
+            headerName: t('displayedName_M'),
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'date_naissance',
-            headerName: 'BIRTH DATE',
-            width: 110,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-        {
-            field: 'lieu_naissance',
-            headerName:'BIRTH PLACE',
+            field: 'moy_seq1',
+            headerName:  t('moy_seq_M')+seq1,
             width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+    
         {
-            field: 'date_entree',
-            headerName:'REG. YEAR',
-            width: 110,
+            field: 'moy_seq2',
+            headerName:   t('moy_seq_M')+seq2,
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'considered_seq',
+            headerName: t('considered_seq'),
+            width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow}>
+                        <div style={{display:"flex",flexDirection:"row"}}>
+                            <input id={params.row.id_seq1} type='checkbox' checked={true} onClick={()=>updateSeq1(params.row.rang)}/>
+                            <div>{"Seq"+seq1}</div>
+                        </div>
+                        <div style={{marginLeft:"1.7vw",display:"flex",flexDirection:"row"}}>
+                            <input id={params.row.id_seq2} type='checkbox' checked={true} onClick={()=>updateSeq2(params.row.rang)}/>
+                            <div>{"Seq"+seq2}</div>
+                        </div>
+                    </div>
+                )
+            }           
                 
         },
     
+        { 
+            field: 'classser',
+            headerName: t('class_student_M'),
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow}>
+                        <select onChange={ClasserEleveTrimHandler} id='a_changer' className={classes.comboBoxStyle} style={{width:'4.3vw'}}>
+                                {(optOuiNon||[]).map((option)=> {
+                                    return(
+                                        <option  value={option.value}>{option.label}</option>
+                                    );
+                                })}
+                        </select>
+                    </div>
+                )
+            }           
+                
+        },
+    
+        
         {
-            field: 'nom_parent',
-            headerName:'PARENT NAME',
+            field: 'id',
+            headerName: '',
+            width: 15,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow}>
+                        <img src="icons/baseline_edit.png"  
+                            width={17} 
+                            height={17} 
+                            className={classes.cellPointer} 
+                            onClick={(event)=> {
+                                event.ignore = true;
+                            }}
+                            alt=''
+                        />
+                    </div>
+                )}           
+                
+            },
+    
+        ];
+    
+    
+
+    const columnsYear = [
+       
+        {
+            field: 'rang',
+            headerName: "N",
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'matricule',
+            headerName: t('matricule_short_M'),
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'nom',
+            headerName: t('displayedName_M'),
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-      
+    
         {
-            field: 'en_regle_Header',
-            headerName:'FEES PAID ?',
-            width: 110,
+            field: 'moy_trim1',
+            headerName: t('moy_trim1_M'),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field: 'moy_trim2',
+            headerName: t('moy_trim2_M'),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'moy_trim3',
+            headerName: t('moy_trim3_M'),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'considered_trim',
+            headerName: t('considered_trim'),
+            width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow}>
+                        <div style={{display:"flex",flexDirection:"row"}}>
+                            <input id={params.row.id_trim1} type='checkbox' checked={true} onClick={()=>updateTrim1(params.row.rang)}/>
+                            <div>{"Trim1"}</div>
+                        </div>
+                        <div style={{marginLeft:"1.7vw",display:"flex",flexDirection:"row"}}>
+                            <input id={params.row.id_trim2} type='checkbox' checked={true} onClick={()=>updateTrim2(params.row.rang)}/>
+                            <div>{"Trim2"}</div>
+                        </div>
+                        <div style={{marginLeft:"1.7vw",display:"flex",flexDirection:"row"}}>
+                            <input id={params.row.id_trim3} type='checkbox' checked={true} onClick={()=>updateTrim3(params.row.rang)}/>
+                            <div>{"Trim3"}</div>
+                        </div>
+                    </div>
+                )
+            }
                 
         },
     
+        {
+            field: 'classser',
+            headerName: t('class_student_M'),
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow}>
+                        <select onChange={ClasserEleveAnnuelHandler} id='a_changer' className={classes.comboBoxStyle} style={{width:'4.3vw'}}>
+                                {(optOuiNon||[]).map((option)=> {
+                                    return(
+                                        <option  value={option.value}>{option.label}</option>
+                                    );
+                                })}
+                        </select>
+                    </div>
+                )
+            }
+                
+        },
+        
         {
             field: 'id',
             headerName: '',
@@ -461,8 +740,6 @@ const columnsFr = [
     }   
     
 /*************************** Handler functions ***************************/
-    
-
     function initFormInputs(){
         var inputs=[];
         inputs[0] = '';
@@ -812,22 +1089,22 @@ const columnsFr = [
             } 
 
 
-            <div className={classes.inputRow} >
+            <div className={classes.inputRow}>                
                 <div className={classes.formTitle}>
-                    {t('print_bulletin_M')}  
+                    {t('Gen_bulletin_M')}   
                 </div>
+                   
             </div>
             <div className={classes.formGridContent}>
               
                 <div className={classes.gridTitleRow}> 
-                    <div className={classes.gridTitle} style={{width:"77vw"}}> 
-                                                             
+                    <div className={classes.gridTitle} style={{width:"77vw"}}>                  
                         <div className={classes.gridTitleText} style={{width:"5.7vw", fontSize:"0.87vw"}}>
                             {t('class_M')} :
                         </div>
-                    
+                      
                         <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
-                            <select onChange={dropDownHandler} id='selectClass1' className={classes.comboBoxStyle} style={{width:'10.3vw', marginBottom:1, marginLeft:"-1vw"}}>
+                            <select onChange={dropDownHandler} id='selectClass1' className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1, marginLeft:"-1vw"}}>
                                 {(optClasse||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>
@@ -835,44 +1112,39 @@ const columnsFr = [
                                 })}
                             </select>                          
                         </div>
-                        
 
-                       
-                            <div className={classes.gridTitleText} style={{width:"9.7vw", fontSize:"0.87vw", marginLeft:"1vw"}}>
-                                {t('type_bulletin_M')} :
-                            </div>
                         
-                            <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
-                                <select onChange={dropDownTypeReportHandler} id='optPeriode' className={classes.comboBoxStyle} style={{width:'10.3vw', marginBottom:1, marginLeft:"-2vw"}}>
-                                    {(optTypeReport||[]).map((option)=> {
-                                        return(
-                                            <option  value={option.value}>{option.label}</option>
-                                        );
-                                    })}
-                                </select>                          
+                        <div style={{display:"flex", flexDirection:"row",justifyContent:"space-evenly", width:"30vw", borderRadius:3, border:"solid 1px gray", marginLeft:"1vw", marginBottom:"0.3vh"}}>
+                            
+                            <div style={{display:"flex", flexDirection:"row"}}>
+                                <input type="radio" name="type_bulletin" checked={typeBulletin==1} onClick={()=>{changeBulletinType(1)}}/>
+                                <div style={{fontSize:"0.83vw", fontWeight:'bolder',marginLeft:"0.17vw"}}>{t('bulletin_sequentiel')}</div>
                             </div>
-                       
 
-                       
-                            <div className={classes.gridTitleText} style={{marginLeft:'1vw',width:"5.7vw", fontSize:"0.87vw"}}>
-                                {t('period_M')} :
+                            <div style={{marginLeft:"1vw", display:"flex", flexDirection:"row"}}>
+                                <input type="radio" name="type_bulletin" checked={typeBulletin==2} onClick={()=>{changeBulletinType(2)}}/>
+                                <div style={{fontSize:"0.83vw", fontWeight:'bolder',marginLeft:"0.17vw"}}>{t('bulletin_trimestriel')}</div>
                             </div>
-                        
-                            <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
-                                <select onChange={dropDownPeriodHandler} id='optPeriode' className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1, marginLeft:"-1vw"}}>
-                                    {(optPeriode||[]).map((option)=> {
-                                        return(
-                                            <option  value={option.value}>{option.label}</option>
-                                        );
-                                    })}
-                                </select>                          
+
+                            <div style={{marginLeft:"1vw", display:"flex", flexDirection:"row"}}>
+                                <input type="radio" name="type_bulletin" checked={typeBulletin==3} onClick={()=>{changeBulletinType(3)}}/>
+                                <div style={{fontSize:"0.83vw", fontWeight:'bolder',marginLeft:"0.17vw"}}>{t('bulletin_annuel')}</div>
                             </div>
-                       
-                        <div style={{display:"flex", flexDirection:"row", marginLeft:"2vw", marginRight:"-2vw" }}>
-                            <input type="checkbox" onClick={filterEleves}/> 
-                            <div style={{marginLeft:"0.3vw", width:"17vw"}}>{t('paid_fees')}</div>
                         </div>
- 
+
+                        <div className={classes.gridTitleText} style={{marginLeft:'1vw',width:"5.7vw", fontSize:"0.87vw"}}>
+                            {t('period_M')} :
+                        </div>
+                      
+                        <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
+                            <select onChange={dropDownPeriodHandler} id='optPeriode' className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1, marginLeft:"-1vw"}}>
+                                {(optPeriode||[]).map((option)=> {
+                                    return(
+                                        <option  value={option.value}>{option.label}</option>
+                                    );
+                                })}
+                            </select>                          
+                        </div>
                     </div>
                     
                                 
@@ -890,18 +1162,18 @@ const columnsFr = [
                             />
                         } */}
                       
-                       
-                    
+                                          
                         <CustomButton
-                            btnText={t('imprimer')}
+                            btnText= {t('generate')}
                             hasIconImg= {true}
-                            imgSrc='images/printing1.png'
-                            imgStyle = {classes.grdBtnImgStyle}  
+                            imgSrc='images/engrenage1.png'
+                            imgStyle = {classes.grdBtnImgStyleP}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printStudentList}
-                            disable={(isValid==false)}   
-                        />
+                            btnClickHandler={()=>generateBulletinHandler("none")}
+                            disable={(canGenerate==false)}   
+                        />                      
+                       
                     </div>
                         
                 </div>
@@ -918,23 +1190,12 @@ const columnsFr = [
                             generateHandler = {generateBulletinHandler}
                         />
                     } 
-
                     <StripedDataGrid
                         rows={gridRows}
-                        columns={(i18n.language == 'fr') ? columnsFr : columnsEn}
+                        columns={(typeBulletin == 1) ? columnsSeq : (typeBulletin == 2) ? columnsTrim : columnsYear}
 
-                        checkboxSelection = {true}
-                            
-                        onSelectionModelChange={(id)=>{
-                            selectedElevesIds = new Array(id);
-                            if(selectedElevesIds[0].length>0) setIsValid(true);
-                            else setIsValid(false);
-                            console.log("selections",selectedElevesIds);
-                        }}
-
-
-                        /* getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
-                        onCellClick={handleDeleteRow}
+                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        /*onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {
                                 //console.log(params.row);
@@ -964,11 +1225,11 @@ const columnsFr = [
                             params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
                         }
                     />
-                </div>
+                </div>                
             
             </div>
         </div>
         
     );
 } 
-export default PrintStudentReport;
+export default GenStudentReport;

@@ -189,7 +189,7 @@ function SideContent(props) {
                 </div>
 
                 <div id='annee' > 
-                    <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'9.3vw',borderColor:getSelectDropDownTextColr()}}
+                    <select id="activated_annee" className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'9.3vw',borderColor:getSelectDropDownTextColr()}}
                     onChange={onChangeAnneeHandler2} 
                     >
                         {(optAnnee||[]).map((option)=> {
