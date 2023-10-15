@@ -14,7 +14,6 @@ import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
 import CritSequentiel from '../modals/CritSequentiel';
-import CritTrimAndAnnuel from '../modals/CritTrimAndAnnuel';
 import BulletinSequence from '../reports/BulletinSequence';
 import {useTranslation} from "react-i18next";
 
@@ -800,17 +799,6 @@ const columnsFr = [
                     <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
                 </div>                    
             }
-
-            {(modalOpen==6) &&  
-                <CritTrimAndAnnuel
-                    typeBulletin    = {typeBulletin}
-                    classeId        = {CURRENT_CLASSE_ID}  
-                    tabPeriodes     = {[]}
-                    cancelHandler   = {()=>setModalOpen(0)}
-                    generateHandler = {generateBulletinHandler}
-                />
-            } 
-
 
             <div className={classes.inputRow} >
                 <div className={classes.formTitle}>
