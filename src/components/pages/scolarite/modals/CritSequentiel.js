@@ -18,6 +18,11 @@ const MSG_SUCCESS_FP =11;
 const MSG_WARNING_FP =12;
 const MSG_ERROR_FP   =13;
 
+var matierSansNote;
+var minTotalCoeff;
+var countMatSpe = 0;
+var matSpeSelected = [];
+
 var CRITERIA = {};
 
 function CriteresGeneration(props) {
@@ -40,12 +45,14 @@ function CriteresGeneration(props) {
     function getMatieresSpecialites(idClasse){
         console.log("classeId",idClasse);
         LIST_MATIERES_SPE = [];
+        matSpeSelected    = [];
         axiosInstance.post(`classe-matieres-specialite/`, {
             id_classe: idClasse,
         }).then((res)=>{      
             console.log("matieres", res.data, );          
             (res.data||[]).map((matiere)=>{
-                LIST_MATIERES_SPE.push({value:matiere.id, label:matiere.libelle});             
+                LIST_MATIERES_SPE.push({value:matiere.id, label:matiere.libelle});      
+                matSpeSelected.push('');       
             })
             setMatieresSpe(LIST_MATIERES_SPE);
         })
@@ -156,31 +163,33 @@ function CriteresGeneration(props) {
     }
 
     /************************************ Handlers ************************************/    
-    function checkMatiereSpeHandler(){
-
+    function checkMatiereSpeHandler(e){
+        console.log(matieresSpe)
+        var matiereIndex = matieresSpe.findIndex((elt)=>elt.value == parseInt(e.target.id));
+        if(matiereIndex==-1) return;
+        if(e.target.checked)  matSpeSelected[matiereIndex] = e.target.id;
+        else matSpeSelected[matiereIndex] = ""; 
     }
 
-    function matieresSansNoteHandler(){
+    function getFormData(){
+        CRITERIA = {};
+        var listMatSpe = [];
+        matSpeSelected.map((elt)=>{
+            if(elt!='') listMatSpe.push(elt);
+        })
 
-    }
-
-    function totalCoefMinHandler(){
-
-    }
-
-    function includeNCHandler(){
-
-    }
-
-    function includeCoefManquntsHandler(){
-
+        CRITERIA.id_matieres_ne_pouvant_manquer = document.getElementById('matSansNote').value;
+        CRITERIA.nb_max_coefs_manquants         = document.getElementById('totMaxCoef').value;
+        CRITERIA.nb_max_matieres_sans_note      = listMatSpe.join("²²");
+        console.log("resultats",CRITERIA);
     }
     
     
 
     function generateSeqBulletin(){
+        getFormData();
         props.cancelHandler();
-        props.generateHandler(CRITERIA)
+        props.generateHandler(CRITERIA);
     }
 
     /************************************ JSX Code ************************************/
@@ -225,15 +234,15 @@ function CriteresGeneration(props) {
                                     <div style={{width:'30.3vw',fontWeight:570}}>
                                         {t('Nbre Max de matières sans notes')}:  
                                     </div>
-                                    <input type='number' defaultValue={2} style={{fontSize:"1.03vw", textAlign:"center", width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  onClick={matieresSansNoteHandler}/>                                                                             
+                                    <input type='number' id="matSansNote" defaultValue={2} style={{fontSize:"1.03vw", textAlign:"center", width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  /*onClick={matieresSansNoteHandler}*//>                                                                             
                                     
                                 </div>
 
                                 <div className={classes.inputRowLeft}>                                        
                                     <div style={{width:'30.3vw',fontWeight:570}}>
-                                        {t('Total min de coefficients pris en compte')}:  
+                                        {t('Total max de coefficients manquants')}:  
                                     </div>
-                                    <input type='number' defaultValue={20} style={{fontSize:"1.03vw", textAlign:"center",width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  onClick={totalCoefMinHandler}/>                                       
+                                    <input type='number' id="totMaxCoef" defaultValue={3} style={{fontSize:"1.03vw", textAlign:"center",width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  /*onClick={totalCoefMinHandler}*//>                                       
                                 </div>
 
                                 {(matieresSpe.length>0) &&
@@ -248,7 +257,7 @@ function CriteresGeneration(props) {
                                     {(matieresSpe||[]).map((elt)=>{
                                         return (
                                             <div style={{width:"100%",display:"flex",flexDirection:"row", justifyContent:"center", alignItems:"center", flexWrap:"wrap" }}>
-                                                <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.3vh'}}   value={'presents'} name='matri' onClick={checkMatiereSpeHandler}/>
+                                                <input id={elt.value} type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.3vh'}}   value={'presents'} name='matri' onClick={checkMatiereSpeHandler}/>
                                                 <div style={{width:'fit-content',fontWeight:200, fontSize:"0.9vw", marginTop:'0.3vh'}}>
                                                     {elt.label}
                                                 </div>
@@ -257,7 +266,10 @@ function CriteresGeneration(props) {
                                     })}                                    
                                 </div>
 
-                                <div className={classes.inputRowLeft}>
+                                {/*CETTE PARTIE EST COMMENTEE */}
+                                
+                                
+                                {/* <div className={classes.inputRowLeft}>
                                     <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.47vh', }} value={'presents'} name='matri' onClick={includeNCHandler}/>
                                     <div style={{width:'20vw',fontWeight:800, color:"#062686de", fontSize:"0.9vw"}}>
                                         {t('Inclure les élèves non classés')}
@@ -267,7 +279,7 @@ function CriteresGeneration(props) {
                                     <div style={{width:'30vw',fontWeight:800, color:"#062686de", fontSize:"0.9vw"}}>
                                         {t('Calculer les moyennes de élèves non classés en incluant les coefs manquants')}
                                     </div>
-                                </div>
+                                </div> */}
 
                             </div>
 

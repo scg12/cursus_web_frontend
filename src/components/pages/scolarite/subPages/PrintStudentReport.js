@@ -14,7 +14,6 @@ import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
 import CritSequentiel from '../modals/CritSequentiel';
-import CritTrimAndAnnuel from '../modals/CritTrimAndAnnuel';
 import BulletinSequence from '../reports/BulletinSequence';
 import {useTranslation} from "react-i18next";
 
@@ -68,6 +67,8 @@ function PrintStudentReport(props) {
     const [optPeriode, setOptPeriode]       = useState([]);
     const [optTypeReport, setOptTypeReport] = useState([]);
     const [typeBulletin, setTypeBulletin] = useState(1);
+    const [seq1, setSeq1] = useState("1");
+    const [seq2, setSeq2] = useState("2");
     const selectedTheme = currentUiContext.theme;
 
     const tabPeriode =[
@@ -225,13 +226,14 @@ function PrintStudentReport(props) {
         }    
     }
 
-    function getTrimSequences(trimId){
-        var cur_trim = LIST_TRIMESTRES.find((trim)=> trim.id==trimId);
-        if(cur_trim != undefined){
-           var list_cur_seq = LIST_SEQUENCE.filter((seq)=>(seq.date_deb >= cur_trim.date_deb) && (seq.date_fin <= cur_trim.date_fin))
-            if(list_cur_seq!=undefined) return list_cur_seq;
-            else return [];
-        } else return [];
+
+    function getTrimSequences(trimestre){
+        console.log("trimestre",trimestre)
+       switch(trimestre){
+        case "Trimestre1": {setSeq1("1"); setSeq2("2");   return;} 
+        case "Trimestre2": {setSeq1("3"); setSeq2("4");   return;}
+        case "Trimestre3": {setSeq1("5"); setSeq2("6");   return;}
+       }
     }
 
 
@@ -271,139 +273,40 @@ function PrintStudentReport(props) {
 
    
     
-/*************************** DataGrid Declaration ***************************/    
-const columnsFr = [
-       
-    {
-        field: 'matricule',
-        headerName: 'MATRICULE',
-        width: 100,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: 'nom',
-        headerName: 'NOM ET PRENOM(S)',
-        width: 200,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'date_naissance',
-        headerName: 'DATE NAISSANCE',
-        width: 110,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: 'lieu_naissance',
-        headerName: 'LIEU NAISANCE',
-        width: 120,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: 'date_entree',
-        headerName: 'DATE ENTREE',
-        width: 110,
-        editable: false,
-        headerClassName:classes.GridColumnStyle,
-            
-    },
-
-    {
-        field: 'nom_parent',
-        headerName: 'NOM PARENT',
-        width: 200,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    
-    {
-        field: 'en_regle_Header',
-        headerName: 'EN REGLES ?',
-        width: 110,
-        editable: false,
-        headerClassName:classes.GridColumnStyle,
-            
-    },
-
-    {
-        field: 'id',
-        headerName: '',
-        width: 15,
-        editable: false,
-        hide : true,
-        headerClassName:classes.GridColumnStyle,
-        renderCell: (params)=>{
-            return(
-                <div className={classes.inputRow}>
-                    <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            event.ignore = true;
-                        }}
-                        alt=''
-                    />
-                </div>
-            )}           
-            
-        },
-
-    ];
-    
-
-    const columnsEn = [
-       
+/*************************** DataGrid Declaration ***************************/   
+    const columnsSeq = [
         {
             field: 'matricule',
-            headerName: 'REG. CODE',
+            headerName: t('matricule_short_M'),
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
         {
             field: 'nom',
-            headerName: 'NAME AND SURNAME',
+            headerName: t('displayedName_M'),
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-    
+
         {
-            field: 'date_naissance',
-            headerName: 'BIRTH DATE',
-            width: 110,
+            field: 'rang',
+            headerName: "N°",
+            width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
         {
-            field: 'lieu_naissance',
-            headerName:'BIRTH PLACE',
-            width: 120,
+            field: 'moyenne',
+            headerName: t('moySeq_M'),
+            width: 125,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-        {
-            field: 'date_entree',
-            headerName:'REG. YEAR',
-            width: 110,
-            editable: false,
-            headerClassName:classes.GridColumnStyle,
-                
-        },
-    
-        {
-            field: 'nom_parent',
-            headerName:'PARENT NAME',
-            width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-      
+
         {
             field: 'en_regle_Header',
             headerName:'FEES PAID ?',
@@ -412,33 +315,398 @@ const columnsFr = [
             headerClassName:classes.GridColumnStyle,
                 
         },
-    
+        
         {
             field: 'id',
             headerName: '',
             width: 15,
             editable: false,
             hide:true,
-            headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{
-                return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
-                    </div>
-                )}           
+            headerClassName:classes.GridColumnStyleP,
                 
-            },
+        }        
+    ];
+
+    const columnsSeqNC = [
+        {
+            field: 'matricule',
+            headerName: t('matricule_short_M'),
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'nom',
+            headerName: t('displayedName_M'),
+            width: 200,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'rang',
+            headerName: "N°",
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'moyenne',
+            headerName: t('moySeq_M'),
+            width: 125,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'en_regle_Header',
+            headerName:'FEES PAID ?',
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC,
+                
+        },
         
-        ];
-     
+        {
+            field: 'id',
+            headerName: '',
+            width: 15,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyleNC,
+                
+        }        
+    ];
+
+
+    const columnsTrim = [
+        
+        {
+            field: 'matricule',
+            headerName: t('matricule_short_M'),
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'nom',
+            headerName: t('displayedName_M'),
+            width: 200,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'rang',
+            headerName: t("rang_M"),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id_seq1',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field: 'moy_seq1',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id_seq2',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field: 'moy_seq2',
+            headerName:   t('moy_seq_M')+seq2,
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'moyenne',
+            headerName: t('moyTrin_M'),
+            width: 127,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'en_regle_Header',
+            headerName:'FEES PAID ?',
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyle,                
+        },        
+        
+        {
+            field: 'id',
+            headerName: '',
+            width: 15,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle,                
+        },
+    
+    ];
+    
+
+    const columnsTrimNC = [
+        
+        {
+            field: 'matricule',
+            headerName: t('matricule_short_M'),
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+        {
+            field: 'nom',
+            headerName: t('displayedName_M'),
+            width: 200,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'rang',
+            headerName: t("rang_M"),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'id_seq1',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyleNC
+        },
+    
+        {
+            field: 'moy_seq1',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'id_seq2',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyleNC
+        },
+    
+        {
+            field: 'moy_seq2',
+            headerName:   t('moy_seq_M')+seq2,
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'moyenne',
+            headerName: t('moyTrin_M'),
+            width: 127,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'en_regle_Header',
+            headerName:'FEES PAID ?',
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC,                
+        },        
+        
+        {
+            field: 'id',
+            headerName: '',
+            width: 15,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyleNC,                
+        },
+    
+    ];
+    
+
+    const columnsYear = [
+       
+        {
+            field: 'matricule',
+            headerName: t('matricule_short_M'),
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'nom',
+            headerName: t('displayedName_M'),
+            width: 200,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'rang',
+            headerName: "N°",
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field: 'moy_trim1',
+            headerName: t('moy_trim_M')+'1',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field: 'moy_trim2',
+            headerName: t('moy_trim_M')+'2',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'moy_trim3',
+            headerName: t('moy_trim_M')+'3',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'moyenne',
+            headerName: t('moyGen_M'),
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'en_regle_Header',
+            headerName:'FEES PAID ?',
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyle,
+                
+        },
+
+        {
+            field: 'id',
+            headerName: '',
+            width: 15,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle,               
+        },        
+    ];
+
+    const columnsYearNC = [
+       
+        {
+            field: 'matricule',
+            headerName: t('matricule_short_M'),
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+        {
+            field: 'nom',
+            headerName: t('displayedName_M'),
+            width: 200,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'rang',
+            headerName: "N°",
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+    
+        {
+            field: 'moy_trim1',
+            headerName: t('moy_trim_M')+'1',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+    
+        {
+            field: 'moy_trim2',
+            headerName: t('moy_trim_M')+'2',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'moy_trim3',
+            headerName: t('moy_trim_M')+'3',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'moyenne',
+            headerName: t('moyGen_M'),
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
+        {
+            field: 'en_regle_Header',
+            headerName:'FEES PAID ?',
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC,
+                
+        },
+
+        {
+            field: 'id',
+            headerName: '',
+            width: 15,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyleNC,               
+        },        
+    ];
+
 /*************************** Theme Functions ***************************/
     function getGridButtonStyle()
     { // Choix du theme courant
@@ -459,60 +727,19 @@ const columnsFr = [
             default: return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P;
         }
     }   
+
+    function getPuceByTheme()
+    { // Choix du theme courant
+        switch(selectedTheme){
+            case 'Theme1': return 'puceN1.png' ;
+            case 'Theme2': return 'puceN2.png' ;
+            case 'Theme3': return 'puceN3.png' ;
+            default: return 'puceN1.png' ;
+        }
+    }
     
 /*************************** Handler functions ***************************/
     
-
-    function initFormInputs(){
-        var inputs=[];
-        inputs[0] = '';
-        inputs[1] = '';
-        inputs[2] = '';
-        inputs[3] = '';
-        inputs[4] = '';
-        inputs[5] = '';       
-        inputs[6] = '';
-        inputs[7] = '';        
-        inputs[8] = '';
-        inputs[9] = '';
-        inputs[10]= '';
-        inputs[11]= '';
-        inputs[12]='';
-        inputs[13]= '';
-       
-        currentUiContext.setFormInputs(inputs)
-    }
-
-    function handleEditRow(row){       
-        var inputs=[];
-        
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
-        console.log("laligne",row);
-        currentUiContext.setFormInputs(inputs)
-        setModalOpen(2);
-
-    }
-
     function consultRowData(row){
         var inputs=[];
        
@@ -629,99 +856,11 @@ const columnsFr = [
         setModalOpen(0);
     }
 
-    function genSeqBulletin(criteria){
-        setModalOpen(5);
-        axiosInstance.post(`generer-bulletin-classe/`, {
-            id_sousetab : currentAppContext.currentEtab,
-            id_classe   : CURRENT_CLASSE_ID,
-            id_sequence : CURRENT_PERIOD_ID,
-            // sous la forme 1²²2...
-            id_matieres_ne_pouvant_manquer : criteria.id_matieres_ne_pouvant_manquer,
-            nb_max_matieres_sans_note      : criteria.nb_max_matieres_sans_note,
-            nb_max_coefs_manquants         : criteria.nb_max_coefs_manquants           
-        }).then((res)=>{
-            setModalOpen(1);    
-            
-            // chosenMsgBox = MSG_WARNING_NOTES;
-            // currentUiContext.showMsgBox({
-            //     visible:true, 
-            //     msgType:"info", 
-            //     msgTitle:t("error_M"), 
-            //     message:t("no_activated_period")
-            // })       
-           
-        })
-    }
-
-    function genTrimBulletin(){
-        setModalOpen(5);
-        axiosInstance.post(`generer-bulletin-trimestre-classe/`, {
-            id_sousetab  : currentAppContext.currentEtab,
-            id_classe    : CURRENT_CLASSE_ID,
-            id_trimestre : CURRENT_PERIOD_ID  ,
-        }).then((res)=>{
-            setModalOpen(2);    
-            // tabTrimestres = [];               
-            // tempTable = [...res.data];                         
-            // tempTable.map((seq)=>{
-            //     if(seq.is_active == true){
-            //         tabTrimestres.push({value:seq.id, label:seq.libelle});
-            //     }                              
-            // })    
-           
-        })
-    }
-
-    function genYearBulletin(){
-        setModalOpen(5);
-        axiosInstance.post(`generer-bulletin-annee-classe/`, {
-            id_sousetab : currentAppContext.currentEtab,
-            id_classe   : CURRENT_CLASSE_ID,
-        }).then((res)=>{
-            setModalOpen(3);    
-            // tabTrimestres = [];               
-            // tempTable = [...res.data];                         
-            // tempTable.map((seq)=>{
-            //     if(seq.is_active == true){
-            //         tabTrimestres.push({value:seq.id, label:seq.libelle});
-            //     }                              
-            // })    
-           
-        })
-    }
-
-
-    const generateBulletinHandler=(criteria)=>{       
-        switch(typeBulletin){
-            case 1:{
-                if(criteria=="none") setModalOpen(3);
-                else genSeqBulletin(criteria);
-                return;
-            }            
-
-            case 2:{
-                if(criteria=="none") {
-                    setModalOpen(6);
-                }
-                else genTrimBulletin(criteria);
-                return;
-            }
-
-            case 3:{
-                if(criteria=="none") {
-                    
-                    setModalOpen(6);
-                }
-                else genYearBulletin(criteria);
-                return;
-            }
-        }
-    }
- 
+    
     /********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
     
-    const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+    const StripedDataGrid1 = styled(DataGrid)(({ theme }) => ({
       [`& .${gridClasses.row}.even`]: {
         backgroundColor: theme.palette.grey[200],
         '&:hover, &.Mui-hovered': {
@@ -753,6 +892,32 @@ const columnsFr = [
         },
       },
     }));
+
+    const StripedDataGrid2 = styled(DataGrid)(({ theme }) => ({
+        [`& .${gridClasses.row}.even`]: {
+          backgroundColor: '#dcb5b5',
+          '&:hover, &.Mui-hovered': {
+            backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+            '@media (hover: none)': {
+              backgroundColor: 'transparent',
+            },
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#dcb5b5',
+            '&:hover, &.Mui-hovered': {
+              backgroundColor: '#dcb5b5',
+              // Reset on touch devices, it doesn't add specificity
+              '@media (hover: none)': {
+                backgroundColor: alpha(
+                  theme.palette.primary.main,
+                  ODD_OPACITY + theme.palette.action.selectedOpacity,
+                ),
+              },
+            },
+          },
+        },
+    }));
+  
 
     return (
         <div className={classes.formStyleP}>
@@ -800,17 +965,6 @@ const columnsFr = [
                     <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
                 </div>                    
             }
-
-            {(modalOpen==6) &&  
-                <CritTrimAndAnnuel
-                    typeBulletin    = {typeBulletin}
-                    classeId        = {CURRENT_CLASSE_ID}  
-                    tabPeriodes     = {[]}
-                    cancelHandler   = {()=>setModalOpen(0)}
-                    generateHandler = {generateBulletinHandler}
-                />
-            } 
-
 
             <div className={classes.inputRow} >
                 <div className={classes.formTitle}>
@@ -909,19 +1063,88 @@ const columnsFr = [
                 
 
                
-                <div className={classes.gridDisplay} >
+                <div  id='elev-classe' className={classes.gridDisplay} >
                     {(modalOpen!=0) && <BackDrop/>}
-                    {(modalOpen==3) &&  
-                        <CritSequentiel 
-                            classeId={CURRENT_CLASSE_ID}  
-                            cancelHandler   = {()=>setModalOpen(0)}
-                            generateHandler = {generateBulletinHandler}
-                        />
-                    } 
-
-                    <StripedDataGrid
+                   
+                    <StripedDataGrid1 
+                       
+                       
                         rows={gridRows}
-                        columns={(i18n.language == 'fr') ? columnsFr : columnsEn}
+                        //columns={(i18n.language == 'fr') ? columnsFr : columnsEn}
+                        columns={(typeBulletin == 1) ? columnsSeq : (typeBulletin == 2) ? columnsTrim : columnsYear}
+
+                        checkboxSelection = {true}
+                            
+                        onSelectionModelChange={(id)=>{
+                            selectedElevesIds = new Array(id);
+                            if(selectedElevesIds[0].length>0) setIsValid(true);
+                            else setIsValid(false);
+                            console.log("selections",selectedElevesIds);
+                        }}
+
+
+                        /* getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        onCellClick={handleDeleteRow}
+                        onRowClick={(params,event)=>{
+                            if(event.ignore) {
+                                //console.log(params.row);
+                                handleEditRow(params.row)
+                            }
+                        }}*/  
+                        
+                        // onRowDoubleClick ={(params, event) => {
+                        //     event.defaultMuiPrevented = true;
+                        //     consultRowData(params.row)
+                        // }}
+                        
+                        //loading={loading}
+                        //{...data}
+                        sx={{
+                            //boxShadow: 2,
+                            //border: 2,
+                            //borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                                color: 'primary.main',
+                                border:0,
+                                borderColor:'none'
+                            },
+                            
+                        }}
+                        getRowClassName={(params) =>
+                            params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+                        }
+                    />
+                </div>
+
+                
+                <div style={{width:"100%", fontSize:"0.9vw", fontWeight:"800", display:'flex', flexDirection:'row', marginTop:'1.3vh', marginBottom:'0.3vh', justifyContent:'space-between', borderBottom:'solid', borderBottomWidth:2}} >
+                    <div style={{display:'flex', flexDirection:'row',justifyContent:'flex-start'}}>
+                        <img src={'images/' + getPuceByTheme()} className={classes.PuceStyle}/>
+                        {t("ELEVES NON CLASSES (ORDRE ALPHABETIQUE) ")}
+                    </div>
+                    
+                        
+                    <div className={classes.gridAction}> 
+                        <CustomButton
+                            btnText={t('imprimer')}
+                            hasIconImg= {true}
+                            imgSrc='images/printing1.png'
+                            imgStyle = {classes.grdBtnImgStyle}  
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.gridBtnTextStyle}
+                            btnClickHandler={printStudentList}
+                            disable={(isValid==false)}   
+                        />
+                    </div>
+                    </div>
+
+                <div  id='elev-non-classe' className={classes.gridDisplay} style={{maxHeight:'23vh'}} >
+                    {(modalOpen!=0) && <BackDrop/>}
+                   
+                    <StripedDataGrid2
+                        rows={gridRows}
+                        //columns={(i18n.language == 'fr') ? columnsFr : columnsEn}
+                        columns={(typeBulletin == 1) ? columnsSeqNC : (typeBulletin == 2) ? columnsTrimNC : columnsYearNC}
 
                         checkboxSelection = {true}
                             

@@ -14,7 +14,7 @@ import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
 import CritSequentiel from '../modals/CritSequentiel';
-import CritTrimAndAnnuel from '../modals/CritTrimAndAnnuel';
+import ResultatsGeneration from '../modals/ResultatsGeneration';
 import BulletinSequence from '../reports/BulletinSequence';
 import {useTranslation} from "react-i18next";
 
@@ -29,6 +29,7 @@ var CURRENT_ANNEE_SCOLAIRE;
 
 let CURRENT_CLASSE_ID;
 let CURRENT_PERIOD_ID;
+let CURRENT_PERIOD_LABEL;
 let CURRENT_CLASSE_LABEL;
 var selectedElevesIds = new Array();
 
@@ -54,6 +55,12 @@ var tabCurrentAnnee = [];
 
 var LIST_SEQUENCE   = [];
 var LIST_TRIMESTRES = [];
+
+var periodes_considerees = [];
+var classer   = [];
+var enCompte1 = [];
+var enCompte2 = [];
+var enCompte3 = [];
 
 
 function GenStudentReport(props) {
@@ -172,6 +179,11 @@ function GenStudentReport(props) {
         //     //console.log(gridRows);
         // })  
         // return listEleves; 
+        dataTrim.map((elt)=>{
+            enCompte1.push(elt.id_seq1);
+            enCompte2.push(elt.id_seq2);
+            classer.push(1);
+        })
         setGridRows(dataTrim);
     }
 
@@ -188,12 +200,20 @@ function GenStudentReport(props) {
         //     //setGridRows(listEleves);
         //     //console.log(gridRows);
         // })  
-        // return listEleves;         
+        // return listEleves; 
+        
+        dataAnnee.map((elt)=>{
+            enCompte1.push(elt.id_trim1);
+            enCompte2.push(elt.id_trim2);
+            enCompte3.push(elt.id_trim3);
+            classer.push(1);
+        })        
         setGridRows(dataAnnee);
     }
 
 
     function getStudentGenerationInfo(classeId, periode, typeBulletin){
+        enCompte1 = []; enCompte2 = []; enCompte3 = []; classer = [];
         if(classeId!=undefined && periode!=undefined) {
             switch(typeBulletin){
                 case 1 : {
@@ -297,9 +317,9 @@ function GenStudentReport(props) {
 
     function getActivatedEvalPeriods(typebultin){       
         switch(typebultin){
-            case 1: {setOptPeriode(tabSequences);    return;} 
-            case 2: {setOptPeriode(tabTrimestres);   return;}
-            case 3: {setOptPeriode(tabCurrentAnnee); return;}
+            case 1: {setOptPeriode(tabSequences);       return;} 
+            case 2: {setOptPeriode(tabTrimestres);      return;}
+            case 3: {setOptPeriode(tabCurrentAnnee);    return;}
         }    
     }
 
@@ -335,8 +355,8 @@ function GenStudentReport(props) {
         // if(e.target.value != optPeriode[0].value){
             CURRENT_PERIOD_ID = e.target.value; 
             if(typeBulletin==2){
-                var selected_periode = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
-                getTrimSequences(selected_periode);
+                CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
+                getTrimSequences(CURRENT_PERIOD_LABEL);
             }
             getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
            
@@ -347,34 +367,6 @@ function GenStudentReport(props) {
     }
 
 
-    function ClasserEleveAnnuelHandler(e){
-
-    }
-
-    function ClasserEleveTrimHandler(e){
-        
-    }
-
-
-    function updateSeq1(rang){
-
-    }
-
-    function updateSeq2(rang){
-        
-    }
-
-    function updateTrim1(rang){
-
-    }
-
-    function updateTrim2(rang){
-        
-    }
-
-    function updateTrim3(rang){
-        
-    }
     
 /*************************** DataGrid Declaration ***************************/    
 /*---DATA*/
@@ -386,15 +378,15 @@ var dataSeq   = [
 ];
 
 var dataTrim  = [
-    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        moy_seq1:"11.75", moy_seq2:"12.5",  enCompte:'1²²2', toBeClaased:true},
-    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     moy_seq1:"07.75", moy_seq2:"13.75", enCompte:'1²²2', toBeClaased:true},
-    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", moy_seq1:"15.75", moy_seq2:"12.75", enCompte:'1²²2', toBeClaased:true},
+    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        id_seq1:1, moy_seq1:"11.75",  id_seq2:2, moy_seq2:"12.5",  enCompte1:'1',enCompte2:'2', toBeClassed:1},
+    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     id_seq1:1, moy_seq1:"07.75",  id_seq2:2, moy_seq2:"13.75", enCompte1:'1',enCompte2:'2', toBeClassed:1},
+    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", id_seq1:1, moy_seq1:"15.75",  id_seq2:2, moy_seq2:"12.75", enCompte1:'1',enCompte2:'2', toBeClassed:1},
 ];
 
 var dataAnnee = [
-    {rang:1, id:124, matricule:"HT25647R3", nom:"Mballa alphonse",        moy_trim1:"11.75", moy_trim2:"12.75", moy_trim3:"07.5", enCompte:'1²²2²²3', toBeClaased:true},
-    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     moy_trim1:"11.75", moy_trim2:"12.75", moy_trim3:"08.5", enCompte:'1²²2²²3', toBeClaased:true},
-    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", moy_trim1:"11.75", moy_trim2:"12.75", moy_trim3:"05.5", enCompte:'1²²2²²3', toBeClaased:true},
+    {rang:1, id:124, matricule:"HT25647R3", nom:"Mballa alphonse",        id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"07.5", enCompte:'1²²2²²3', toBeClassed:1},
+    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"08.5", enCompte:'1²²2²²3', toBeClassed:1},
+    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"05.5", enCompte:'1²²2²²3', toBeClassed:1},
 ];
 
 
@@ -402,7 +394,7 @@ var dataAnnee = [
 const columnsSeq = [
     {
         field: 'rang',
-        headerName: "N",
+        headerName: "N°",
         width: 80,
         editable: false,
         headerClassName:classes.GridColumnStyle
@@ -426,7 +418,7 @@ const columnsSeq = [
 
     {
         field: 'moyenne',
-        headerName: t('moyenne_M'),
+        headerName: t('moySeq_M'),
         width: 120,
         editable: false,
         headerClassName:classes.GridColumnStyle
@@ -440,7 +432,7 @@ const columnsSeq = [
     },
 
     {
-        field: 'classserl',
+        field: 'classerl',
         headerName: t('coef_manquants_M'),
         width: 170,
         editable: false,
@@ -448,7 +440,7 @@ const columnsSeq = [
     },
 
     {
-        field: 'classser',
+        field: 'classer',
         headerName: t('matieres_spe_manquante_M'),
         width: 170,
         editable: false,
@@ -463,28 +455,14 @@ const columnsSeq = [
         editable: false,
         hide:true,
         headerClassName:classes.GridColumnStyleP,
-        renderCell: (params)=>{
-            return(
-                <div className={classes.inputRow}>
-                    <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            event.ignore = true;
-                        }}
-                        alt=''
-                    />
-                </div>
-            )}         
-            
+         
         },
     ];
 
     const columnsTrim = [
         {
             field: 'rang',
-            headerName: "N",
+            headerName: "N°",
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -503,12 +481,30 @@ const columnsSeq = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'id_seq1',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
     
         {
             field: 'moy_seq1',
             headerName:  t('moy_seq_M')+seq1,
             width: 120,
             editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id_seq2',
+            headerName:  t('moy_seq_M')+seq1,
+            width: 120,
+            editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
     
@@ -530,11 +526,11 @@ const columnsSeq = [
                 return(
                     <div className={classes.inputRow}>
                         <div style={{display:"flex",flexDirection:"row"}}>
-                            <input id={params.row.id_seq1} type='checkbox' checked={true} onClick={()=>updateSeq1(params.row.rang)}/>
+                            <input id={params.row.id_seq1} type='checkbox' defaultChecked={true} onClick={(e)=>{(e.target.checked) ? enCompte1[params.row.rang-1] = params.row.id_seq1:enCompte1[params.row.rang-1]=""}}/>
                             <div>{"Seq"+seq1}</div>
                         </div>
                         <div style={{marginLeft:"1.7vw",display:"flex",flexDirection:"row"}}>
-                            <input id={params.row.id_seq2} type='checkbox' checked={true} onClick={()=>updateSeq2(params.row.rang)}/>
+                            <input id={params.row.id_seq2} type='checkbox' defaultChecked={true} onClick={(e)=>{(e.target.checked) ? enCompte2[params.row.rang-1] = params.row.id_seq1:enCompte2[params.row.rang-1]=""}}/>
                             <div>{"Seq"+seq2}</div>
                         </div>
                     </div>
@@ -542,9 +538,9 @@ const columnsSeq = [
             }           
                 
         },
-    
+
         { 
-            field: 'classser',
+            field: 'classer',
             headerName: t('class_student_M'),
             width: 110,
             editable: false,
@@ -552,7 +548,7 @@ const columnsSeq = [
             renderCell: (params)=>{
                 return(
                     <div className={classes.inputRow}>
-                        <select onChange={ClasserEleveTrimHandler} id='a_changer' className={classes.comboBoxStyle} style={{width:'4.3vw'}}>
+                        <select onChange={(e)=>{classer[params.row.rang-1] = e.target.value}} id='a_changer' className={classes.comboBoxStyle} style={{width:'4.3vw'}}>
                                 {(optOuiNon||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>
@@ -573,24 +569,10 @@ const columnsSeq = [
             editable: false,
             hide:true,
             headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{
-                return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
-                    </div>
-                )}           
-                
-            },
+               
+        },
     
-        ];
+    ];
     
     
 
@@ -598,7 +580,7 @@ const columnsSeq = [
        
         {
             field: 'rang',
-            headerName: "N",
+            headerName: "N°",
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -621,7 +603,7 @@ const columnsSeq = [
     
         {
             field: 'moy_trim1',
-            headerName: t('moy_trim1_M'),
+            headerName: t('moy_trim_M')+'1',
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -629,7 +611,7 @@ const columnsSeq = [
     
         {
             field: 'moy_trim2',
-            headerName: t('moy_trim2_M'),
+            headerName: t('moy_trim_M')+'2',
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -637,7 +619,7 @@ const columnsSeq = [
 
         {
             field: 'moy_trim3',
-            headerName: t('moy_trim3_M'),
+            headerName: t('moy_trim_M')+'3',
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -653,15 +635,15 @@ const columnsSeq = [
                 return(
                     <div className={classes.inputRow}>
                         <div style={{display:"flex",flexDirection:"row"}}>
-                            <input id={params.row.id_trim1} type='checkbox' checked={true} onClick={()=>updateTrim1(params.row.rang)}/>
+                            <input id={params.row.id_trim1} type='checkbox' defaultChecked={true} onClick={(e)=>{(e.target.checked) ? enCompte1[params.row.rang-1] = params.row.id_trim1:enCompte1[params.row.rang-1]=""}}/>
                             <div>{"Trim1"}</div>
                         </div>
                         <div style={{marginLeft:"1.7vw",display:"flex",flexDirection:"row"}}>
-                            <input id={params.row.id_trim2} type='checkbox' checked={true} onClick={()=>updateTrim2(params.row.rang)}/>
+                            <input id={params.row.id_trim2} type='checkbox' defaultChecked={true} onClick={(e)=>{(e.target.checked) ? enCompte2[params.row.rang-1] = params.row.id_trim2:enCompte2[params.row.rang-1]=""}}/>
                             <div>{"Trim2"}</div>
                         </div>
                         <div style={{marginLeft:"1.7vw",display:"flex",flexDirection:"row"}}>
-                            <input id={params.row.id_trim3} type='checkbox' checked={true} onClick={()=>updateTrim3(params.row.rang)}/>
+                            <input id={params.row.id_trim3} type='checkbox' defaultChecked={true} onClick={(e)=>{(e.target.checked) ? enCompte3[params.row.rang-1] = params.row.id_trim3:enCompte3[params.row.rang-1]=""}}/>
                             <div>{"Trim3"}</div>
                         </div>
                     </div>
@@ -669,7 +651,7 @@ const columnsSeq = [
             }
                 
         },
-    
+
         {
             field: 'classser',
             headerName: t('class_student_M'),
@@ -679,7 +661,7 @@ const columnsSeq = [
             renderCell: (params)=>{
                 return(
                     <div className={classes.inputRow}>
-                        <select onChange={ClasserEleveAnnuelHandler} id='a_changer' className={classes.comboBoxStyle} style={{width:'4.3vw'}}>
+                        <select onChange={(e)=>{classer[params.row.rang-1] = e.target.value}} id='a_changer' className={classes.comboBoxStyle} style={{width:'4.3vw'}}>
                                 {(optOuiNon||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>
@@ -698,25 +680,11 @@ const columnsSeq = [
             width: 15,
             editable: false,
             hide:true,
-            headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{
-                return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
-                    </div>
-                )}           
+            headerClassName:classes.GridColumnStyle,               
                 
-            },
+        },
         
-        ];
+    ];
      
 /*************************** Theme Functions ***************************/
     function getGridButtonStyle()
@@ -907,62 +875,122 @@ const columnsSeq = [
     }
 
     function genSeqBulletin(criteria){
-        setModalOpen(5);
-        axiosInstance.post(`generer-bulletin-classe/`, {
-            id_sousetab : currentAppContext.currentEtab,
-            id_classe   : CURRENT_CLASSE_ID,
-            id_sequence : CURRENT_PERIOD_ID,
-            // sous la forme 1²²2...
-            id_matieres_ne_pouvant_manquer : criteria.id_matieres_ne_pouvant_manquer,
-            nb_max_matieres_sans_note      : criteria.nb_max_matieres_sans_note,
-            nb_max_coefs_manquants         : criteria.nb_max_coefs_manquants           
-        }).then((res)=>{
-            setModalOpen(1);    
+        console.log("criteres",criteria, CURRENT_PERIOD_ID);
+        //-- A ACTIVER LE MOMENT VENU
+        // setModalOpen(5);
+        // axiosInstance.post(`generer-bulletin-classe/`, {
+        //     id_sousetab : currentAppContext.currentEtab,
+        //     id_classe   : CURRENT_CLASSE_ID,
+        //     id_sequence : CURRENT_PERIOD_ID,
+        //     id_matieres_ne_pouvant_manquer : criteria.id_matieres_ne_pouvant_manquer,
+        //     nb_max_matieres_sans_note      : criteria.nb_max_matieres_sans_note,
+        //     nb_max_coefs_manquants         : criteria.nb_max_coefs_manquants                       
+        // }).then((res)=>{
+        //     setModalOpen(1);    
             
-            // chosenMsgBox = MSG_WARNING_NOTES;
-            // currentUiContext.showMsgBox({
-            //     visible:true, 
-            //     msgType:"info", 
-            //     msgTitle:t("error_M"), 
-            //     message:t("no_activated_period")
-            // })       
+        //     // chosenMsgBox = MSG_WARNING_NOTES;
+        //     // currentUiContext.showMsgBox({
+        //     //     visible:true, 
+        //     //     msgType:"info", 
+        //     //     msgTitle:t("error_M"), 
+        //     //     message:t("no_activated_period")
+        //     // })       
            
-        })
+        // })
     }
 
     function genTrimBulletin(){
-        setModalOpen(5);
-        axiosInstance.post(`generer-bulletin-trimestre-classe/`, {
-            id_sousetab  : currentAppContext.currentEtab,
-            id_classe    : CURRENT_CLASSE_ID,
-            id_trimestre : CURRENT_PERIOD_ID  ,
-        }).then((res)=>{
-            setModalOpen(2);    
-            // tabTrimestres = [];               
-            // tempTable = [...res.data];                         
-            // tempTable.map((seq)=>{
-            //     if(seq.is_active == true){
-            //         tabTrimestres.push({value:seq.id, label:seq.libelle});
-            //     }                              
-            // })    
-           
-        })
+        var id_eleves = []; periodes_considerees = [];        
+
+        if(gridRows.length>0){
+            gridRows.map((elt, index)=>{
+                id_eleves.push(elt.id);
+                periodes_considerees[index] = (enCompte1[index].length==0)?  
+                enCompte2[index] 
+                :(enCompte2[index].length==0) ? 
+                enCompte1[index] 
+                : enCompte1[index] +'²²'+ enCompte2[index];
+            });
+
+            var eleves_ids     =  id_eleves.join('²²');
+            var seq_consideree =  periodes_considerees.join('&');
+            var toBeClassed    =  classer.join('²²');
+
+            console.log("data",eleves_ids,seq_consideree, toBeClassed);
+
+            setModalOpen(6);
+            // axiosInstance.post(`generer-bulletin-trimestre-classe/`, {
+            //     id_sousetab  : currentAppContext.currentEtab,
+            //     id_classe    : CURRENT_CLASSE_ID,
+            //     id_trimestre : CURRENT_PERIOD_ID,
+            //     id_eleves    : eleves_ids,              
+            //     periodes_considerees : seq_consideree,
+            //     classer      : toBeClassed
+            // }).then((res)=>{
+            //     setModalOpen(2);    
+            
+            
+            // })
+        }
+    }
+
+    function getListTrimCons(trim1,trim2,trim3){
+        if(trim1.length==0){
+            if(trim2.length==0){
+                if(trim3.length==0)return '';
+                else return trim3;
+            } else {
+                if(trim3.length==0) return trim2
+                else return trim2+'²²'+trim3
+            }
+        } else{
+            if(trim2.length==0){
+                if(trim3.length==0)return trim1;
+                else return trim1+'²²'+trim3;
+            } else {
+                if(trim3.length==0) return trim1+'²²'+trim2
+                else return trim1+'²²'+trim2+'²²'+trim3
+            }
+        }
+
     }
 
     function genYearBulletin(){
-        setModalOpen(5);
+        var id_eleves = []; periodes_considerees = [];        
+
+        if(gridRows.length>0){
+            gridRows.map((elt, index)=>{
+                id_eleves.push(elt.id);
+                periodes_considerees[index] = getListTrimCons(enCompte1[index], enCompte2[index], enCompte3[index]);
+                
+            });
+
+            var eleves_ids      =  id_eleves.join('²²');
+            var trim_consideree =  periodes_considerees.join('&');
+            var toBeClassed     =  classer.join('²²');
+
+            console.log("data",eleves_ids,trim_consideree, toBeClassed);
+
+            setModalOpen(6);
+            // axiosInstance.post(`generer-bulletin-annee-classe/`, {
+            //     id_sousetab          : currentAppContext.currentEtab,
+            //     id_classe            : CURRENT_CLASSE_ID,
+            //     id_trimestre         : CURRENT_PERIOD_ID,
+            //     id_eleves            : eleves_ids,              
+            //     periodes_considerees : trim_consideree,
+            //     classer              : toBeClassed
+            // }).then((res)=>{
+            //     console.log(res)
+            //     setModalOpen(2);    
+            // })
+        }
+        setModalOpen(6);
         axiosInstance.post(`generer-bulletin-annee-classe/`, {
             id_sousetab : currentAppContext.currentEtab,
             id_classe   : CURRENT_CLASSE_ID,
         }).then((res)=>{
+            console.log(res)
             setModalOpen(3);    
-            // tabTrimestres = [];               
-            // tempTable = [...res.data];                         
-            // tempTable.map((seq)=>{
-            //     if(seq.is_active == true){
-            //         tabTrimestres.push({value:seq.id, label:seq.libelle});
-            //     }                              
-            // })    
            
         })
     }
@@ -977,19 +1005,12 @@ const columnsSeq = [
             }            
 
             case 2:{
-                if(criteria=="none") {
-                    setModalOpen(6);
-                }
-                else genTrimBulletin(criteria);
-                return;
+                genTrimBulletin();
+               return;
             }
 
             case 3:{
-                if(criteria=="none") {
-                    
-                    setModalOpen(6);
-                }
-                else genYearBulletin(criteria);
+                genYearBulletin();
                 return;
             }
         }
@@ -1078,15 +1099,17 @@ const columnsSeq = [
                 </div>                    
             }
 
-            {(modalOpen==6) &&  
-                <CritTrimAndAnnuel
-                    typeBulletin    = {typeBulletin}
-                    classeId        = {CURRENT_CLASSE_ID}  
-                    tabPeriodes     = {[]}
-                    cancelHandler   = {()=>setModalOpen(0)}
-                    generateHandler = {generateBulletinHandler}
-                />
-            } 
+             {(modalOpen==6) &&  
+                <ResultatsGeneration
+                    typeBulletin     = {typeBulletin}
+                    bullPeriodeLabel = {optPeriode[0].label}
+                    annee            = {CURRENT_ANNEE_SCOLAIRE}
+                    classeId         = {CURRENT_CLASSE_ID}  
+                    tabPeriodes      = {[]}
+                    cancelHandler    = {()=>setModalOpen(0)}
+                    generateHandler  = {generateBulletinHandler}
+                /> 
+            }  
 
 
             <div className={classes.inputRow}>                

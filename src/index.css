@@ -151,6 +151,16 @@ span.select__indicator-separator.css-1okebmr-indicatorSeparato{
 }
 
 /****************** Les Tableaux *******************/
+div#elev-non-classe  .MuiDataGrid-columnHeaders.css-f3jnds-MuiDataGrid-columnHeaders{
+  background-color: #d0290c;
+}
+
+
+div#elev-non-classe  .MuiDataGrid-footerContainer.css-17jjc08-MuiDataGrid-footerContainer{
+  background-color: #d0290c;
+}
+
+
 .css-i4bv87-MuiSvgIcon-root{
   display: none !important;
 
