@@ -71,8 +71,8 @@ function DashBoardPage() {
   const [isFraisScolaireClass, setIsFraisScolaireClass] = useState(false);
  
   
-  const [effectifLevel, setEffectifLevel]       = useState(0);
-  const [effectifClass, setEffectifClass]       = useState(0);
+  const [effectifLevel, setEffectifLevel]       = useState({'id':'0','label':"Tous"});
+  const [effectifClass, setEffectifClass]       = useState({'id':'0','label':"Toutes"});
 
   const [assiduiteLevel, setAssiduiteLevel]     = useState(1);
   const [assiduiteClass, setAssiduiteClass]     = useState(1);
@@ -84,9 +84,12 @@ function DashBoardPage() {
 
 
     const [DoughnutData, setDoughnutData] = useState([100,0]);
-    const [barchartData, setBarChartData] = useState([]);
+    const [BarchartData, setBarChartData] = useState([0,0,0]);
+    const [BarchartClasseData, setBarChartClasseData] = useState([0,0,0]);
     const [barchartDataLabels, setBarchartDataLabels] = useState([]);
     const [barchartDataValues, setBarchartDataValues] = useState([]);
+    const [niveau_effectif_selected, setNiveau_effectif_selected] = useState('0');
+    const [classe_effectif_selected, setClasse_effectif_selected] = useState('0');
 
     const axiosInstance2 = axios.create({
       baseURL: '',
@@ -96,11 +99,13 @@ function DashBoardPage() {
         accept: 'application/json',
       }, 
     });
-
+    ;
+    var curentClass = {'id':'0','label':"Toutes"};
   useEffect(()=> {
     var tabNiveaux  = [...getEtabNiveaux(currentAppContext.currentEtab)];
     var tabClasses  = [... getEtabClassesNiveau(currentAppContext.currentEtab, 0)];
-    var tabMatieres = [... getEtabMatieresClasse(currentAppContext.currentEtab, 0)]
+    var tabMatieres = [... getEtabMatieresClasse(currentAppContext.currentEtab, 0)];
+
   
 
 
@@ -179,12 +184,12 @@ function DashBoardPage() {
     if(niveauId == 0) {
       tabClasses =  currentAppContext.infoClasses.filter((classe)=>classe.id_setab == sousEtabId)
       tabClasses.map((classe)=>{
-      tempTable.push({value:classe.id_niveau, label:classe.libelle});
+      tempTable.push({value:classe.id_classe, label:classe.libelle});
       });
     } else {
       tabClasses =  currentAppContext.infoClasses.filter((classe)=>classe.id_setab == sousEtabId && classe.id_niveau == niveauId )
       tabClasses.map((classe)=>{
-        tempTable.push({value:classe.id_niveau, label:classe.libelle});
+        tempTable.push({value:classe.id_classe, label:classe.libelle});
       });   
 
     }
@@ -233,7 +238,8 @@ function init(){
   level.id = '0';
   level.label = 'Tous';
 
-  getData('0')
+  getData('0');
+  getEffectifData('0');
   console.log(level)
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
@@ -241,7 +247,7 @@ function init(){
   currentUiContext.setPrgramCoverSelectedLevel(level);
 }
 function getData(niveauId){
-  console.log("SALUT: ",niveauId);
+  // console.log("SALUT: ",niveauId);
   axiosInstance.post(`program-cover-niveau/`, {
       id_niveau : niveauId,
       id_sousetab:currentAppContext.currentEtab,        
@@ -257,7 +263,73 @@ function getData(niveauId){
   // else
   //   setDoughnutData([20,80]);       
 
-}  
+}
+function getEffectifData(niveauId){
+  let selectedClass = document.querySelector('#selectclass2').value;
+  // console.log("SALUT Eff: ",niveauId," isInscritLevelChart: ",isInscritLevelChart," classe: ",selectedClass);
+  axiosInstance.post(`effectif-data-niveau/`, {
+      id_niveau : niveauId,
+      id_classe : selectedClass,
+      is_inscrit : isInscritLevelChart,
+      is_inscrit_classe : isInscritClassChart,
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getEffectifData: ",res.data);
+      setBarChartData(res.data.effectif_niveau_data);
+      setBarChartClasseData(res.data.effectif_classe_data)
+
+  })
+}
+function getEffectifData2(){
+  let selectedClass = document.querySelector('#selectclass2').value;
+  // console.log("SALUT Eff2: ",effectifLevel.id," isInscritLevelChart: ",!isInscritLevelChart,selectedClass);
+  axiosInstance.post(`effectif-data-niveau/`, {
+      id_niveau : effectifLevel.id,
+      id_classe : selectedClass,
+      is_inscrit : !isInscritLevelChart,
+      is_inscrit_classe : isInscritClassChart,
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getEffectifData2: ",res.data);
+      setBarChartData(res.data.effectif_niveau_data);
+      setBarChartClasseData(res.data.effectif_classe_data)
+
+
+  })
+}
+function getEffectifClassesData(classeId){
+  // let selectedClass = document.querySelector('#selectclass2').value;
+  // console.log("SALUT  classe: ",classeId," isInscritClassChart: ",isInscritClassChart);
+  axiosInstance.post(`effectif-data-classe/`, {
+      id_classe : classeId,
+      id_niveau : effectifLevel.id,
+      is_inscrit : isInscritClassChart,
+      is_inscrit_niveau : isInscritLevelChart,
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getEffectifClassesData: ",res.data);
+      setBarChartClasseData(res.data.effectif_classe_data)
+  })
+}
+function getEffectifClassesData2(){
+  // let id_cl = '0' ? effectifClass.id === undefined : effectifClass.id;
+  let selectedClass = document.querySelector('#selectclass2').value;
+  // console.log("SALUT  classe: ",selectedClass," isInscritClassChart: ",isInscritClassChart);
+  axiosInstance.post(`effectif-data-classe/`, {
+      id_classe : selectedClass,
+      id_niveau : effectifLevel.id,
+      is_inscrit : !isInscritClassChart,
+      is_inscrit_niveau : isInscritLevelChart,
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getEffectifClassesData2: ",res.data);
+      setBarChartClasseData(res.data.effectif_classe_data)
+  })
+}
 
 /****************************************** Les Handlers ****************************************/
 //---------------- Programme Completion -----------------//
@@ -316,16 +388,34 @@ const effectifNiveauHandler=(e)=>{
   var level ={};
   level.id = curentLevel;
   level.label = libelleLevel;
-  
+  // setNiveau_effectif_selected(curentLevel);
+
   console.log(level)
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
   setOptClasseEFF(tabClasses);
-  setEffectifLevel(level); 
+  setEffectifClass(tabClasses[0])
+  setEffectifLevel(level);
+  var select = document.querySelector('#selectclass2');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+  getEffectifData(curentLevel);
+
 }
 
 const effectifClasseHandler=(e)=>{
+  curentClass = e.target.value;  
+  var cur_index = optClasseEFF.findIndex((index)=>index.value == curentClass);
+  var libelleClass = optClasseEFF[cur_index].label;
   
+  var classe ={};
+  classe.id = curentClass;
+  classe.label = libelleClass;
+
+  getEffectifClassesData(curentClass)
+  console.log(classe)
+  setEffectifClass(classe); 
 }
 
 //---------------- Frais -----------------//
@@ -500,16 +590,16 @@ const resultatsMatiereHandler=(e)=>{
               </select>
               <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}>
                 <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}>{t('effectifs_total')} </label>
-                <input type='radio' checked={!isInscritLevelChart}  value={'enreg'} name='effectifsNiveau' onClick={()=> { isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true)}}/>
+                <input type='radio' checked={!isInscritLevelChart}  value={'enreg'} name='effectifsNiveau' onClick={()=> { console.log(isInscritLevelChart); isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true);getEffectifData2()}}/>
                 <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}> {t('effectifs_inscrit')}</label>
-                <input type='radio' checked={isInscritLevelChart}  value={'inscrits'} name='effectifsNiveau' onClick={()=> { isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true)}}/>
+                <input type='radio' checked={isInscritLevelChart}  value={'inscrits'} name='effectifsNiveau' onClick={()=> { console.log(isInscritLevelChart); isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true);getEffectifData2()}}/>
               </div> 
 
             </div>
           
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-                <Effectifs selectedClass='' selectedNiveau={effectifLevel} isInscrits={isInscritLevelChart}/>
+                <Effectifs BarchartData={BarchartData} selectedClass='' selectedNiveau={effectifLevel} isInscrits={isInscritLevelChart}/>
               </div>             
             </div>
           </div>
@@ -527,15 +617,15 @@ const resultatsMatiereHandler=(e)=>{
               </select>
               <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}>
                 <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}>{t('effectifs_total')} </label>
-                <input type='radio' checked={!isInscritClassChart}  value={'enreg'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true)}}/>
+                <input type='radio' checked={!isInscritClassChart}  value={'enreg'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true);getEffectifClassesData2()}}/>
                 <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}> {t('effectifs_inscrit')} </label>
-                <input type='radio' checked={isInscritClassChart}  value={'inscrits'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true)}}/>
+                <input type='radio' checked={isInscritClassChart}  value={'inscrits'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true);getEffectifClassesData2()}}/>
               </div> 
             </div>    
             
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-                <Effectifs selectedNiveau='' selectedClass={effectifClass} isInscrits={isInscritClassChart}/>
+                <Effectifs BarchartData={BarchartClasseData} selectedNiveau='' selectedClass={effectifClass} isInscrits={isInscritClassChart}/>
               </div>             
             </div> 
           </div>                     
