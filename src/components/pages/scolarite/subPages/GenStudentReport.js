@@ -418,7 +418,7 @@ const columnsSeq = [
 
     {
         field: 'moyenne',
-        headerName: t('moyenne_M'),
+        headerName: t('moySeq_M'),
         width: 120,
         editable: false,
         headerClassName:classes.GridColumnStyle
@@ -455,21 +455,7 @@ const columnsSeq = [
         editable: false,
         hide:true,
         headerClassName:classes.GridColumnStyleP,
-        renderCell: (params)=>{
-            return(
-                <div className={classes.inputRow}>
-                    <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            event.ignore = true;
-                        }}
-                        alt=''
-                    />
-                </div>
-            )}         
-            
+         
         },
     ];
 
@@ -583,24 +569,10 @@ const columnsSeq = [
             editable: false,
             hide:true,
             headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{
-                return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
-                    </div>
-                )}           
-                
-            },
+               
+        },
     
-        ];
+    ];
     
     
 
@@ -708,25 +680,11 @@ const columnsSeq = [
             width: 15,
             editable: false,
             hide:true,
-            headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{
-                return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
-                    </div>
-                )}           
+            headerClassName:classes.GridColumnStyle,               
                 
-            },
+        },
         
-        ];
+    ];
      
 /*************************** Theme Functions ***************************/
     function getGridButtonStyle()

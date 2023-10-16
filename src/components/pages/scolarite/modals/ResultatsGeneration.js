@@ -145,8 +145,18 @@ function ResultatsGeneration(props) {
                 {(typeBulletin==3)&&
                     <div style={{width:'7vw',fontSize:"0.7vw"}}> {t("moy_trim_M")+"3"}  </div>
                 }
-               
-                <div style={{width:'7vw'}}>  {t("moyenne_M")}          </div>
+
+                {(typeBulletin==1)&&               
+                    <div style={{width:'7vw', fontSize:"0.7vw"}}>  {t("moySeq_M")}          </div>
+                }
+
+                {(typeBulletin==2)&&               
+                    <div style={{width:'7vw', fontSize:"0.7vw"}}>  {t("moyTrin_M")}         </div>
+                }
+
+                {(typeBulletin==3)&&               
+                    <div style={{width:'7vw', fontSize:"0.7vw"}}>  {t("moyGenAB_M")}          </div>
+                }
                 
                 {/*----- CAS BULLETIN ANNUEL -------*/}
                 {(typeBulletin==3)&&
