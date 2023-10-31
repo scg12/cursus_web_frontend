@@ -507,9 +507,7 @@ function LoginForm(props){
             currentAppContext.setInfoMatieres(res.data.info_matieres);
             currentAppContext.setInfoCours(res.data.info_cours);
             currentUiContext.updateFirstLoad(true);
-            currentUiContext.updateTheme(res.data.theme);
-            i18n.changeLanguage(res.data.langue);
-            updateCalendarTheme(res.data.theme);
+            
             
             //Pour les MsgBoxes
             currentUiContext.setIsParentMsgBox(true);            
@@ -519,6 +517,11 @@ function LoginForm(props){
 
             loadEmploiDetemps(res.data.id_etab_init);
             setIsLoading(false);
+
+            currentUiContext.updateTheme(res.data.theme);
+            i18n.changeLanguage(res.data.langue);
+            updateCalendarTheme(res.data.theme);
+
             history.replace('/');
         },(res)=>{
             ERROR_CODE = res.response.status;

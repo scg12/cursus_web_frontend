@@ -164,7 +164,8 @@ function SaveNotes(props) {
             notes.map((ntElv)=>{
                var currentElev = listEleves.find((elev)=>elev.id == ntElv.eleves[0]);
                currentElev.note = ntElv.score;
-               currentElev.deja_saisi = 1;
+            //    currentElev.deja_saisi = 1;
+               currentElev.deja_saisi = 1?ntElv.deja_saisi:-1;
             })        
         } 
         calculTendance();  
@@ -521,7 +522,8 @@ function SaveNotes(props) {
             headerClassName: classes.GridColumnStyle,  
            renderCell: (params)=>{
             return(
-                <div id={"div"+params.row.id} style={{display:"flex", flexDirection:"row",  justifyContent:"center", alignItems:'center', width:"60vw", height:"2vw", borderRadius:'3px', borderStyle:"solid", borderWidth:"1px", marginTop:"1vh", marginBottom:'1vh', borderColor:'#065386', backgroundColor:params.row.deja_saisi==-1 ? "#ec151080" : params.row.deja_saisi==0 ? "#dcd05c94":null}}>
+                // <div id={"div"+params.row.id} style={{display:"flex", flexDirection:"row",  justifyContent:"center", alignItems:'center', width:"60vw", height:"2vw", borderRadius:'3px', borderStyle:"solid", borderWidth:"1px", marginTop:"1vh", marginBottom:'1vh', borderColor:'#065386', backgroundColor:params.row.deja_saisi==-1 ? "#ec151080" : params.row.deja_saisi==0 ? "#dcd05c94":null}}>
+                <div id={"div"+params.row.id} style={{display:"flex", flexDirection:"row",  justifyContent:"center", alignItems:'center', width:"60vw", height:"2vw", borderRadius:'3px', borderStyle:"solid", borderWidth:"1px", marginTop:"1vh", marginBottom:'1vh', borderColor:'#065386', backgroundColor:params.row.deja_saisi==-1||params.row.deja_saisi=== false ? "#ec151080" : params.row.deja_saisi==1 ? null:"#dcd05c94"}}>
                     <input type='text' id={params.row.id} onChange={updateNoteColor}   defaultValue={params.row.note} style={{textAlign:'center', fontSize:'0.9vw', color:params.row.note >=10? 'black':'red'}}/>
                 </div>
             )}                     
