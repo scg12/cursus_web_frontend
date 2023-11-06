@@ -45,6 +45,11 @@
     color: white;
   }
 
+  .Theme1_RightBorder{
+    border-right: solid 3px #0e5ec7;
+  }
+
+
 
 /*--------------------- Theme2 ----------------------- */
 
@@ -69,6 +74,11 @@
     color: white;
   }
 
+  .Theme2_RightBorder{
+    border-right: solid 3px #3ca015;
+  }
+
+
 /*--------------------- Theme3 ----------------------- */
 
   .Theme3_sideContent {
@@ -91,6 +101,11 @@
     font-weight: bold;   
     color: white;
   }
+
+  .Theme3_RightBorder{
+    border-right: solid 3px #4031a5;
+  }
+
 
 
  /* @media (min-width: 380px) and (max-width: 900px) {

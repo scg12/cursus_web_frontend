@@ -159,7 +159,7 @@ function GenStudentReport(props) {
                 id_periode      : periode,
                 
             }).then((res)=>{
-                console.log(res.data);
+                console.log("les eleves",res.data);
                 setModalOpen(0);
 
                 switch(typeBulletin){

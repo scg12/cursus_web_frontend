@@ -48,6 +48,17 @@ function SideContent(props) {
         }
     }
 
+    function getCurrentRightBorderTheme()
+    { 
+       // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_RightBorder;
+            case 'Theme2': return classes.Theme2_RightBorder;
+            case 'Theme3': return classes.Theme3_RightBorder;
+            default: return classes.Theme1_RightBorder;
+        }
+    }
+
 
     function getCurrentThemeSideLabel()
     { 
@@ -178,7 +189,7 @@ function SideContent(props) {
           
     return (
 
-        <div /*style={{backgroundImage:"images/sideImg.jpeg"}}*/> 
+        <div> 
             <CustomCalendar/>
             <div className= {classes.mainInfosStyle}>
 
