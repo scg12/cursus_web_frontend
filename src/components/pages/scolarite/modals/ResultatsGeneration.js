@@ -101,6 +101,11 @@ function ResultatsGeneration(props) {
     function quitFormAndGetData(){
         props.cancelHandler();
     }
+
+    function printReports(){
+        props.cancelHandler();
+        props.printReportHandler();
+    }
    
   
    
@@ -307,7 +312,7 @@ function ResultatsGeneration(props) {
                     btnText={t("imprimer_bulletin")} 
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={quitFormAndGetData}
+                    btnClickHandler={printReports}
                     style={{width:"fit-content",padding:3}}
                 />
             </div>

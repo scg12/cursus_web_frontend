@@ -11,11 +11,15 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 
-import { PDFViewer } from '@react-pdf/renderer';
+import {isMobile} from 'react-device-detect';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import CritSequentiel from '../modals/CritSequentiel';
 import ResultatsGeneration from '../modals/ResultatsGeneration';
 import BulletinSequence from '../reports/BulletinSequence';
+import BulletinTrimestriel from '../reports/BulletinTrimestriel'
+import BulletinAnnuel from '../reports/BulletinAnnuel';
 import {useTranslation} from "react-i18next";
 
 
@@ -43,8 +47,9 @@ var page = {
     pageNumber:0,
 }
 
-
+var ELEVES_DATA;
 var ElevePageSet={};
+var printedETFileName ='';
 
 var tabSequences    = [];
 var tabTrimestres   = [];
@@ -58,6 +63,8 @@ var classer   = [];
 var enCompte1 = [];
 var enCompte2 = [];
 var enCompte3 = [];
+
+var PROF_PRINCIPAL = undefined;
 
 
 function GenStudentReport(props) {
@@ -76,6 +83,7 @@ function GenStudentReport(props) {
     const [optOuiNon,setOptOuiNon] = useState([]);
     const [elevesCL, setEleveCL] = useState([]);
     const [elevesNCL,setEleveNCL] = useState([]);
+    const [bullTypeLabel, setBullTypeLabel] = useState();
     const selectedTheme = currentUiContext.theme;
 
     var firstItem = {
@@ -120,15 +128,6 @@ function GenStudentReport(props) {
            })         
         }) 
     }
-
-
-    // function getTodayDate(){
-    //     var annee = new Date().getFullYear();
-    //     var mm  = (new Date().getMonth()+1).length==1 ? '0'+(new Date().getMonth()+1) : (new Date().getMonth()+1);
-    //     var jj = (new Date().getDate()).length==1 ? '0'+(new Date().getDate()) : (new Date().getDate())
-    //     return annee+'-'+ mm+'-'+jj;
-    // }
-
 
     function getStudentGenerationInfo(classeId, periode, typeBulletin){
         var type_generation = 'sequence'
@@ -378,12 +377,15 @@ function GenStudentReport(props) {
 
     function dropDownHandler(e){
         if(e.target.value != optClasse[0].value){
-            setCanGenerate(true);
-            CURRENT_CLASSE_ID = e.target.value; 
+            CURRENT_CLASSE_ID    = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
+            
+            PROF_PRINCIPAL       = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
             CURRENT_PERIOD_ID    = document.getElementById('optPeriode').value;
+        
             console.log("chargement",CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
             getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
+            setCanGenerate(true);
         }else{
             setCanGenerate(false);
             CURRENT_CLASSE_ID = undefined;
@@ -411,30 +413,7 @@ function GenStudentReport(props) {
         }
     }
 
-
-    
 /*************************** DataGrid Declaration ***************************/    
-/*---DATA*/
-
-var dataSeq   = [
-    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        moyenne:"11.75", nb_max_matieres_sans_note:"2", classserl:"1", classser:'2' },
-    {rang:2, id:124, matricule:"HT25647S3", nom:"Mbombo njoya armel",     moyenne:"11.75", nb_max_matieres_sans_note:"0", classserl:"3", classser:'2' },
-    {rang:3, id:125, matricule:"HT25645V7", nom:"Mndeng salome huguette", moyenne:"11.75", nb_max_matieres_sans_note:"1", classserl:"5", classser:'3'},
-];
-
-var dataTrim  = [
-    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        id_seq1:1, moy_seq1:"11.75",  id_seq2:2, moy_seq2:"12.5",  enCompte1:'1',enCompte2:'2', toBeClassed:1},
-    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     id_seq1:1, moy_seq1:"07.75",  id_seq2:2, moy_seq2:"13.75", enCompte1:'1',enCompte2:'2', toBeClassed:1},
-    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", id_seq1:1, moy_seq1:"15.75",  id_seq2:2, moy_seq2:"12.75", enCompte1:'1',enCompte2:'2', toBeClassed:1},
-];
-
-var dataAnnee = [
-    {rang:1, id:124, matricule:"HT25647R3", nom:"Mballa alphonse",        id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"07.5", enCompte:'1²²2²²3', toBeClassed:1},
-    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"08.5", enCompte:'1²²2²²3', toBeClassed:1},
-    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"05.5", enCompte:'1²²2²²3', toBeClassed:1},
-];
-
-
 
 const columnsSeq = [
     {
@@ -919,34 +898,21 @@ const columnsSeq = [
         
     }
 
-    const printStudentList=()=>{
-        if(CURRENT_CLASSE_ID != undefined){           
-            setModalOpen(5);
-            let formData = new FormData();
-           
-            formData.append('id_classe',CURRENT_CLASSE_ID);
-            formData.append('id_sequence',CURRENT_PERIOD_ID);
-            formData.append('id_eleves',selectedElevesIds[0].join('_'));
-
-            const config = {headers:{'Content-Type':'multipart/form-data'}};
-            axiosInstance
-            .post(`imprimer-bulletin-classe/`,formData,config)
-            .then((response) => {  
-               // setModalOpen(0);              
-                ElevePageSet={};
-                ElevePageSet.effectif = listEleves.length;
-                ElevePageSet.eleveNotes = [... response.data.eleve_results];
-                ElevePageSet.noteRecaps = [... response.data.note_recap_results];
-                ElevePageSet.groupeRecaps = [... response.data.groupe_recap_results];
-                ElevePageSet.entete_fr ={... response.data.entete_fr};
-                ElevePageSet.entete_en ={... response.data.entete_en};
-                ElevePageSet.titreBulletin ={... response.data.titre_bulletin};
-                ElevePageSet.etabLogo = "images/collegeVogt.png";
-                ElevePageSet.profPrincipal = 'MESSI Martin';
-                ElevePageSet.classeLabel = CURRENT_CLASSE_LABEL;                
-                console.log("ici la",ElevePageSet,gridRows);  
-                setModalOpen(4);               
-            })          
+    const printStudentReports=()=>{
+        if(ELEVES_DATA != {}){
+            ElevePageSet = {};
+            ElevePageSet.effectif       = listEleves.length;
+            ElevePageSet.eleveNotes     = [... ELEVES_DATA.eleve_results_c];
+            ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
+            ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
+            ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
+            ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
+            ElevePageSet.titreBulletin  = {... ELEVES_DATA.titre_bulletin};
+            ElevePageSet.etabLogo       = "images/collegeVogt.png";
+            ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
+            ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
+            printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(4); 
                           
         } else{
             chosenMsgBox = MSG_WARNING_GENRPT;
@@ -959,6 +925,11 @@ const columnsSeq = [
         }      
     }
 
+    function getTitre(sexe){        
+        if(sexe=='M') return 'Mr';
+        else return 'Mme';
+    }
+
     const closePreview =()=>{
         selectedElevesIds =[];
         setIsValid(false);                 
@@ -967,6 +938,7 @@ const columnsSeq = [
 
     function genSeqBulletin(criteria){
         console.log("criteres",criteria, CURRENT_PERIOD_ID);
+        ELEVES_DATA = {};
         setModalOpen(5);
         
         axiosInstance.post(`generer-bulletin-classe/`, {
@@ -978,6 +950,8 @@ const columnsSeq = [
             nb_max_coefs_manquants          : criteria.nb_max_coefs_manquants  
                                  
         }).then((res)=>{
+
+            ELEVES_DATA = res.data;
             setEleveCL(res.data.eleve_results_c);
             setEleveNCL(res.data.eleve_results_nc);
             setModalOpen(6);   
@@ -994,7 +968,8 @@ const columnsSeq = [
     }
 
     function genTrimBulletin(){
-        var id_eleves = []; periodes_considerees = [];        
+        var id_eleves = []; periodes_considerees = [];
+        ELEVES_DATA = {};        
 
         if(gridRows.length>0){
             gridRows.map((elt, index)=>{
@@ -1021,6 +996,8 @@ const columnsSeq = [
                 periodes_considerees : seq_consideree,
                 classer      : toBeClassed
             }).then((res)=>{
+
+                ELEVES_DATA = res.data;
                 setEleveCL(res.data.eleve_results_c);
                 setEleveNCL(res.data.eleve_results_nc);
                 setModalOpen(6);   
@@ -1059,7 +1036,8 @@ const columnsSeq = [
     }
 
     function genYearBulletin(){
-        var id_eleves = []; periodes_considerees = [];        
+        var id_eleves = []; periodes_considerees = [];  
+        ELEVES_DATA = {};
 
         if(gridRows.length>0){
             gridRows.map((elt, index)=>{
@@ -1083,7 +1061,9 @@ const columnsSeq = [
                 periodes_considerees : trim_consideree,
                 classer              : toBeClassed
             }).then((res)=>{
-                console.log(res)
+
+                console.log(res);
+                ELEVES_DATA = res.data;
                 setEleveCL(res.data.eleve_results_c);
                 setEleveNCL(res.data.eleve_results_nc);
                 setModalOpen(6);  
@@ -1120,6 +1100,14 @@ const columnsSeq = [
                 return;
             }
         }
+    }
+
+    function getBulletinTypeLabel(typeBulletin){
+        switch(typeBulletin){
+            case 1: {setBullTypeLabel(t('bulletin_sequentiel'));   return;} 
+            case 2: {setBullTypeLabel(t('bulletin_trimestriel'));  return;}
+            case 3: {setBullTypeLabel(t('bulletin_annuel'));       return;}
+           }
     }
  
     /********************************** JSX Code **********************************/   
@@ -1162,7 +1150,36 @@ const columnsSeq = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen==4) && <PDFTemplate previewCloseHandler={closePreview}><PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}><BulletinSequence data={ElevePageSet}/></PDFViewer></PDFTemplate>} 
+            {(modalOpen==4) &&                 
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    { isMobile?
+                        <PDFDownloadLink fileName={printedETFileName}   
+                            document = { 
+                                (typeBulletin==1)?
+                                    <BulletinSequence data={ElevePageSet}/>
+                                :
+                                (typeBulletin==2) ?
+                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                : 
+                                    <BulletinAnnuel data={ElevePageSet}/>
+                            }
+                        >
+                            {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            {(typeBulletin==1)?
+                                <BulletinSequence data={ElevePageSet}/>
+                                :
+                                (typeBulletin==2) ?
+                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                : 
+                                <BulletinAnnuel data={ElevePageSet}/>
+                            }
+                        </PDFViewer>  
+                    }               
+                </PDFTemplate>                
+            } 
             
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
@@ -1208,14 +1225,14 @@ const columnsSeq = [
              {(modalOpen==6) &&  
                 <ResultatsGeneration
                     typeBulletin          = {typeBulletin}
-                    bullPeriodeLabel      = {optPeriode[0].label}
+                    bullPeriodeLabel      = {CURRENT_PERIOD_LABEL}
                     annee                 = {CURRENT_ANNEE_SCOLAIRE}
                     classeId              = {CURRENT_CLASSE_ID} 
                     elevesClasses         = {elevesCL}
                     elevesNonClasses      = {elevesNCL} 
-                    //tabPeriodes      = {[]}
                     cancelHandler         = {()=>setModalOpen(0)}
                     generateHandler       = {generateBulletinHandler}
+                    printReportHandler    = {printStudentReports}
                 /> 
             }  
 

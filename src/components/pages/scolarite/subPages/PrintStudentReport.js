@@ -11,10 +11,13 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 
-import { PDFViewer } from '@react-pdf/renderer';
+import {isMobile} from 'react-device-detect';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
-import CritSequentiel from '../modals/CritSequentiel';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import BulletinSequence from '../reports/BulletinSequence';
+import BulletinTrimestriel from '../reports/BulletinTrimestriel'
+import BulletinAnnuel from '../reports/BulletinAnnuel';
 import {useTranslation} from "react-i18next";
 
 
@@ -27,9 +30,12 @@ const MSG_ERROR_PrRPT   = 13;
 var CURRENT_ANNEE_SCOLAIRE;
 
 let CURRENT_CLASSE_ID;
-let CURRENT_PERIOD_ID;
-let CURRENT_TYPE_BULLETIN_ID;
 let CURRENT_CLASSE_LABEL;
+
+let CURRENT_PERIOD_ID;
+let CURRENT_PERIOD_LABEL;
+
+let CURRENT_TYPE_BULLETIN_ID;
 var selectedElevesIds = new Array();
 
 var listElt    = {};
@@ -44,6 +50,8 @@ var page = {
 
 const ROWS_PER_PAGE= 40;
 var ElevePageSet={};
+var ELEVES_DATA;
+var printedETFileName ='';
 
 var tabSequences    = [];
 var tabTrimestres   = [];
@@ -52,9 +60,11 @@ var tabCurrentAnnee = [];
 var LIST_SEQUENCE   = [];
 var LIST_TRIMESTRES = [];
 
-var ELEVES_DATA;
+
 var ELEVES_CL ;
 var ELEVES_NCL;
+var PROF_PRINCIPAL = undefined;
+
 
 
 function PrintStudentReport(props) {
@@ -69,6 +79,7 @@ function PrintStudentReport(props) {
     const [optPeriode, setOptPeriode]       = useState([]);
     const [optTypeReport, setOptTypeReport] = useState([]);
     const [typeBulletin, setTypeBulletin] = useState(1);
+    const [bullTypeLabel, setBullTypeLabel] = useState();
     const [seq1, setSeq1] = useState("1");
     const [seq2, setSeq2] = useState("2");
     const selectedTheme = currentUiContext.theme;
@@ -450,6 +461,8 @@ function PrintStudentReport(props) {
             console.log("valeures",e.target.value, optClasse[0].value)
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
+
+            PROF_PRINCIPAL       = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
    
             getStudentListOfClass(CURRENT_CLASSE_ID).then((elevesList)=>{alert("bonjour"); setGridRowsCL(elevesList);/*getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, elevesList)*/});
 
@@ -482,6 +495,14 @@ function PrintStudentReport(props) {
             CURRENT_PERIOD_ID = undefined;  
             setIsValid(false);         
         }
+    }
+
+    function getBulletinTypeLabel(typeBulletin){
+        switch(typeBulletin){
+            case 1: {setBullTypeLabel(t('bulletin_sequentiel'));   return;} 
+            case 2: {setBullTypeLabel(t('bulletin_trimestriel'));  return;}
+            case 3: {setBullTypeLabel(t('bulletin_annuel'));       return;}
+           }
     }
 
    
@@ -1079,45 +1100,79 @@ function PrintStudentReport(props) {
         
     }
 
-    const printStudentList=()=>{
-        if(CURRENT_CLASSE_ID != undefined){           
-            setModalOpen(5);
-            let formData = new FormData();
-           
-            formData.append('id_classe',CURRENT_CLASSE_ID);
-            formData.append('id_sequence',CURRENT_PERIOD_ID);
-            formData.append('id_eleves',selectedElevesIds[0].join('_'));
-
-            const config = {headers:{'Content-Type':'multipart/form-data'}};
-            axiosInstance
-            .post(`imprimer-bulletin-classe/`,formData,config)
-            .then((response) => {  
-               // setModalOpen(0);              
-                ElevePageSet={};
-                ElevePageSet.effectif = listEleves.length;
-                ElevePageSet.eleveNotes = [... response.data.eleve_results];
-                ElevePageSet.noteRecaps = [... response.data.note_recap_results];
-                ElevePageSet.groupeRecaps = [... response.data.groupe_recap_results];
-                ElevePageSet.entete_fr ={... response.data.entete_fr};
-                ElevePageSet.entete_en ={... response.data.entete_en};
-                ElevePageSet.titreBulletin ={... response.data.titre_bulletin};
-                ElevePageSet.etabLogo = "images/collegeVogt.png";
-                ElevePageSet.profPrincipal = 'MESSI Martin';
-                ElevePageSet.classeLabel = CURRENT_CLASSE_LABEL;                
-                console.log("ici la",ElevePageSet,gridRowsCL);  
-                setModalOpen(4);               
-            })          
+    const printStudentReports=(e)=>{
+        var classes_OU_nclasses = e.target.id;
+        if(ELEVES_DATA != {}){
+            ElevePageSet = {};
+            ElevePageSet.effectif       = listEleves.length;
+            ElevePageSet.eleveNotes     = (classes_OU_nclasses=='eleves_C')? [... ELEVES_DATA.eleve_results_c] : [... ELEVES_DATA.eleve_results_nc];
+            ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
+            ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
+            ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
+            ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
+            ElevePageSet.titreBulletin  = {... ELEVES_DATA.titre_bulletin};
+            ElevePageSet.etabLogo       = "images/collegeVogt.png";
+            ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
+            ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
+            printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(4); 
                           
         } else{
             chosenMsgBox = MSG_WARNING_PrRPT;
             currentUiContext.showMsgBox({
                 visible  : true, 
                 msgType  : "warning", 
-                msgTitle : t("warning"), 
+                msgTitle : t("ATTENTION!"), 
                 message  : t("must_select_class")
             })            
         }      
     }
+
+    function getTitre(sexe){        
+        if(sexe=='M') return 'Mr';
+        else return 'Mme';
+    }
+
+
+    // const printStudentList=()=>{
+    //     if(CURRENT_CLASSE_ID != undefined){           
+    //         setModalOpen(5);
+    //         let formData = new FormData();
+           
+    //         formData.append('id_classe',CURRENT_CLASSE_ID);
+    //         formData.append('id_sequence',CURRENT_PERIOD_ID);
+    //         formData.append('id_eleves',selectedElevesIds[0].join('_'));
+
+    //         const config = {headers:{'Content-Type':'multipart/form-data'}};
+    //         axiosInstance
+    //         .post(`imprimer-bulletin-classe/`,formData,config)
+    //         .then((response) => {  
+    //            // setModalOpen(0);              
+    //             ElevePageSet={};
+    //             ElevePageSet.effectif = listEleves.length;
+    //             ElevePageSet.eleveNotes = [... response.data.eleve_results];
+    //             ElevePageSet.noteRecaps = [... response.data.note_recap_results];
+    //             ElevePageSet.groupeRecaps = [... response.data.groupe_recap_results];
+    //             ElevePageSet.entete_fr ={... response.data.entete_fr};
+    //             ElevePageSet.entete_en ={... response.data.entete_en};
+    //             ElevePageSet.titreBulletin ={... response.data.titre_bulletin};
+    //             ElevePageSet.etabLogo = "images/collegeVogt.png";
+    //             ElevePageSet.profPrincipal = 'MESSI Martin';
+    //             ElevePageSet.classeLabel = CURRENT_CLASSE_LABEL;                
+    //             console.log("ici la",ElevePageSet,gridRowsCL);  
+    //             setModalOpen(4);               
+    //         })          
+                          
+    //     } else{
+    //         chosenMsgBox = MSG_WARNING_PrRPT;
+    //         currentUiContext.showMsgBox({
+    //             visible  : true, 
+    //             msgType  : "warning", 
+    //             msgTitle : t("warning"), 
+    //             message  : t("must_select_class")
+    //         })            
+    //     }      
+    // }
 
     const closePreview =()=>{
         selectedElevesIds =[];
@@ -1192,7 +1247,36 @@ function PrintStudentReport(props) {
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen==4) && <PDFTemplate previewCloseHandler={closePreview}><PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}><BulletinSequence data={ElevePageSet}/></PDFViewer></PDFTemplate>} 
+            {(modalOpen==4) && 
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    { isMobile?
+                        <PDFDownloadLink fileName={printedETFileName}   
+                            document = { 
+                                (typeBulletin==1)?
+                                    <BulletinSequence data={ElevePageSet}/>
+                                :
+                                (typeBulletin==2) ?
+                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                : 
+                                    <BulletinAnnuel data={ElevePageSet}/>
+                            }
+                        >
+                            {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            {(typeBulletin==1)?
+                                <BulletinSequence data={ElevePageSet}/>
+                                :
+                                (typeBulletin==2) ?
+                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                : 
+                                <BulletinAnnuel data={ElevePageSet}/>
+                            }
+                        </PDFViewer>  
+                    }               
+                </PDFTemplate>
+            }
             
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
@@ -1316,13 +1400,14 @@ function PrintStudentReport(props) {
                        
                     
                         <CustomButton
+                            id="eleves_C"
                             btnText={t('imprimer')}
                             hasIconImg= {true}
                             imgSrc='images/printing1.png'
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printStudentList}
+                            btnClickHandler={printStudentReports}
                             disable={(isValid==false)}   
                         />
                     </div>
@@ -1395,13 +1480,14 @@ function PrintStudentReport(props) {
                             
                         <div className={classes.gridAction}> 
                             <CustomButton
+                                id="eleves_NC"
                                 btnText={t('imprimer')}
                                 hasIconImg= {true}
                                 imgSrc='images/printing1.png'
                                 imgStyle = {classes.grdBtnImgStyle}  
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={printStudentList}
+                                btnClickHandler={printStudentReports}
                                 disable={(isValid==false)}   
                             />
                         </div>
