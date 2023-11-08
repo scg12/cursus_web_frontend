@@ -1,4 +1,7 @@
-{   "moyGenAB_M":"MOY. GEN.",
+{   "report_not_yet_generated":"Les bulletins n'ont pas encore été généré pour la periode selectionnée!",
+    "en_regle_M":"EN REGLE",
+    "error_when_generating":"Un problème est survenue lors du processus de génération! SVP, contacter un responsable technique pour le resoudre.",
+    "moyGenAB_M":"MOY. GEN.",
     "moySeq_M":"MOY. SEQUENCE",
     "moyTrin_M":"MOY. TRIMESTRE",
     "moyGen_M":"MOY. ANNUELLE",

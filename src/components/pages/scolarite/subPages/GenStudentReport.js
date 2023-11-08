@@ -11,19 +11,23 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 
-import { PDFViewer } from '@react-pdf/renderer';
+import {isMobile} from 'react-device-detect';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import CritSequentiel from '../modals/CritSequentiel';
 import ResultatsGeneration from '../modals/ResultatsGeneration';
 import BulletinSequence from '../reports/BulletinSequence';
+import BulletinTrimestriel from '../reports/BulletinTrimestriel'
+import BulletinAnnuel from '../reports/BulletinAnnuel';
 import {useTranslation} from "react-i18next";
 
 
 
 var chosenMsgBox;
-const MSG_SUCCESS_NOTES =11;
-const MSG_WARNING_NOTES =12;
-const MSG_ERROR_NOTES   =13;
+const MSG_SUCCESS_GENRPT = 11;
+const MSG_WARNING_GENRPT = 12;
+const MSG_ERROR_GENRPT   = 13;
 
 var CURRENT_ANNEE_SCOLAIRE;
 
@@ -43,11 +47,9 @@ var page = {
     pageNumber:0,
 }
 
-var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
-const ROWS_PER_PAGE= 40;
+var ELEVES_DATA;
 var ElevePageSet={};
+var printedETFileName ='';
 
 var tabSequences    = [];
 var tabTrimestres   = [];
@@ -61,6 +63,8 @@ var classer   = [];
 var enCompte1 = [];
 var enCompte2 = [];
 var enCompte3 = [];
+
+var PROF_PRINCIPAL = undefined;
 
 
 function GenStudentReport(props) {
@@ -77,15 +81,15 @@ function GenStudentReport(props) {
     const [seq1, setSeq1] = useState("1");
     const [seq2, setSeq2] = useState("2");
     const [optOuiNon,setOptOuiNon] = useState([]);
+    const [elevesCL, setEleveCL] = useState([]);
+    const [elevesNCL,setEleveNCL] = useState([]);
+    const [bullTypeLabel, setBullTypeLabel] = useState();
     const selectedTheme = currentUiContext.theme;
 
-    const tabPeriode =[
-        {value:0, label:(i18n.language=='fr') ? ' Choisir une periode ' :'  Select a period  '},
-        {value:1, label:' sequence '},
-        {value:2, label:' Trimestre '},
-        {value:3, label:' Annuel '},
-
-    ]
+    var firstItem = {
+        value: -1,   
+        label:'-----'+ t('choisir') +'-----'
+    }
 
     const tabOuiNon =[
         {value:1, label: t('yes')},
@@ -106,11 +110,10 @@ function GenStudentReport(props) {
             CURRENT_CLASSE_ID = undefined;
             CURRENT_PERIOD_ID = undefined;
         }
-
         getEtabListClasses();
-      
         
     },[]);
+
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label:(i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '    }]
@@ -126,146 +129,168 @@ function GenStudentReport(props) {
         }) 
     }
 
-    function getTodayDate(){
-        var annee = new Date().getFullYear();
-        var mm  = (new Date().getMonth()+1).length==1 ? '0'+(new Date().getMonth()+1) : (new Date().getMonth()+1);
-        var jj = (new Date().getDate()).length==1 ? '0'+(new Date().getDate()) : (new Date().getDate())
-        return annee+'-'+ mm+'-'+jj;
-    }
-
-    const  getClassStudentList=(classId)=>{
-        listEleves = []
-        axiosInstance.post(`eleves-situation-financiere/`, {
-            id_classe: classId,
-            date_limite:getTodayDate()
-        }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data.eleves)]
-            console.log(listEleves);
-            //setGridRows(listEleves);
-            //console.log(gridRows);
-        })  
-        return listEleves;     
-    }
-
-    function getClassNoteSequence(classId, periode){
-        // listEleves = []
-        // axiosInstance.post(`eleves-notes-sequence/`, {
-        //     id_classe: classId,
-        //     id_periode: periode
-
-        // }).then((res)=>{
-        //     console.log(res.data);
-        //     listEleves = [...formatList(res.data.eleves)]
-        //     console.log(listEleves);
-        //     //setGridRows(listEleves);
-        //     //console.log(gridRows);
-        // })  
-        // return listEleves;  
-        setGridRows(dataSeq);
-    }
-
-    function getClassNotesTrimestre(classId, periode){
-        // listEleves = []
-        // axiosInstance.post(`eleves-notes-trimestre/`, {
-        //     id_classe: classId,
-        //     id_periode: periode
-
-        // }).then((res)=>{
-        //     console.log(res.data);
-        //     listEleves = [...formatList(res.data.eleves)]
-        //     console.log(listEleves);
-        //     //setGridRows(listEleves);
-        //     //console.log(gridRows);
-        // })  
-        // return listEleves; 
-        dataTrim.map((elt)=>{
-            enCompte1.push(elt.id_seq1);
-            enCompte2.push(elt.id_seq2);
-            classer.push(1);
-        })
-        setGridRows(dataTrim);
-    }
-
-    function getClassNotesAnnee(classId, periode){
-        // listEleves = []
-        // axiosInstance.post(`eleves-notes-annee/`, {
-        //     id_classe : classId,
-        //     id_periode: periode,
-            
-        // }).then((res)=>{
-        //     console.log(res.data);
-        //     listEleves = [...formatList(res.data.eleves)]
-        //     console.log(listEleves);
-        //     //setGridRows(listEleves);
-        //     //console.log(gridRows);
-        // })  
-        // return listEleves; 
-        
-        dataAnnee.map((elt)=>{
-            enCompte1.push(elt.id_trim1);
-            enCompte2.push(elt.id_trim2);
-            enCompte3.push(elt.id_trim3);
-            classer.push(1);
-        })        
-        setGridRows(dataAnnee);
-    }
-
-
     function getStudentGenerationInfo(classeId, periode, typeBulletin){
-        enCompte1 = []; enCompte2 = []; enCompte3 = []; classer = [];
-        if(classeId!=undefined && periode!=undefined) {
-            switch(typeBulletin){
-                case 1 : {
-                    getClassNoteSequence(classeId, periode);
-                    return;
-                }
-    
-                case 2 : {
-                    getClassNotesTrimestre(classeId, periode);
-                    return;
-                    
-                }
-    
-                case 3 : {
-                    getClassNotesAnnee(classeId, periode);
-                    return;
-                }
+        var type_generation = 'sequence'
+
+        switch(typeBulletin){
+            case 1 : {
+                type_generation = 'sequence';
+                break;
             }
+
+            case 2 : {
+                type_generation = 'trimestre';
+                break;
+                
+            }
+            case 3 : {
+                type_generation = 'annuel';
+                break;
+            }
+        }
+
+        if(classeId!=undefined && periode!=undefined) {
+            setModalOpen(5)
+            axiosInstance.post('list-eleves-pour-generation-bulletins/', {
+                type_generation : type_generation,
+                id_classe       : classeId,
+                id_sousetab     : currentAppContext.currentEtab,
+                id_periode      : periode,
+                
+            }).then((res)=>{
+                console.log("les eleves",res.data);
+                setModalOpen(0);
+
+                switch(typeBulletin){
+                    case 1 : {
+                        listEleves = formatSeqList(res.data.res);
+                        break;
+                    }
+        
+                    case 2 : {
+                        listEleves = formatTrimList(res.data.res, res.data.periode);
+                        break;                        
+                    }
+        
+                    case 3 : {
+                        listEleves = formatAnnualList(res.data.res, res.data.periode);
+                        break;
+                    }
+                }
+                setGridRows(listEleves);
+            })
 
         }
        
     }
 
 
-    const formatList=(list) =>{
+    const formatSeqList=(list) =>{
         var rang = 1;
-        var formattedList =[]
+        var matiereIndispSansNote = []
+        var formattedList = []
+
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.nom = elt.nom;
-            listElt.rang = rang; 
+            listElt.id        = elt.id_eleve;
+            listElt.nom       = elt.nom;
+            listElt.rang      = rang; 
             listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.nom_pere = elt.nom_mere;           
-            listElt.en_regle = elt.en_regle ;
-            listElt.en_regle_Header = (elt.en_regle == true) ? t("yes") : t("no");
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;           
+            listElt.moyenne   = elt.moyenne;
+            listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
+            listElt.nb_coef_manquants = elt.nb_coef_manquants;
+            listElt.nb_matiere_indispensable_sans_notes = elt.nb_matiere_indispensable_sans_notes;
+            listElt.matiere_indispensables = elt.matiere_indispensables;
+            elt.matiere_indispensables.map((matiere)=> matiereIndispSansNote.push(matiere.libelle));
+            listElt.matieres_spe_manquante = matiereIndispSansNote.join(" ");
             formattedList.push(listElt);
             rang ++;
         })
         return formattedList;
     }
 
-    function filterEleves(e){
-        var list =[]
-        var enRegle = e.target.checked;      
-        console.log("check", enRegle);
-        setGridRows(listEleves.filter((elt)=>elt.en_regle==enRegle));         
+
+    const formatTrimList=(list, listSeqId) =>{
+        var rang = 1;        
+        var notesSeq      = [];
+        var classerSeq    = [];
+        var formattedList = [];
+        enCompte1 = []; enCompte2 = [];  classer = [];
+
+        list.map((elt)=>{
+            notesSeq   = [0,0];
+            classerSeq = [true,true];
+            listElt={};
+            listElt.id   = elt.id_eleve;
+            listElt.nom  = elt.nom;
+            listElt.rang = rang; 
+            listElt.matricule    = elt.matricule;
+            listElt.moyennes_seq = elt.moyennes_seq;
+            listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
+            
+            listElt.moy_seq1  = notesSeq[0];
+            listElt.id_seq1   = listSeqId[0];
+
+            listElt.moy_seq2  = notesSeq[1];
+            listElt.id_seq2   = listSeqId[1];
+            
+            listElt.classees_seq = elt.classees_seq;
+            listElt.classees_seq.map((el,index)=>classerSeq[index]=el);
+
+            listElt.classer_seq1  = classerSeq[0];
+            listElt.classer_seq2  = classerSeq[1];
+
+            enCompte1.push(listSeqId[0]);
+            enCompte2.push(listSeqId[1]);
+
+            classer.push(1);
+                       
+            formattedList.push(listElt);
+            rang ++;
+        })
+        return formattedList;
+    }
+
+
+    const formatAnnualList=(list,listTrimId) =>{
+        var rang = 1;
+        var notesTrim     = [];
+        var classerTrim   = [];
+        var formattedList = [];
+        enCompte1 = []; enCompte2 = []; enCompte3 = []; classer = [];
+
+        list.map((elt)=>{
+            notesTrim = [0,0,0];
+            classerTrim = [true,true,true];
+            listElt={};
+            listElt.id   = elt.id_eleve;
+            listElt.nom  = elt.nom;
+            listElt.rang = rang; 
+            listElt.matricule    = elt.matricule;
+            listElt.moyennes_trimestre = elt.moyennes_trimestre;
+            listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
+            
+            listElt.moy_trim1  = notesTrim[0];
+            listElt.moy_trim2  = notesTrim[1];
+            listElt.moy_trim3  = notesTrim[2];
+            
+            listElt.classees_trim = elt.classees_trim;
+            listElt.classees_trim.map((el,index)=>classerTrim[index]=el)
+            
+            listElt.classer_trim1  = classerTrim[0];
+            listElt.classer_trim2  = classerTrim[1];
+            listElt.classer_trim3  = classerTrim[2];
+           
+            enCompte1.push(listTrimId[0]);
+            enCompte2.push(listTrimId[1]);
+            enCompte3.push(listTrimId[2]);
+
+            classer.push(1);
+          
+            formattedList.push(listElt);
+            rang ++;
+        })
+        return formattedList;
     }
 
     function changeBulletinType(typeBulletin){
@@ -274,8 +299,10 @@ function GenStudentReport(props) {
         getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
     }
 
+
     function getActivatedSequences(){
         var tempTable=[];
+        tabSequences = [];
         
         axiosInstance.post(`list-sequences/`, {
             id_sousetab: currentAppContext.currentEtab,
@@ -287,40 +314,55 @@ function GenStudentReport(props) {
                     tabSequences.push({value:seq.id, label:seq.libelle});
                     LIST_SEQUENCE.push(seq);
                 }                              
-            })    
+            })  
+            tabSequences.unshift(firstItem);
+            console.log("seaadadad",tabSequences)
         })
         
     }
 
     function getActivatedTrimestres(){
-        var tempTable = []
-              
+        var tempTable = [];
+        tabTrimestres = [];    
         axiosInstance.post(`list-trimestres/`, {
             id_sousetab: currentAppContext.currentEtab,
             id_trimestre:""
         }).then((res)=>{    
             tabTrimestres = [];               
             tempTable = [...res.data];                         
-            tempTable.map((seq)=>{
-                if(seq.is_active == true){
-                    tabTrimestres.push({value:seq.id, label:seq.libelle});
-                    LIST_TRIMESTRES.push(seq);
+            tempTable.map((trim)=>{
+                if(trim.is_active == true){
+                    tabTrimestres.push({value:trim.id, label:trim.libelle});
+                    LIST_TRIMESTRES.push(trim);
                 }                              
             })
+            tabTrimestres.unshift(firstItem);
         })
     }
 
     function getActivatedAnnee(){
-        tabCurrentAnnee = [{value: 0,      label: t("annee")+ ' '+ CURRENT_ANNEE_SCOLAIRE  }]       
+        tabCurrentAnnee = [];
+        tabCurrentAnnee = [{value: 0,      label: t("annee")+ ' '+ CURRENT_ANNEE_SCOLAIRE  }]  
+        tabCurrentAnnee.unshift(firstItem);     
     }
 
 
-    function getActivatedEvalPeriods(typebultin){       
+    function getActivatedEvalPeriods(typebultin){    
+        CURRENT_PERIOD_ID = undefined;
+        setGridRows([]);
+
+        if(document.getElementById('optPeriode').options != undefined && document.getElementById('optPeriode').options[0] != undefined){
+            document.getElementById('optPeriode').options[0].selected = true;
+        }
+       
         switch(typebultin){
-            case 1: {setOptPeriode(tabSequences);       return;} 
-            case 2: {setOptPeriode(tabTrimestres);      return;}
-            case 3: {setOptPeriode(tabCurrentAnnee);    return;}
+            case 1: {setOptPeriode(tabSequences);    break;}
+          
+            case 2: {setOptPeriode(tabTrimestres);   break;}
+            
+            case 3: {setOptPeriode(tabCurrentAnnee); break;}     
         }    
+       
     }
 
     function getTrimSequences(trimestre){
@@ -333,14 +375,18 @@ function GenStudentReport(props) {
     }
 
 
+
     function dropDownHandler(e){
         if(e.target.value != optClasse[0].value){
-            setCanGenerate(true);
-            CURRENT_CLASSE_ID = e.target.value; 
+            CURRENT_CLASSE_ID    = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
-            CURRENT_PERIOD_ID = optPeriode[0].value;
+            
+            PROF_PRINCIPAL       = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
+            CURRENT_PERIOD_ID    = document.getElementById('optPeriode').value;
+        
             console.log("chargement",CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
             getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
+            setCanGenerate(true);
         }else{
             setCanGenerate(false);
             CURRENT_CLASSE_ID = undefined;
@@ -352,44 +398,21 @@ function GenStudentReport(props) {
 
     
     function dropDownPeriodHandler(e){
-        // if(e.target.value != optPeriode[0].value){
+        if(e.target.value > 0){
+            console.log("icicciicicicigfgf", e.target.value);
             CURRENT_PERIOD_ID = e.target.value; 
-            if(typeBulletin==2){
-                CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
-                getTrimSequences(CURRENT_PERIOD_LABEL);
-            }
+            CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
+            if(typeBulletin==2) getTrimSequences(CURRENT_PERIOD_LABEL);
             getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
            
-        // }else{
-        //     CURRENT_PERIOD_ID = undefined;
-        //     if(isValid)  setIsValid(false);
-        // }
+        }else{
+            CURRENT_PERIOD_ID = undefined;
+            setGridRows([])
+           //if(isValid)  setIsValid(false);
+        }
     }
 
-
-    
 /*************************** DataGrid Declaration ***************************/    
-/*---DATA*/
-
-var dataSeq   = [
-    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        moyenne:"11.75", nb_max_matieres_sans_note:"2", classserl:"1", classser:'2' },
-    {rang:2, id:124, matricule:"HT25647S3", nom:"Mbombo njoya armel",     moyenne:"11.75", nb_max_matieres_sans_note:"0", classserl:"3", classser:'2' },
-    {rang:3, id:125, matricule:"HT25645V7", nom:"Mndeng salome huguette", moyenne:"11.75", nb_max_matieres_sans_note:"1", classserl:"5", classser:'3'},
-];
-
-var dataTrim  = [
-    {rang:1, id:123, matricule:"HT25647R3", nom:"Mballa alphonse",        id_seq1:1, moy_seq1:"11.75",  id_seq2:2, moy_seq2:"12.5",  enCompte1:'1',enCompte2:'2', toBeClassed:1},
-    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     id_seq1:1, moy_seq1:"07.75",  id_seq2:2, moy_seq2:"13.75", enCompte1:'1',enCompte2:'2', toBeClassed:1},
-    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", id_seq1:1, moy_seq1:"15.75",  id_seq2:2, moy_seq2:"12.75", enCompte1:'1',enCompte2:'2', toBeClassed:1},
-];
-
-var dataAnnee = [
-    {rang:1, id:124, matricule:"HT25647R3", nom:"Mballa alphonse",        id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"07.5", enCompte:'1²²2²²3', toBeClassed:1},
-    {rang:2, id:125, matricule:"HT25647S3", nom:"Mbombo njoya armel",     id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"08.5", enCompte:'1²²2²²3', toBeClassed:1},
-    {rang:3, id:126, matricule:"HT25645V7", nom:"Mndeng salome huguette", id_trim1:1, moy_trim1:"11.75", id_trim2:2, moy_trim2:"12.75", id_trim3:3, moy_trim3:"05.5", enCompte:'1²²2²²3', toBeClassed:1},
-];
-
-
 
 const columnsSeq = [
     {
@@ -424,7 +447,7 @@ const columnsSeq = [
         headerClassName:classes.GridColumnStyle
     },
     {
-        field: 'nb_max_matieres_sans_note',
+        field: 'nb_matiere_sans_notes',
         headerName: t('matiere_sans_note_M'),
         width: 170,
         editable: false,
@@ -432,7 +455,7 @@ const columnsSeq = [
     },
 
     {
-        field: 'classerl',
+        field: 'nb_coef_manquants',
         headerName: t('coef_manquants_M'),
         width: 170,
         editable: false,
@@ -440,7 +463,7 @@ const columnsSeq = [
     },
 
     {
-        field: 'classer',
+        field: 'matieres_spe_manquantes',
         headerName: t('matieres_spe_manquante_M'),
         width: 170,
         editable: false,
@@ -500,6 +523,15 @@ const columnsSeq = [
         },
 
         {
+            field: 'classer_seq1',
+            headerName:   '',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'id_seq2',
             headerName:  t('moy_seq_M')+seq1,
             width: 120,
@@ -513,6 +545,14 @@ const columnsSeq = [
             headerName:   t('moy_seq_M')+seq2,
             width: 120,
             editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'classer_seq2',
+            headerName:   '',
+            width: 120,
+            editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
 
@@ -608,6 +648,24 @@ const columnsSeq = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'id_trim1',
+            headerName:  '',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'classer_trim1',
+            headerName:   '',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
     
         {
             field: 'moy_trim2',
@@ -618,10 +676,46 @@ const columnsSeq = [
         },
 
         {
+            field: 'id_trim2',
+            headerName:  '',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'classer_trim2',
+            headerName:  '',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'moy_trim3',
             headerName: t('moy_trim_M')+'3',
             width: 80,
             editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id_trim3',
+            headerName:  '',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'classer_trim3',
+            headerName:  '',
+            width: 120,
+            editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
 
@@ -708,90 +802,11 @@ const columnsSeq = [
     }   
     
 /*************************** Handler functions ***************************/
-    function initFormInputs(){
-        var inputs=[];
-        inputs[0] = '';
-        inputs[1] = '';
-        inputs[2] = '';
-        inputs[3] = '';
-        inputs[4] = '';
-        inputs[5] = '';       
-        inputs[6] = '';
-        inputs[7] = '';        
-        inputs[8] = '';
-        inputs[9] = '';
-        inputs[10]= '';
-        inputs[11]= '';
-        inputs[12]='';
-        inputs[13]= '';
-       
-        currentUiContext.setFormInputs(inputs)
-    }
-
-    function handleEditRow(row){       
-        var inputs=[];
-        
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
-        console.log("laligne",row);
-        currentUiContext.setFormInputs(inputs)
-        setModalOpen(2);
-
-    }
-
-    function consultRowData(row){
-        var inputs=[];
-       
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
-     
-        currentUiContext.setFormInputs(inputs)
-        setModalOpen(3);
-
-    }
-
+    
     const acceptHandler=()=>{
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS_NOTES: {
+            case MSG_SUCCESS_GENRPT: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -802,7 +817,18 @@ const columnsSeq = [
                 return 1;
             }
 
-            case MSG_WARNING_NOTES: {
+            case MSG_WARNING_GENRPT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+
+            case MSG_ERROR_GENRPT: {
+                setModalOpen(0);
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -826,39 +852,71 @@ const columnsSeq = [
 
     const rejectHandler=()=>{
         
+        switch(chosenMsgBox){
+
+            case MSG_SUCCESS_GENRPT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //getClassStudentList(CURRENT_CLASSE_ID); 
+                return 1;
+            }
+
+            case MSG_WARNING_GENRPT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+
+            case MSG_ERROR_GENRPT: {
+                setModalOpen(0);
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+            }
+        }
+        
     }
 
-    const printStudentList=()=>{
-        if(CURRENT_CLASSE_ID != undefined){           
-            setModalOpen(5);
-            let formData = new FormData();
-           
-            formData.append('id_classe',CURRENT_CLASSE_ID);
-            formData.append('id_sequence',CURRENT_PERIOD_ID);
-            formData.append('id_eleves',selectedElevesIds[0].join('_'));
-
-            const config = {headers:{'Content-Type':'multipart/form-data'}};
-            axiosInstance
-            .post(`imprimer-bulletin-classe/`,formData,config)
-            .then((response) => {  
-               // setModalOpen(0);              
-                ElevePageSet={};
-                ElevePageSet.effectif = listEleves.length;
-                ElevePageSet.eleveNotes = [... response.data.eleve_results];
-                ElevePageSet.noteRecaps = [... response.data.note_recap_results];
-                ElevePageSet.groupeRecaps = [... response.data.groupe_recap_results];
-                ElevePageSet.entete_fr ={... response.data.entete_fr};
-                ElevePageSet.entete_en ={... response.data.entete_en};
-                ElevePageSet.titreBulletin ={... response.data.titre_bulletin};
-                ElevePageSet.etabLogo = "images/collegeVogt.png";
-                ElevePageSet.profPrincipal = 'MESSI Martin';
-                ElevePageSet.classeLabel = CURRENT_CLASSE_LABEL;                
-                console.log("ici la",ElevePageSet,gridRows);  
-                setModalOpen(4);               
-            })          
+    const printStudentReports=()=>{
+        if(ELEVES_DATA != {}){
+            ElevePageSet = {};
+            ElevePageSet.effectif       = listEleves.length;
+            ElevePageSet.eleveNotes     = [... ELEVES_DATA.eleve_results_c];
+            ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
+            ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
+            ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
+            ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
+            ElevePageSet.titreBulletin  = {... ELEVES_DATA.titre_bulletin};
+            ElevePageSet.etabLogo       = "images/collegeVogt.png";
+            ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
+            ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
+            printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(4); 
                           
         } else{
-            chosenMsgBox = MSG_WARNING;
+            chosenMsgBox = MSG_WARNING_GENRPT;
             currentUiContext.showMsgBox({
                 visible  : true, 
                 msgType  : "warning", 
@@ -866,6 +924,11 @@ const columnsSeq = [
                 message  : t("must_select_class")
             })            
         }      
+    }
+
+    function getTitre(sexe){        
+        if(sexe=='M') return 'Mr';
+        else return 'Mme';
     }
 
     const closePreview =()=>{
@@ -876,31 +939,39 @@ const columnsSeq = [
 
     function genSeqBulletin(criteria){
         console.log("criteres",criteria, CURRENT_PERIOD_ID);
-        //-- A ACTIVER LE MOMENT VENU
-        // setModalOpen(5);
-        // axiosInstance.post(`generer-bulletin-classe/`, {
-        //     id_sousetab : currentAppContext.currentEtab,
-        //     id_classe   : CURRENT_CLASSE_ID,
-        //     id_sequence : CURRENT_PERIOD_ID,
-        //     id_matieres_ne_pouvant_manquer : criteria.id_matieres_ne_pouvant_manquer,
-        //     nb_max_matieres_sans_note      : criteria.nb_max_matieres_sans_note,
-        //     nb_max_coefs_manquants         : criteria.nb_max_coefs_manquants                       
-        // }).then((res)=>{
-        //     setModalOpen(1);    
-            
-        //     // chosenMsgBox = MSG_WARNING_NOTES;
-        //     // currentUiContext.showMsgBox({
-        //     //     visible:true, 
-        //     //     msgType:"info", 
-        //     //     msgTitle:t("error_M"), 
-        //     //     message:t("no_activated_period")
-        //     // })       
-           
-        // })
+        ELEVES_DATA = {};
+        setModalOpen(5);
+        
+        axiosInstance.post(`generer-bulletin-classe/`, {
+            id_sousetab                     : currentAppContext.currentEtab,
+            id_classe                       : CURRENT_CLASSE_ID,
+            id_sequence                     : CURRENT_PERIOD_ID,
+            id_matieres_ne_pouvant_manquer  : criteria.id_matieres_ne_pouvant_manquer,
+            nb_max_matieres_sans_note       : criteria.nb_max_matieres_sans_note,
+            nb_max_coefs_manquants          : criteria.nb_max_coefs_manquants  
+                                 
+        }).then((res)=>{
+
+            ELEVES_DATA = res.data;
+            console.log("RESULTATS GENSEQ", ELEVES_DATA);
+            setEleveCL(res.data.eleve_results_c);
+            setEleveNCL(res.data.eleve_results_nc);
+            setModalOpen(6);   
+
+        },(res)=>{
+            chosenMsgBox = MSG_ERROR_GENRPT;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "danger", 
+                msgTitle : t("error_M"), 
+                message  : t("error_when_generating")
+            })        
+        })
     }
 
     function genTrimBulletin(){
-        var id_eleves = []; periodes_considerees = [];        
+        var id_eleves = []; periodes_considerees = [];
+        ELEVES_DATA = {};        
 
         if(gridRows.length>0){
             gridRows.map((elt, index)=>{
@@ -918,19 +989,30 @@ const columnsSeq = [
 
             console.log("data",eleves_ids,seq_consideree, toBeClassed);
 
-            setModalOpen(6);
-            // axiosInstance.post(`generer-bulletin-trimestre-classe/`, {
-            //     id_sousetab  : currentAppContext.currentEtab,
-            //     id_classe    : CURRENT_CLASSE_ID,
-            //     id_trimestre : CURRENT_PERIOD_ID,
-            //     id_eleves    : eleves_ids,              
-            //     periodes_considerees : seq_consideree,
-            //     classer      : toBeClassed
-            // }).then((res)=>{
-            //     setModalOpen(2);    
-            
-            
-            // })
+            setModalOpen(5);
+            axiosInstance.post(`generer-bulletin-trimestre-classe/`, {
+                id_sousetab  : currentAppContext.currentEtab,
+                id_classe    : CURRENT_CLASSE_ID,
+                id_trimestre : CURRENT_PERIOD_ID,
+                id_eleves    : eleves_ids,              
+                periodes_considerees : seq_consideree,
+                classer      : toBeClassed
+            }).then((res)=>{
+
+                ELEVES_DATA = res.data;
+                setEleveCL(res.data.eleve_results_c);
+                setEleveNCL(res.data.eleve_results_nc);
+                setModalOpen(6);   
+
+            },(res)=>{
+                chosenMsgBox = MSG_ERROR_GENRPT;
+                currentUiContext.showMsgBox({
+                    visible  : true, 
+                    msgType  : "error", 
+                    msgTitle : t("error_M"), 
+                    message  : t("error_when_generating")
+                })        
+            })
         }
     }
 
@@ -956,7 +1038,8 @@ const columnsSeq = [
     }
 
     function genYearBulletin(){
-        var id_eleves = []; periodes_considerees = [];        
+        var id_eleves = []; periodes_considerees = [];  
+        ELEVES_DATA = {};
 
         if(gridRows.length>0){
             gridRows.map((elt, index)=>{
@@ -971,28 +1054,33 @@ const columnsSeq = [
 
             console.log("data",eleves_ids,trim_consideree, toBeClassed);
 
-            setModalOpen(6);
-            // axiosInstance.post(`generer-bulletin-annee-classe/`, {
-            //     id_sousetab          : currentAppContext.currentEtab,
-            //     id_classe            : CURRENT_CLASSE_ID,
-            //     id_trimestre         : CURRENT_PERIOD_ID,
-            //     id_eleves            : eleves_ids,              
-            //     periodes_considerees : trim_consideree,
-            //     classer              : toBeClassed
-            // }).then((res)=>{
-            //     console.log(res)
-            //     setModalOpen(2);    
-            // })
+            setModalOpen(5);
+            axiosInstance.post(`generer-bulletin-annee-classe/`, {
+                id_sousetab          : currentAppContext.currentEtab,
+                id_classe            : CURRENT_CLASSE_ID,
+                id_trimestre         : CURRENT_PERIOD_ID,
+                id_eleves            : eleves_ids,              
+                periodes_considerees : trim_consideree,
+                classer              : toBeClassed
+            }).then((res)=>{
+
+                console.log(res);
+                ELEVES_DATA = res.data;
+                setEleveCL(res.data.eleve_results_c);
+                setEleveNCL(res.data.eleve_results_nc);
+                setModalOpen(6);  
+
+            },(res)=>{
+                chosenMsgBox = MSG_ERROR_GENRPT;
+                currentUiContext.showMsgBox({
+                    visible  : true, 
+                    msgType  : "error", 
+                    msgTitle : t("error_M"), 
+                    message  : t("error_when_generating")
+                })        
+            })
         }
-        setModalOpen(6);
-        axiosInstance.post(`generer-bulletin-annee-classe/`, {
-            id_sousetab : currentAppContext.currentEtab,
-            id_classe   : CURRENT_CLASSE_ID,
-        }).then((res)=>{
-            console.log(res)
-            setModalOpen(3);    
-           
-        })
+        
     }
 
 
@@ -1006,7 +1094,7 @@ const columnsSeq = [
 
             case 2:{
                 genTrimBulletin();
-               return;
+                return;
             }
 
             case 3:{
@@ -1014,6 +1102,14 @@ const columnsSeq = [
                 return;
             }
         }
+    }
+
+    function getBulletinTypeLabel(typeBulletin){
+        switch(typeBulletin){
+            case 1: {setBullTypeLabel(t('bulletin_sequentiel'));   return;} 
+            case 2: {setBullTypeLabel(t('bulletin_trimestriel'));  return;}
+            case 3: {setBullTypeLabel(t('bulletin_annuel'));       return;}
+           }
     }
  
     /********************************** JSX Code **********************************/   
@@ -1056,7 +1152,36 @@ const columnsSeq = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen==4) && <PDFTemplate previewCloseHandler={closePreview}><PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}><BulletinSequence data={ElevePageSet}/></PDFViewer></PDFTemplate>} 
+            {(modalOpen==4) &&                 
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    { isMobile?
+                        <PDFDownloadLink fileName={printedETFileName}   
+                            document = { 
+                                (typeBulletin==1)?
+                                    <BulletinSequence data={ElevePageSet}/>
+                                :
+                                (typeBulletin==2) ?
+                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                : 
+                                    <BulletinAnnuel data={ElevePageSet}/>
+                            }
+                        >
+                            {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            {(typeBulletin==1)?
+                                <BulletinSequence data={ElevePageSet}/>
+                                :
+                                (typeBulletin==2) ?
+                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                : 
+                                <BulletinAnnuel data={ElevePageSet}/>
+                            }
+                        </PDFViewer>  
+                    }               
+                </PDFTemplate>                
+            } 
             
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
@@ -1065,6 +1190,8 @@ const columnsSeq = [
                     msgType  = {currentUiContext.msgBox.msgType} 
                     message  = {currentUiContext.msgBox.message} 
                     customImg ={true}
+                    customStyle={true}
+                    contentStyle={classes.msgContentP}
                     imgStyle={classes.msgBoxImgStyle}
                     buttonAcceptText = {"ok"}
                     buttonRejectText = {"non"}  
@@ -1101,13 +1228,15 @@ const columnsSeq = [
 
              {(modalOpen==6) &&  
                 <ResultatsGeneration
-                    typeBulletin     = {typeBulletin}
-                    bullPeriodeLabel = {optPeriode[0].label}
-                    annee            = {CURRENT_ANNEE_SCOLAIRE}
-                    classeId         = {CURRENT_CLASSE_ID}  
-                    tabPeriodes      = {[]}
-                    cancelHandler    = {()=>setModalOpen(0)}
-                    generateHandler  = {generateBulletinHandler}
+                    typeBulletin          = {typeBulletin}
+                    bullPeriodeLabel      = {CURRENT_PERIOD_LABEL}
+                    annee                 = {CURRENT_ANNEE_SCOLAIRE}
+                    classeId              = {CURRENT_CLASSE_ID} 
+                    elevesClasses         = {elevesCL}
+                    elevesNClasses        = {elevesNCL} 
+                    cancelHandler         = {()=>setModalOpen(0)}
+                    generateHandler       = {generateBulletinHandler}
+                    printReportHandler    = {printStudentReports}
                 /> 
             }  
 
@@ -1217,7 +1346,9 @@ const columnsSeq = [
                         rows={gridRows}
                         columns={(typeBulletin == 1) ? columnsSeq : (typeBulletin == 2) ? columnsTrim : columnsYear}
 
-                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        //getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : (params.field.includes('moy_') && params.row['classer_'+params.field.split('_')[1]] == false)?  classes.gridNoteRedRowStyle : classes.gridRowStyle }
+                       
                         /*onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {

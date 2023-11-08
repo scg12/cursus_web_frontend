@@ -33,16 +33,22 @@ function ResultatsGeneration(props) {
     const [bullTypeLabel, setBullTypeLabel] = useState();
     const [seq1, setSeq1] = useState("1");
     const [seq2, setSeq2] = useState("2");
+    
+    const [elevesCL, setEleveCL] = useState([]);
+    const [elevesNCL,setEleveNCL] = useState([]);
 
     useEffect(()=> {
         console.log("gdgd", props.typeBulletin)
         setTypeBulletin(props.typeBulletin);
         getTrimSequences(props.bullPeriodeLabel);
         getBulletinTypeLabel(props.typeBulletin);
+       
+        setEleveCL(props.elevesClasses);
+        setEleveNCL(props.elevesNClasses);
     },[]);
 
 
-    const elevesCL  = [
+    const elevesClasses  = [
         {rang:'1er',  matricule:'HT021U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
         {rang:'2eme', matricule:'HT026U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
         {rang:'3eme', matricule:'HT016U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
@@ -50,7 +56,7 @@ function ResultatsGeneration(props) {
         {rang:'5eme', matricule:'HT215U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
     ];
 
-    const elevesNCL = [
+    const elevesNClasses = [
         {rang:'1', matricule:'HT015U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
         {rang:'2', matricule:'HT0216U1',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
         {rang:'3', matricule:'HT021U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
@@ -95,6 +101,11 @@ function ResultatsGeneration(props) {
     function quitFormAndGetData(){
         props.cancelHandler();
     }
+
+    function printReports(){
+        props.cancelHandler();
+        props.printReportHandler();
+    }
    
   
    
@@ -119,9 +130,9 @@ function ResultatsGeneration(props) {
     const LigneEleveHeader=(props)=>{
         return(
             <div style={{display:'flex', color:'white', backgroundColor:(props.ordered) ? '#065386':'#d0290c', flexDirection:'row', height:'3vh',  width:'50vw', fontSize:'0.77vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black', position:"absolute", top:'10vh', borderRadius:3}}>
-                <div style={{width:'5vw', paddingLeft:"1.3vh"}}>  {t("rang_M")}            </div>
-                <div style={{width:'8vw'}}>  {t("matricule_M")}       </div> 
-                <div style={{width:'17vw'}}> {t("displayedName_M")}   </div>   
+                <div style={{width:'5vw', paddingLeft:"1.3vh"}}>  {t("rang_M")}           </div>
+                <div style={{width:'8vw'}}>                       {t("matricule_M")}      </div> 
+                <div style={{width:'17vw'}}>                      {t("displayedName_M")}  </div>   
                 
                 
                 {/*----- CAS BULLETIN TRIMESTRIEL -------*/}
@@ -245,7 +256,7 @@ function ResultatsGeneration(props) {
                     </div>
 
                     <LigneEleveHeader ordered={true}/>
-                    <div style={{display:'flex', flexDirection:'column', position:"absolute", top:"13vh", width:"50vw", height:"40vh", overflowY:"scroll", overflowX:'scroll', border: "solid 1px #6286b6cf", borderRadius:3}}>
+                    <div style={{display:'flex', flexDirection:'column', position:"absolute", top:"13vh", width:"50vw", height:elevesNCL.length>0 ?"40vh":"70vh", overflowY:"scroll", overflowX:'scroll', border: "solid 1px #6286b6cf", borderRadius:3}}>
                         {(elevesCL||[]).map((elv, index)=>{
                             return (
                                 <LigneEleve 
@@ -259,28 +270,34 @@ function ResultatsGeneration(props) {
 
                 </div>
                
-                <div style={{display:'flex', flexDirection:'column', justifyContent:"center", position:"absolute", top:"53vh",width:'87%'}}>
+                {(elevesNCL.length>0) &&
+                    <div style={{display:'flex', flexDirection:'column', justifyContent:"center", position:"absolute", top:"53vh",width:'87%'}}>
+                        
+                        <div style={{position:'absolute', top:'6.3vh', width:"100%", fontSize:"0.9vw", fontWeight:"800", display:'flex', flexDirection:'row'}} >
+                            <img src={'images/' + getPuceByTheme()} className={classes.PuceStyle}/>
+                            {t("ELEVES NON CLASSES - ORDRE ALPHABETIQUE")}
+                        </div>
+
+                        
+                        <LigneEleveHeader ordered={false}/>
                     
-                    <div style={{position:'absolute', top:'6.3vh', width:"100%", fontSize:"0.9vw", fontWeight:"800", display:'flex', flexDirection:'row'}} >
-                        <img src={'images/' + getPuceByTheme()} className={classes.PuceStyle}/>
-                        {t("ELEVES NON CLASSES - ORDRE ALPHABETIQUE")}
+                    
+                    
+                        <div style={{display:'flex', flexDirection:'column', position:"absolute", top:"13vh", width:"50vw", height:"17vh", overflowY:"scroll", overflowX:'scroll', border: "solid 1px #ec6885", borderRadius:3}}>
+                            {(elevesNCL||[]).map((elv, index)=>{
+                                return (
+                                    <LigneEleve
+                                        rowIndex = {index}   
+                                        ordered =  {false}
+                                        eleve   =  {elv}                                 
+                                    />
+                                )})
+                            }
+                        </div>
+                    
+
                     </div>
-
-
-                    <LigneEleveHeader ordered={false}/>
-                    <div style={{display:'flex', flexDirection:'column', position:"absolute", top:"13vh", width:"50vw", height:"17vh", overflowY:"scroll", overflowX:'scroll', border: "solid 1px #ec6885", borderRadius:3}}>
-                        {(elevesNCL||[]).map((elv, index)=>{
-                            return (
-                                <LigneEleve
-                                    rowIndex = {index}   
-                                    ordered =  {false}
-                                    eleve   =  {elv}                                 
-                                />
-                            )})
-                        }
-                    </div>
-
-                </div>
+                }
                 
                     
             </div>
@@ -297,7 +314,7 @@ function ResultatsGeneration(props) {
                     btnText={t("imprimer_bulletin")} 
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={quitFormAndGetData}
+                    btnClickHandler={printReports}
                     style={{width:"fit-content",padding:3}}
                 />
             </div>

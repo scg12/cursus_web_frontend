@@ -30,7 +30,7 @@
 .mainContentPosition{
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   height: 100vh;
   
@@ -50,10 +50,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 20vw;  
+  width: 19vw;  
   height: 100vh;
   padding-top: 7vh;
-  overflow-y: scroll;   
+  margin-right: 1vw;
+  /*overflow-y: scroll;   */
 }
 
 
@@ -69,6 +70,10 @@
 
 
 /*--------------------- Theme1 Template Style ------------------*/
+.Theme1_RightBorder{
+  border-right: solid 3.7px #0e5ec7;
+}
+
 .Theme1_headerStyle {
     background-color:rgb(60, 160, 21);  
 }
@@ -96,7 +101,11 @@
 
 /*--------------------- Theme2 Template Style ------------------*/
 
-.Theme2_headerStyle {
+  .Theme2_RightBorder{
+    border-right: solid 3.7px #3ca015;
+  }
+
+  .Theme2_headerStyle {
     background-color:rgb(35, 88, 187);  
   }
 
@@ -114,12 +123,17 @@
 /*    margin-bottom: 10%;*/
 }
 
-.Theme2_footerStyle{
+  .Theme2_footerStyle{
     background-color:rgb(12, 32, 160); 
-}
+  }
+
 
 
 /*--------------------- Theme3 Template Style ------------------*/
+
+.Theme3_RightBorder{
+  border-right: solid 3.7px #4031a5;
+}
 
 .Theme3_headerStyle {
   background-color: rgb(209, 30, 90);  
@@ -142,4 +156,7 @@
 .Theme3_footerStyle{
   background-color:rgb(134, 4, 59);
 }
+
+
+
 
