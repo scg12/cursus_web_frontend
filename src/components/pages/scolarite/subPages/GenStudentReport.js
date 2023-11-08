@@ -186,7 +186,7 @@ function GenStudentReport(props) {
 
 
     const formatSeqList=(list) =>{
-        //var rang = 1;
+        var rang = 1;
         var matiereIndispSansNote = []
         var formattedList = []
 
@@ -194,7 +194,7 @@ function GenStudentReport(props) {
             listElt={};
             listElt.id        = elt.id_eleve;
             listElt.nom       = elt.nom;
-            listElt.rang      = elt.rang; 
+            listElt.rang      = rang; 
             listElt.matricule = elt.matricule;
             listElt.moyenne   = elt.moyenne;
             listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
@@ -204,14 +204,14 @@ function GenStudentReport(props) {
             elt.matiere_indispensables.map((matiere)=> matiereIndispSansNote.push(matiere.libelle));
             listElt.matieres_spe_manquante = matiereIndispSansNote.join(" ");
             formattedList.push(listElt);
-            //rang ++;
+            rang ++;
         })
         return formattedList;
     }
 
 
     const formatTrimList=(list, listSeqId) =>{
-        //var rang = 1;        
+        var rang = 1;        
         var notesSeq      = [];
         var classerSeq    = [];
         var formattedList = [];
@@ -223,7 +223,7 @@ function GenStudentReport(props) {
             listElt={};
             listElt.id   = elt.id_eleve;
             listElt.nom  = elt.nom;
-            listElt.rang = elt.rang; 
+            listElt.rang = rang; 
             listElt.matricule    = elt.matricule;
             listElt.moyennes_seq = elt.moyennes_seq;
             listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
@@ -246,13 +246,14 @@ function GenStudentReport(props) {
             classer.push(1);
                        
             formattedList.push(listElt);
-            //rang ++;
+            rang ++;
         })
         return formattedList;
     }
 
 
     const formatAnnualList=(list,listTrimId) =>{
+        var rang = 1;
         var notesTrim     = [];
         var classerTrim   = [];
         var formattedList = [];
@@ -264,7 +265,7 @@ function GenStudentReport(props) {
             listElt={};
             listElt.id   = elt.id_eleve;
             listElt.nom  = elt.nom;
-            listElt.rang = elt.rang; 
+            listElt.rang = rang; 
             listElt.matricule    = elt.matricule;
             listElt.moyennes_trimestre = elt.moyennes_trimestre;
             listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
@@ -287,7 +288,7 @@ function GenStudentReport(props) {
             classer.push(1);
           
             formattedList.push(listElt);
-            //rang ++;
+            rang ++;
         })
         return formattedList;
     }
@@ -829,6 +830,7 @@ const columnsSeq = [
             }
 
             case MSG_ERROR_GENRPT: {
+                setModalOpen(0);
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -876,6 +878,7 @@ const columnsSeq = [
             }
 
             case MSG_ERROR_GENRPT: {
+                setModalOpen(0);
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -952,6 +955,7 @@ const columnsSeq = [
         }).then((res)=>{
 
             ELEVES_DATA = res.data;
+            console.log("RESULTATS GENSEQ", ELEVES_DATA);
             setEleveCL(res.data.eleve_results_c);
             setEleveNCL(res.data.eleve_results_nc);
             setModalOpen(6);   
@@ -960,7 +964,7 @@ const columnsSeq = [
             chosenMsgBox = MSG_ERROR_GENRPT;
             currentUiContext.showMsgBox({
                 visible  : true, 
-                msgType  : "error", 
+                msgType  : "danger", 
                 msgTitle : t("error_M"), 
                 message  : t("error_when_generating")
             })        
@@ -1188,6 +1192,8 @@ const columnsSeq = [
                     msgType  = {currentUiContext.msgBox.msgType} 
                     message  = {currentUiContext.msgBox.message} 
                     customImg ={true}
+                    customStyle={true}
+                    contentStyle={classes.msgContentP}
                     imgStyle={classes.msgBoxImgStyle}
                     buttonAcceptText = {"ok"}
                     buttonRejectText = {"non"}  
@@ -1229,7 +1235,7 @@ const columnsSeq = [
                     annee                 = {CURRENT_ANNEE_SCOLAIRE}
                     classeId              = {CURRENT_CLASSE_ID} 
                     elevesClasses         = {elevesCL}
-                    elevesNonClasses      = {elevesNCL} 
+                    elevesNClasses      = {elevesNCL} 
                     cancelHandler         = {()=>setModalOpen(0)}
                     generateHandler       = {generateBulletinHandler}
                     printReportHandler    = {printStudentReports}

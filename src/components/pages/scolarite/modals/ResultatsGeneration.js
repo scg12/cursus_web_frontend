@@ -256,7 +256,7 @@ function ResultatsGeneration(props) {
                     </div>
 
                     <LigneEleveHeader ordered={true}/>
-                    <div style={{display:'flex', flexDirection:'column', position:"absolute", top:"13vh", width:"50vw", height:"40vh", overflowY:"scroll", overflowX:'scroll', border: "solid 1px #6286b6cf", borderRadius:3}}>
+                    <div style={{display:'flex', flexDirection:'column', position:"absolute", top:"13vh", width:"50vw", height:elevesNCL.length>0 ?"40vh":"70vh", overflowY:"scroll", overflowX:'scroll', border: "solid 1px #6286b6cf", borderRadius:3}}>
                         {(elevesCL||[]).map((elv, index)=>{
                             return (
                                 <LigneEleve 
@@ -270,18 +270,19 @@ function ResultatsGeneration(props) {
 
                 </div>
                
-                <div style={{display:'flex', flexDirection:'column', justifyContent:"center", position:"absolute", top:"53vh",width:'87%'}}>
-                    
-                    <div style={{position:'absolute', top:'6.3vh', width:"100%", fontSize:"0.9vw", fontWeight:"800", display:'flex', flexDirection:'row'}} >
-                        <img src={'images/' + getPuceByTheme()} className={classes.PuceStyle}/>
-                        {t("ELEVES NON CLASSES - ORDRE ALPHABETIQUE")}
-                    </div>
+                {(elevesNCL.length>0) &&
+                    <div style={{display:'flex', flexDirection:'column', justifyContent:"center", position:"absolute", top:"53vh",width:'87%'}}>
+                        
+                        <div style={{position:'absolute', top:'6.3vh', width:"100%", fontSize:"0.9vw", fontWeight:"800", display:'flex', flexDirection:'row'}} >
+                            <img src={'images/' + getPuceByTheme()} className={classes.PuceStyle}/>
+                            {t("ELEVES NON CLASSES - ORDRE ALPHABETIQUE")}
+                        </div>
 
-                    {(elevesNCL.length>0) &&
+                        
                         <LigneEleveHeader ordered={false}/>
-                    }
                     
-                    {(elevesNCL.length>0) &&
+                    
+                    
                         <div style={{display:'flex', flexDirection:'column', position:"absolute", top:"13vh", width:"50vw", height:"17vh", overflowY:"scroll", overflowX:'scroll', border: "solid 1px #ec6885", borderRadius:3}}>
                             {(elevesNCL||[]).map((elv, index)=>{
                                 return (
@@ -293,9 +294,10 @@ function ResultatsGeneration(props) {
                                 )})
                             }
                         </div>
-                    }
+                    
 
-                </div>
+                    </div>
+                }
                 
                     
             </div>

@@ -13,7 +13,7 @@ const remoteClientUrl ='http://192.168.43.99:3000/';
 
 const axiosInstance = axios.create({
 	baseURL: baseURL,
-	timeout: 25000,
+	timeout: 900000,
 	headers: {
 		Authorization: localStorage.getItem('access')
 			? 'JWT ' + localStorage.getItem('access')

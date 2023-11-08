@@ -462,7 +462,7 @@ function PrintStudentReport(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
 
-            PROF_PRINCIPAL       = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
+            PROF_PRINCIPAL = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
    
             getStudentListOfClass(CURRENT_CLASSE_ID).then((elevesList)=>{alert("bonjour"); setGridRowsCL(elevesList);/*getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, elevesList)*/});
 
@@ -1285,6 +1285,8 @@ function PrintStudentReport(props) {
                     msgType  = {currentUiContext.msgBox.msgType} 
                     message  = {currentUiContext.msgBox.message} 
                     customImg ={true}
+                    customStyle={true}
+                    contentStyle={classes.msgContentP}
                     imgStyle={classes.msgBoxImgStyle}
                     buttonAcceptText = {"ok"}
                     buttonRejectText = {"non"}  

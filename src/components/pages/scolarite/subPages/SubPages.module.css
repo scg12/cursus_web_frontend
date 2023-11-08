@@ -116,6 +116,16 @@
 
 }
 
+.msgContentP{
+    display: flex;
+    color:black;
+    font-size: 0.9vw;
+    font-weight: 750;
+    align-self: center;
+    margin-left: 0.17vw;
+
+}
+
 
 .clotureStyle{
 min-height: 5vh !important;
