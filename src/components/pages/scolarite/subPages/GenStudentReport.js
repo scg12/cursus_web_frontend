@@ -401,10 +401,8 @@ function GenStudentReport(props) {
         if(e.target.value > 0){
             console.log("icicciicicicigfgf", e.target.value);
             CURRENT_PERIOD_ID = e.target.value; 
-            if(typeBulletin==2){
-                CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
-                getTrimSequences(CURRENT_PERIOD_LABEL);
-            }
+            CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
+            if(typeBulletin==2) getTrimSequences(CURRENT_PERIOD_LABEL);
             getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
            
         }else{
@@ -1235,7 +1233,7 @@ const columnsSeq = [
                     annee                 = {CURRENT_ANNEE_SCOLAIRE}
                     classeId              = {CURRENT_CLASSE_ID} 
                     elevesClasses         = {elevesCL}
-                    elevesNClasses      = {elevesNCL} 
+                    elevesNClasses        = {elevesNCL} 
                     cancelHandler         = {()=>setModalOpen(0)}
                     generateHandler       = {generateBulletinHandler}
                     printReportHandler    = {printStudentReports}

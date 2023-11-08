@@ -487,12 +487,14 @@ function PrintStudentReport(props) {
     
     function dropDownPeriodHandler(e){
         if(e.target.value != optPeriode[0].value){
-            CURRENT_PERIOD_ID = e.target.value; 
+            CURRENT_PERIOD_ID    = e.target.value; 
+            CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
            // getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, listEleves);           
             // if(CURRENT_CLASSE_ID!=undefined) setIsValid(true);
             // else setIsValid(false);
         }else{
-            CURRENT_PERIOD_ID = undefined;  
+            CURRENT_PERIOD_ID    = undefined;
+            CURRENT_PERIOD_LABEL = ''; 
             setIsValid(false);         
         }
     }
