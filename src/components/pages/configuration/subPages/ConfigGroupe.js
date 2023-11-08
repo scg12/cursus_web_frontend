@@ -324,7 +324,7 @@ function ConfigGroupe(props) {
                 id_cours:grp.idCours, 
                 id_classe:grp.idClasse,
                 grp_spe:grp.grp_spe,
-                supprimer:"1",
+                supprimer:"0",
                 new_groupe:grp.new_groupe,
                 id_sousetab: currentAppContext.currentEtab
             }).then((res)=>{
