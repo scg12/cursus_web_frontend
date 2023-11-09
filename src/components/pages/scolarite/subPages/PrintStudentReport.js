@@ -182,7 +182,7 @@ function PrintStudentReport(props) {
                 chosenMsgBox = MSG_ERROR_PrRPT;
                 currentUiContext.showMsgBox({
                     visible  : true, 
-                    msgType  : "error", 
+                    msgType  : "danger", 
                     msgTitle : t("error_M"), 
                     message  : t("report_not_yet_generated")
                 })        
@@ -213,7 +213,7 @@ function PrintStudentReport(props) {
                 chosenMsgBox = MSG_ERROR_PrRPT;
                 currentUiContext.showMsgBox({
                     visible  : true, 
-                    msgType  : "error", 
+                    msgType  : "danger", 
                     msgTitle : t("error_M"), 
                     message  : t("report_not_yet_generated")
                 })        
@@ -244,7 +244,7 @@ function PrintStudentReport(props) {
                 chosenMsgBox = MSG_ERROR_PrRPT;
                 currentUiContext.showMsgBox({
                     visible  : true, 
-                    msgType  : "error", 
+                    msgType  : "danger", 
                     msgTitle : t("error_M"), 
                     message  : t("report_not_yet_generated")
                 })        

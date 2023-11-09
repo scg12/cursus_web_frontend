@@ -131,6 +131,7 @@ function GenStudentReport(props) {
 
     function getStudentGenerationInfo(classeId, periode, typeBulletin){
         var type_generation = 'sequence'
+        console.log("classe, periode,typebull",classeId, periode, typeBulletin);
 
         switch(typeBulletin){
             case 1 : {
@@ -246,6 +247,7 @@ function GenStudentReport(props) {
             classer.push(1);
                        
             formattedList.push(listElt);
+            // formattedList[0].classer_seq1=false;
             rang ++;
         })
         return formattedList;
@@ -1008,7 +1010,7 @@ const columnsSeq = [
                 chosenMsgBox = MSG_ERROR_GENRPT;
                 currentUiContext.showMsgBox({
                     visible  : true, 
-                    msgType  : "error", 
+                    msgType  : "danger", 
                     msgTitle : t("error_M"), 
                     message  : t("error_when_generating")
                 })        
@@ -1074,7 +1076,7 @@ const columnsSeq = [
                 chosenMsgBox = MSG_ERROR_GENRPT;
                 currentUiContext.showMsgBox({
                     visible  : true, 
-                    msgType  : "error", 
+                    msgType  : "danger", 
                     msgTitle : t("error_M"), 
                     message  : t("error_when_generating")
                 })        
