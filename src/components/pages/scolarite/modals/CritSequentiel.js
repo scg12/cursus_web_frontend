@@ -174,13 +174,17 @@ function CriteresGeneration(props) {
     function getFormData(){
         CRITERIA = {};
         var listMatSpe = [];
+        var matSpeObigatoire = "";
+        
         matSpeSelected.map((elt)=>{
             if(elt!='') listMatSpe.push(elt);
         })
 
-        CRITERIA.id_matieres_ne_pouvant_manquer = document.getElementById('matSansNote').value;
+        if(listMatSpe.length > 0) matSpeObigatoire = listMatSpe.join("²²");
+
+        CRITERIA.nb_max_matieres_sans_note      = document.getElementById('matSansNote').value;
         CRITERIA.nb_max_coefs_manquants         = document.getElementById('totMaxCoef').value;
-        CRITERIA.nb_max_matieres_sans_note      = listMatSpe.join("²²");
+        CRITERIA.id_matieres_ne_pouvant_manquer = matSpeObigatoire;
         console.log("resultats",CRITERIA);
     }
     
@@ -202,7 +206,7 @@ function CriteresGeneration(props) {
                 </div>
                            
                 <div className={classes.formMainTitle} style={{marginLeft:'0.7vw'}}>
-                    {t("CRITERES DE SELECTION DES ELEVES POUR GENERATION")}
+                    {t("crit_gen_seq_M")}
                 </div>                
             </div>
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop/>}

@@ -382,7 +382,7 @@ function GenStudentReport(props) {
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             
             PROF_PRINCIPAL       = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
-            CURRENT_PERIOD_ID    = document.getElementById('optPeriode').value;
+            //CURRENT_PERIOD_ID    = document.getElementById('optPeriode').value;
         
             console.log("chargement",CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
             getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);

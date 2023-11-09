@@ -233,13 +233,13 @@ function AddStudent(props) {
 
 
     const tabRedouble=[
-        {value: 'N',  label:'Non'  },
-        {value: 'O',   label:'Oui'   },       
+        {value: 'N',   label:t('no')  },
+        {value: 'O',   label:t('yes')  },       
     ];
 
     const tabSexe=[        
-        {value: 'M',  label:'Masculin' },
-        {value: 'F',  label:'Feminin'  }
+        {value: 'M',  label:t('form_masculin') },
+        {value: 'F',  label:t('form_feminin')  }
     ];
 
     

@@ -42,11 +42,55 @@ function ResultatsGeneration(props) {
         setTypeBulletin(props.typeBulletin);
         getTrimSequences(props.bullPeriodeLabel);
         getBulletinTypeLabel(props.typeBulletin);
+
+        var elevesClasses   = convertElevesDataIntoarray(props.elevesClasses);
+        var elevesNClasses  = convertElevesDataIntoarray(props.elevesNClasses);
        
-        setEleveCL(props.elevesClasses);
-        setEleveNCL(props.elevesNClasses);
+        setEleveCL(elevesClasses);
+        setEleveNCL(elevesNClasses);
     },[]);
 
+    function convertElevesDataIntoarray(elevesData){
+        var elvData = [];
+        var eleve   = {};
+        var resultatElev = [];
+        elevesData.map((elv)=>{
+            eleve = {};
+            resultatElev      = elv.resultat.split("~~~");
+            console.log("resultElv:", resultatElev)
+            eleve.id          = elv.id;
+            eleve.rang        = elv.rang;
+            eleve.matricule   = resultatElev[1].split("²²")[2];
+            eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
+
+            switch(typeBulletin){
+                case 1: {
+                    eleve.moyenne = resultatElev[resultatElev.length-1].split("²²")[2];
+                    break;
+                }
+
+                case 2: {
+                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    break;
+                }
+
+                case 3: {
+                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.decision  = "";
+                    eleve.promuEn   = "";
+                    break;
+                }
+            }
+
+            elvData.push(eleve);    
+        })
+
+        return elvData;
+
+    }
 
     const elevesClasses  = [
         {rang:'1er',  matricule:'HT021U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
