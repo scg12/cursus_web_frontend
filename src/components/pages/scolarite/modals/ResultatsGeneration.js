@@ -43,14 +43,14 @@ function ResultatsGeneration(props) {
         getTrimSequences(props.bullPeriodeLabel);
         getBulletinTypeLabel(props.typeBulletin);
 
-        var elevesClasses   = convertElevesDataIntoarray(props.elevesClasses);
+        var elevesClasses   = convertElevesDataIntoarray(props.elevesClasses, props.typeBulletin);
         var elevesNClasses  = convertElevesDataIntoarray(props.elevesNClasses);
        
         setEleveCL(elevesClasses);
         setEleveNCL(elevesNClasses);
     },[]);
 
-    function convertElevesDataIntoarray(elevesData){
+    function convertElevesDataIntoarray(elevesData, typeBulletin){
         var elvData = [];
         var eleve   = {};
         var resultatElev = [];
@@ -62,9 +62,11 @@ function ResultatsGeneration(props) {
             eleve.rang        = elv.rang;
             eleve.matricule   = resultatElev[1].split("²²")[2];
             eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
+            console.log("typeBull",typeBulletin);
 
-            switch(typeBulletin){
+            switch(typeBulletin){ 
                 case 1: {
+                    console.log("ici1");
                     eleve.moyenne = resultatElev[resultatElev.length-1].split("²²")[2];
                     break;
                 }
