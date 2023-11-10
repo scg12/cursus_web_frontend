@@ -207,7 +207,7 @@ function BulletinSequence(props) {
                             }
                             </View>
                             <View key={id_note+8000} style={styles.ligne_entete_note__appreciation}>
-                            <Text>Très Bien</Text>
+                            <Text>{note.split("²²")[2]}</Text>
                             </View>
                         </View>
                             ))

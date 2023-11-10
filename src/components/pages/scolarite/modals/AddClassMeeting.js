@@ -119,9 +119,9 @@ function AddClassMeeting(props) {
 
     
     const tabTypeConseil=[
-        {value:"sequentiel",  label:"Conseil bilan sequentiel" },
-        {value:"trimestriel", label:"Conseil bilan trimestriel"},
-        {value:"annuel",      label:"Conseil bilan annuel"     },
+        {value:"sequentiel",  label:t("conseil_bilan_seq")      },
+        {value:"trimestriel", label:t("conseil_bilan_trim")     },
+        {value:"annuel",      label:t("conseil_bilan_annuel")   },
     ];
 
     const verdictAnnuel = [
@@ -345,7 +345,7 @@ function AddClassMeeting(props) {
     }
 
     function getElevesTab(elevesTab){
-        var tabEleves = [{value:0,label:"- Choisir un eleve -"}]
+        var tabEleves = [{value:0,label:"- "+t("select_eleve")+" -"}]
         var new_eleve;
         elevesTab.map((eleve)=>{
             new_eleve = {};
