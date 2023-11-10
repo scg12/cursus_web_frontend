@@ -44,7 +44,7 @@ function ResultatsGeneration(props) {
         getBulletinTypeLabel(props.typeBulletin);
 
         var elevesClasses   = convertElevesDataIntoarray(props.elevesClasses, props.typeBulletin);
-        var elevesNClasses  = convertElevesDataIntoarray(props.elevesNClasses);
+        var elevesNClasses  = convertElevesDataIntoarray(props.elevesNClasses,props.typeBulletin);
        
         setEleveCL(elevesClasses);
         setEleveNCL(elevesNClasses);
@@ -94,21 +94,6 @@ function ResultatsGeneration(props) {
 
     }
 
-    const elevesClasses  = [
-        {rang:'1er',  matricule:'HT021U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'2eme', matricule:'HT026U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'3eme', matricule:'HT016U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'4eme', matricule:'HT0156U3',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'5eme', matricule:'HT215U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-    ];
-
-    const elevesNClasses = [
-        {rang:'1', matricule:'HT015U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'2', matricule:'HT0216U1',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'3', matricule:'HT021U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'4', matricule:'HT0216U3',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-        {rang:'5', matricule:'HT215U13',nom:'MBARGA Luc Donald', moy_seq1:'12.5', moy_seq2:'13.5', moyenne:'13.00'},
-    ];
 
    
     function getGridButtonStyle()
@@ -212,7 +197,7 @@ function ResultatsGeneration(props) {
                 }
 
                 {(typeBulletin==3)&&               
-                    <div style={{width:'7vw', fontSize:"0.7vw"}}>  {t("moyGenAB_M")}          </div>
+                    <div style={{width:'7vw', fontSize:"0.7vw"}}>  {t("moyGenAN_M")}          </div>
                 }
                 
                 {/*----- CAS BULLETIN ANNUEL -------*/}

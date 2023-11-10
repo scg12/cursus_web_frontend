@@ -97,13 +97,15 @@ function PrintStudentReport(props) {
 
     useEffect(()=> {
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
+
         setOptTypeReport(tabTypReport);
        
         getActivatedSequences();
         getActivatedTrimestres();
         getActivatedAnnee();
 
-        getActivatedEvalPeriods(1);
+        CURRENT_TYPE_BULLETIN_ID = 1;
+        getActivatedEvalPeriods(CURRENT_TYPE_BULLETIN_ID);
 
         if(gridRowsCL.length==0){
             CURRENT_CLASSE_ID = undefined;
@@ -113,6 +115,69 @@ function PrintStudentReport(props) {
         getEtabListClasses();
         
     },[]);
+
+
+    function getActivatedSequences(){
+        var tempTable=[];
+        tabSequences = [];
+        
+        axiosInstance.post(`list-sequences/`, {
+            id_sousetab: currentAppContext.currentEtab,
+            id_trimestre:""
+        }).then((res)=>{                   
+            tempTable = [...res.data.sequences];                         
+            tempTable.map((seq)=>{
+                if(seq.is_active == true){
+                    tabSequences.push({value:seq.id, label:seq.libelle});
+                    LIST_SEQUENCE.push(seq);
+                }                              
+            })  
+            tabSequences.unshift(firstItem);
+            console.log("seaadadad",tabSequences)
+        })
+    }
+
+    function getActivatedTrimestres(){
+        var tempTable = [];
+        tabTrimestres = [];    
+        axiosInstance.post(`list-trimestres/`, {
+            id_sousetab: currentAppContext.currentEtab,
+            id_trimestre:""
+        }).then((res)=>{    
+            tabTrimestres = [];               
+            tempTable = [...res.data];                         
+            tempTable.map((trim)=>{
+                if(trim.is_active == true){
+                    tabTrimestres.push({value:trim.id, label:trim.libelle});
+                    LIST_TRIMESTRES.push(trim);
+                }                              
+            })
+            tabTrimestres.unshift(firstItem);
+        })
+    }
+
+    function getActivatedAnnee(){
+        tabCurrentAnnee = [];
+        tabCurrentAnnee = [{value: 0,      label: t("annee")+ ' '+ CURRENT_ANNEE_SCOLAIRE  }]  
+        tabCurrentAnnee.unshift(firstItem);     
+    }
+
+    function getActivatedEvalPeriods(typebultin){    
+        CURRENT_PERIOD_ID = undefined;
+        setGridRowsCL([]); setGridRowsNCL([]);
+
+        if(document.getElementById('optPeriode').options != undefined && document.getElementById('optPeriode').options[0] != undefined){
+            document.getElementById('optPeriode').options[0].selected = true;
+        }
+       
+        switch(typebultin){
+            case 1: {setOptPeriode(tabSequences);    break;}
+          
+            case 2: {setOptPeriode(tabTrimestres);   break;}
+            
+            case 3: {setOptPeriode(tabCurrentAnnee); break;}     
+        }  
+    }
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label:(i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '    }]
@@ -145,7 +210,7 @@ function PrintStudentReport(props) {
     } 
 
     function getBulletinInfos(typeBulletin, idClasse, idSequence, studentList){
-       
+       console.log("type bulletin",typeBulletin);
         if(idClasse==undefined || idSequence==undefined){
             setGridRowsCL([]);  setGridRowsNCL([]);
         } else {
@@ -160,6 +225,51 @@ function PrintStudentReport(props) {
         }      
     }
 
+    function convertElevesDataIntoarray(elevesData, typeBulletin){
+        var elvData = [];
+        var eleve   = {};
+        var resultatElev = [];
+        elevesData.map((elv)=>{
+            eleve = {};
+            resultatElev      = elv.resultat.split("~~~");
+            console.log("resultElv:", resultatElev)
+            eleve.id          = elv.id;
+            eleve.rang        = elv.rang;
+            eleve.matricule   = resultatElev[1].split("²²")[2];
+            eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
+            console.log("typeBull",typeBulletin);
+
+            switch(typeBulletin){ 
+                case 1: {
+                    console.log("ici1");
+                    eleve.moyenne = resultatElev[resultatElev.length-1].split("²²")[2];
+                    break;
+                }
+
+                case 2: {
+                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    break;
+                }
+
+                case 3: {
+                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.decision  = "";
+                    eleve.promuEn   = "";
+                    break;
+                }
+            }
+
+            elvData.push(eleve);    
+        })
+
+        return elvData;
+
+    }
+
+
     function getBullSequentielInfo(idClasse, idSequence, studentList){
         var selectedEleves = []; ELEVES_DATA={}; ELEVES_CL = []; ELEVES_NCL = [];
 
@@ -173,8 +283,15 @@ function PrintStudentReport(props) {
             if(res.data.status=="ok"){
 
                 ELEVES_DATA = res.data;
-                ELEVES_CL   = formatSeqList(res.data.eleve_results_c, studentList);
-                ELEVES_NCL  = formatSeqList(res.data.eleve_results_nc, studentList);
+
+                console.log("Donnes pr impression",ELEVES_DATA);
+
+                var elevesClasses   = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_c,  CURRENT_TYPE_BULLETIN_ID);
+                var elevesNClasses  = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_nc, CURRENT_TYPE_BULLETIN_ID);
+
+                ELEVES_CL   = formatSeqList(elevesClasses, studentList);
+                ELEVES_NCL  = formatSeqList(elevesNClasses, studentList);
+
                 setGridRowsCL(ELEVES_CL);
                 setGridRowsNCL(ELEVES_NCL);
 
@@ -204,8 +321,14 @@ function PrintStudentReport(props) {
             if(res.data.status=="ok"){
 
                 ELEVES_DATA = res.data;
-                ELEVES_CL   = formatSeqList(res.data.eleve_results_c, studentList);
-                ELEVES_NCL  = formatSeqList(res.data.eleve_results_nc, studentList);
+
+                var elevesClasses   = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_c,  CURRENT_TYPE_BULLETIN_ID);
+                var elevesNClasses  = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_nc, CURRENT_TYPE_BULLETIN_ID);
+
+                ELEVES_CL   = formatTrimList(elevesClasses, studentList);
+                ELEVES_NCL  = formatTrimList(elevesNClasses,studentList);
+
+
                 setGridRowsCL(ELEVES_CL);
                 setGridRowsNCL(ELEVES_NCL);
 
@@ -235,8 +358,13 @@ function PrintStudentReport(props) {
             if(res.data.status=="ok"){
 
                 ELEVES_DATA = res.data;
-                ELEVES_CL  = formatSeqList(res.data.eleve_results_c, studentList);
-                ELEVES_NCL = formatSeqList(res.data.eleve_results_nc, studentList);
+
+                var elevesClasses   = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_c,  CURRENT_TYPE_BULLETIN_ID);
+                var elevesNClasses  = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_nc, CURRENT_TYPE_BULLETIN_ID);
+                
+                ELEVES_CL  = formatAnnualList(elevesClasses, studentList);
+                ELEVES_NCL = formatAnnualList(elevesNClasses, studentList);
+
                 setGridRowsCL(ELEVES_CL);
                 setGridRowsNCL(ELEVES_NCL);
 
@@ -262,24 +390,25 @@ function PrintStudentReport(props) {
 
     const formatSeqList=(list, listEnRegle) =>{
         //var rang = 1;
+        console.log("en regles",list,listEnRegle);
         var matiereIndispSansNote = []
         var formattedList = []
 
         list.map((elt)=>{
             listElt = {};
-            listElt.id        = elt.id_eleve;
+            listElt.id        = elt.id;
             listElt.nom       = elt.nom;
             listElt.rang      = elt.rang; 
             listElt.matricule = elt.matricule;
             listElt.moyenne   = elt.moyenne;
-            listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
-            listElt.nb_coef_manquants = elt.nb_coef_manquants;
-            listElt.nb_matiere_indispensable_sans_notes = elt.nb_matiere_indispensable_sans_notes;
-            listElt.matiere_indispensables = elt.matiere_indispensables;
-            elt.matiere_indispensables.map((matiere)=> matiereIndispSansNote.push(matiere.libelle));
-            listElt.matieres_spe_manquante = matiereIndispSansNote.join(" ");
+            // listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
+            // listElt.nb_coef_manquants = elt.nb_coef_manquants;
+            // listElt.nb_matiere_indispensable_sans_notes = elt.nb_matiere_indispensable_sans_notes;
+            // listElt.matiere_indispensables = (elt.matiere_indispensables!= undefined) ? elt.matiere_indispensables:[];
+            // listElt.matiere_indispensables.map((matiere)=> matiereIndispSansNote.push(matiere.libelle));
+            // listElt.matieres_spe_manquante = matiereIndispSansNote.join(" ");
 
-            listElt.en_regle = listEnRegle.find((elv)=>elv.id==elt.id).en_regle;
+            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
             formattedList.push(listElt);
             //rang ++;
@@ -296,7 +425,7 @@ function PrintStudentReport(props) {
         list.map((elt)=>{
             notesSeq   = [0,0];
             listElt={};
-            listElt.id   = elt.id_eleve;
+            listElt.id   = elt.id;
             listElt.nom  = elt.nom;
             listElt.rang = elt.rang; 
             listElt.matricule    = elt.matricule;
@@ -307,7 +436,7 @@ function PrintStudentReport(props) {
             listElt.moy_seq2  = notesSeq[1];
             listElt.moyenne  = notesSeq[1];
            
-            listElt.en_regle = listEnRegle.find((elv)=>elv.id==elt.id).en_regle;
+            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
           
             formattedList.push(listElt);
@@ -324,10 +453,10 @@ function PrintStudentReport(props) {
         list.map((elt)=>{
             notesTrim = [0,0,0];
             listElt={};
-            listElt.id   = elt.id_eleve;
+            listElt.id   = elt.id;
             listElt.nom  = elt.nom;
             listElt.rang = elt.rang; 
-            listElt.matricule    = elt.matricule;
+            listElt.matricule          = elt.matricule;
             listElt.moyennes_trimestre = elt.moyennes_trimestre;
             listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
             
@@ -336,7 +465,7 @@ function PrintStudentReport(props) {
             listElt.moy_trim3  = notesTrim[2];
             listElt.moyenne  = notesTrim[2];
 
-            listElt.en_regle = listEnRegle.find((elv)=>elv.id==elt.id).en_regle;
+            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
             
             formattedList.push(listElt);
@@ -381,72 +510,6 @@ function PrintStudentReport(props) {
         getActivatedEvalPeriods(typeBulletin);
     }
 
-    function getActivatedSequences(){
-        var tempTable=[];
-        tabSequences = [];
-        
-        axiosInstance.post(`list-sequences/`, {
-            id_sousetab: currentAppContext.currentEtab,
-            id_trimestre:""
-        }).then((res)=>{                   
-            tempTable = [...res.data.sequences];                         
-            tempTable.map((seq)=>{
-                if(seq.is_active == true){
-                    tabSequences.push({value:seq.id, label:seq.libelle});
-                    LIST_SEQUENCE.push(seq);
-                }                              
-            })  
-            tabSequences.unshift(firstItem);
-            console.log("seaadadad",tabSequences)
-        })
-        
-    }
-
-    function getActivatedTrimestres(){
-        var tempTable = [];
-        tabTrimestres = [];    
-        axiosInstance.post(`list-trimestres/`, {
-            id_sousetab: currentAppContext.currentEtab,
-            id_trimestre:""
-        }).then((res)=>{    
-            tabTrimestres = [];               
-            tempTable = [...res.data];                         
-            tempTable.map((trim)=>{
-                if(trim.is_active == true){
-                    tabTrimestres.push({value:trim.id, label:trim.libelle});
-                    LIST_TRIMESTRES.push(trim);
-                }                              
-            })
-            tabTrimestres.unshift(firstItem);
-        })
-    }
-
-    function getActivatedAnnee(){
-        tabCurrentAnnee = [];
-        tabCurrentAnnee = [{value: 0,      label: t("annee")+ ' '+ CURRENT_ANNEE_SCOLAIRE  }]  
-        tabCurrentAnnee.unshift(firstItem);     
-    }
-
-
-    function getActivatedEvalPeriods(typebultin){    
-        CURRENT_PERIOD_ID = undefined;
-        setGridRowsCL([]); setGridRowsNCL([]);
-
-        if(document.getElementById('optPeriode').options != undefined && document.getElementById('optPeriode').options[0] != undefined){
-            document.getElementById('optPeriode').options[0].selected = true;
-        }
-       
-        switch(typebultin){
-            case 1: {setOptPeriode(tabSequences);    break;}
-          
-            case 2: {setOptPeriode(tabTrimestres);   break;}
-            
-            case 3: {setOptPeriode(tabCurrentAnnee); break;}     
-        }    
-       
-    }
-
-
     function getTrimSequences(trimestre){
         console.log("trimestre",trimestre)
        switch(trimestre){
@@ -464,11 +527,8 @@ function PrintStudentReport(props) {
 
             PROF_PRINCIPAL = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
    
-            getStudentListOfClass(CURRENT_CLASSE_ID).then((elevesList)=>{alert("bonjour"); setGridRowsCL(elevesList);/*getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, elevesList)*/});
+            getStudentListOfClass(CURRENT_CLASSE_ID).then((elevesList)=>{getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, elevesList)});
 
-            // if(CURRENT_PERIOD_ID!=undefined) setIsValid(true);
-            // else setIsValid(false);            
-            console.log(CURRENT_CLASSE_LABEL)          
         }else{           
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
@@ -489,7 +549,7 @@ function PrintStudentReport(props) {
         if(e.target.value != optPeriode[0].value){
             CURRENT_PERIOD_ID    = e.target.value; 
             CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
-           // getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, listEleves);           
+            getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, listEleves);           
             // if(CURRENT_CLASSE_ID!=undefined) setIsValid(true);
             // else setIsValid(false);
         }else{
@@ -1038,6 +1098,8 @@ function PrintStudentReport(props) {
                     msgTitle:"", 
                     message:""
                 })  
+                setGridRowsCL([]);
+                setGridRowsNCL([]);
                 return 1;
             }
             
@@ -1099,15 +1161,27 @@ function PrintStudentReport(props) {
                 })  
             }
         }
-        
-    }
+            }
 
-    const printStudentReports=(e)=>{
-        var classes_OU_nclasses = e.target.id;
+    const printOrderedStudentReports=(e)=>{
+        var elevesToPrint = [];      
+       
         if(ELEVES_DATA != {}){
+
+            if(selectedElevesIds[0].length < listEleves.length){
+                selectedElevesIds[0].map((id)=>{
+                    var eleve = ELEVES_DATA.eleve_results_c.find((elv)=>elv.id == id);
+                    elevesToPrint.push(eleve);
+                })
+            } else {
+                elevesToPrint = [...ELEVES_DATA.eleve_results_c];
+            }
+
+            console.log("data to print", elevesToPrint, selectedElevesIds.length, listEleves.length);
+
             ElevePageSet = {};
             ElevePageSet.effectif       = listEleves.length;
-            ElevePageSet.eleveNotes     = (classes_OU_nclasses=='eleves_C')? [... ELEVES_DATA.eleve_results_c] : [... ELEVES_DATA.eleve_results_nc];
+            ElevePageSet.eleveNotes     = elevesToPrint;
             ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
             ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
             ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
@@ -1130,52 +1204,55 @@ function PrintStudentReport(props) {
         }      
     }
 
+    const printNOrderedStudentReports=(e)=>{
+        var elevesToPrint = [];
+
+        if(selectedElevesIds[0].length < listEleves.length){
+            selectedElevesIds[0].map((id)=>{
+                var eleve = ELEVES_DATA.eleve_results_nc.find((elv)=>elv.id == id);
+                elevesToPrint.push(eleve);
+            })
+        } else {
+            elevesToPrint = [... ELEVES_DATA.eleve_results_nc]
+        }
+
+        if(ELEVES_DATA != {}){
+            ElevePageSet = {};
+            ElevePageSet.effectif       = listEleves.length;
+            ElevePageSet.eleveNotes     = elevesToPrint;
+            ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
+            ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
+            ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
+            ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
+            ElevePageSet.titreBulletin  = {... ELEVES_DATA.titre_bulletin};
+            ElevePageSet.etabLogo       = "images/collegeVogt.png";
+            ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
+            ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
+            printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(4); 
+                          
+        } else{
+            chosenMsgBox = MSG_WARNING_PrRPT;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "warning", 
+                msgTitle : t("ATTENTION!"), 
+                message  : t("must_select_class")
+            })            
+        }      
+    }
+
+
+
+    
+
     function getTitre(sexe){        
         if(sexe=='M') return 'Mr';
         else return 'Mme';
     }
 
 
-    // const printStudentList=()=>{
-    //     if(CURRENT_CLASSE_ID != undefined){           
-    //         setModalOpen(5);
-    //         let formData = new FormData();
-           
-    //         formData.append('id_classe',CURRENT_CLASSE_ID);
-    //         formData.append('id_sequence',CURRENT_PERIOD_ID);
-    //         formData.append('id_eleves',selectedElevesIds[0].join('_'));
-
-    //         const config = {headers:{'Content-Type':'multipart/form-data'}};
-    //         axiosInstance
-    //         .post(`imprimer-bulletin-classe/`,formData,config)
-    //         .then((response) => {  
-    //            // setModalOpen(0);              
-    //             ElevePageSet={};
-    //             ElevePageSet.effectif = listEleves.length;
-    //             ElevePageSet.eleveNotes = [... response.data.eleve_results];
-    //             ElevePageSet.noteRecaps = [... response.data.note_recap_results];
-    //             ElevePageSet.groupeRecaps = [... response.data.groupe_recap_results];
-    //             ElevePageSet.entete_fr ={... response.data.entete_fr};
-    //             ElevePageSet.entete_en ={... response.data.entete_en};
-    //             ElevePageSet.titreBulletin ={... response.data.titre_bulletin};
-    //             ElevePageSet.etabLogo = "images/collegeVogt.png";
-    //             ElevePageSet.profPrincipal = 'MESSI Martin';
-    //             ElevePageSet.classeLabel = CURRENT_CLASSE_LABEL;                
-    //             console.log("ici la",ElevePageSet,gridRowsCL);  
-    //             setModalOpen(4);               
-    //         })          
-                          
-    //     } else{
-    //         chosenMsgBox = MSG_WARNING_PrRPT;
-    //         currentUiContext.showMsgBox({
-    //             visible  : true, 
-    //             msgType  : "warning", 
-    //             msgTitle : t("warning"), 
-    //             message  : t("must_select_class")
-    //         })            
-    //     }      
-    // }
-
+    
     const closePreview =()=>{
         selectedElevesIds =[];
         setIsValid(false);                 
@@ -1403,7 +1480,7 @@ function PrintStudentReport(props) {
                       
                        
                     
-                        <CustomButton
+                        <CustomButton                          
                             id="eleves_C"
                             btnText={t('imprimer')}
                             hasIconImg= {true}
@@ -1411,7 +1488,7 @@ function PrintStudentReport(props) {
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printStudentReports}
+                            btnClickHandler={printOrderedStudentReports}
                             disable={(isValid==false)}   
                         />
                     </div>
@@ -1484,6 +1561,7 @@ function PrintStudentReport(props) {
                             
                         <div className={classes.gridAction}> 
                             <CustomButton
+                                key="eleves_NC"
                                 id="eleves_NC"
                                 btnText={t('imprimer')}
                                 hasIconImg= {true}
@@ -1491,7 +1569,7 @@ function PrintStudentReport(props) {
                                 imgStyle = {classes.grdBtnImgStyle}  
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={printStudentReports}
+                                btnClickHandler={printNOrderedStudentReports}
                                 disable={(isValid==false)}   
                             />
                         </div>
