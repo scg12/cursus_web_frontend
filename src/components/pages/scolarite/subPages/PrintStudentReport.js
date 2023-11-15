@@ -315,7 +315,7 @@ function PrintStudentReport(props) {
         studentList.map((elt)=>selectedEleves.push(elt.id));
         axiosInstance.post(`imprimer-bulletin-trimestre-classe/`, {
             id_classe   : idClasse,
-            id_sequence : idSequence,
+            id_trimestre : idSequence,
             id_eleves   : selectedEleves.join("_")
         }).then((res)=>{
             //chargement des gridViews
