@@ -74,6 +74,7 @@ function ResultatsGeneration(props) {
                 case 2: {
                     eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2];
                     eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2];
                     break;
                 }
 

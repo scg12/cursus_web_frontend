@@ -5,6 +5,7 @@ import classes from "../../scolarite/subPages/SubPages.module.css";
 import UiContext from '../../../../store/UiContext';
 import { useContext } from 'react';
 import { PDFViewer } from '@react-pdf/renderer';
+import {useTranslation} from "react-i18next";
 
 
 
@@ -14,6 +15,7 @@ function PDFTemplate(props) {
    // const currentAppContext = useContext(AppContext);
 
     const selectedTheme = currentUiContext.theme;
+    const { t, i18n } = useTranslation();
 
     function getGridButtonStyle()
     { // Choix du theme courant
@@ -30,8 +32,30 @@ function PDFTemplate(props) {
 
     return (
         <div style={{height:"73vh", width: "100%", backgroundColor:isMobile?'white':null, display:'flex', flexDirection:'column', justifyContent:'center', zIndex:1200, position:'absolute'}}>
-            
-            <div>
+           
+            <div style={{ alignSelf: 'center',  position: 'absolute', top:'50%', fontWeight:'bolder', color:'#fffbfb',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                {t('traitement')}...
+            </div>                 
+        
+            <div style={{   
+                alignSelf: 'center',
+                borderRadius: '8px',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '13vw',
+                height: '3.13vh',
+                position: 'absolute',
+                top:'50%',
+                zIndex: '1200',
+                overflow: 'hidden'
+            }}
+            >
+                <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+            </div>   
+
+            <div style={{position:"relative", zIndex:1207}}>
                 {props.children}
             </div>
             <div style={{height: "7vh", width: "100%", display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1vh'}}>

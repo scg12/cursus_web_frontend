@@ -17,6 +17,7 @@ import PDFTemplate from '../reports/PDFTemplate';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import CritSequentiel from '../modals/CritSequentiel';
 import ResultatsGeneration from '../modals/ResultatsGeneration';
+import BulletinEleve from '../reports/BulletinEleve';
 import BulletinSequence from '../reports/BulletinSequence';
 import BulletinTrimestriel from '../reports/BulletinTrimestriel'
 import BulletinAnnuel from '../reports/BulletinAnnuel';
@@ -904,13 +905,15 @@ const columnsSeq = [
     const printStudentReports=()=>{
         if(ELEVES_DATA != {}){
             ElevePageSet = {};
+            ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
             ElevePageSet.eleveNotes     = [... ELEVES_DATA.eleve_results_c];
             ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
             ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
             ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
             ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
-            ElevePageSet.titreBulletin  = {... ELEVES_DATA.titre_bulletin};
+            ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
             ElevePageSet.etabLogo       = "images/collegeVogt.png";
             ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
             ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
@@ -1002,6 +1005,7 @@ const columnsSeq = [
             }).then((res)=>{
 
                 ELEVES_DATA = res.data;
+                console.log("RESULTATS GENSEQ", ELEVES_DATA);
                 setEleveCL(res.data.eleve_results_c);
                 setEleveNCL(res.data.eleve_results_nc);
                 setModalOpen(6);   
@@ -1108,9 +1112,9 @@ const columnsSeq = [
 
     function getBulletinTypeLabel(typeBulletin){
         switch(typeBulletin){
-            case 1: {setBullTypeLabel(t('bulletin_sequentiel'));   return;} 
-            case 2: {setBullTypeLabel(t('bulletin_trimestriel'));  return;}
-            case 3: {setBullTypeLabel(t('bulletin_annuel'));       return;}
+            case 1: {return(t('bulletin_sequentiel')); } 
+            case 2: {return(t('bulletin_trimestriel'));}
+            case 3: {return(t('bulletin_annuel'));     }
            }
     }
  
@@ -1160,12 +1164,12 @@ const columnsSeq = [
                         <PDFDownloadLink fileName={printedETFileName}   
                             document = { 
                                 (typeBulletin==1)?
-                                    <BulletinSequence data={ElevePageSet}/>
+                                    <BulletinEleve data={ElevePageSet}/>
                                 :
                                 (typeBulletin==2) ?
-                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                    <BulletinEleve data={ElevePageSet}/>
                                 : 
-                                    <BulletinAnnuel data={ElevePageSet}/>
+                                    <BulletinEleve data={ElevePageSet}/>
                             }
                         >
                             {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
@@ -1173,12 +1177,12 @@ const columnsSeq = [
                         :
                         <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
                             {(typeBulletin==1)?
-                                <BulletinSequence data={ElevePageSet}/>
+                                <BulletinEleve data={ElevePageSet}/>
                                 :
                                 (typeBulletin==2) ?
-                                    <BulletinTrimestriel data={ElevePageSet}/>
+                                    <BulletinEleve data={ElevePageSet}/>
                                 : 
-                                <BulletinAnnuel data={ElevePageSet}/>
+                                <BulletinEleve data={ElevePageSet}/>
                             }
                         </PDFViewer>  
                     }               
