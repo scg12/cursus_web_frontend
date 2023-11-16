@@ -120,7 +120,7 @@ function BulletinEleve(props) {
                             eleveGroupRecap.moyGroup        = notes[notes.length-1].split("²²")[4];
                             eleveGroupRecap.apprecGroupe    = notes[notes.length-1].split("²²")[5];
                             eleveGroupRecap.coefTotalgroup  = notes[notes.length-1].split("²²")[0]; 
-                            eleveGroupRecap.nxcTotal        = notes[notes.length-1].split("²²")[5];
+                            eleveGroupRecap.nxcTotal        = notes[notes.length-1].split("²²")[2];
                             eleveGroupRecap.rangGroupe      = notes[notes.length-1].split("²²")[3];
                             eleveGroupRecap.libelleGroup    = GroupesData[grp].split("²²")[3];
                             eleveGroupRecap.borneInf        = GroupesData[grp].split("²²")[0];
@@ -146,6 +146,7 @@ function BulletinEleve(props) {
                     }
                     console.log("donne to print",eleves_data)
                     resolve(eleves_data) ;
+                    break;
                 }
 
                 case 2:{
@@ -219,7 +220,8 @@ function BulletinEleve(props) {
                         eleves_data.push(eleve_data);
                     }
                     console.log("donne to print",eleves_data)
-                    resolve(eleves_data) ;
+                    resolve(eleves_data);
+                    break;
                 }
 
                 case 3:{
@@ -295,6 +297,7 @@ function BulletinEleve(props) {
                     }
                     console.log("donne to print",eleves_data)
                     resolve(eleves_data) ;
+                    break;
                 }
             }
         });       
@@ -306,7 +309,7 @@ function BulletinEleve(props) {
     }
 
     function calcTop(index){
-        var val = 2+index*10;
+        var val = index*10;
         return (val).toString()+"vh";
     }
 
@@ -343,7 +346,7 @@ function BulletinEleve(props) {
             
                 <View style={styles.header3_1}>                   
                     <View style={{textAlign:"left",marginLeft:"5px"}}>
-                        <Text style={{fontFamily:"MyBold"}}>{props.eleveEntete.nom + " "+props.eleveEntete.sexe }</Text>
+                        <Text style={{fontFamily:"MyBold"}}>{props.eleveEntete.nom + " "+props.eleveEntete.prenom }</Text>
                         <Text>Sexe: {props.eleveEntete.sexe}</Text>
                         <Text>Né(e) le: {props.eleveEntete.dateNaiss} A: {props.eleveEntete.lieuNaiss}</Text>
                         <Text>Matricule: {props.eleveEntete.matricule} Redoublant:{props.eleveEntete.redouble? t("yes"):t("no")}</Text>
@@ -386,6 +389,7 @@ function BulletinEleve(props) {
                         <View style={styles.ligne_entete_note__moySeq}><Text>MOY. SEQ{seq1}.</Text></View>
                         <View style={styles.ligne_entete_note__moySeq}><Text>MOY. SEQ{seq2}.</Text></View>
                         <View style={styles.ligne_entete_note__moySeq}><Text>MOY. TRIM.</Text></View>
+                        <View style={styles.ligne_entete_note__rang}><Text>RANG</Text></View>
                         <View style={styles.ligne_entete_note__appreciation}><Text>APPRECIATION</Text></View>
                     </View>
                 );
@@ -400,6 +404,7 @@ function BulletinEleve(props) {
                         <View style={styles.ligne_entete_note__moySeq}><Text>MOY. TRIM2</Text></View>
                         <View style={styles.ligne_entete_note__moySeq}><Text>MOY. TRIM3</Text></View>
                         <View style={styles.ligne_entete_note__moySeq}><Text>MOY. ANN.</Text></View>
+                        <View style={styles.ligne_entete_note__rang}><Text>RANG</Text></View>
                         <View style={styles.ligne_entete_note__appreciation}><Text>APPRECIATION</Text></View>
                     </View>
                 );
@@ -563,22 +568,22 @@ function BulletinEleve(props) {
             
             case 2:{  //Bulletin trimestriel
                 return(
-                    <View style={styles.ligne_groupe}>
-                        <View style={styles.ligne_entete_groupe__libelle}>
+                    <View style={{...styles.ligne_groupe}}>
+                        <View style={{...styles.ligne_entete_groupe__libelle}}>
                             <Text style={{fontFamily:"MyBold"}} >Groupe: {props.eleveGroupRecap.libelleGroup}</Text>
                         </View>
-                       
-                        <View style={[styles.ligne_entete_groupe__moy,{fontFamily:"MyBold"}]}>
-                            <Text>{props.eleveGroupRecap.moyGroup}</Text>
+
+                        <View style={{...styles.ligne_entete_groupe__moy,fontFamily:"MyBold"}}>
+                            <Text style={{paddingLeft:"3vw"}}>{props.eleveGroupRecap.moyGroup}</Text>
                         </View>
                        
                         
-                        <View style={[styles.ligne_entete_groupe__rang,{fontFamily:"MyBold"}]}>
-                            <Text>{props.eleveGroupRecap.rangGroupe}</Text>
+                        <View style={{...styles.ligne_entete_groupe__rang, fontFamily:"MyBold", /*marginLeft:"0vw"*/}}>
+                            <Text style={{paddingLeft:"8vw"}}>{props.eleveGroupRecap.rangGroupe}</Text>
                         </View>
                     
-                        <View style={styles.ligne_entete_groupe__appreciation}>
-                            <Text>{props.eleveGroupRecap.apprecGroupe}</Text>
+                        <View style={{...styles.ligne_entete_groupe__appreciation,fontFamily:"MyBold"}}>
+                            <Text style={{paddingLeft:"9vw"}}>{props.eleveGroupRecap.apprecGroupe}</Text>
                         </View>
                             
                     </View>
@@ -622,7 +627,6 @@ function BulletinEleve(props) {
             <View style={{...props.style, display:"flex",flexDirection:"column",justifyContent:"flex-start", alignItems:"center", height:"50vh", width:"100%", /*marginBottom:"-10vh"*/}}>
                 {  props.eleveInfos.map((elv)=>{
                    return( 
-                        //<View><Text>[{props.index}]</Text></View>
                         <EleveNoteRow typeBulletin ={props.typeBulletin} eleve={elv}/>
                     );                   
                 })} 
@@ -639,7 +643,6 @@ function BulletinEleve(props) {
                
                 { props.groupesInfos.map((grp, index)=>{                   
                    return(
-                        // <View><Text>[{index}]</Text></View>
                         <EleveGroupe style={{position:"absolute", top:calcTop(index)}} index={index} typeBulletin={props.typeBulletin} eleveInfos={grp.eleveInfos} eleveGroupRecap={grp.eleveGroupRecap}/>
                    );                   
                 })}
@@ -758,14 +761,8 @@ function BulletinEleve(props) {
 
             {Array.from(ELEVES_DATA,
                 (eleve, index) => (
-                    <Page size="A4"  style={styles.page} key={index}>
-                        
-                        {/* <View style={styles.main}>
-                            
-                            <EleveGroupNoteList typeBulletin = {props.data.typeBulletin} groupesInfos={eleve.groupesInfos}/>
-                       
-                        </View> */}
-                       <View style={styles.header}>
+                    <Page size="A4"  style={styles.page} key={index}>                     
+                        <View style={styles.header}>
                             <PageHeader titreBulletin={props.data.titreBulletin.titre} 
                                 entete_fr = {props.data.entete_fr} 
                                 entete_en = {props.data.entete_en} 
@@ -823,7 +820,7 @@ const styles = StyleSheet.create({
       width: "100%",
       display: "flex",
       justifyContent:'flex-start',
-      marginBottom:"3vh",
+    //   marginBottom:"3vh",
       position:"absolute",
       top:0
     },
@@ -941,7 +938,7 @@ const styles = StyleSheet.create({
 
     main: {
       position:"absolute",
-      top:"20.7vh",
+      top:"23vh",
       boxSizing:"border-box",
       textAlign: "center",
       backgroundColor: "white",
@@ -1104,12 +1101,14 @@ const styles = StyleSheet.create({
       boxSizing:"border-box",
       width: "100%",
       height:"4%",
-      color: "black",
+    //color: "black",
+      color: "white",
       fontSize:"12px",
       display:"flex",
       flexDirection:"row",
       justifyContent:"center",
       alignItems:"center",
+      backgroundColor:"gray"
     },
     ligne_note:{
       boxSizing:"border-box",

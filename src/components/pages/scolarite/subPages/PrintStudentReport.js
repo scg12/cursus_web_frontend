@@ -250,6 +250,7 @@ function PrintStudentReport(props) {
                 case 2: {
                     eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2];
                     eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2];
                     break;
                 }
 
@@ -257,6 +258,7 @@ function PrintStudentReport(props) {
                     eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2];
                     eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2];
                     eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moyenne   = resultatElev[resultatElev.length-1].split("²²")[2];
                     eleve.decision  = "";
                     eleve.promuEn   = "";
                     break;
@@ -430,12 +432,12 @@ function PrintStudentReport(props) {
             listElt.nom  = elt.nom;
             listElt.rang = elt.rang; 
             listElt.matricule    = elt.matricule;
-            listElt.moyennes_seq = elt.moyennes_seq;
-            listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
+            // listElt.moyennes_seq = elt.moyennes_seq;
+            // listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
             
-            listElt.moy_seq1  = notesSeq[0];
-            listElt.moy_seq2  = notesSeq[1];
-            listElt.moyenne  = notesSeq[1];
+            listElt.moy_seq1  = elt.moy_seq1;
+            listElt.moy_seq2  = elt.moy_seq2;
+            listElt.moyenne   = elt.moyenne;
            
             listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
@@ -458,13 +460,13 @@ function PrintStudentReport(props) {
             listElt.nom  = elt.nom;
             listElt.rang = elt.rang; 
             listElt.matricule          = elt.matricule;
-            listElt.moyennes_trimestre = elt.moyennes_trimestre;
-            listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
+            // listElt.moyennes_trimestre = elt.moyennes_trimestre;
+            // listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
             
-            listElt.moy_trim1  = notesTrim[0];
-            listElt.moy_trim2  = notesTrim[1];
-            listElt.moy_trim3  = notesTrim[2];
-            listElt.moyenne  = notesTrim[2];
+            listElt.moy_trim1  = elt.moy_trim1;
+            listElt.moy_trim2  = elt.moy_trim2;
+            listElt.moy_trim3  = elt.moy_trim3;
+            listElt.moyenne    = elt.moyenne;
 
             listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
@@ -527,6 +529,8 @@ function PrintStudentReport(props) {
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
 
             PROF_PRINCIPAL = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
+
+            console.log("PP:",PROF_PRINCIPAL);
    
             getStudentListOfClass(CURRENT_CLASSE_ID).then((elevesList)=>{getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, elevesList)});
 
@@ -541,7 +545,8 @@ function PrintStudentReport(props) {
 
     function dropDownTypeReportHandler(e){
         CURRENT_TYPE_BULLETIN_ID = parseInt(e.target.value);
-        console.log("type bulletin",CURRENT_TYPE_BULLETIN_ID)
+        console.log("type bulletin",CURRENT_TYPE_BULLETIN_ID);
+        console.log("PP:",PROF_PRINCIPAL);
         changeBulletinType(CURRENT_TYPE_BULLETIN_ID);    
     }
 
@@ -549,6 +554,7 @@ function PrintStudentReport(props) {
     function dropDownPeriodHandler(e){
         if(e.target.value != optPeriode[0].value){
             CURRENT_PERIOD_ID    = e.target.value; 
+            console.log("PP:",PROF_PRINCIPAL);
             CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
             getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, listEleves);           
             // if(CURRENT_CLASSE_ID!=undefined) setIsValid(true);
@@ -712,14 +718,14 @@ function PrintStudentReport(props) {
             headerClassName:classes.GridColumnStyle
         },
 
-        {
-            field: 'id_seq1',
-            headerName:  t('moy_seq_M')+seq1,
-            width: 120,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },
+        // {
+        //     field: 'id_seq1',
+        //     headerName:  t('moy_seq_M')+seq1,
+        //     width: 120,
+        //     editable: false,
+        //     hide:true,
+        //     headerClassName:classes.GridColumnStyle
+        // },
     
         {
             field: 'moy_seq1',
@@ -729,14 +735,14 @@ function PrintStudentReport(props) {
             headerClassName:classes.GridColumnStyle
         },
 
-        {
-            field: 'id_seq2',
-            headerName:  t('moy_seq_M')+seq1,
-            width: 120,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },
+        // {
+        //     field: 'id_seq2',
+        //     headerName:  t('moy_seq_M')+seq1,
+        //     width: 120,
+        //     editable: false,
+        //     hide:true,
+        //     headerClassName:classes.GridColumnStyle
+        // },
     
         {
             field: 'moy_seq2',
@@ -799,14 +805,14 @@ function PrintStudentReport(props) {
             headerClassName:classes.GridColumnStyleNC
         },
 
-        {
-            field: 'id_seq1',
-            headerName:  t('moy_seq_M')+seq1,
-            width: 120,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyleNC
-        },
+        // {
+        //     field: 'id_seq1',
+        //     headerName:  t('moy_seq_M')+seq1,
+        //     width: 120,
+        //     editable: false,
+        //     hide:true,
+        //     headerClassName:classes.GridColumnStyleNC
+        // },
     
         {
             field: 'moy_seq1',
@@ -816,14 +822,14 @@ function PrintStudentReport(props) {
             headerClassName:classes.GridColumnStyleNC
         },
 
-        {
-            field: 'id_seq2',
-            headerName:  t('moy_seq_M')+seq1,
-            width: 120,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyleNC
-        },
+        // {
+        //     field: 'id_seq2',
+        //     headerName:  t('moy_seq_M')+seq1,
+        //     width: 120,
+        //     editable: false,
+        //     hide:true,
+        //     headerClassName:classes.GridColumnStyleNC
+        // },
     
         {
             field: 'moy_seq2',
@@ -1191,13 +1197,14 @@ function PrintStudentReport(props) {
 
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
             ElevePageSet.eleveNotes     = elevesToPrint;
             ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
             ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
             ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
             ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
-            ElevePageSet.titreBulletin  = {... ELEVES_DATA.titre_bulletin};
+            ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
             ElevePageSet.etabLogo       = "images/collegeVogt.png";
             ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
             ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
