@@ -1177,7 +1177,57 @@ function PrintStudentReport(props) {
                 })  
             }
         }
+    }
+
+    function getEtMatiereWithMaxProf(ETTab){
+        var nbrMaxProfs = 0; var curETMatiere;
+        ETTab.map((etMat)=>{
+            var countCurProf = etMat.id_enseignants.length;
+            if(countCurProf>nbrMaxProfs)  {
+                nbrMaxProfs  = countCurProf;
+                curETMatiere =  etMat; 
             }
+        })
+
+        return curETMatiere
+    }
+
+    function getMatieresWithTeachersNames(classeId){
+        var cur_matiere_id, cur_matiere_label, cur_profs=[], cur_profLabel, profsMatiere = "";
+        var listMatiereProf = "", matieresTraites=[];
+       
+        var ETClasse = currentUiContext.emploiDeTemps.filter((etData)=>etData.id_classe == classeId);
+        ETClasse.map((et,index1)=>{
+            cur_matiere_id = et.id_matiere;
+            cur_matiere_label = currentUiContext.matiereSousEtab.find((mat)=>mat.id == cur_matiere_id).libelle;
+
+            if(matieresTraites.find((matId)=>matId==cur_matiere_id)==undefined){
+                var tabMatieres   = ETClasse.filter((et)=>et.id_matiere == cur_matiere_id);
+                var  curETMatiere = getEtMatiereWithMaxProf(tabMatieres);            
+                cur_profs         = (curETMatiere!= undefined) ? curETMatiere.id_enseignants:[];
+
+                cur_profs.map((profId, index2)=>{
+                    var curProf = currentUiContext.listProfs.find((prf)=>prf.id == profId);
+                    cur_profLabel = curProf.nom + ' '+ curProf.prenom;
+                    if(index2 >= cur_profs.length-1)
+                       profsMatiere = profsMatiere + cur_profLabel;
+                    else 
+                       profsMatiere = profsMatiere + cur_profLabel+",";
+                })
+
+                if(index1 >= ETClasse.length-1 )
+                   listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere;
+                else 
+                   listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere+"&";           
+
+                matieresTraites.push(cur_matiere_id); profsMatiere = "";
+            }         
+      
+        })
+        console.log("prof & Matieres:",listMatiereProf);
+        return listMatiereProf;
+    }
+
 
     const printOrderedStudentReports=(e)=>{
         var elevesToPrint = [];      
@@ -1197,6 +1247,7 @@ function PrintStudentReport(props) {
 
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
             ElevePageSet.eleveNotes     = elevesToPrint;
@@ -1237,6 +1288,7 @@ function PrintStudentReport(props) {
         if(ELEVES_DATA != {}){
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
             ElevePageSet.eleveNotes     = [... ELEVES_DATA.eleve_results_c];

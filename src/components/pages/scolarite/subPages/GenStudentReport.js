@@ -900,10 +900,40 @@ const columnsSeq = [
         
     }
 
+    function getMatieresWithTeachersNames(classeId){
+        var cur_matiere_id, cur_matiere_label, cur_prof=[], cur_profLabel, profsMatiere = "";
+        var listMatiereProf = "";
+        var ETClasse = currentUiContext.emploiDeTemps.filter((etData)=>etData.id_classe == classeId);
+       ETClasse.map((et,index1)=>{
+            cur_matiere_id = et.id_matiere;
+            cur_matiere_label = currentUiContext.matiereSousEtab.find((mat)=>mat.id == cur_matiere_id).libelle;
+
+            cur_prof = et.id_enseignants;
+            cur_prof.map((profId, index2)=>{
+                var curProf = currentUiContext.listProfs.find((prf)=>prf.id == profId);
+                cur_profLabel = curProf.nom + ' '+ curProf.prenom;
+                if(index2 == cur_prof.length-1)
+                    profsMatiere = profsMatiere + cur_profLabel;
+                else 
+                    profsMatiere = profsMatiere + cur_profLabel+",";
+            })
+
+            if(index1 == ETClasse.length-1 )
+                listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere
+            else 
+                listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere+"&"
+
+        })
+        console.log("prof & Matieres:",listMatiereProf);
+
+        return listMatiereProf;
+    }
+
     const printStudentReports=()=>{
         if(ELEVES_DATA != {}){
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
             ElevePageSet.eleveNotes     = [... ELEVES_DATA.eleve_results_c];

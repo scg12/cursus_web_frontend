@@ -44,7 +44,14 @@ function BulletinEleve(props) {
          case "Trimestre2": {setSeq1("3"); setSeq2("4");   return;}
          case "Trimestre3": {setSeq1("5"); setSeq2("6");   return;}
         }
-     }
+    }
+
+    function getNomProf(matiereLabel){
+        var lisMatieresProfs = props.data.profMatieres.split("&");
+        var matiereProf = lisMatieresProfs.find((elt)=>elt.split("_")[0]==matiereLabel);
+        if(matiereProf!=undefined) return matiereProf.split("_")[1];
+        else return "";
+    }
 
     function createGroupes(typeBulletin, elevesData, groupeRecapData, notesData){
         return new Promise(function(resolve, reject){
@@ -103,7 +110,7 @@ function BulletinEleve(props) {
                                 eleveInfos = {};
                                 eleveInfos.libelleMatiere = NotesData[indNote].split("²²")[4];
                                 eleveInfos.coefMatiere    = NotesData[indNote].split("²²")[0];
-                                eleveInfos.nomProf        = "";
+                                eleveInfos.nomProf        = getNomProf(eleveInfos.libelleMatiere);
                                 eleveInfos.compVisee      = "competence visee";
                                 eleveInfos.moyenne        = notes[nt].split("²²")[0];
                                 eleveInfos.nxc            = notes[nt].split("²²")[1];
@@ -177,7 +184,7 @@ function BulletinEleve(props) {
                                 eleveInfos = {};
                                 eleveInfos.libelleMatiere = NotesData[indNote].split("²²")[4];
                                 //eleveInfos.coefMatiere    = NotesData[indNote].split("²²")[0];
-                                eleveInfos.nomProf        = "";
+                                eleveInfos.nomProf        = getNomProf(eleveInfos.libelleMatiere);;
                                 eleveInfos.compVisee      = "no need";
                                 eleveInfos.moySeq1        = notes[nt].split("²²")[0].split("&")[0];
                                 eleveInfos.moySeq2        = notes[nt].split("²²")[0].split("&")[1];
@@ -252,7 +259,7 @@ function BulletinEleve(props) {
                                 eleveInfos = {};
                                 eleveInfos.libelleMatiere = NotesData[indNote].split("²²")[4];
                                 //eleveInfos.coefMatiere    = NotesData[indNote].split("²²")[0];
-                                eleveInfos.nomProf        = "";
+                                eleveInfos.nomProf        = getNomProf(eleveInfos.libelleMatiere);;
                                 eleveInfos.compVisee      = "no need";
                                 eleveInfos.moyTrim1       = notes[nt].split("²²")[0].split("&")[0];
                                 eleveInfos.moyTrim2       = notes[nt].split("²²")[0].split("&")[1];
