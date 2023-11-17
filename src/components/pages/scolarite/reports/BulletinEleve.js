@@ -143,7 +143,7 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = currentElvData[ligne].split("²²")[5];
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5] : t("non_classe");
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -218,7 +218,7 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = currentElvData[ligne].split("²²")[5];
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5] : t("non_classe");
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -294,7 +294,7 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = currentElvData[ligne].split("²²")[5];
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5] : t("non_classe");
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];

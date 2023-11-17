@@ -933,6 +933,7 @@ const columnsSeq = [
         if(ELEVES_DATA != {}){
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.isElevesclasse = true;
             ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
@@ -1191,27 +1192,14 @@ const columnsSeq = [
                     { isMobile?
                         <PDFDownloadLink fileName={printedETFileName}   
                             document = { 
-                                (typeBulletin==1)?
-                                    <BulletinEleve data={ElevePageSet}/>
-                                :
-                                (typeBulletin==2) ?
-                                    <BulletinEleve data={ElevePageSet}/>
-                                : 
-                                    <BulletinEleve data={ElevePageSet}/>
+                                <BulletinEleve data={ElevePageSet}/>
                             }
                         >
                             {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>
                         :
                         <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
-                            {(typeBulletin==1)?
-                                <BulletinEleve data={ElevePageSet}/>
-                                :
-                                (typeBulletin==2) ?
-                                    <BulletinEleve data={ElevePageSet}/>
-                                : 
-                                <BulletinEleve data={ElevePageSet}/>
-                            }
+                            <BulletinEleve data={ElevePageSet}/>
                         </PDFViewer>  
                     }               
                 </PDFTemplate>                

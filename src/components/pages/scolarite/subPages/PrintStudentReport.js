@@ -37,7 +37,8 @@ let CURRENT_PERIOD_ID;
 let CURRENT_PERIOD_LABEL;
 
 let CURRENT_TYPE_BULLETIN_ID;
-var selectedElevesIds = new Array();
+var selectedElevesIds   = new Array();
+var selectedNCElevesIds = new Array();
 
 var listElt    = {};
 var listEleves = [];
@@ -72,7 +73,8 @@ function PrintStudentReport(props) {
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const { t, i18n }       = useTranslation();
-    const [isValid, setIsValid]          = useState(false);
+    const [isValid1, setIsValid1]          = useState(false);
+    const [isValid2, setIsValid2]          = useState(false);
     const [gridRowsCL, setGridRowsCL]    = useState([]);
     const [gridRowsNCL, setGridRowsNCL]  = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
@@ -331,7 +333,6 @@ function PrintStudentReport(props) {
                 ELEVES_CL   = formatTrimList(elevesClasses, studentList);
                 ELEVES_NCL  = formatTrimList(elevesNClasses,studentList);
 
-
                 setGridRowsCL(ELEVES_CL);
                 setGridRowsNCL(ELEVES_NCL);
 
@@ -392,7 +393,7 @@ function PrintStudentReport(props) {
     }
 
     const formatSeqList=(list, listEnRegle) =>{
-        //var rang = 1;
+        var pos = 1;
         console.log("en regles",list,listEnRegle);
         var matiereIndispSansNote = []
         var formattedList = []
@@ -401,7 +402,8 @@ function PrintStudentReport(props) {
             listElt = {};
             listElt.id        = elt.id;
             listElt.nom       = elt.nom;
-            listElt.rang      = elt.rang; 
+            listElt.rang      = (elt.rang==1)? elt.rang+t("er"):elt.rang+t("ieme");
+            listElt.pos       = pos; 
             listElt.matricule = elt.matricule;
             listElt.moyenne   = elt.moyenne;
             // listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
@@ -414,14 +416,14 @@ function PrintStudentReport(props) {
             listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
             formattedList.push(listElt);
-            //rang ++;
+            pos ++;
         })
         return formattedList;
     }
 
 
     const formatTrimList=(list, listEnRegle) =>{
-        //var rang = 1;        
+        var pos = 1;        
         var notesSeq      = [];
         var formattedList = [];
        
@@ -430,8 +432,9 @@ function PrintStudentReport(props) {
             listElt={};
             listElt.id   = elt.id;
             listElt.nom  = elt.nom;
-            listElt.rang = elt.rang; 
-            listElt.matricule    = elt.matricule;
+            listElt.rang = (elt.rang==1)? elt.rang+t("er"):elt.rang+t("ieme"); 
+            listElt.pos  = pos;
+            listElt.matricule  = elt.matricule;
             // listElt.moyennes_seq = elt.moyennes_seq;
             // listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
             
@@ -443,13 +446,14 @@ function PrintStudentReport(props) {
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
           
             formattedList.push(listElt);
-            //rang ++;
+            pos ++;
         })
         return formattedList;
     }
 
 
     const formatAnnualList=(list, listEnRegle) =>{
+        var pos = 1;
         var notesTrim     = [];
         var formattedList = [];
     
@@ -458,8 +462,9 @@ function PrintStudentReport(props) {
             listElt={};
             listElt.id   = elt.id;
             listElt.nom  = elt.nom;
-            listElt.rang = elt.rang; 
-            listElt.matricule          = elt.matricule;
+            listElt.rang = (elt.rang==1)? elt.rang+t("er"):elt.rang+t("ieme"); 
+            listElt.pos  = pos;
+            listElt.matricule  = elt.matricule;
             // listElt.moyennes_trimestre = elt.moyennes_trimestre;
             // listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
             
@@ -537,7 +542,8 @@ function PrintStudentReport(props) {
         }else{           
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
-            setIsValid(false);
+            setIsValid1(false);
+            setIsValid2(false);
             setGridRowsCL([]);
             setGridRowsNCL([]);
         }
@@ -562,7 +568,8 @@ function PrintStudentReport(props) {
         }else{
             CURRENT_PERIOD_ID    = undefined;
             CURRENT_PERIOD_LABEL = ''; 
-            setIsValid(false);         
+            setIsValid1(false); 
+            setIsValid2(false);        
         }
     }
 
@@ -640,6 +647,15 @@ function PrintStudentReport(props) {
     ];
 
     const columnsSeqNC = [
+
+        {
+            field: 'pos',
+            headerName:t("N°"),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
+
         {
             field: 'matricule',
             headerName: t('matricule_short_M'),
@@ -652,14 +668,6 @@ function PrintStudentReport(props) {
             field: 'nom',
             headerName: t('displayedName_M'),
             width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyleNC
-        },
-
-        {
-            field: 'rang',
-            headerName:t("rang_M"),
-            width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyleNC
         },
@@ -781,6 +789,13 @@ function PrintStudentReport(props) {
     
 
     const columnsTrimNC = [
+        {
+            field: 'pos',
+            headerName: t("N°"),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
         
         {
             field: 'matricule',
@@ -793,14 +808,6 @@ function PrintStudentReport(props) {
             field: 'nom',
             headerName: t('displayedName_M'),
             width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyleNC
-        },
-
-        {
-            field: 'rang',
-            headerName: t("rang_M"),
-            width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyleNC
         },
@@ -944,6 +951,14 @@ function PrintStudentReport(props) {
     ];
 
     const columnsYearNC = [
+        
+        {
+            field: 'pos',
+            headerName: t("N°"),
+            width: 80,
+            editable: false,
+            headerClassName:classes.GridColumnStyleNC
+        },
        
         {
             field: 'matricule',
@@ -956,14 +971,6 @@ function PrintStudentReport(props) {
             field: 'nom',
             headerName: t('displayedName_M'),
             width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyleNC
-        },
-
-        {
-            field: 'rang',
-            headerName: t("rang_M"),
-            width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyleNC
         },
@@ -1247,6 +1254,7 @@ function PrintStudentReport(props) {
 
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.isElevesclasse = true;
             ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
@@ -1276,8 +1284,8 @@ function PrintStudentReport(props) {
     const printNOrderedStudentReports=(e)=>{
         var elevesToPrint = [];
 
-        if(selectedElevesIds[0].length < listEleves.length){
-            selectedElevesIds[0].map((id)=>{
+        if(selectedNCElevesIds[0].length < listEleves.length){
+            selectedNCElevesIds[0].map((id)=>{
                 var eleve = ELEVES_DATA.eleve_results_nc.find((elv)=>elv.id == id);
                 elevesToPrint.push(eleve);
             })
@@ -1286,12 +1294,14 @@ function PrintStudentReport(props) {
         }
 
         if(ELEVES_DATA != {}){
+
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
+            ElevePageSet.isElevesclasse = false;
             ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
-            ElevePageSet.eleveNotes     = [... ELEVES_DATA.eleve_results_c];
+            ElevePageSet.eleveNotes     = elevesToPrint;
             ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
             ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
             ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
@@ -1326,8 +1336,10 @@ function PrintStudentReport(props) {
 
     
     const closePreview =()=>{
-        selectedElevesIds =[];
-        setIsValid(false);                 
+        selectedElevesIds   = [];
+        selectedNCElevesIds = [];
+        setIsValid1(false);  
+        setIsValid2(false);                 
         setModalOpen(0);
     }
 
@@ -1403,27 +1415,14 @@ function PrintStudentReport(props) {
                     { isMobile?
                         <PDFDownloadLink fileName={printedETFileName}   
                             document = { 
-                                (typeBulletin==1)?
-                                    <BulletinEleve data={ElevePageSet}/>
-                                :
-                                (typeBulletin==2) ?
-                                    <BulletinEleve data={ElevePageSet}/>
-                                : 
-                                    <BulletinEleve data={ElevePageSet}/>
+                                <BulletinEleve data={ElevePageSet}/>
                             }
                         >
                             {({blob, url, loading, error})=> loading ? "loading...": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>
                         :
                         <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
-                            {(typeBulletin==1)?
-                                <BulletinEleve data={ElevePageSet}/>
-                                :
-                                (typeBulletin==2) ?
-                                    <BulletinEleve data={ElevePageSet}/>
-                                : 
-                                <BulletinEleve data={ElevePageSet}/>
-                            }
+                            <BulletinEleve data={ElevePageSet}/>
                         </PDFViewer>  
                     }               
                 </PDFTemplate>
@@ -1561,7 +1560,7 @@ function PrintStudentReport(props) {
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={printOrderedStudentReports}
-                            disable={(isValid==false)}   
+                            disable={(isValid1==false)}   
                         />
                     </div>
                         
@@ -1584,14 +1583,14 @@ function PrintStudentReport(props) {
                             
                         onSelectionModelChange={(id)=>{
                             selectedElevesIds = new Array(id);
-                            if(selectedElevesIds[0].length>0) setIsValid(true);
-                            else setIsValid(false);
+                            if(selectedElevesIds[0].length>0) setIsValid1(true);
+                            else setIsValid1(false);
                             console.log("selections",selectedElevesIds);
                         }}
 
 
-                        /* getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
-                        onCellClick={handleDeleteRow}
+                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : (params.field==='rang')? classes.gridRangRowStyle:classes.gridRowStyle }
+                        /*onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {
                                 //console.log(params.row);
@@ -1642,7 +1641,7 @@ function PrintStudentReport(props) {
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyle}
                                 btnClickHandler={printNOrderedStudentReports}
-                                disable={(isValid==false)}   
+                                disable={(isValid2==false)}   
                             />
                         </div>
                     </div>
@@ -1660,15 +1659,15 @@ function PrintStudentReport(props) {
                             checkboxSelection = {true}
                                 
                             onSelectionModelChange={(id)=>{
-                                selectedElevesIds = new Array(id);
-                                if(selectedElevesIds[0].length>0) setIsValid(true);
-                                else setIsValid(false);
-                                console.log("selections",selectedElevesIds);
+                                selectedNCElevesIds = new Array(id);
+                                if(selectedNCElevesIds[0].length>0) setIsValid2(true);
+                                else setIsValid2(false);
+                                console.log("selections",selectedNCElevesIds);
                             }}
 
 
-                            /* getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
-                            onCellClick={handleDeleteRow}
+                            getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                            /*onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {
                                     //console.log(params.row);

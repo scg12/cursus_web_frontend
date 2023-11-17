@@ -1121,7 +1121,14 @@ min-height: 5vh !important;
 max-height: 5vh !important;
 font-weight: 700;
 font-size: 0.9vw;
+}
 
+.gridRangRowStyle{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-weight: 700;
+    color:blueviolet;
+    font-size: 0.9vw;
 }
 
 .GridColumnStyle{

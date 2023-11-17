@@ -1,4 +1,7 @@
-{   "crit_gen_seq_M"      : "CRITERIA FOR SELECTING STUDENTS",
+{   "er"                  : "st",
+    "ieme"                : "th",
+    "non_classe"          : "N.C.",
+    "crit_gen_seq_M"      : "CRITERIA FOR SELECTING STUDENTS",
     "select_eleve"        : "Select one student",
     "conseil_bilan_seq"   : "Sequential meeting",
     "conseil_bilan_trim"  : "Quaterly meeting",

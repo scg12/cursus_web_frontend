@@ -1,4 +1,8 @@
-{   "crit_gen_seq_M"      : "CRITERES DE SELECTION DES ELEVES POUR GENERATION",
+{   
+    "er"                  : "er",
+    "ieme"                : "ieme",
+    "non_classe"          : "N.C.",
+    "crit_gen_seq_M"      : "CRITERES DE SELECTION DES ELEVES POUR GENERATION",
     "select_eleve"        :"Choisir un eleve",
     "conseil_bilan_seq"   :"Conseil bilan sequentiel",
     "conseil_bilan_trim"  :"Conseil bilan trimestriel",

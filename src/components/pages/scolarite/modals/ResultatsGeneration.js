@@ -162,7 +162,7 @@ function ResultatsGeneration(props) {
     const LigneEleveHeader=(props)=>{
         return(
             <div style={{display:'flex', color:'white', backgroundColor:(props.ordered) ? '#065386':'#d0290c', flexDirection:'row', height:'3vh',  width:'50vw', fontSize:'0.77vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black', position:"absolute", top:'10vh', borderRadius:3}}>
-                <div style={{width:'5vw', paddingLeft:"1.3vh"}}>  {t("rang_M")}           </div>
+                <div style={{width:'5vw', paddingLeft:"1.3vh"}}>  {(props.ordered) ? t("rang_M") :t("N°") }        </div>
                 <div style={{width:'8vw'}}>                       {t("matricule_M")}      </div> 
                 <div style={{width:'17vw'}}>                      {t("displayedName_M")}  </div>   
                 
@@ -216,7 +216,7 @@ function ResultatsGeneration(props) {
        
         return(
             <div style={{display:'flex', color:'black', backgroundColor:(props.ordered) ? (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf' : (props.rowIndex % 2==0) ? '#ebe3e0':'#ebbda4', flexDirection:'row', height: 'fit-content',width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'5vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   {props.eleve.rang}            </div>
+                <div style={{width:'5vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   {(props.ordered) ? (props.eleve.rang==1)? props.eleve.rang+t("er"):props.eleve.rang+t("ieme") : props.rowIndex+1}   </div>
                 <div style={{width:'8vw'}}>   {props.eleve.matricule}       </div> 
                 <div style={{width:'17vw', fontSize:"0.77vw", fontWeight:'bold'}}>         
                     {props.eleve.nom}                     
