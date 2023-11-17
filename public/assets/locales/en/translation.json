@@ -115,7 +115,7 @@
     "lesson_empty_error":"Lesson must have at least one resume or on homework!",
     "notes":"Marks",
     "non_saisi":"No marks",
-    "paid_fees":"Students with paid tuition fees only ",
+    "paid_fees":"tuition fees paid only ",
     "traitement":"Processing",
     "print_report":"Print student's reports",
     "generate_report":"Generate student's reports",
