@@ -151,13 +151,28 @@ function ResultatsGeneration(props) {
 
     function getBulletinTypeLabel(typeBulletin){
         switch(typeBulletin){
-            case 1: {setBullTypeLabel(t('bulletin_sequentiel'));   return;} 
-            case 2: {setBullTypeLabel(t('bulletin_trimestriel'));  return;}
-            case 3: {setBullTypeLabel(t('bulletin_annuel'));       return;}
+            case 1: {setBullTypeLabel('bulletin_sequentiel');   return;} 
+            case 2: {setBullTypeLabel('bulletin_trimestriel');  return;}
+            case 3: {setBullTypeLabel('bulletin_annuel');       return;}
            }
     }
 
-   
+    function getPrefixeRang(rang){
+        if(i18n.language =='fr'){
+            switch(parseInt(rang)){
+                case 1 : return 'er';
+                default: return 'ieme';
+            }
+
+        } else {
+            switch(rang){
+                case 1 : return 'st';
+                case 2 : return 'nd';
+                case 3 : return 'rd';
+                default: return 'th';
+            }
+        }
+    }
     /************************************ JSX Code ************************************/
     const LigneEleveHeader=(props)=>{
         return(
@@ -216,7 +231,7 @@ function ResultatsGeneration(props) {
        
         return(
             <div style={{display:'flex', color:'black', backgroundColor:(props.ordered) ? (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf' : (props.rowIndex % 2==0) ? '#ebe3e0':'#ebbda4', flexDirection:'row', height: 'fit-content',width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'5vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   {(props.ordered) ? (props.eleve.rang==1)? props.eleve.rang+t("er"):props.eleve.rang+t("ieme") : props.rowIndex+1}   </div>
+                <div style={{width:'5vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   <b>{(props.ordered) ? props.eleve.rang:props.rowIndex+1}</b> <b style={{verticalAlign:"super", marginLeft:"-0.3vw", fontSize:"0.77vw"}}>{(props.ordered) ? getPrefixeRang(props.eleve.rang):null} </b>   </div>
                 <div style={{width:'8vw'}}>   {props.eleve.matricule}       </div> 
                 <div style={{width:'17vw', fontSize:"0.77vw", fontWeight:'bold'}}>         
                     {props.eleve.nom}                     
@@ -272,7 +287,7 @@ function ResultatsGeneration(props) {
                 </div>
 
                 <div className={classes.formMainTitle} >
-                    {t("RESULTATS DE LA GENERATION ") + bullTypeLabel +' - '+props.bullPeriodeLabel}
+                    {t("result_gen_M") +' '+ t(bullTypeLabel) +' - '+props.bullPeriodeLabel}
                 </div>
                 
             </div>
@@ -284,7 +299,7 @@ function ResultatsGeneration(props) {
                     
                     <div style={{position:'absolute', top:'6.3vh', width:"100%", fontSize:"0.9vw", fontWeight:"800", display:'flex', flexDirection:'row'}} >
                         <img src={'images/' + getPuceByTheme()} className={classes.PuceStyle}/>
-                        {t("ELEVES CLASSES (ORDRE DE MERITE) ")}
+                        {t("ordered_student_M" )}
                     </div>
 
                     <LigneEleveHeader ordered={true}/>
@@ -307,7 +322,7 @@ function ResultatsGeneration(props) {
                         
                         <div style={{position:'absolute', top:'6.3vh', width:"100%", fontSize:"0.9vw", fontWeight:"800", display:'flex', flexDirection:'row'}} >
                             <img src={'images/' + getPuceByTheme()} className={classes.PuceStyle}/>
-                            {t("ELEVES NON CLASSES - ORDRE ALPHABETIQUE")}
+                            {t("non_ordered_student_M")}
                         </div>
 
                         

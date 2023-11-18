@@ -319,7 +319,7 @@ function CursusAcad(props) {
                 </div>
                               
                 <div className={classes.formMainTitle} >
-                    {t('DOSSIER SCOLAIRE PERSONNEL')}
+                    {t('student_history_M')}
                 </div>
             </div>
               
@@ -341,8 +341,8 @@ function CursusAcad(props) {
                         <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> 10 ans</div>
                     </div>
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
-                        <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t("ENTREE")} : </div> <div> {props.eleve.date_entree} </div>
-                        <div style={{fontWeight:'700', marginRight:'0.3vw', marginLeft:'4.3vw'}}> {t('SORTIE')} : </div> <div> - </div>
+                        <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t("entree_M")} : </div> <div> {props.eleve.date_entree} </div>
+                        <div style={{fontWeight:'700', marginRight:'0.3vw', marginLeft:'4.3vw'}}> {t('sortie_M')} : </div> <div> - </div>
                     </div>
                 </div>
             

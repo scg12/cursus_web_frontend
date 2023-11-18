@@ -1,6 +1,10 @@
-{   
-    "er"                  : "er",
-    "ieme"                : "ieme",
+{   "sortie_M" : "SORTIE",
+    "entree_M" : "ENTREE",
+    "student_history_M":"DOSSIER SCOLAIRE PERSONNEL",
+    "student_history_search_M":"RECHERCHE D'UN DOSSIER SCOLAIRE",
+    "non_ordered_student_M"   : "ELEVES NON CLASSES - ORDRE ALPHABETIQUE",
+    "ordered_student_M"   : "ELEVES CLASSES - ORDRE DE MERITE",
+    "result_gen_M"        :"RESULTATS DE LA GENERATION",
     "non_classe"          : "N.C.",
     "crit_gen_seq_M"      : "CRITERES DE SELECTION DES ELEVES POUR GENERATION",
     "select_eleve"        :"Choisir un eleve",

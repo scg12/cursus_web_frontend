@@ -53,6 +53,23 @@ function BulletinEleve(props) {
         else return "";
     }
 
+    function getPrefixeRang(rang){
+        if(i18n.language =='fr'){
+            switch(parseInt(rang)){
+                case 1 : return 'er';
+                default: return 'ieme';
+            }
+
+        } else {
+            switch(parseInt(rang)){
+                case 1 : return 'st';
+                case 2 : return 'nd';
+                case 3 : return 'rd';
+                default: return 'th';
+            }
+        }
+    }
+
     function createGroupes(typeBulletin, elevesData, groupeRecapData, notesData){
         return new Promise(function(resolve, reject){
             ElevesInfo = [];
@@ -143,7 +160,7 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5] : t("non_classe");
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5]: t("non_classe");
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -294,7 +311,7 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5] : t("non_classe");
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5]  : t("non_classe");
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -665,20 +682,24 @@ function BulletinEleve(props) {
                         <View style={styles.box_header}><Text>RESULTAT DE L'ELEVE</Text></View>
                         <View style={styles.box_corps}>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Points:  </Text>
-                            <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalPoints}</Text>
+                              <Text style={{fontFamily:"MyBold", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Points:  </Text>
+                              <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalPoints}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Coefs:  </Text>
-                            <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalcoef}</Text>
+                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Coefs:  </Text>
+                              <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalcoef}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Moyenne:  </Text>
-                            <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.MoyGenerale}</Text>
+                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Moyenne:  </Text>
+                              <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.MoyGenerale}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                            <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Rang:  </Text>
-                            <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.rangGeneral}</Text>
+                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Rang:  </Text>
+                              <View style={{...styles.special_textP,display:"flex",flexDirection:"row",width:"7vw",marginRight:"0.7vw"}}> 
+                                  <Text style={{fontFamily:"MyBold",}}>{props.recapGeneral.rangGeneral}</Text>
+                                  <Text style={{fontFamily:"MyBold", verticalAlign:"super",marginRight:"0.7vw",paddingTop:"0.7vh", fontSize:"0.7vh"}}>{getPrefixeRang(props.recapGeneral.rangGeneral)}</Text>
+                              </View>
+                              
                             </View>
                         </View>
                     </View>

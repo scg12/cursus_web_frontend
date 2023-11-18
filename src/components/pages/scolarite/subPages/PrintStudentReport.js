@@ -387,9 +387,26 @@ function PrintStudentReport(props) {
 
     function getTodayDate(){
         var annee = new Date().getFullYear();
-        var mm  = (new Date().getMonth()+1).length==1 ? '0'+(new Date().getMonth()+1) : (new Date().getMonth()+1);
-        var jj = (new Date().getDate()).length==1 ? '0'+(new Date().getDate()) : (new Date().getDate())
+        var mm    = (new Date().getMonth()+1).length==1 ? '0'+(new Date().getMonth()+1) : (new Date().getMonth()+1);
+        var jj    = (new Date().getDate()).length==1 ? '0'+(new Date().getDate()) : (new Date().getDate())
         return annee+'-'+ mm+'-'+jj;
+    }
+
+    function getPrefixeRang(rang){
+        if(i18n.language =='fr'){
+            switch(parseInt(rang)){
+                case 1 : return 'er';
+                default: return 'ieme';
+            }
+
+        } else {
+            switch(rang){
+                case 1 : return 'st';
+                case 2 : return 'nd';
+                case 3 : return 'rd';
+                default: return 'th';
+            }
+        }
     }
 
     const formatSeqList=(list, listEnRegle) =>{
@@ -402,7 +419,7 @@ function PrintStudentReport(props) {
             listElt = {};
             listElt.id        = elt.id;
             listElt.nom       = elt.nom;
-            listElt.rang      = (elt.rang==1)? elt.rang+t("er"):elt.rang+t("ieme");
+            listElt.rang      = elt.rang;
             listElt.pos       = pos; 
             listElt.matricule = elt.matricule;
             listElt.moyenne   = elt.moyenne;
@@ -432,7 +449,7 @@ function PrintStudentReport(props) {
             listElt={};
             listElt.id   = elt.id;
             listElt.nom  = elt.nom;
-            listElt.rang = (elt.rang==1)? elt.rang+t("er"):elt.rang+t("ieme"); 
+            listElt.rang = elt.rang; 
             listElt.pos  = pos;
             listElt.matricule  = elt.matricule;
             // listElt.moyennes_seq = elt.moyennes_seq;
@@ -462,7 +479,7 @@ function PrintStudentReport(props) {
             listElt={};
             listElt.id   = elt.id;
             listElt.nom  = elt.nom;
-            listElt.rang = (elt.rang==1)? elt.rang+t("er"):elt.rang+t("ieme"); 
+            listElt.rang = elt.rang; 
             listElt.pos  = pos;
             listElt.matricule  = elt.matricule;
             // listElt.moyennes_trimestre = elt.moyennes_trimestre;
@@ -612,12 +629,20 @@ function PrintStudentReport(props) {
 
         {
             field: 'rang',
-            headerName: t("rang_M"),
+            headerName: t('rang_M'),
             width: 80,
             editable: false,
-            headerClassName:classes.GridColumnStyle
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
+                        <b>{params.row.rang}</b> 
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}</b>
+                        
+                    </div>
+                )}     
         },
-
+        
         {
             field: 'moyenne',
             headerName: t('moySeq_M'),
@@ -720,10 +745,18 @@ function PrintStudentReport(props) {
 
         {
             field: 'rang',
-            headerName: t("rang_M"),
+            headerName: t('rang_M'),
             width: 80,
             editable: false,
-            headerClassName:classes.GridColumnStyle
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
+                        <b>{params.row.rang}</b> 
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}</b>
+                        
+                    </div>
+                )}     
         },
 
         // {
@@ -893,10 +926,18 @@ function PrintStudentReport(props) {
 
         {
             field: 'rang',
-            headerName: t("rang_M"),
+            headerName: t('rang_M'),
             width: 80,
             editable: false,
-            headerClassName:classes.GridColumnStyle
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
+                        <b>{params.row.rang}</b> 
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}</b>
+                        
+                    </div>
+                )}        
         },
     
         {

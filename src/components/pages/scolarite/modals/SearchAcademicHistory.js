@@ -507,7 +507,7 @@ function SearchAcademicHistory(props) {
                 </div>
                            
                 <div className={classes.formMainTitle} >
-                    {t("RECHERCHE D'UN DOSSIER SCOLAIRE")}
+                    {t("student_history_search_M")}
                 </div>                
             </div>
             {(modalOpen == 1)&& <CursusAcad eleve={SEARCHED_ELEVE} cancelHandler={quitForm}/> }
