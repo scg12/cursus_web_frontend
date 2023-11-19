@@ -232,12 +232,16 @@ function PrintStudentReport(props) {
         var elvData = [];
         var eleve   = {};
         var resultatElev = [];
+        var cur_rang = 0;
         elevesData.map((elv)=>{
             eleve = {};
             resultatElev      = elv.resultat.split("~~~");
             console.log("resultElv:", resultatElev)
             eleve.id          = elv.id;
             eleve.rang        = elv.rang;
+            eleve.isExeco     = elv.rang==cur_rang;
+            if(eleve.isExeco) cur_rang = elv.rang;
+            else cur_rang ++;
             eleve.matricule   = resultatElev[1].split("²²")[2];
             eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
             console.log("typeBull",typeBulletin);
@@ -417,12 +421,13 @@ function PrintStudentReport(props) {
 
         list.map((elt)=>{
             listElt = {};
-            listElt.id        = elt.id;
-            listElt.nom       = elt.nom;
-            listElt.rang      = elt.rang;
-            listElt.pos       = pos; 
-            listElt.matricule = elt.matricule;
-            listElt.moyenne   = elt.moyenne;
+            listElt.id         = elt.id;
+            listElt.nom        = elt.nom;
+            listElt.rang       = elt.rang;
+            listElt.isExeco    = elt.isExeco;
+            listElt.pos        = pos; 
+            listElt.matricule  = elt.matricule;
+            listElt.moyenne    = elt.moyenne;
             // listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
             // listElt.nb_coef_manquants = elt.nb_coef_manquants;
             // listElt.nb_matiere_indispensable_sans_notes = elt.nb_matiere_indispensable_sans_notes;
@@ -443,14 +448,16 @@ function PrintStudentReport(props) {
         var pos = 1;        
         var notesSeq      = [];
         var formattedList = [];
+        console.log("en regles",list,listEnRegle);
        
         list.map((elt)=>{
-            notesSeq   = [0,0];
-            listElt={};
-            listElt.id   = elt.id;
-            listElt.nom  = elt.nom;
-            listElt.rang = elt.rang; 
-            listElt.pos  = pos;
+            notesSeq  = [0,0];
+            listElt   = {};
+            listElt.id         = elt.id;
+            listElt.nom        = elt.nom;
+            listElt.rang       = elt.rang; 
+            listElt.isExeco    = elt.isExeco;
+            listElt.pos        = pos;
             listElt.matricule  = elt.matricule;
             // listElt.moyennes_seq = elt.moyennes_seq;
             // listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
@@ -476,11 +483,12 @@ function PrintStudentReport(props) {
     
         list.map((elt)=>{
             notesTrim = [0,0,0];
-            listElt={};
-            listElt.id   = elt.id;
-            listElt.nom  = elt.nom;
-            listElt.rang = elt.rang; 
-            listElt.pos  = pos;
+            listElt   = {};
+            listElt.id         = elt.id;
+            listElt.nom        = elt.nom;
+            listElt.rang       = elt.rang;
+            listElt.isExeco    = elt.isExeco; 
+            listElt.pos        = pos;
             listElt.matricule  = elt.matricule;
             // listElt.moyennes_trimestre = elt.moyennes_trimestre;
             // listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
@@ -628,6 +636,15 @@ function PrintStudentReport(props) {
         },
 
         {
+            field: 'isExeco',
+            headerName: t('execo'),
+            width: 200,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'rang',
             headerName: t('rang_M'),
             width: 80,
@@ -637,7 +654,7 @@ function PrintStudentReport(props) {
                 return(
                     <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
                         <b>{params.row.rang}</b> 
-                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}</b>
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":null}</b>
                         
                     </div>
                 )}     
@@ -744,6 +761,15 @@ function PrintStudentReport(props) {
         },
 
         {
+            field: 'isExeco',
+            headerName: t('execo'),
+            width: 200,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'rang',
             headerName: t('rang_M'),
             width: 80,
@@ -753,7 +779,7 @@ function PrintStudentReport(props) {
                 return(
                     <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
                         <b>{params.row.rang}</b> 
-                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}</b>
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":null}</b>
                         
                     </div>
                 )}     
@@ -925,6 +951,15 @@ function PrintStudentReport(props) {
         },
 
         {
+            field: 'isExeco',
+            headerName: t('execo'),
+            width: 200,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'rang',
             headerName: t('rang_M'),
             width: 80,
@@ -934,7 +969,7 @@ function PrintStudentReport(props) {
                 return(
                     <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
                         <b>{params.row.rang}</b> 
-                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}</b>
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":null}</b>
                         
                     </div>
                 )}        
@@ -1282,7 +1317,7 @@ function PrintStudentReport(props) {
        
         if(ELEVES_DATA != {}){
 
-            if(selectedElevesIds[0].length < listEleves.length){
+            if(selectedElevesIds[0].length < ELEVES_DATA.eleve_results_c.length){
                 selectedElevesIds[0].map((id)=>{
                     var eleve = ELEVES_DATA.eleve_results_c.find((elv)=>elv.id == id);
                     elevesToPrint.push(eleve);
@@ -1325,7 +1360,7 @@ function PrintStudentReport(props) {
     const printNOrderedStudentReports=(e)=>{
         var elevesToPrint = [];
 
-        if(selectedNCElevesIds[0].length < listEleves.length){
+        if(selectedNCElevesIds[0].length < ELEVES_DATA.eleve_results_nc.length){
             selectedNCElevesIds[0].map((id)=>{
                 var eleve = ELEVES_DATA.eleve_results_nc.find((elv)=>elv.id == id);
                 elevesToPrint.push(eleve);
