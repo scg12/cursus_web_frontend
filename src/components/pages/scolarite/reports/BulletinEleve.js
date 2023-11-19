@@ -78,6 +78,7 @@ function BulletinEleve(props) {
             var eleve_data   = {};
             var currentElvData, eleveInfos;
             var elvDataSize  = 0, tail = 0;
+            var currentRang = 0;
 
             elevesData.map((elv)=>{
                 resultatElev  = elv.resultat.split("~~~");
@@ -103,6 +104,7 @@ function BulletinEleve(props) {
                     for(var elv=0; elv<ElevesInfo.length; elv++){
                         var currentElvData = ElevesInfo[elv]; 
                         var ligne=0;
+                        
                         eleve_data={};
                         console.log("ligne courante", currentElvData[ligne]);
                         //construction de l'entete de l'eleve
@@ -161,6 +163,9 @@ function BulletinEleve(props) {
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
                         eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5]: t("non_classe");
+                        eleve_data.recapGeneral.isExeco     = eleve_data.recapGeneral.rangGeneral == currentRang;
+                        if(eleve_data.recapGeneral.isExeco) currentRang = eleve_data.recapGeneral.rangGeneral;
+                        else currentRang = currentRang+1
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -236,6 +241,9 @@ function BulletinEleve(props) {
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
                         eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5] : t("non_classe");
+                        eleve_data.recapGeneral.isExeco     = eleve_data.recapGeneral.rangGeneral == currentRang;
+                        if(eleve_data.recapGeneral.isExeco) currentRang = eleve_data.recapGeneral.rangGeneral
+                        else currentRang = currentRang+1
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -312,6 +320,9 @@ function BulletinEleve(props) {
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
                         eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5]  : t("non_classe");
+                        eleve_data.recapGeneral.isExeco     = eleve_data.recapGeneral.rangGeneral == currentRang;
+                        if(eleve_data.recapGeneral.isExeco) currentRang = eleve_data.recapGeneral.rangGeneral
+                        else currentRang = currentRang+1
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -371,17 +382,17 @@ function BulletinEleve(props) {
                 <View style={styles.header3_1}>                   
                     <View style={{textAlign:"left",marginLeft:"5px"}}>
                         <Text style={{fontFamily:"MyBold"}}>{props.eleveEntete.nom + " "+props.eleveEntete.prenom }</Text>
-                        <Text>Sexe: {props.eleveEntete.sexe}</Text>
-                        <Text>Né(e) le: {props.eleveEntete.dateNaiss} A: {props.eleveEntete.lieuNaiss}</Text>
-                        <Text>Matricule: {props.eleveEntete.matricule} Redoublant:{props.eleveEntete.redouble? t("yes"):t("no")}</Text>
+                        <Text>{t('form_sexe')}: {props.eleveEntete.sexe}</Text>
+                        <Text>{t('born_on')}: {props.eleveEntete.dateNaiss} A: {props.eleveEntete.lieuNaiss}</Text>
+                        <Text>{t('matricule_short')}: {props.eleveEntete.matricule}  {t('redoublant')}:{props.eleveEntete.redouble? t("yes"):t("no")}</Text>
                     </View>                   
                 </View>            
             
                 <View style={[styles.header3_2,{textAlign:"left"}]}>
                     <Text style={{fontFamily:"MyBold"}}>{props.classeLabel}</Text>
-                    <Text>Effectif: {props.effectif}</Text>
-                    <Text>Année Scolaire: {props.annee_scolaire}</Text>
-                    <Text>Prof Principal: {props.profPrincipal}</Text>
+                    <Text>{t('effectif')}: {props.effectif}</Text>
+                    <Text>{t('annee_scolaire')}: {props.annee_scolaire}</Text>
+                    <Text style={{minWidth:"12vw"}}>{t('prof_principal')}: {props.profPrincipal}</Text>
                 </View>
             </View>
         );
@@ -393,14 +404,14 @@ function BulletinEleve(props) {
             case 1:{  //Bulletin sequentiel
                 return( 
                     <View style={styles.ligne_entete_note}>
-                        <View style={styles.ligne_entete_note__matiere}><Text>MATIERE</Text></View>
-                        <View style={styles.ligne_entete_note__competence}><Text>COMPETENCE VISEE</Text></View>
-                        <View style={styles.ligne_entete_note__moy}><Text>MOY</Text></View>
-                        <View style={styles.ligne_entete_note__coef}><Text>COEF</Text></View>
-                        <View style={styles.ligne_entete_note__nxc}><Text>NxC</Text></View>
-                        <View style={styles.ligne_entete_note__rang}><Text>RANG</Text></View>
-                        <View style={styles.ligne_entete_note__borne}><Text>BORNES</Text></View>
-                        <View style={styles.ligne_entete_note__appreciation}><Text>APPRECIATION</Text></View>
+                        <View style={styles.ligne_entete_note__matiere}><Text>{t('lesson_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__competence}><Text>{t('lesson_goal_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__moy}><Text>{t('moy_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__coef}><Text>{t('COEF')}</Text></View>
+                        <View style={styles.ligne_entete_note__nxc}><Text>{t('TOTAL')}</Text></View>
+                        <View style={styles.ligne_entete_note__rang}><Text>{t('rang_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__borne}><Text>{t('bornes_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__appreciation}><Text>{t('APPRECIATION')}</Text></View>
                     </View>
                 );
 
@@ -409,12 +420,12 @@ function BulletinEleve(props) {
             case 2:{  //Bulletin trimestriel
                 return(
                     <View style={styles.ligne_entete_note}>
-                        <View style={styles.ligne_entete_note__matiere}><Text>MATIERE</Text></View>
-                        <View style={styles.ligne_entete_note__moySeq}><Text>MOY. SEQ{seq1}.</Text></View>
-                        <View style={styles.ligne_entete_note__moySeq}><Text>MOY. SEQ{seq2}.</Text></View>
-                        <View style={styles.ligne_entete_note__moySeq}><Text>MOY. TRIM.</Text></View>
-                        <View style={styles.ligne_entete_note__rang}><Text>RANG</Text></View>
-                        <View style={styles.ligne_entete_note__appreciation}><Text>APPRECIATION</Text></View>
+                        <View style={styles.ligne_entete_note__matiere}><Text>{t('lesson_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__moySeq}><Text>{t('moy_seq_M')}{seq1}.</Text></View>
+                        <View style={styles.ligne_entete_note__moySeq}><Text>{t('moy_seq_M')}{seq2}.</Text></View>
+                        <View style={styles.ligne_entete_note__moySeq}><Text>{t('moy_trim_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__rang}><Text>{t('rang_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__appreciation}><Text>{t('APPRECIATION')}</Text></View>
                     </View>
                 );
 
@@ -423,13 +434,13 @@ function BulletinEleve(props) {
             case 3:{   //Bulletin annuel
                 return(
                     <View style={styles.ligne_entete_note}>
-                        <View style={styles.ligne_entete_note__matiere}><Text>MATIERE</Text></View>
-                        <View style={styles.ligne_entete_note__moySeq}><Text>MOY. TRIM1</Text></View>
-                        <View style={styles.ligne_entete_note__moySeq}><Text>MOY. TRIM2</Text></View>
-                        <View style={styles.ligne_entete_note__moySeq}><Text>MOY. TRIM3</Text></View>
-                        <View style={styles.ligne_entete_note__moySeq}><Text>MOY. ANN.</Text></View>
-                        <View style={styles.ligne_entete_note__rang}><Text>RANG</Text></View>
-                        <View style={styles.ligne_entete_note__appreciation}><Text>APPRECIATION</Text></View>
+                        <View style={styles.ligne_entete_note__matiere}><Text>{t('lesson_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__moySeq}><Text>{t('moy_trim_M')}1</Text></View>
+                        <View style={styles.ligne_entete_note__moySeq}><Text>{t('moy_trim_M')}2</Text></View>
+                        <View style={styles.ligne_entete_note__moySeq}><Text>{t('moy_trim_M')}3</Text></View>
+                        <View style={styles.ligne_entete_note__moySeq}><Text>{t('moyGenAN_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__rang}><Text>{t('rang_M')}</Text></View>
+                        <View style={styles.ligne_entete_note__appreciation}><Text>{t('APPRECIATION')}</Text></View>
                     </View>
                 );
 
@@ -557,7 +568,7 @@ function BulletinEleve(props) {
                 return(
                     <View style={styles.ligne_groupe}>
                         <View style={styles.ligne_entete_groupe__libelle}>
-                            <Text style={{fontFamily:"MyBold"}} >Groupe: {props.eleveGroupRecap.libelleGroup}</Text>
+                            <Text style={{fontFamily:"MyBold"}} >{t('group')}: {props.eleveGroupRecap.libelleGroup}</Text>
                         </View>
                        
                         <View style={[styles.ligne_entete_groupe__moy,{fontFamily:"MyBold"}]}>
@@ -594,7 +605,7 @@ function BulletinEleve(props) {
                 return(
                     <View style={{...styles.ligne_groupe}}>
                         <View style={{...styles.ligne_entete_groupe__libelle}}>
-                            <Text style={{fontFamily:"MyBold"}} >Groupe: {props.eleveGroupRecap.libelleGroup}</Text>
+                            <Text style={{fontFamily:"MyBold"}} >{t('group')}: {props.eleveGroupRecap.libelleGroup}</Text>
                         </View>
 
                         <View style={{...styles.ligne_entete_groupe__moy,fontFamily:"MyBold"}}>
@@ -619,7 +630,7 @@ function BulletinEleve(props) {
                 return(
                     <View style={styles.ligne_groupe}>
                         <View style={styles.ligne_entete_groupe__libelle}>
-                            <Text style={{fontFamily:"MyBold"}} >Groupe: {props.eleveGroupRecap.libelleGroup}</Text>
+                            <Text style={{fontFamily:"MyBold"}} >{t('group')}: {props.eleveGroupRecap.libelleGroup}</Text>
                         </View>
                        
                         <View style={[styles.ligne_entete_groupe__moy,{fontFamily:"MyBold"}]}>
@@ -679,24 +690,25 @@ function BulletinEleve(props) {
             <View style={styles.footer}> 
                 <View style={styles.footer_row1}>
                     <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>RESULTAT DE L'ELEVE</Text></View>
+                        <View style={styles.box_header}><Text>{t('student_results_M')}</Text></View>
                         <View style={styles.box_corps}>
                             <View style={styles.box_corps_ligne}>
-                              <Text style={{fontFamily:"MyBold", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Points:  </Text>
+                              <Text style={{fontFamily:"MyBold", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Points')}:  </Text>
                               <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalPoints}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Total Coefs:  </Text>
+                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Coefs')}:  </Text>
                               <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalcoef}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Moyenne:  </Text>
+                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moyenne')}:  </Text>
                               <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.MoyGenerale}</Text>
                             </View>
                             <View style={styles.box_corps_ligne}>
-                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Rang:  </Text>
+                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('rang')}:  </Text>
                               <View style={{...styles.special_textP,display:"flex",flexDirection:"row",width:"7vw",marginRight:"0.7vw"}}> 
                                   <Text style={{fontFamily:"MyBold",}}>{props.recapGeneral.rangGeneral}</Text>
+
                                   {props.isElevesclasse&&
                                     <Text style={{fontFamily:"MyBold", verticalAlign:"super",marginRight:"0.7vw",paddingTop:"0.7vh", fontSize:"0.7vh"}}>{getPrefixeRang(props.recapGeneral.rangGeneral)}</Text>
                                   }
@@ -707,23 +719,23 @@ function BulletinEleve(props) {
                     </View>
                   
                     <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>RESULTATS DE LA CLASSE</Text></View>
+                        <View style={styles.box_header}><Text>{t('class_results_M')}</Text></View>
                         <View style={styles.box_corps}></View>
                     </View>
                   
                     <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>DISCIPLINE</Text></View>
+                        <View style={styles.box_header}><Text>{t('disciplin_M')}</Text></View>
                         <View style={styles.box_corps}></View>
                     </View>
                   
                     <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>RAPPEL MOYENNE</Text></View>
+                        <View style={styles.box_header}><Text>{t('score_remind_M')}</Text></View>
                         <View style={styles.box_corps}>         
                         </View>
                     </View>
                   
                     <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>TRAVAIL</Text></View>
+                        <View style={styles.box_header}><Text>{t('work_M')}</Text></View>
                             <View style={styles.box_corps}></View>
                         </View>
                     </View>
@@ -732,27 +744,27 @@ function BulletinEleve(props) {
                         <View style={styles.footer_ligne2_1}>
                             <View style={styles.footer_ligne2_1_1}>
                                 <View style={styles.footer_ligne2_1_1_box}>
-                                    <View style={styles.box_header}><Text>APPRECIATION TRAVAIL</Text></View>
+                                    <View style={styles.box_header}><Text>{t('work_appreciation_M')}</Text></View>
                                     <View style={styles.box_corps}></View>
                                 </View>
                                 <View style={styles.footer_ligne2_1_1_box}>
-                                    <View style={styles.box_header}><Text>OBSERVATIONS</Text></View>
+                                    <View style={styles.box_header}><Text>{t('work_observation_M')}</Text></View>
                                     <View style={styles.box_corps}></View>
                                 </View> 
                             </View>
                             <View style={styles.footer_ligne2_1_1}>
                                 <View style={styles.footer_ligne2_1_1_box}>
-                                <View style={styles.box_header}><Text>VISA DES PARENTS</Text></View>
+                                <View style={styles.box_header}><Text>{t('visa_parent_M')}</Text></View>
                                     <View style={styles.box_corps}></View>
                                 </View>
                                 <View style={styles.footer_ligne2_1_1_box}>
-                                <View style={styles.box_header}><Text>VISA PROF PRINCIPAL</Text></View>
+                                <View style={styles.box_header}><Text>{t('head_teacher_visa_M')}</Text></View>
                                     <View style={styles.box_corps}></View>
                                 </View>
                             </View>
                         </View>
                         <View style={styles.footer_ligne2_2}>
-                        <View style={styles.box_header}><Text>Visa Principal</Text></View>
+                        <View style={styles.box_header}><Text>{t('visa_principal_M')}</Text></View>
                         <View style={styles.box_corps}></View>
                     </View>
                 </View>                   
@@ -801,7 +813,8 @@ function BulletinEleve(props) {
 
                             <View style={styles.header2}>
                                 <View style={styles.header2_cadre}>
-                                    <Text>{props.data.titreBulletin}</Text>
+                                    <Text style={{textTransform:"uppercase"}}>{props.data.titreBulletin.split('-')[0]}</Text>
+                                    <Text> - {props.data.titreBulletin.split('-')[1]}</Text>
                                 </View>             
                             </View>
 
@@ -909,6 +922,7 @@ const styles = StyleSheet.create({
       alignItems:"center",
       marginBottom:"3vh"
     },
+
     header2_cadre:{
       border: "2px 2px solid black",
       borderRadius:"5px",
@@ -916,6 +930,7 @@ const styles = StyleSheet.create({
       width:"50%",
       height:"77%",
       display:"flex",
+      flexDirection:"row",
       justifyContent:"center",
       alignItems:"center",
     },
