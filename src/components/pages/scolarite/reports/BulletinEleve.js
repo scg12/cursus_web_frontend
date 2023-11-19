@@ -697,7 +697,9 @@ function BulletinEleve(props) {
                               <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>Rang:  </Text>
                               <View style={{...styles.special_textP,display:"flex",flexDirection:"row",width:"7vw",marginRight:"0.7vw"}}> 
                                   <Text style={{fontFamily:"MyBold",}}>{props.recapGeneral.rangGeneral}</Text>
-                                  <Text style={{fontFamily:"MyBold", verticalAlign:"super",marginRight:"0.7vw",paddingTop:"0.7vh", fontSize:"0.7vh"}}>{getPrefixeRang(props.recapGeneral.rangGeneral)}</Text>
+                                  {props.isElevesclasse&&
+                                    <Text style={{fontFamily:"MyBold", verticalAlign:"super",marginRight:"0.7vw",paddingTop:"0.7vh", fontSize:"0.7vh"}}>{getPrefixeRang(props.recapGeneral.rangGeneral)}</Text>
+                                  }
                               </View>
                               
                             </View>
@@ -818,7 +820,7 @@ function BulletinEleve(props) {
                         </View> 
                         
                         <View style={styles.footer}> 
-                                <EleveRecap  recapGeneral = {eleve.recapGeneral}/>
+                                <EleveRecap  recapGeneral = {eleve.recapGeneral} isElevesclasse = {props.data.isElevesclasse}/>
                         </View>
                     </Page>
                 ))

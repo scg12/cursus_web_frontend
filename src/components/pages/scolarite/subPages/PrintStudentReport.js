@@ -1282,7 +1282,7 @@ function PrintStudentReport(props) {
        
         if(ELEVES_DATA != {}){
 
-            if(selectedElevesIds[0].length < listEleves.length){
+            if(selectedElevesIds[0].length < ELEVES_DATA.eleve_results_c.length){
                 selectedElevesIds[0].map((id)=>{
                     var eleve = ELEVES_DATA.eleve_results_c.find((elv)=>elv.id == id);
                     elevesToPrint.push(eleve);
