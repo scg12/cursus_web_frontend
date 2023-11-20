@@ -54,12 +54,17 @@ function ResultatsGeneration(props) {
         var elvData = [];
         var eleve   = {};
         var resultatElev = [];
+        var cur_rang = 0;
+        var cptExco  = 1;
         elevesData.map((elv)=>{
             eleve = {};
             resultatElev      = elv.resultat.split("~~~");
             console.log("resultElv:", resultatElev)
             eleve.id          = elv.id;
             eleve.rang        = elv.rang;
+            eleve.isExeco     = elv.rang==cur_rang;
+            if(eleve.isExeco) {cur_rang = elv.rang; cptExco+=1}
+            else {cur_rang +=cptExco; cptExco=1;}
             eleve.matricule   = resultatElev[1].split("²²")[2];
             eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
             console.log("typeBull",typeBulletin);
@@ -72,16 +77,17 @@ function ResultatsGeneration(props) {
                 }
 
                 case 2: {
-                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];
+                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];
+                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];
                     break;
                 }
 
                 case 3: {
-                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];;
+                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];;
+                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];;
+                    eleve.moyenne   = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[3];;
                     eleve.decision  = "";
                     eleve.promuEn   = "";
                     break;
@@ -178,7 +184,7 @@ function ResultatsGeneration(props) {
         return(
             <div style={{display:'flex', color:'white', backgroundColor:(props.ordered) ? '#065386':'#d0290c', flexDirection:'row', height:'3vh',  width:'50vw', fontSize:'0.77vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black', position:"absolute", top:'10vh', borderRadius:3}}>
                 <div style={{width:'5vw', paddingLeft:"1.3vh"}}>  {(props.ordered) ? t("rang_M") :t("N°") }        </div>
-                <div style={{width:'8vw'}}>                       {t("matricule_M")}      </div> 
+                <div style={{width:'8vw'}}>            {(typeBulletin==3) ?  t('matricule_short_M') :  t("matricule_M")}    </div> 
                 <div style={{width:'17vw'}}>                      {t("displayedName_M")}  </div>   
                 
                 
@@ -231,7 +237,7 @@ function ResultatsGeneration(props) {
        
         return(
             <div style={{display:'flex', color:'black', backgroundColor:(props.ordered) ? (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf' : (props.rowIndex % 2==0) ? '#ebe3e0':'#ebbda4', flexDirection:'row', height: 'fit-content',width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'5vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   <b>{(props.ordered) ? props.eleve.rang:props.rowIndex+1}</b> <b style={{verticalAlign:"super", marginLeft:"-0.3vw", fontSize:"0.77vw"}}>{(props.ordered) ? getPrefixeRang(props.eleve.rang):null} </b>   </div>
+                <div style={{width:'5vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   <b>{(props.ordered) ? props.eleve.rang:props.rowIndex+1}</b> <b style={{verticalAlign:"super", marginLeft:"-0.3vw", fontSize:"0.77vw"}}>{(props.ordered) ? getPrefixeRang(props.eleve.rang):null}{(props.ordered && props.eleve.isExeco) ? " ex":""} </b>   </div>
                 <div style={{width:'8vw'}}>   {props.eleve.matricule}       </div> 
                 <div style={{width:'17vw', fontSize:"0.77vw", fontWeight:'bold'}}>         
                     {props.eleve.nom}                     

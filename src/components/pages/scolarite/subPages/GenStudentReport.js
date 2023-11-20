@@ -343,7 +343,7 @@ function GenStudentReport(props) {
 
     function getActivatedAnnee(){
         tabCurrentAnnee = [];
-        tabCurrentAnnee = [{value: 0,      label: t("annee")+ ' '+ CURRENT_ANNEE_SCOLAIRE  }]  
+        tabCurrentAnnee = [{value: 1,      label: t("annee")+ ' '+ CURRENT_ANNEE_SCOLAIRE  }]  
         tabCurrentAnnee.unshift(firstItem);     
     }
 
@@ -1109,7 +1109,7 @@ const columnsSeq = [
                 chosenMsgBox = MSG_ERROR_GENRPT;
                 currentUiContext.showMsgBox({
                     visible  : true, 
-                    msgType  : "error", 
+                    msgType  : "danger", 
                     msgTitle : t("error_M"), 
                     message  : t("error_when_generating")
                 })        

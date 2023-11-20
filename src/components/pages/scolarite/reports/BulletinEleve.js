@@ -77,8 +77,8 @@ function BulletinEleve(props) {
             var eleves_data  = [];  
             var eleve_data   = {};
             var currentElvData, eleveInfos;
-            var elvDataSize  = 0, tail = 0;
-            var currentRang = 0;
+            var elvDataSize  = 0, tail    = 0;
+            var currentRang  = 0, cptExco = 1;
 
             elevesData.map((elv)=>{
                 resultatElev  = elv.resultat.split("~~~");
@@ -90,8 +90,8 @@ function BulletinEleve(props) {
             console.log("eleves transform", ElevesInfo, elevesData);
 
             NotesData    = notesData[0].resultat.split("~~");
-            tail = NotesData.length;
-            NotesData    = NotesData.splice(1,tail-1);
+            tail         = NotesData.length;
+            NotesData    = NotesData.splice(1, tail-1);
 
             GroupesData  = groupeRecapData[0].resultat.split("~~");
             tail         = GroupesData.length;
@@ -162,10 +162,17 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5]: t("non_classe");
-                        eleve_data.recapGeneral.isExeco     = eleve_data.recapGeneral.rangGeneral == currentRang;
-                        if(eleve_data.recapGeneral.isExeco) currentRang = eleve_data.recapGeneral.rangGeneral;
-                        else currentRang = currentRang+1
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? parseInt(currentElvData[ligne].split("²²")[5]): t("non_classe");
+                        eleve_data.recapGeneral.isExeco     = (eleve_data.recapGeneral.rangGeneral == currentRang);
+                        
+                        if(eleve_data.recapGeneral.isExeco) {
+                            currentRang = eleve_data.recapGeneral.rangGeneral;
+                            cptExco++;
+                        } else {
+                            currentRang += cptExco; 
+                            cptExco=1;
+                        }
+                        
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -240,10 +247,17 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5] : t("non_classe");
-                        eleve_data.recapGeneral.isExeco     = eleve_data.recapGeneral.rangGeneral == currentRang;
-                        if(eleve_data.recapGeneral.isExeco) currentRang = eleve_data.recapGeneral.rangGeneral
-                        else currentRang = currentRang+1
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? parseInt(currentElvData[ligne].split("²²")[5]) : t("non_classe");
+                        eleve_data.recapGeneral.isExeco     = (eleve_data.recapGeneral.rangGeneral == currentRang);
+                        
+                        if(eleve_data.recapGeneral.isExeco) {
+                            currentRang = eleve_data.recapGeneral.rangGeneral;
+                            cptExco++;
+                        } else {
+                            currentRang += cptExco; 
+                            cptExco=1;
+                        }
+
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -319,10 +333,17 @@ function BulletinEleve(props) {
                         //construction du recap general de l'eleve
                         eleve_data.recapGeneral = {};
                         eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? currentElvData[ligne].split("²²")[5]  : t("non_classe");
-                        eleve_data.recapGeneral.isExeco     = eleve_data.recapGeneral.rangGeneral == currentRang;
-                        if(eleve_data.recapGeneral.isExeco) currentRang = eleve_data.recapGeneral.rangGeneral
-                        else currentRang = currentRang+1
+                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? parseInt(currentElvData[ligne].split("²²")[5]) : t("non_classe");
+                        eleve_data.recapGeneral.isExeco     = (eleve_data.recapGeneral.rangGeneral == currentRang);
+                        
+                        if(eleve_data.recapGeneral.isExeco) {
+                            currentRang = eleve_data.recapGeneral.rangGeneral;
+                            cptExco++;
+                        } else {
+                            currentRang += cptExco; 
+                            cptExco=1;
+                        }
+
                         eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                         eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                         eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
@@ -710,7 +731,7 @@ function BulletinEleve(props) {
                                   <Text style={{fontFamily:"MyBold",}}>{props.recapGeneral.rangGeneral}</Text>
 
                                   {props.isElevesclasse&&
-                                    <Text style={{fontFamily:"MyBold", verticalAlign:"super",marginRight:"0.7vw",paddingTop:"0.7vh", fontSize:"0.7vh"}}>{getPrefixeRang(props.recapGeneral.rangGeneral)}</Text>
+                                    <Text style={{fontFamily:"MyBold", verticalAlign:"super",marginRight:"0.7vw",paddingTop:"0.7vh", fontSize:"0.7vh"}}>{getPrefixeRang(props.recapGeneral.rangGeneral)} {props.recapGeneral.isExeco ? " ex":""}</Text>
                                   }
                               </View>
                               

@@ -233,6 +233,7 @@ function PrintStudentReport(props) {
         var eleve   = {};
         var resultatElev = [];
         var cur_rang = 0;
+        var cptExco  = 1;
         elevesData.map((elv)=>{
             eleve = {};
             resultatElev      = elv.resultat.split("~~~");
@@ -240,8 +241,8 @@ function PrintStudentReport(props) {
             eleve.id          = elv.id;
             eleve.rang        = elv.rang;
             eleve.isExeco     = elv.rang==cur_rang;
-            if(eleve.isExeco) cur_rang = elv.rang;
-            else cur_rang ++;
+            if(eleve.isExeco) {cur_rang = elv.rang; cptExco+=1}
+            else {cur_rang +=cptExco; cptExco=1;}
             eleve.matricule   = resultatElev[1].split("²²")[2];
             eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
             console.log("typeBull",typeBulletin);
@@ -254,17 +255,17 @@ function PrintStudentReport(props) {
                 }
 
                 case 2: {
-                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];
+                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];
+                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];
                     break;
                 }
 
                 case 3: {
-                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2];
-                    eleve.moyenne   = resultatElev[resultatElev.length-1].split("²²")[2];
+                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];;
+                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];;
+                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];;
+                    eleve.moyenne   = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[3];;
                     eleve.decision  = "";
                     eleve.promuEn   = "";
                     break;
@@ -654,7 +655,7 @@ function PrintStudentReport(props) {
                 return(
                     <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
                         <b>{params.row.rang}</b> 
-                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":null}</b>
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":""}</b>
                         
                     </div>
                 )}     
@@ -779,7 +780,7 @@ function PrintStudentReport(props) {
                 return(
                     <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
                         <b>{params.row.rang}</b> 
-                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":null}</b>
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":""}</b>
                         
                     </div>
                 )}     
@@ -969,7 +970,7 @@ function PrintStudentReport(props) {
                 return(
                     <div className={classes.inputRow} style={{justifyContent:"flex-start"}}>
                         <b>{params.row.rang}</b> 
-                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":null}</b>
+                        <b style={{verticalAlign:"super", fontSize:"0.77vw"}}>{getPrefixeRang(params.row.rang)}{params.row.isExeco?" ex":""}</b>
                         
                     </div>
                 )}        
