@@ -15,15 +15,9 @@ Font.register({
   src: fontItalic 
 });
 
-var ElevesInfo;
-var NotesData;
-var GroupesData;
-var GroupesCount;
-
 function BulletinEleve(props) {
 
     const [ELEVES_DATA, setElevesData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [seq1, setSeq1] = useState("1");
     const [seq2, setSeq2] = useState("2");
     const { t, i18n } = useTranslation();
@@ -31,11 +25,7 @@ function BulletinEleve(props) {
 
     useEffect(()=> {
         if(props.data.typeBulletin==2) getTrimSequences(props.data.periode);
-        createGroupes(props.data.typeBulletin,props.data.eleveNotes, props.data.groupeRecaps, props.data.noteRecaps)
-        .then((eleveData)=>{
-            setElevesData(eleveData);
-            setIsLoading(false);
-        });      
+        setElevesData(props.data.elvToPrintData); 
     },[]);
 
     function getTrimSequences(trimestre){
@@ -44,13 +34,6 @@ function BulletinEleve(props) {
          case "Trimestre2": {setSeq1("3"); setSeq2("4");   return;}
          case "Trimestre3": {setSeq1("5"); setSeq2("6");   return;}
         }
-    }
-
-    function getNomProf(matiereLabel){
-        var lisMatieresProfs = props.data.profMatieres.split("&");
-        var matiereProf = lisMatieresProfs.find((elt)=>elt.split("_")[0]==matiereLabel);
-        if(matiereProf!=undefined) return matiereProf.split("_")[1];
-        else return "";
     }
 
     function getPrefixeRang(rang){
@@ -68,300 +51,6 @@ function BulletinEleve(props) {
                 default: return 'th';
             }
         }
-    }
-
-    function createGroupes(typeBulletin, elevesData, groupeRecapData, notesData){
-        return new Promise(function(resolve, reject){
-            ElevesInfo = [];
-            var resultatElev = []; 
-            var eleves_data  = [];  
-            var eleve_data   = {};
-            var currentElvData, eleveInfos;
-            var elvDataSize  = 0, tail    = 0;
-            var currentRang  = 0, cptExco = 1;
-
-            elevesData.map((elv)=>{
-                resultatElev  = elv.resultat.split("~~~");
-                elvDataSize = resultatElev.length;
-                resultatElev  = resultatElev.splice(1,elvDataSize-1);
-                ElevesInfo.push(resultatElev)
-            });
-
-            console.log("eleves transform", ElevesInfo, elevesData);
-
-            NotesData    = notesData[0].resultat.split("~~");
-            tail         = NotesData.length;
-            NotesData    = NotesData.splice(1, tail-1);
-
-            GroupesData  = groupeRecapData[0].resultat.split("~~");
-            tail         = GroupesData.length;
-            GroupesData  = GroupesData.splice(1, tail-1);
-
-            GroupesCount = GroupesData.length;
-
-            switch(typeBulletin){
-                case 1:{
-                    for(var elv=0; elv<ElevesInfo.length; elv++){
-                        var currentElvData = ElevesInfo[elv]; 
-                        var ligne=0;
-                        
-                        eleve_data={};
-                        console.log("ligne courante", currentElvData[ligne]);
-                        //construction de l'entete de l'eleve
-                        eleve_data.entete = {};
-                        eleve_data.entete.nom       = currentElvData[ligne].split("²²")[0];
-                        eleve_data.entete.prenom    = currentElvData[ligne].split("²²")[1];
-                        eleve_data.entete.matricule = currentElvData[ligne].split("²²")[2];
-                        eleve_data.entete.sexe      = currentElvData[ligne].split("²²")[3];
-                        eleve_data.entete.redouble  = currentElvData[ligne].split("²²")[4];
-                        eleve_data.entete.dateNaiss = currentElvData[ligne].split("²²")[5];
-                        eleve_data.entete.lieuNaiss = currentElvData[ligne].split("²²")[6];
-
-                        //construction des notes de l'eleve par groupes
-                        eleve_data.groupesInfos = []; 
-                        var indNote = 0; ligne++;
-                        for(var grp=0; grp<=GroupesCount-1; grp++){
-                            var grpInfo = {}; 
-                            var tabEleveInfos = []; 
-                        
-                            var notes = currentElvData[ligne].split("~~");
-                            for(var nt=0; nt<=notes.length-2; nt++){
-                                eleveInfos = {};
-                                eleveInfos.libelleMatiere = NotesData[indNote].split("²²")[4];
-                                eleveInfos.coefMatiere    = NotesData[indNote].split("²²")[0];
-                                eleveInfos.nomProf        = getNomProf(eleveInfos.libelleMatiere);
-                                eleveInfos.compVisee      = "competence visee";
-                                eleveInfos.moyenne        = notes[nt].split("²²")[0];
-                                eleveInfos.nxc            = notes[nt].split("²²")[1];
-                                eleveInfos.appreciation   = notes[nt].split("²²")[2];
-                                eleveInfos.rang           = notes[nt].split("²²")[3];
-                                eleveInfos.borneInf       = NotesData[indNote].split("²²")[1];
-                                eleveInfos.borneSup       = NotesData[indNote].split("²²")[2];
-
-                                tabEleveInfos.push(eleveInfos)
-                                indNote++;
-                            }
-
-                            var eleveGroupRecap = {};
-                            eleveGroupRecap.moyGroup        = notes[notes.length-1].split("²²")[4];
-                            eleveGroupRecap.apprecGroupe    = notes[notes.length-1].split("²²")[5];
-                            eleveGroupRecap.coefTotalgroup  = notes[notes.length-1].split("²²")[0]; 
-                            eleveGroupRecap.nxcTotal        = notes[notes.length-1].split("²²")[2];
-                            eleveGroupRecap.rangGroupe      = notes[notes.length-1].split("²²")[3];
-                            eleveGroupRecap.libelleGroup    = GroupesData[grp].split("²²")[3];
-                            eleveGroupRecap.borneInf        = GroupesData[grp].split("²²")[0];
-                            eleveGroupRecap.borneSup        = GroupesData[grp].split("²²")[1];
-
-                            grpInfo.eleveInfos      = tabEleveInfos;
-                            grpInfo.eleveGroupRecap = eleveGroupRecap;
-
-                            eleve_data.groupesInfos.push(grpInfo);
-                            ligne++;
-                        }
-
-                        //construction du recap general de l'eleve
-                        eleve_data.recapGeneral = {};
-                        eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? parseInt(currentElvData[ligne].split("²²")[5]): t("non_classe");
-                        eleve_data.recapGeneral.isExeco     = (eleve_data.recapGeneral.rangGeneral == currentRang);
-                        
-                        if(eleve_data.recapGeneral.isExeco) {
-                            currentRang = eleve_data.recapGeneral.rangGeneral;
-                            cptExco++;
-                        } else {
-                            currentRang += cptExco; 
-                            cptExco=1;
-                        }
-                        
-                        eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
-                        eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
-                        eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
-                        eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
-
-                        eleves_data.push(eleve_data);
-                    }
-                    console.log("donne to print",eleves_data)
-                    resolve(eleves_data) ;
-                    break;
-                }
-
-                case 2:{
-                    for(var elv=0; elv<ElevesInfo.length; elv++){
-                        var currentElvData = ElevesInfo[elv]; 
-                        var ligne=0;
-                        eleve_data={};
-                        
-                        //construction de l'entete de l'eleve
-                        eleve_data.entete = {};
-                        eleve_data.entete.nom       = currentElvData[ligne].split("²²")[0];
-                        eleve_data.entete.prenom    = currentElvData[ligne].split("²²")[1];
-                        eleve_data.entete.matricule = currentElvData[ligne].split("²²")[2];
-                        eleve_data.entete.sexe      = currentElvData[ligne].split("²²")[3];
-                        eleve_data.entete.redouble  = currentElvData[ligne].split("²²")[4];
-                        eleve_data.entete.dateNaiss = currentElvData[ligne].split("²²")[5];
-                        eleve_data.entete.lieuNaiss = currentElvData[ligne].split("²²")[6];
-
-                        //construction des notes de l'eleve par groupes
-                        eleve_data.groupesInfos = []; 
-                        var indNote = 0; ligne++;
-                        for(var grp=0; grp<=GroupesCount-1; grp++){
-                            var grpInfo = {}; 
-                            var tabEleveInfos = []; 
-                        
-                            var notes = currentElvData[ligne].split("~~");
-                            for(var nt=0; nt<=notes.length-2; nt++){
-                                eleveInfos = {};
-                                eleveInfos.libelleMatiere = NotesData[indNote].split("²²")[4];
-                                //eleveInfos.coefMatiere    = NotesData[indNote].split("²²")[0];
-                                eleveInfos.nomProf        = getNomProf(eleveInfos.libelleMatiere);;
-                                eleveInfos.compVisee      = "no need";
-                                eleveInfos.moySeq1        = notes[nt].split("²²")[0].split("&")[0];
-                                eleveInfos.moySeq2        = notes[nt].split("²²")[0].split("&")[1];
-                                eleveInfos.moyenne        = notes[nt].split("²²")[1];
-                                eleveInfos.nxc            = notes[nt].split("²²")[2];
-                                eleveInfos.appreciation   = notes[nt].split("²²")[3];
-                                eleveInfos.rang           = notes[nt].split("²²")[4];
-                                //eleveInfos.borneInf       = NotesData[indNote].split("²²")[1];
-                                //eleveInfos.borneSup       = NotesData[indNote].split("²²")[2];
-
-                                tabEleveInfos.push(eleveInfos)
-                                indNote++;
-                            }
-
-                            var eleveGroupRecap = {};
-                            eleveGroupRecap.moyGroup        = notes[notes.length-1].split("²²")[4];
-                            eleveGroupRecap.apprecGroupe    = notes[notes.length-1].split("²²")[5];
-                            eleveGroupRecap.coefTotalgroup  = notes[notes.length-1].split("²²")[0]; 
-                            eleveGroupRecap.nxcTotal        = notes[notes.length-1].split("²²")[5];
-                            eleveGroupRecap.rangGroupe      = notes[notes.length-1].split("²²")[3];
-                            eleveGroupRecap.libelleGroup    = GroupesData[grp].split("²²")[3];
-                            eleveGroupRecap.borneInf        = GroupesData[grp].split("²²")[0];
-                            eleveGroupRecap.borneSup        = GroupesData[grp].split("²²")[1]
-
-                            grpInfo.eleveInfos      = tabEleveInfos;
-                            grpInfo.eleveGroupRecap = eleveGroupRecap;
-                            eleve_data.groupesInfos.push(grpInfo);
-                            ligne++;
-                        }
-
-                        //construction du recap general de l'eleve
-                        eleve_data.recapGeneral = {};
-                        eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? parseInt(currentElvData[ligne].split("²²")[5]) : t("non_classe");
-                        eleve_data.recapGeneral.isExeco     = (eleve_data.recapGeneral.rangGeneral == currentRang);
-                        
-                        if(eleve_data.recapGeneral.isExeco) {
-                            currentRang = eleve_data.recapGeneral.rangGeneral;
-                            cptExco++;
-                        } else {
-                            currentRang += cptExco; 
-                            cptExco=1;
-                        }
-
-                        eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
-                        eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
-                        eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
-                        eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
-
-                        eleves_data.push(eleve_data);
-                    }
-                    console.log("donne to print",eleves_data)
-                    resolve(eleves_data);
-                    break;
-                }
-
-                case 3:{
-                    for(var elv=0; elv<ElevesInfo.length; elv++){
-                        var currentElvData = ElevesInfo[elv]; 
-                        var ligne=0;
-                        eleve_data={};
-                        
-                        //construction de l'entete de l'eleve
-                        eleve_data.entete = {};
-                        eleve_data.entete.nom       = currentElvData[ligne].split("²²")[0];
-                        eleve_data.entete.prenom    = currentElvData[ligne].split("²²")[1];
-                        eleve_data.entete.matricule = currentElvData[ligne].split("²²")[2];
-                        eleve_data.entete.sexe      = currentElvData[ligne].split("²²")[3];
-                        eleve_data.entete.redouble  = currentElvData[ligne].split("²²")[4];
-                        eleve_data.entete.dateNaiss = currentElvData[ligne].split("²²")[5];
-                        eleve_data.entete.lieuNaiss = currentElvData[ligne].split("²²")[6];
-
-                        //construction des notes de l'eleve par groupes
-                        eleve_data.groupesInfos = []; 
-                        var indNote = 0; ligne++;
-                        for(var grp=0; grp<=GroupesCount-1; grp++){
-                            var grpInfo = {}; 
-                            var tabEleveInfos = []; 
-                        
-                            var notes = currentElvData[ligne].split("~~");
-                            for(var nt=0; nt<=notes.length-2; nt++){
-                                eleveInfos = {};
-                                eleveInfos.libelleMatiere = NotesData[indNote].split("²²")[4];
-                                //eleveInfos.coefMatiere    = NotesData[indNote].split("²²")[0];
-                                eleveInfos.nomProf        = getNomProf(eleveInfos.libelleMatiere);;
-                                eleveInfos.compVisee      = "no need";
-                                eleveInfos.moyTrim1       = notes[nt].split("²²")[0].split("&")[0];
-                                eleveInfos.moyTrim2       = notes[nt].split("²²")[0].split("&")[1];
-                                eleveInfos.moyTrim3       = notes[nt].split("²²")[0].split("&")[2];
-                                eleveInfos.moyenne        = notes[nt].split("²²")[1];
-                                eleveInfos.nxc            = notes[nt].split("²²")[2];
-                                eleveInfos.appreciation   = notes[nt].split("²²")[3];
-                                eleveInfos.rang           = notes[nt].split("²²")[4];
-                                //eleveInfos.borneInf       = NotesData[indNote].split("²²")[1];
-                                //eleveInfos.borneSup       = NotesData[indNote].split("²²")[2];
-
-                                tabEleveInfos.push(eleveInfos)
-                                indNote++;
-                            }
-
-                            var eleveGroupRecap = {};
-                            eleveGroupRecap.moyGroup        = notes[notes.length-1].split("²²")[4];
-                            eleveGroupRecap.apprecGroupe    = notes[notes.length-1].split("²²")[5];
-                            eleveGroupRecap.coefTotalgroup  = notes[notes.length-1].split("²²")[0]; 
-                            eleveGroupRecap.nxcTotal        = notes[notes.length-1].split("²²")[5];
-                            eleveGroupRecap.rangGroupe      = notes[notes.length-1].split("²²")[3];
-                            eleveGroupRecap.libelleGroup    = GroupesData[grp].split("²²")[3];
-                            eleveGroupRecap.borneInf        = GroupesData[grp].split("²²")[0];
-                            eleveGroupRecap.borneSup        = GroupesData[grp].split("²²")[1]
-
-                            grpInfo.eleveInfos      = tabEleveInfos;
-                            grpInfo.eleveGroupRecap = eleveGroupRecap;
-                            eleve_data.groupesInfos.push(grpInfo);
-                            ligne++;
-                        }
-
-                        //construction du recap general de l'eleve
-                        eleve_data.recapGeneral = {};
-                        eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2];
-                        eleve_data.recapGeneral.rangGeneral = props.data.isElevesclasse ? parseInt(currentElvData[ligne].split("²²")[5]) : t("non_classe");
-                        eleve_data.recapGeneral.isExeco     = (eleve_data.recapGeneral.rangGeneral == currentRang);
-                        
-                        if(eleve_data.recapGeneral.isExeco) {
-                            currentRang = eleve_data.recapGeneral.rangGeneral;
-                            cptExco++;
-                        } else {
-                            currentRang += cptExco; 
-                            cptExco=1;
-                        }
-
-                        eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
-                        eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
-                        eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
-                        eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
-
-                        eleves_data.push(eleve_data);
-                    }
-                    console.log("donne to print",eleves_data)
-                    resolve(eleves_data) ;
-                    break;
-                }
-            }
-        });       
-    }
-
-    function truncate(string,limit){
-        if(string.length <= limit) return string;
-        else return string.slice(0,limit)+"...";
     }
 
     function calcTop(index){
@@ -413,7 +102,7 @@ function BulletinEleve(props) {
                     <Text style={{fontFamily:"MyBold"}}>{props.classeLabel}</Text>
                     <Text>{t('effectif')}: {props.effectif}</Text>
                     <Text>{t('annee_scolaire')}: {props.annee_scolaire}</Text>
-                    <Text style={{minWidth:"12vw"}}>{t('prof_principal')}: {props.profPrincipal}</Text>
+                    <Text style={{minWidth:"20vw"}}>{t('prof_principal_ab')}: {props.profPrincipal}</Text>
                 </View>
             </View>
         );
@@ -797,31 +486,6 @@ function BulletinEleve(props) {
     return (
         
         <Document>
-            {(isLoading) &&
-                <View style={{ alignSelf: 'center',position:'absolute', top:'50%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
-                    {t('traitement')}...
-                </View>                    
-            }
-            {(isLoading) &&
-                <View style={{   
-                    alignSelf: 'center',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '13vw',
-                    height: '3.13vh',
-                    position: 'absolute',
-                    top:'50%',
-                    zIndex: '1200',
-                    overflow: 'hidden'
-                }}>
-                
-                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
-                </View>                  
-            }
-
             {Array.from(ELEVES_DATA,
                 (eleve, index) => (
                     <Page size="A4"  style={styles.page} key={index}>                     

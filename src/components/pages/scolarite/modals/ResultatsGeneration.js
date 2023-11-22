@@ -43,65 +43,11 @@ function ResultatsGeneration(props) {
         getTrimSequences(props.bullPeriodeLabel);
         getBulletinTypeLabel(props.typeBulletin);
 
-        var elevesClasses   = convertElevesDataIntoarray(props.elevesClasses, props.typeBulletin);
-        var elevesNClasses  = convertElevesDataIntoarray(props.elevesNClasses,props.typeBulletin);
-       
-        setEleveCL(elevesClasses);
-        setEleveNCL(elevesNClasses);
+        setEleveCL(props.elevesClasses);
+        setEleveNCL(props.elevesNClasses);
     },[]);
 
-    function convertElevesDataIntoarray(elevesData, typeBulletin){
-        var elvData = [];
-        var eleve   = {};
-        var resultatElev = [];
-        var cur_rang = 0;
-        var cptExco  = 1;
-        elevesData.map((elv)=>{
-            eleve = {};
-            resultatElev      = elv.resultat.split("~~~");
-            console.log("resultElv:", resultatElev)
-            eleve.id          = elv.id;
-            eleve.rang        = elv.rang;
-            eleve.isExeco     = elv.rang==cur_rang;
-            if(eleve.isExeco) {cur_rang = elv.rang; cptExco+=1}
-            else {cur_rang +=cptExco; cptExco=1;}
-            eleve.matricule   = resultatElev[1].split("²²")[2];
-            eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
-            console.log("typeBull",typeBulletin);
-
-            switch(typeBulletin){ 
-                case 1: {
-                    console.log("ici1");
-                    eleve.moyenne = resultatElev[resultatElev.length-1].split("²²")[2];
-                    break;
-                }
-
-                case 2: {
-                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];
-                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];
-                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];
-                    break;
-                }
-
-                case 3: {
-                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];;
-                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];;
-                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];;
-                    eleve.moyenne   = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[3];;
-                    eleve.decision  = "";
-                    eleve.promuEn   = "";
-                    break;
-                }
-            }
-
-            elvData.push(eleve);    
-        })
-
-        return elvData;
-
-    }
-
-
+    
    
     function getGridButtonStyle()
     { // Choix du theme courant
@@ -237,45 +183,45 @@ function ResultatsGeneration(props) {
        
         return(
             <div style={{display:'flex', color:'black', backgroundColor:(props.ordered) ? (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf' : (props.rowIndex % 2==0) ? '#ebe3e0':'#ebbda4', flexDirection:'row', height: 'fit-content',width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'5vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   <b>{(props.ordered) ? props.eleve.rang:props.rowIndex+1}</b> <b style={{verticalAlign:"super", marginLeft:"-0.3vw", fontSize:"0.77vw"}}>{(props.ordered) ? getPrefixeRang(props.eleve.rang):null}{(props.ordered && props.eleve.isExeco) ? " ex":""} </b>   </div>
-                <div style={{width:'8vw'}}>   {props.eleve.matricule}       </div> 
+                <div style={{width:'7vw', fontWeight:"bold", paddingLeft:"1.3vh", color:(props.ordered) ? "#3e77b2":"black"}}>   <b>{(props.ordered) ? props.eleve.recapGeneral.rangGeneral:props.rowIndex+1}</b> <b style={{verticalAlign:"super", marginLeft:"-0.3vw", fontSize:"0.77vw"}}>{(props.ordered) ? getPrefixeRang(props.eleve.recapGeneral.rangGeneral):null}{(props.ordered && props.eleve.recapGeneral.isExeco) ? " ex":""} </b>   </div>
+                <div style={{width:'8vw'}}>   {props.eleve.entete.matricule}       </div> 
                 <div style={{width:'17vw', fontSize:"0.77vw", fontWeight:'bold'}}>         
-                    {props.eleve.nom}                     
+                    {props.eleve.entete.nom}                     
                 </div>
 
                 {/*----- CAS BULLETIN TRIMESTRIEL -------*/}
                 
                 {(typeBulletin==2)&&
-                    <div style={{width:'7vw'}}> {props.eleve.moy_seq1} </div>
+                    <div style={{width:'7vw'}}> {props.eleve.recapGeneral.moy_seq1} </div>
                 }
                 
                 {(typeBulletin==2)&&
-                    <div style={{width:'7vw'}}> {props.eleve.moy_seq2} </div>
+                    <div style={{width:'7vw'}}> {props.eleve.recapGeneral.moy_seq2} </div>
                 }
                 
                 {/*----- CAS BULLETIN ANNUEL -------*/}
                 
                 {(typeBulletin==3)&&
-                    <div style={{width:'7vw', fontSize:"0.7vw"}}> {props.eleve.moy_trim1}  </div>
+                    <div style={{width:'7vw', fontSize:"0.7vw"}}> {props.eleve.recapGeneral.moy_trim1}  </div>
                 }
                 
                 {(typeBulletin==3)&&
-                    <div style={{width:'7vw', fontSize:"0.7vw"}}> {props.eleve.moy_trim2}  </div>
+                    <div style={{width:'7vw', fontSize:"0.7vw"}}> {props.eleve.recapGeneral.moy_trim2}  </div>
                 }
 
                 {(typeBulletin==3)&&
-                    <div style={{width:'7vw', fontSize:"0.7vw"}}> {props.eleve.moy_trim3}  </div>
+                    <div style={{width:'7vw', fontSize:"0.7vw"}}> {props.eleve.recapGeneral.moy_trim3}  </div>
                 }
                
-                <div style={{width:'7vw', fontSize:"0.7vw"}}>  {props.eleve.moyenne}       </div>
+                <div style={{width:'7vw', fontSize:"0.7vw"}}>  {props.eleve.recapGeneral.MoyGenerale}       </div>
 
                 {/*----- CAS BULLETIN ANNUEL -------*/}
-                {(typeBulletin==3)&&
+                {/* {(typeBulletin==3)&&
                     <div style={{width:'10vw'}}> {props.eleve.decision}  </div>
                 }
                 {(typeBulletin==3)&&
                     <div style={{width:'10vw'}}> {props.eleve.promuEn}   </div>
-                }               
+                }                */}
               
             </div>
         );

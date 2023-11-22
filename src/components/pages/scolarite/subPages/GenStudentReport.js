@@ -9,7 +9,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -18,9 +18,6 @@ import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import CritSequentiel from '../modals/CritSequentiel';
 import ResultatsGeneration from '../modals/ResultatsGeneration';
 import BulletinEleve from '../reports/BulletinEleve';
-import BulletinSequence from '../reports/BulletinSequence';
-import BulletinTrimestriel from '../reports/BulletinTrimestriel'
-import BulletinAnnuel from '../reports/BulletinAnnuel';
 import {useTranslation} from "react-i18next";
 
 
@@ -65,7 +62,11 @@ var enCompte1 = [];
 var enCompte2 = [];
 var enCompte3 = [];
 
-var PROF_PRINCIPAL = undefined;
+var ELEVES_C_TO_PRINT;
+var ELEVES_NC_TO_PRINT;
+var PROF_PRINCIPAL     = undefined;
+var listMatiereEtProfs = '';
+
 
 
 function GenStudentReport(props) {
@@ -117,7 +118,7 @@ function GenStudentReport(props) {
 
 
     const getEtabListClasses=()=>{
-       var tempTable=[{value: '0',      label:(i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '    }]
+       var tempTable=[{value: -1,      label:(i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '    }]
         axiosInstance.post(`list-classes/`, {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
@@ -131,7 +132,9 @@ function GenStudentReport(props) {
     }
 
     function getStudentGenerationInfo(classeId, periode, typeBulletin){
-        var type_generation = 'sequence'
+        var type_generation = 'sequence';
+
+        console.log("classe,periode",classeId, periode);
 
         switch(typeBulletin){
             case 1 : {
@@ -150,7 +153,7 @@ function GenStudentReport(props) {
             }
         }
 
-        if(classeId!=undefined && periode!=undefined) {
+        if(classeId>0 && periode>0) {
             setModalOpen(5)
             axiosInstance.post('list-eleves-pour-generation-bulletins/', {
                 type_generation : type_generation,
@@ -378,20 +381,23 @@ function GenStudentReport(props) {
 
 
     function dropDownHandler(e){
-        if(e.target.value != optClasse[0].value){
-            CURRENT_CLASSE_ID    = e.target.value; 
-            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
+        if(e.target.value > 0){
+            CURRENT_CLASSE_ID      = e.target.value; 
+            CURRENT_CLASSE_LABEL   = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             
-            PROF_PRINCIPAL       = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
-            CURRENT_PERIOD_ID    = document.getElementById('optPeriode').value;
+            PROF_PRINCIPAL         = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
+            CURRENT_PERIOD_ID      = document.getElementById('optPeriode').value;
+
+            listMatiereEtProfs = getMatieresWithTeachersNames(CURRENT_CLASSE_ID, currentUiContext.emploiDeTemps, currentUiContext.matiereSousEtab, currentUiContext.listProfs);
         
             console.log("chargement",CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
             getStudentGenerationInfo(CURRENT_CLASSE_ID,CURRENT_PERIOD_ID,typeBulletin);
             setCanGenerate(true);
         }else{
             setCanGenerate(false);
-            CURRENT_CLASSE_ID = undefined;
-            CURRENT_CLASSE_LABEL='';
+            CURRENT_CLASSE_ID    = undefined;
+            CURRENT_CLASSE_LABEL = '';
+            listMatiereEtProfs   = '';
             setIsValid(false);
             setGridRows([]);
         }
@@ -900,53 +906,22 @@ const columnsSeq = [
         
     }
 
-    function getMatieresWithTeachersNames(classeId){
-        var cur_matiere_id, cur_matiere_label, cur_prof=[], cur_profLabel, profsMatiere = "";
-        var listMatiereProf = "";
-        var ETClasse = currentUiContext.emploiDeTemps.filter((etData)=>etData.id_classe == classeId);
-       ETClasse.map((et,index1)=>{
-            cur_matiere_id = et.id_matiere;
-            cur_matiere_label = currentUiContext.matiereSousEtab.find((mat)=>mat.id == cur_matiere_id).libelle;
-
-            cur_prof = et.id_enseignants;
-            cur_prof.map((profId, index2)=>{
-                var curProf = currentUiContext.listProfs.find((prf)=>prf.id == profId);
-                cur_profLabel = curProf.nom + ' '+ curProf.prenom;
-                if(index2 == cur_prof.length-1)
-                    profsMatiere = profsMatiere + cur_profLabel;
-                else 
-                    profsMatiere = profsMatiere + cur_profLabel+",";
-            })
-
-            if(index1 == ETClasse.length-1 )
-                listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere
-            else 
-                listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere+"&"
-
-        })
-        console.log("prof & Matieres:",listMatiereProf);
-
-        return listMatiereProf;
-    }
 
     const printStudentReports=()=>{
-        if(ELEVES_DATA != {}){
+        if(ELEVES_C_TO_PRINT != {}){
             ElevePageSet = {};
-            ElevePageSet.typeBulletin   = typeBulletin;
-            ElevePageSet.isElevesclasse = true;
-            ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
-            ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
-            ElevePageSet.effectif       = listEleves.length;
-            ElevePageSet.eleveNotes     = [... ELEVES_DATA.eleve_results_c];
-            ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
-            ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
-            ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
-            ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
-            ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
-            ElevePageSet.etabLogo       = "images/collegeVogt.png";
-            ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
-            ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
-            printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
+            ElevePageSet.typeBulletin    = typeBulletin;
+            ElevePageSet.isElevesclasse  = true;
+            ElevePageSet.periode         = CURRENT_PERIOD_LABEL;
+            ElevePageSet.effectif        = listEleves.length;
+            ElevePageSet.elvToPrintData  = elevesCL;
+            ElevePageSet.entete_fr       = {... ELEVES_DATA.entete_fr};
+            ElevePageSet.entete_en       = {... ELEVES_DATA.entete_en};
+            ElevePageSet.titreBulletin   = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
+            ElevePageSet.etabLogo        = "images/collegeVogt.png";
+            ElevePageSet.profPrincipal   = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
+            ElevePageSet.classeLabel     = CURRENT_CLASSE_LABEL; 
+            printedETFileName            = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4); 
                           
         } else{
@@ -988,10 +963,16 @@ const columnsSeq = [
 
             ELEVES_DATA = res.data;
             console.log("RESULTATS GENSEQ", ELEVES_DATA);
-            setEleveCL(res.data.eleve_results_c);
-            setEleveNCL(res.data.eleve_results_nc);
-            setModalOpen(6);   
 
+            ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+            console.log("eleves_data",ELEVES_C_TO_PRINT);  
+            setEleveCL(ELEVES_C_TO_PRINT); 
+
+            ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+            setEleveNCL(ELEVES_NC_TO_PRINT);
+
+            setModalOpen(6);
+       
         },(res)=>{
             chosenMsgBox = MSG_ERROR_GENRPT;
             currentUiContext.showMsgBox({
@@ -1035,9 +1016,15 @@ const columnsSeq = [
 
                 ELEVES_DATA = res.data;
                 console.log("RESULTATS GENSEQ", ELEVES_DATA);
-                setEleveCL(res.data.eleve_results_c);
-                setEleveNCL(res.data.eleve_results_nc);
-                setModalOpen(6);   
+
+                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+                console.log("eleves_data",ELEVES_C_TO_PRINT);  
+                setEleveCL(ELEVES_C_TO_PRINT); 
+    
+                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+                setEleveNCL(ELEVES_NC_TO_PRINT);
+
+                setModalOpen(6);
 
             },(res)=>{
                 chosenMsgBox = MSG_ERROR_GENRPT;
@@ -1101,10 +1088,16 @@ const columnsSeq = [
 
                 console.log(res);
                 ELEVES_DATA = res.data;
-                setEleveCL(res.data.eleve_results_c);
-                setEleveNCL(res.data.eleve_results_nc);
-                setModalOpen(6);  
+          
+                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+                console.log("eleves_data",ELEVES_C_TO_PRINT);  
+                setEleveCL(ELEVES_C_TO_PRINT); 
+    
+                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+                setEleveNCL(ELEVES_NC_TO_PRINT);
 
+                setModalOpen(6);
+         
             },(res)=>{
                 chosenMsgBox = MSG_ERROR_GENRPT;
                 currentUiContext.showMsgBox({
@@ -1323,20 +1316,7 @@ const columnsSeq = [
                     
                                 
                     <div className={classes.gridAction}> 
-                        {/* {(props.formMode =="generation") &&
-                            <CustomButton
-                                btnText={t('criteres')}
-                                hasIconImg= {true}
-                                imgSrc='images/checkCriteres.png'
-                                imgStyle = {classes.grdBtnImgStyleP}  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={openCriterModal}
-                                disable={(isValid==false)}   
-                            />
-                        } */}
-                      
-                                          
+                  
                         <CustomButton
                             btnText= {t('generate')}
                             hasIconImg= {true}

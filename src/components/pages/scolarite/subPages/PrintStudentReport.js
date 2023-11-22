@@ -9,16 +9,13 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import BulletinEleve from '../reports/BulletinEleve';
-import BulletinSequence from '../reports/BulletinSequence';
-import BulletinTrimestriel from '../reports/BulletinTrimestriel'
-import BulletinAnnuel from '../reports/BulletinAnnuel';
 import {useTranslation} from "react-i18next";
 
 
@@ -51,20 +48,24 @@ var page = {
 }
 
 const ROWS_PER_PAGE= 40;
-var ElevePageSet={};
+var ElevePageSet = {};
 var ELEVES_DATA;
-var printedETFileName ='';
+var printedETFileName  ='';
 
-var tabSequences    = [];
-var tabTrimestres   = [];
-var tabCurrentAnnee = [];
+var tabSequences       = [];
+var tabTrimestres      = [];
+var tabCurrentAnnee    = [];
 
-var LIST_SEQUENCE   = [];
-var LIST_TRIMESTRES = [];
+var LIST_SEQUENCE      = [];
+var LIST_TRIMESTRES    = [];
+
+var listMatiereEtProfs = '';
 
 
 var ELEVES_CL ;
 var ELEVES_NCL;
+var ELEVES_C_TO_PRINT;
+var ELEVES_NC_TO_PRINT;
 var PROF_PRINCIPAL = undefined;
 
 
@@ -73,10 +74,10 @@ function PrintStudentReport(props) {
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const { t, i18n }       = useTranslation();
-    const [isValid1, setIsValid1]          = useState(false);
-    const [isValid2, setIsValid2]          = useState(false);
-    const [gridRowsCL, setGridRowsCL]    = useState([]);
-    const [gridRowsNCL, setGridRowsNCL]  = useState([]);
+    const [isValid1, setIsValid1]           = useState(false);
+    const [isValid2, setIsValid2]           = useState(false);
+    const [gridRowsCL, setGridRowsCL]       = useState([]);
+    const [gridRowsNCL, setGridRowsNCL]     = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse]  = useState([]);
     const [optPeriode, setOptPeriode]       = useState([]);
@@ -206,7 +207,7 @@ function PrintStudentReport(props) {
                 console.log(res.data);
                 listEleves = [...formatList(res.data.eleves)]
                 console.log(listEleves);
-                //setGridRowsCL(listEleves);           
+               
                 resolve(listEleves);  //Pas important pour mon cas ci
             })  
         });
@@ -228,57 +229,6 @@ function PrintStudentReport(props) {
         }      
     }
 
-    function convertElevesDataIntoarray(elevesData, typeBulletin){
-        var elvData = [];
-        var eleve   = {};
-        var resultatElev = [];
-        var cur_rang = 0;
-        var cptExco  = 1;
-        elevesData.map((elv)=>{
-            eleve = {};
-            resultatElev      = elv.resultat.split("~~~");
-            console.log("resultElv:", resultatElev)
-            eleve.id          = elv.id;
-            eleve.rang        = elv.rang;
-            eleve.isExeco     = elv.rang==cur_rang;
-            if(eleve.isExeco) {cur_rang = elv.rang; cptExco+=1}
-            else {cur_rang +=cptExco; cptExco=1;}
-            eleve.matricule   = resultatElev[1].split("²²")[2];
-            eleve.nom         = resultatElev[1].split("²²")[0] + ' '+resultatElev[1].split("²²")[1];
-            console.log("typeBull",typeBulletin);
-
-            switch(typeBulletin){ 
-                case 1: {
-                    console.log("ici1");
-                    eleve.moyenne = resultatElev[resultatElev.length-1].split("²²")[2];
-                    break;
-                }
-
-                case 2: {
-                    eleve.moy_seq1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];
-                    eleve.moy_seq2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];
-                    eleve.moyenne  = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];
-                    break;
-                }
-
-                case 3: {
-                    eleve.moy_trim1 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[0];;
-                    eleve.moy_trim2 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[1];;
-                    eleve.moy_trim3 = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[2];;
-                    eleve.moyenne   = resultatElev[resultatElev.length-1].split("²²")[2].split('&')[3];;
-                    eleve.decision  = "";
-                    eleve.promuEn   = "";
-                    break;
-                }
-            }
-
-            elvData.push(eleve);    
-        })
-
-        return elvData;
-
-    }
-
 
     function getBullSequentielInfo(idClasse, idSequence, studentList){
         var selectedEleves = []; ELEVES_DATA={}; ELEVES_CL = []; ELEVES_NCL = [];
@@ -296,15 +246,16 @@ function PrintStudentReport(props) {
 
                 console.log("Donnes pr impression",ELEVES_DATA);
 
-                var elevesClasses   = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_c,  CURRENT_TYPE_BULLETIN_ID);
-                var elevesNClasses  = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_nc, CURRENT_TYPE_BULLETIN_ID);
-
-                ELEVES_CL   = formatSeqList(elevesClasses, studentList);
-                ELEVES_NCL  = formatSeqList(elevesNClasses, studentList);
-
+                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+               
+                console.log("eleves_data",ELEVES_C_TO_PRINT);                
+                ELEVES_CL   = formatSeqList(ELEVES_C_TO_PRINT, studentList);
                 setGridRowsCL(ELEVES_CL);
-                setGridRowsNCL(ELEVES_NCL);
 
+                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+                ELEVES_NCL  = formatSeqList(ELEVES_NC_TO_PRINT, studentList);                        
+                setGridRowsNCL(ELEVES_NCL);                    
+          
             } else {
                 chosenMsgBox = MSG_ERROR_PrRPT;
                 currentUiContext.showMsgBox({
@@ -332,13 +283,14 @@ function PrintStudentReport(props) {
 
                 ELEVES_DATA = res.data;
 
-                var elevesClasses   = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_c,  CURRENT_TYPE_BULLETIN_ID);
-                var elevesNClasses  = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_nc, CURRENT_TYPE_BULLETIN_ID);
-
-                ELEVES_CL   = formatTrimList(elevesClasses, studentList);
-                ELEVES_NCL  = formatTrimList(elevesNClasses,studentList);
-
+                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+               
+                console.log("eleves_data",ELEVES_C_TO_PRINT);                
+                ELEVES_CL   = formatTrimList(ELEVES_C_TO_PRINT, studentList);
                 setGridRowsCL(ELEVES_CL);
+
+                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+                ELEVES_NCL  = formatTrimList(ELEVES_NC_TO_PRINT, studentList);                        
                 setGridRowsNCL(ELEVES_NCL);
 
             } else {
@@ -368,13 +320,14 @@ function PrintStudentReport(props) {
 
                 ELEVES_DATA = res.data;
 
-                var elevesClasses   = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_c,  CURRENT_TYPE_BULLETIN_ID);
-                var elevesNClasses  = convertElevesDataIntoarray(ELEVES_DATA.eleve_results_nc, CURRENT_TYPE_BULLETIN_ID);
-                
-                ELEVES_CL  = formatAnnualList(elevesClasses, studentList);
-                ELEVES_NCL = formatAnnualList(elevesNClasses, studentList);
-
+                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+               
+                console.log("eleves_data",ELEVES_C_TO_PRINT);                
+                ELEVES_CL   = formatAnnualList(ELEVES_C_TO_PRINT, studentList);
                 setGridRowsCL(ELEVES_CL);
+
+                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+                ELEVES_NCL  = formatAnnualList(ELEVES_NC_TO_PRINT, studentList);                        
                 setGridRowsNCL(ELEVES_NCL);
 
             } else {
@@ -422,21 +375,15 @@ function PrintStudentReport(props) {
 
         list.map((elt)=>{
             listElt = {};
-            listElt.id         = elt.id;
-            listElt.nom        = elt.nom;
-            listElt.rang       = elt.rang;
-            listElt.isExeco    = elt.isExeco;
+            listElt.id         = elt.entete.matricule;  //je n'ai pas les ids
+            listElt.nom        = elt.entete.nom;
+            listElt.rang       = elt.recapGeneral.rangGeneral;
+            listElt.isExeco    = elt.recapGeneral.isExeco;
             listElt.pos        = pos; 
-            listElt.matricule  = elt.matricule;
-            listElt.moyenne    = elt.moyenne;
-            // listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
-            // listElt.nb_coef_manquants = elt.nb_coef_manquants;
-            // listElt.nb_matiere_indispensable_sans_notes = elt.nb_matiere_indispensable_sans_notes;
-            // listElt.matiere_indispensables = (elt.matiere_indispensables!= undefined) ? elt.matiere_indispensables:[];
-            // listElt.matiere_indispensables.map((matiere)=> matiereIndispSansNote.push(matiere.libelle));
-            // listElt.matieres_spe_manquante = matiereIndispSansNote.join(" ");
-
-            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
+            listElt.matricule  = elt.entete.matricule;
+            listElt.moyenne    = elt.recapGeneral.MoyGenerale;
+            
+            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.entete.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
             formattedList.push(listElt);
             pos ++;
@@ -454,20 +401,18 @@ function PrintStudentReport(props) {
         list.map((elt)=>{
             notesSeq  = [0,0];
             listElt   = {};
-            listElt.id         = elt.id;
-            listElt.nom        = elt.nom;
-            listElt.rang       = elt.rang; 
-            listElt.isExeco    = elt.isExeco;
+            listElt.id         = elt.entete.matricule;  //je n'ai pas les ids
+            listElt.nom        = elt.entete.nom;
+            listElt.rang       = elt.recapGeneral.rangGeneral;
+            listElt.isExeco    = elt.recapGeneral.isExeco;
             listElt.pos        = pos;
-            listElt.matricule  = elt.matricule;
-            // listElt.moyennes_seq = elt.moyennes_seq;
-            // listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
+            listElt.matricule  = elt.entete.matricule;
             
-            listElt.moy_seq1  = elt.moy_seq1;
-            listElt.moy_seq2  = elt.moy_seq2;
-            listElt.moyenne   = elt.moyenne;
+            listElt.moy_seq1  = elt.recapGeneral.moy_seq1;
+            listElt.moy_seq2  = elt.recapGeneral.moy_seq2;
+            listElt.moyenne   = elt.recapGeneral.MoyGenerale;
            
-            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
+            listElt.en_regle  = listEnRegle.find((elv)=>elv.matricule==elt.entete.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
           
             formattedList.push(listElt);
@@ -485,21 +430,19 @@ function PrintStudentReport(props) {
         list.map((elt)=>{
             notesTrim = [0,0,0];
             listElt   = {};
-            listElt.id         = elt.id;
-            listElt.nom        = elt.nom;
-            listElt.rang       = elt.rang;
-            listElt.isExeco    = elt.isExeco; 
+            listElt.id         = elt.entete.matricule;  //je n'ai pas les ids
+            listElt.nom        = elt.entete.nom;
+            listElt.rang       = elt.recapGeneral.rangGeneral;
+            listElt.isExeco    = elt.recapGeneral.isExeco; 
             listElt.pos        = pos;
-            listElt.matricule  = elt.matricule;
-            // listElt.moyennes_trimestre = elt.moyennes_trimestre;
-            // listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});
+            listElt.matricule  = elt.entete.matricule;
             
-            listElt.moy_trim1  = elt.moy_trim1;
-            listElt.moy_trim2  = elt.moy_trim2;
-            listElt.moy_trim3  = elt.moy_trim3;
-            listElt.moyenne    = elt.moyenne;
+            listElt.moy_trim1  = elt.recapGeneral.moy_trim1;
+            listElt.moy_trim2  = elt.recapGeneral.moy_trim2;
+            listElt.moy_trim3  = elt.recapGeneral.moy_trim3;
+            listElt.moyenne    = elt.recapGeneral.MoyGenerale;
 
-            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.matricule).en_regle;
+            listElt.en_regle = listEnRegle.find((elv)=>elv.matricule==elt.entete.matricule).en_regle;
             listElt.en_regle_Header = (listElt.en_regle == true) ? t("yes") : t("no");
             
             formattedList.push(listElt);
@@ -544,14 +487,6 @@ function PrintStudentReport(props) {
         getActivatedEvalPeriods(typeBulletin);
     }
 
-    function getTrimSequences(trimestre){
-        console.log("trimestre",trimestre)
-       switch(trimestre){
-        case "Trimestre1": {setSeq1("1"); setSeq2("2");   return;} 
-        case "Trimestre2": {setSeq1("3"); setSeq2("4");   return;}
-        case "Trimestre3": {setSeq1("5"); setSeq2("6");   return;}
-       }
-    }
 
     function dropDownHandler(e){ 
         if(e.target.value != optClasse[0].value){
@@ -561,13 +496,16 @@ function PrintStudentReport(props) {
 
             PROF_PRINCIPAL = currentUiContext.currentPPList.find((elt)=>elt.id_classe == CURRENT_CLASSE_ID);
 
+            listMatiereEtProfs = getMatieresWithTeachersNames(CURRENT_CLASSE_ID, currentUiContext.emploiDeTemps, currentUiContext.matiereSousEtab, currentUiContext.listProfs);
+
             console.log("PP:",PROF_PRINCIPAL);
    
             getStudentListOfClass(CURRENT_CLASSE_ID).then((elevesList)=>{getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, elevesList)});
 
         }else{           
-            CURRENT_CLASSE_ID = undefined;
-            CURRENT_CLASSE_LABEL='';
+            CURRENT_CLASSE_ID    = undefined;
+            CURRENT_CLASSE_LABEL = '';
+            listMatiereEtProfs   = '';
             setIsValid1(false);
             setIsValid2(false);
             setGridRowsCL([]);
@@ -598,15 +536,6 @@ function PrintStudentReport(props) {
             setIsValid2(false);        
         }
     }
-
-    // function getBulletinTypeLabel(typeBulletin){
-    //     switch(typeBulletin){
-    //         case 1: {setBullTypeLabel(t('bulletin_sequentiel'));   return;} 
-    //         case 2: {setBullTypeLabel(t('bulletin_trimestriel'));  return;}
-    //         case 3: {setBullTypeLabel(t('bulletin_annuel'));       return;}
-    //        }
-    // }
-
 
     function getBulletinTypeLabel(typeBulletin){
         switch(typeBulletin){
@@ -786,15 +715,7 @@ function PrintStudentReport(props) {
                 )}     
         },
 
-        // {
-        //     field: 'id_seq1',
-        //     headerName:  t('moy_seq_M')+seq1,
-        //     width: 120,
-        //     editable: false,
-        //     hide:true,
-        //     headerClassName:classes.GridColumnStyle
-        // },
-    
+      
         {
             field: 'moy_seq1',
             headerName:  t('moy_seq_M')+seq1,
@@ -803,15 +724,7 @@ function PrintStudentReport(props) {
             headerClassName:classes.GridColumnStyle
         },
 
-        // {
-        //     field: 'id_seq2',
-        //     headerName:  t('moy_seq_M')+seq1,
-        //     width: 120,
-        //     editable: false,
-        //     hide:true,
-        //     headerClassName:classes.GridColumnStyle
-        // },
-    
+       
         {
             field: 'moy_seq2',
             headerName:   t('moy_seq_M')+seq2,
@@ -872,15 +785,6 @@ function PrintStudentReport(props) {
             headerClassName:classes.GridColumnStyleNC
         },
 
-        // {
-        //     field: 'id_seq1',
-        //     headerName:  t('moy_seq_M')+seq1,
-        //     width: 120,
-        //     editable: false,
-        //     hide:true,
-        //     headerClassName:classes.GridColumnStyleNC
-        // },
-    
         {
             field: 'moy_seq1',
             headerName:  t('moy_seq_M')+seq1,
@@ -889,15 +793,6 @@ function PrintStudentReport(props) {
             headerClassName:classes.GridColumnStyleNC
         },
 
-        // {
-        //     field: 'id_seq2',
-        //     headerName:  t('moy_seq_M')+seq1,
-        //     width: 120,
-        //     editable: false,
-        //     hide:true,
-        //     headerClassName:classes.GridColumnStyleNC
-        // },
-    
         {
             field: 'moy_seq2',
             headerName:   t('moy_seq_M')+seq2,
@@ -1263,81 +1158,29 @@ function PrintStudentReport(props) {
         }
     }
 
-    function getEtMatiereWithMaxProf(ETTab){
-        var nbrMaxProfs = 0; var curETMatiere;
-        ETTab.map((etMat)=>{
-            var countCurProf = etMat.id_enseignants.length;
-            if(countCurProf>nbrMaxProfs)  {
-                nbrMaxProfs  = countCurProf;
-                curETMatiere =  etMat; 
-            }
-        })
-
-        return curETMatiere
-    }
-
-    function getMatieresWithTeachersNames(classeId){
-        var cur_matiere_id, cur_matiere_label, cur_profs=[], cur_profLabel, profsMatiere = "";
-        var listMatiereProf = "", matieresTraites=[];
-       
-        var ETClasse = currentUiContext.emploiDeTemps.filter((etData)=>etData.id_classe == classeId);
-        ETClasse.map((et,index1)=>{
-            cur_matiere_id = et.id_matiere;
-            cur_matiere_label = currentUiContext.matiereSousEtab.find((mat)=>mat.id == cur_matiere_id).libelle;
-
-            if(matieresTraites.find((matId)=>matId==cur_matiere_id)==undefined){
-                var tabMatieres   = ETClasse.filter((et)=>et.id_matiere == cur_matiere_id);
-                var  curETMatiere = getEtMatiereWithMaxProf(tabMatieres);            
-                cur_profs         = (curETMatiere!= undefined) ? curETMatiere.id_enseignants:[];
-
-                cur_profs.map((profId, index2)=>{
-                    var curProf = currentUiContext.listProfs.find((prf)=>prf.id == profId);
-                    cur_profLabel = curProf.nom + ' '+ curProf.prenom;
-                    if(index2 >= cur_profs.length-1)
-                       profsMatiere = profsMatiere + cur_profLabel;
-                    else 
-                       profsMatiere = profsMatiere + cur_profLabel+",";
-                })
-
-                if(index1 >= ETClasse.length-1 )
-                   listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere;
-                else 
-                   listMatiereProf = listMatiereProf+cur_matiere_label+"_"+profsMatiere+"&";           
-
-                matieresTraites.push(cur_matiere_id); profsMatiere = "";
-            }         
-      
-        })
-        console.log("prof & Matieres:",listMatiereProf);
-        return listMatiereProf;
-    }
-
 
     const printOrderedStudentReports=(e)=>{
         var elevesToPrint = [];      
        
-        if(ELEVES_DATA != {}){
+        if(ELEVES_C_TO_PRINT != {}){
 
-            if(selectedElevesIds[0].length < ELEVES_DATA.eleve_results_c.length){
+            if(selectedElevesIds[0].length < ELEVES_C_TO_PRINT.length){
                 selectedElevesIds[0].map((id)=>{
-                    var eleve = ELEVES_DATA.eleve_results_c.find((elv)=>elv.id == id);
+                    var eleve = ELEVES_C_TO_PRINT.find((elv)=>elv.entete.matricule == id);
                     elevesToPrint.push(eleve);
                 })
             } else {
-                elevesToPrint = [...ELEVES_DATA.eleve_results_c];
+                elevesToPrint = [...ELEVES_C_TO_PRINT];
             }
 
-            console.log("data to print", elevesToPrint, selectedElevesIds.length, listEleves.length);
+            console.log("data to print", elevesToPrint, selectedElevesIds.length, listEleves.length,selectedElevesIds);
 
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
             ElevePageSet.isElevesclasse = true;
-            ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
+            ElevePageSet.elvToPrintData  = elevesToPrint;
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
-            ElevePageSet.eleveNotes     = elevesToPrint;
-            ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
-            ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
             ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
             ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
             ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
@@ -1361,26 +1204,23 @@ function PrintStudentReport(props) {
     const printNOrderedStudentReports=(e)=>{
         var elevesToPrint = [];
 
-        if(selectedNCElevesIds[0].length < ELEVES_DATA.eleve_results_nc.length){
-            selectedNCElevesIds[0].map((id)=>{
-                var eleve = ELEVES_DATA.eleve_results_nc.find((elv)=>elv.id == id);
-                elevesToPrint.push(eleve);
-            })
-        } else {
-            elevesToPrint = [... ELEVES_DATA.eleve_results_nc]
-        }
+        if(ELEVES_NC_TO_PRINT != {}){
 
-        if(ELEVES_DATA != {}){
+            if(selectedElevesIds[0].length < ELEVES_NC_TO_PRINT.length){
+                selectedElevesIds[0].map((id)=>{
+                    var eleve = ELEVES_NC_TO_PRINT.find((elv)=>elv.entete.matricule == id);
+                    elevesToPrint.push(eleve);
+                })
+            } else {
+                elevesToPrint = [...ELEVES_NC_TO_PRINT];
+            }
 
             ElevePageSet = {};
             ElevePageSet.typeBulletin   = typeBulletin;
             ElevePageSet.isElevesclasse = false;
-            ElevePageSet.profMatieres   = getMatieresWithTeachersNames(CURRENT_CLASSE_ID);
+            ElevePageSet.elvToPrintData  = elevesToPrint;
             ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
             ElevePageSet.effectif       = listEleves.length;
-            ElevePageSet.eleveNotes     = elevesToPrint;
-            ElevePageSet.noteRecaps     = [... ELEVES_DATA.note_recap_results];
-            ElevePageSet.groupeRecaps   = [... ELEVES_DATA.groupe_recap_results];
             ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
             ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
             ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
@@ -1613,21 +1453,6 @@ function PrintStudentReport(props) {
                     
                                 
                     <div className={classes.gridAction}> 
-                        {/* {(props.formMode =="generation") &&
-                            <CustomButton
-                                btnText={t('criteres')}
-                                hasIconImg= {true}
-                                imgSrc='images/checkCriteres.png'
-                                imgStyle = {classes.grdBtnImgStyleP}  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={openCriterModal}
-                                disable={(isValid==false)}   
-                            />
-                        } */}
-                      
-                       
-                    
                         <CustomButton                          
                             id="eleves_C"
                             btnText={t('imprimer')}
