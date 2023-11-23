@@ -401,20 +401,20 @@ function BulletinEleve(props) {
                 <View style={styles.footer_row1}>
                     <View style={styles.footer_row1_box}>
                         <View style={styles.box_header}><Text>{t('student_results_M')}</Text></View>
-                        <View style={styles.box_corps}>
-                            <View style={styles.box_corps_ligne}>
+                        <View style={{...styles.box_corps, paddingTop:"1.7vh"}}>
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                               <Text style={{fontFamily:"MyBold", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Points')}:  </Text>
                               <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalPoints}</Text>
                             </View>
-                            <View style={styles.box_corps_ligne}>
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                               <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Coefs')}:  </Text>
                               <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalcoef}</Text>
                             </View>
-                            <View style={styles.box_corps_ligne}>
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                               <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moyenne')}:  </Text>
                               <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.MoyGenerale}</Text>
                             </View>
-                            <View style={styles.box_corps_ligne}>
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                               <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('rang')}:  </Text>
                               <View style={{...styles.special_textP,display:"flex",flexDirection:"row",width:"7vw",marginRight:"0.7vw"}}> 
                                   <Text style={{fontFamily:"MyBold",}}>{props.recapGeneral.rangGeneral}</Text>
@@ -429,19 +429,47 @@ function BulletinEleve(props) {
                     </View>
                   
                     <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>{t('class_results_M')}</Text></View>
-                        <View style={styles.box_corps}></View>
-                    </View>
-                  
-                    <View style={styles.footer_row1_box}>
                         <View style={styles.box_header}><Text>{t('disciplin_M')}</Text></View>
-                        <View style={styles.box_corps}></View>
+                        <View style={{...styles.box_corps, alignItems:"flex-start", paddingLeft:"0.3vw", paddingBottom:"0.3vh"}}>
+                            <Text style={{fontFamily:"MyBold",fontSize:"11px", marginBottom:"0.27vh", marginLeft:"1.3vw"}}>{t('absences')}</Text>
+                            <View style={{display:"flex",flexDirection:"column",  marginBottom:"0.7vh"}}>
+                                <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
+                                    <Text style={{fontSize:"9.7px", width:"20%", marginLeft:"0.7vw"}}>{t('Total')}</Text>
+                                    <Text style={{fontSize:"9.7px", width:"30%", marginLeft:"0.7vw"}}>{t('Just.')}</Text>
+                                    <Text style={{fontSize:"9.7px", width:"40%", marginLeft:"0.7vw"}}>{t('Non just.')}</Text>
+                                </View>
+
+                                <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
+                                    <Text style={{fontFamily:"MyBold", width:"20%", marginLeft:"0.7vw", fontSize:"9.7px"}}>{props.recapGeneral.absTotal}</Text>
+                                    <Text style={{fontFamily:"MyBold", width:"30%", marginLeft:"0.7vw", fontSize:"9.7px"}}>{props.recapGeneral.absJ}</Text>
+                                    <Text style={{fontFamily:"MyBold", width:"40%", marginLeft:"0.7vw", fontSize:"9.7px"}}>{props.recapGeneral.absNJ}</Text>
+                                </View>
+                            </View>
+
+                            <Text style={{fontFamily:"MyBold",fontSize:"11px", marginBottom:"0.27vh", marginLeft:"1.3vw"}}>{t('sanctions')}</Text>
+                            <View style={{display:"flex",flexDirection:"column", marginBottom:"0.7vh"}}>
+                                <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
+                                    <Text style={{fontSize:"9.7px", width:"50%", marginLeft:"0vw"}}>{t('consigne')}s</Text>
+                                    <Text style={{fontSize:"9.7px", width:"50%", marginLeft:"0.7vw"}}>{t('exclusion')}s</Text>
+                                   
+                                </View>
+                                <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
+                                    <Text style={{fontFamily:"MyBold",width:"50%", marginLeft:"0vw", fontSize:"9.7px"}}>{props.recapGeneral.consignes}</Text>
+                                    <Text style={{fontFamily:"MyBold",width:"50%", marginLeft:"0.7vw", fontSize:"9.7px"}}>{props.recapGeneral.consignes}</Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
-                  
+
                     <View style={styles.footer_row1_box}>
                         <View style={styles.box_header}><Text>{t('score_remind_M')}</Text></View>
                         <View style={styles.box_corps}>         
                         </View>
+                    </View>
+
+                    <View style={styles.footer_row1_box}>
+                        <View style={styles.box_header}><Text>{t('class_results_M')}</Text></View>
+                        <View style={styles.box_corps}></View>
                     </View>
                   
                     <View style={styles.footer_row1_box}>
@@ -953,7 +981,7 @@ const styles = StyleSheet.create({
     box_corps_ligne:{
       width:"100%",
       height:"auto",
-      fontSize:"12px",
+      fontSize:"11px",
       display:"flex",
       flexDirection:"row",
       justifyContent:"center",

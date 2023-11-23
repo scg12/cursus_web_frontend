@@ -65,6 +65,7 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
             resultatElev  = elv.resultat.split("~~~");
             elvDataSize = resultatElev.length;
             resultatElev  = resultatElev.splice(1,elvDataSize-1);
+            resultatElev.push(elv.absences+"&"+elv.sanctions);
             ElevesInfo.push(resultatElev)
         });
 
@@ -154,10 +155,20 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                         cptExco=1;
                     }
                     
+                    //Resultats scolaires
                     eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                     eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                     eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
                     eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
+
+                    //Infos Discipline
+                    var absencesEleve = currentElvData[ligne+1].split("&")[0];
+                    var punitionEleve = currentElvData[ligne+1].split("&")[1];
+                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
+                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
+                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
+                    eleve_data.recapGeneral.consignes   = punitionEleve;
+                    eleve_data.recapGeneral.exclusions  = punitionEleve;
 
                     eleves_data.push(eleve_data);
                 }
@@ -244,10 +255,20 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                         cptExco=1;
                     }
 
+                    //Resultats scolaires
                     eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                     eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                     eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
                     eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
+
+                    //Infos Discipline
+                    var absencesEleve = currentElvData[ligne+1].split("&")[0];
+                    var punitionEleve = currentElvData[ligne+1].split("&")[1];
+                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
+                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
+                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
+                    eleve_data.recapGeneral.consignes   = punitionEleve;
+                    eleve_data.recapGeneral.exclusions  = punitionEleve;
 
                     eleves_data.push(eleve_data);
                 }
@@ -335,10 +356,20 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                         cptExco=1;
                     }
 
+                    //Resultats scolaires
                     eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
                     eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                     eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
                     eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
+
+                    //Infos Discipline
+                    var absencesEleve = currentElvData[ligne+1].split("&")[0];
+                    var punitionEleve = currentElvData[ligne+1].split("&")[1];
+                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
+                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
+                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
+                    eleve_data.recapGeneral.consignes   = punitionEleve;
+                    eleve_data.recapGeneral.exclusions  = punitionEleve;
 
                     eleves_data.push(eleve_data);
                 }

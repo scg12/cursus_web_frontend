@@ -376,7 +376,7 @@ function PrintStudentReport(props) {
         list.map((elt)=>{
             listElt = {};
             listElt.id         = elt.entete.matricule;  //je n'ai pas les ids
-            listElt.nom        = elt.entete.nom;
+            listElt.nom        = elt.entete.nom+' '+elt.entete.prenom;
             listElt.rang       = elt.recapGeneral.rangGeneral;
             listElt.isExeco    = elt.recapGeneral.isExeco;
             listElt.pos        = pos; 
@@ -402,7 +402,7 @@ function PrintStudentReport(props) {
             notesSeq  = [0,0];
             listElt   = {};
             listElt.id         = elt.entete.matricule;  //je n'ai pas les ids
-            listElt.nom        = elt.entete.nom;
+            listElt.nom        = elt.entete.nom+' '+elt.entete.prenom;
             listElt.rang       = elt.recapGeneral.rangGeneral;
             listElt.isExeco    = elt.recapGeneral.isExeco;
             listElt.pos        = pos;
@@ -431,7 +431,7 @@ function PrintStudentReport(props) {
             notesTrim = [0,0,0];
             listElt   = {};
             listElt.id         = elt.entete.matricule;  //je n'ai pas les ids
-            listElt.nom        = elt.entete.nom;
+            listElt.nom        = elt.entete.nom+' '+elt.entete.prenom;
             listElt.rang       = elt.recapGeneral.rangGeneral;
             listElt.isExeco    = elt.recapGeneral.isExeco; 
             listElt.pos        = pos;
