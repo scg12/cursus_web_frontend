@@ -167,9 +167,8 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
                     eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
                     eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
-                    eleve_data.recapGeneral.consignes   = punitionEleve;
-                    eleve_data.recapGeneral.exclusions  = punitionEleve;
-
+                    eleve_data.recapGeneral.sanction    = punitionEleve.length>0? punitionEleve.split("*"):"R.A.S";
+             
                     eleves_data.push(eleve_data);
                 }
                 console.log("donne to print",eleves_data)
@@ -267,9 +266,8 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
                     eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
                     eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
-                    eleve_data.recapGeneral.consignes   = punitionEleve;
-                    eleve_data.recapGeneral.exclusions  = punitionEleve;
-
+                    eleve_data.recapGeneral.sanction    = punitionEleve.length>0? punitionEleve.split("*"):"R.A.S";
+                    
                     eleves_data.push(eleve_data);
                 }
                 console.log("donne to print",eleves_data)
@@ -368,9 +366,8 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
                     eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
                     eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
-                    eleve_data.recapGeneral.consignes   = punitionEleve;
-                    eleve_data.recapGeneral.exclusions  = punitionEleve;
-
+                    eleve_data.recapGeneral.sanction    = punitionEleve.length>0? punitionEleve.split("*"):"R.A.S";
+                
                     eleves_data.push(eleve_data);
                 }
                 console.log("donne to print",eleves_data)

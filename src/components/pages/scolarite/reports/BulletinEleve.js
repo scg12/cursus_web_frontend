@@ -447,16 +447,20 @@ function BulletinEleve(props) {
                             </View>
 
                             <Text style={{fontFamily:"MyBold",fontSize:"11px", marginBottom:"0.27vh", marginLeft:"1.3vw"}}>{t('sanctions')}</Text>
+
                             <View style={{display:"flex",flexDirection:"column", marginBottom:"0.7vh"}}>
-                                <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
-                                    <Text style={{fontSize:"9.7px", width:"50%", marginLeft:"0vw"}}>{t('consigne')}s</Text>
-                                    <Text style={{fontSize:"9.7px", width:"50%", marginLeft:"0.7vw"}}>{t('exclusion')}s</Text>
-                                   
-                                </View>
-                                <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
-                                    <Text style={{fontFamily:"MyBold",width:"50%", marginLeft:"0vw", fontSize:"9.7px"}}>{props.recapGeneral.consignes}</Text>
-                                    <Text style={{fontFamily:"MyBold",width:"50%", marginLeft:"0.7vw", fontSize:"9.7px"}}>{props.recapGeneral.consignes}</Text>
-                                </View>
+                                {(props.recapGeneral.sanction!="R.A.S")?
+                                    props.recapGeneral.sanction.map((sct)=>{
+                                        return (
+                                            <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
+                                                <Text style={{fontSize:"9.7px", width:"50%", marginLeft:"0vw"}}>{sct.split("_")[0]}</Text>
+                                                <Text style={{fontSize:"9.7px", width:"50%", fontFamily:"MyBold", marginLeft:"0.7vw"}}>{sct.split("_")[1]}</Text>
+                                            </View>
+                                        )
+                                    })
+                                    : <Text style={{fontSize:"9.7px", width:"50%", marginLeft:"0.7vw"}}>{props.recapGeneral.sanction}</Text>                                
+                                }
+                           
                             </View>
                         </View>
                     </View>
