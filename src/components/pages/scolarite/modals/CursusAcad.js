@@ -282,25 +282,25 @@ function CursusAcad(props) {
         return(
             <div style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', width:'93%'}}>
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"#065386", color:'white', width:'100%', height:"3vh"}}>
-                    <div style={{display:'flex', flexDirection:'colunm', justifyContent:'center', width:'40%', fontSize:'0.87vw', borderRight:'solid 1.5px white'}} > BILAN SCOLAIRES</div> 
-                    <div style={{display:'flex', flexDirection:'colunm', justifyContent:'center', width:'54%', fontSize:'0.87vw', marginLeft:'2vw'}}> BILAN DISCIPLINAIRE</div>
+                    <div style={{display:'flex', flexDirection:'colunm', justifyContent:'center', width:'40%', fontSize:'0.87vw', borderRight:'solid 1.5px white'}} > {t("academic_history_M")}</div> 
+                    <div style={{display:'flex', flexDirection:'colunm', justifyContent:'center', width:'54%', fontSize:'0.87vw', marginLeft:'2vw'}}> {t("disciplin_history_M")}</div>
                 </div>
                 
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"white", color:'black', width:'100%', height:"3vh", borderLeft:'solid 1px black', borderRight:'solid 1px black', borderBottom:'solid 1px black'}}>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}>Resultat annuel</div>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>Resultat examen </div>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'30%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>Absences</div>              
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>Consignes</div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>Excl. temp.</div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>Excl. def.</div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}>{t("annual_result")}</div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("exam_result")} </div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("absences")}</div>              
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("consigne")}s</div> 
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Excl. temp.")}</div> 
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{t("Excl. def.")}</div>
                 </div>
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"white", color:'black', width:'100%', height:"3vh", borderLeft:'solid 1px black', borderRight:'solid 1px black', borderBottom:'solid 1px black'}}>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}><div style={props.resultatAnnuel.resultat_final== "Admis"? {color:"green"}:{color:"red"}}>{props.resultatAnnuel.resultat_final}</div> <div>({props.resultatAnnuel.moyenne_finale})</div> </div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}><div style={props.resultatAnnuel.resultat_final== "Admis"? {color:"green"}:{color:"red"}}>{props.resultatAnnuel.resultat_final}</div> <div>({props.resultatAnnuel.moyenne_finale})</div> </div>
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{props.resultatAnnuel.isExamClass? props.resultatAnnuel.examen+'('+ props.resultatAnnuel.resultat_examen +' '+ props.resultatAnnuel.mention_examen+')' :'R.A.S'}</div>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'30%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>justifiees:<div style={{color:'green', marginRight:'0.3vw'}}>{props.resultatAnnuel.absences_justifiees}h</div> non justifiees:<div style={{color:'red'}}>{props.resultatAnnuel.absences_nonJustifiees}h</div></div>              
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>Total:<div style={{fontWeight:'bolder'}}>{props.resultatAnnuel.consignes}jrs</div></div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>Total:<div style={{fontWeight:'bolder'}}>{props.resultatAnnuel.exclusion_temp}jrs</div></div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{props.resultatAnnuel.exclusion_definitive ? 'Oui':'Non'}</div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("justified")}:<div style={{color:'green', marginRight:'0.3vw'}}>{props.resultatAnnuel.absences_justifiees}h</div>{t("non_justified")}:<div style={{color:'red'}}>{props.resultatAnnuel.absences_nonJustifiees}h</div></div>              
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Total")}:<div style={{fontWeight:'bolder'}}>{props.resultatAnnuel.consignes} {t("days_ab")}</div></div> 
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Total")}:<div style={{fontWeight:'bolder'}}>{props.resultatAnnuel.exclusion_temp} {t("days_ab")}</div></div> 
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{props.resultatAnnuel.exclusion_definitive ? t('yes'):t('no')}</div>
                 </div>
             
             </div>
@@ -351,7 +351,7 @@ function CursusAcad(props) {
             <div style={{display:'flex', flexDirection:'column', justifyContent:'center', marginTop:'1.7vh', paddingTop:'23vh', paddingBottom:'7vh', marginBottom:'3vh', height:'auto', overflowY:'scroll'}}>
                 {tabResultat.map((resultat,index)=>{
                     return(
-                        <div style={{display:'flex', flexDirection:'column',fontSize:'1vw', fontWeight:'bold', marginLeft:'0vw', marginBottom:'2.3vh', justifyContent:'space-between'}}>
+                        <div style={{display:'flex', flexDirection:'column',fontSize:'1vw', fontWeight:'bold', marginLeft:'0vw', marginBottom:'2.3vh', justifyContent:'space-between', width:"107%"}}>
                             <FormPuce menuItemId ='1' 
                                 isSimple={true} 
                                 noSelect={true} 

@@ -41,14 +41,14 @@
 .dataZone{
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items:flex-start;
     max-height: 40vh;
     height: auto;
     width: 93%;
     overflow-y: scroll;  
     padding-left: 1vw; 
-    padding-top: 1vw;
+    padding-top: 1vw; 
     /*padding-bottom: 1vw;*/
     border:solid 1px gray;  
     border-radius: 7px;  

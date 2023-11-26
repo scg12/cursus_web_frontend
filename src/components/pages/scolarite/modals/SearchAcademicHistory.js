@@ -531,12 +531,12 @@ function SearchAcademicHistory(props) {
             <div className={classes.searchFormContainer} style={{marginTop:'7vh'}}>               
                 <div style={{display:'flex', flexDirection:'row', marginTop:"2vh", marginBottom:'3vh'}}>
                     <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={isActualStudent}  value={'presents'} name='ficheProg' onClick={()=>{isActualStudent? setIsActualStudent(false):setIsActualStudent(true); setEleves([])}}/>
-                    <label style={{color:'black',  fontWeight:"bold", fontSize:"1vw", marginRight:"12.3vw", marginLeft:"0.3vw", marginTop:"0vw"}}>{t("L'Elève est encore scolarisé")} </label>
+                    <label style={{color:'black',  fontWeight:"bold", fontSize:"1vw", marginRight:"12.3vw", marginLeft:"0.3vw", marginTop:"0vw"}}>{t("current_student")} </label>
 
                     <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={!isActualStudent}  value={'presents'} name='ficheProg' onClick={()=>{isActualStudent? setIsActualStudent(false):setIsActualStudent(true); setEleves([])}}/>
-                    <label style={{color:'black', fontWeight:"bold", fontSize:"1vw", marginLeft:'0.13vw', marginRight:"1vw",marginTop:"0vw" }}>{t("L'Elève n'est plus scolarisé")}</label>
+                    <label style={{color:'black', fontWeight:"bold", fontSize:"1vw", marginLeft:'0.13vw', marginRight:"1vw",marginTop:"0vw" }}>{t("not_current_student")}</label>
                 </div> 
-                <div className={classes.legend} style={{ marginRight:"0.3vw", top:'17vh'}}> <label style={{/*color:'#e0e06c',*/ color:"white",  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("choisissez un ou plusieurs critères de recherche")}</i></label></div>                    
+                <div className={classes.legend} style={{ marginRight:"0.3vw", top:'17vh'}}> <label style={{/*color:'#e0e06c',*/ color:"white",  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("select_criteria")}</i></label></div>                    
                 <div className={classes.container} style={{marginBottom:'2vw', borderRadius:'7px', marginLeft:"-0.77vw", border:"solid 1.87px gray", justifyContent:'center', alignItems:'center', width:'95%', height:'20vh', paddingLeft:"1vw"}}> 
                     {isActualStudent ?
                         <div className={classes.container} style={{marginBottom:'3.7vh', marginTop:'4.3vh',width:'100%'}}>
@@ -545,7 +545,7 @@ function SearchAcademicHistory(props) {
                                     <div className={classes.inputRowLeft}>
                                         <input type='radio' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}} checked={matriculeEnable}  value={'presents'} name='matri' onClick={()=>{matriculeActivateHandler()}}/>
                                         <div style={{width:'5.3vw',fontWeight:570}}>
-                                            {t('Matricule')}:  
+                                            {t('matricule_short')}:  
                                         </div>
                                         
                                         <div style={{marginBottom:'1.3vh'}}>
@@ -556,7 +556,7 @@ function SearchAcademicHistory(props) {
                                     <div className={classes.inputRowLeft} style={{marginTop:"1vh"}}>
                                         <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}} checked={niveauEnable}  value={'presents'} name='matri' onClick={()=>{niveauActiveHandler()}}/>
                                         <div style={{width:'7.7vw', fontWeight:570}}>
-                                            {t('Niveau')}:  
+                                            {t('level')}:  
                                         </div>
                                         
                                         <div style={{marginBottom:'1.3vh', marginLeft:'6vw'}}> 
@@ -731,11 +731,23 @@ function SearchAcademicHistory(props) {
                     }
                 </div>
 
+                {eleves.length >= 6 && 
+                    <div style={{alignSelf:"flex-end", marginRight:"3.97vw", marginTop:"-3vh"}}>
+                        <CustomButton
+                            btnText={t('cancel')}
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.btnTextStyle}
+                            btnClickHandler={props.cancelHandler}
+                        />
+
+                    </div>
+                }
+
                 {elevesP.length > 1 && 
                     <div className={classes.inputRowLeft} style={{marginTop:"1vh"}}>
                         {/*<input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}} checked={nomEnable}  value={'presents'} name='matri' onClick={()=>{nomActivateHandler()}}/>*/}
                         <div style={{width:'19.3vw', fontWeight:570}}>
-                            {t("Nom de l'élève recherché")}:  
+                            {t("searched_name")}:  
                         </div>
                         
                         <div style={{marginBottom:'1.3vh', marginLeft:'-5.7vw'}}> 
@@ -744,11 +756,11 @@ function SearchAcademicHistory(props) {
                     </div>
                 }
 
-                {elevesP.length==1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'40.87vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("Resultats"):t("Resultat")}</i></label></div>}
-                {elevesP.length>1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'47.87vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("Resultats"):t("Resultat")}</i></label></div>}
+                {elevesP.length==1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'41.87vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("results"):t("result")}</i></label></div>}
+                {elevesP.length>1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'48.87vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ?  t("results"):t("result")}</i></label></div>}
                 
                 {elevesP.length>0 &&
-                    <div className={classes.dataZone} style={{padding:'1vh'}}>                
+                    <div className={classes.dataZone}>                
                         {eleves.map((eleve, pos)=>{
                             return(
                                 <LigneEleve index={pos} nom = {eleve.nom} prenom={eleve.prenom} eleveData={eleve}/>
@@ -757,24 +769,25 @@ function SearchAcademicHistory(props) {
                     </div>
                 }
             </div>
-            
-            <div className={classes.formButtonRowPP}>
-               
-                <CustomButton
-                    btnText={t('cancel')}
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={props.cancelHandler}
-                />
+            {eleves.length < 6 && 
+                <div className={classes.formButtonRowPP}>
+                
+                    <CustomButton
+                        btnText={t('cancel')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={props.cancelHandler}
+                    />
 
-               {/* <CustomButton
-                    btnText={t('ok')}
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={saveOrUploadFP}
-                    disable={(isActualStudent) ? !isActualStudent :!fileSelected}
-            />*/}                
-            </div>
+                {/* <CustomButton
+                        btnText={t('ok')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={saveOrUploadFP}
+                        disable={(isActualStudent) ? !isActualStudent :!fileSelected}
+                />*/}                
+                </div>
+            }
         </div>       
     );
  }

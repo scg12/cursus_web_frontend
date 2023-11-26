@@ -45,6 +45,11 @@ function getNomProf(matiereLabel, listMatieres){
     else return "";
 }
 
+function twoDigits(val){
+    if(val.length<=1) return '0'+val;
+    else return val;
+}
+
 export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapData, notesData, listMatieresWithTeacherNames,areElevesClasse){
     
     //return new Promise(function(resolve, reject){
@@ -164,9 +169,9 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     //Infos Discipline
                     var absencesEleve = currentElvData[ligne+1].split("&")[0];
                     var punitionEleve = currentElvData[ligne+1].split("&")[1];
-                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
-                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
-                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
+                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[0]):"00";
+                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[1]):"00";
+                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[2]):"00";
                     eleve_data.recapGeneral.sanction    = punitionEleve.length>0? punitionEleve.split("*"):"R.A.S";
              
                     eleves_data.push(eleve_data);
@@ -263,9 +268,9 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     //Infos Discipline
                     var absencesEleve = currentElvData[ligne+1].split("&")[0];
                     var punitionEleve = currentElvData[ligne+1].split("&")[1];
-                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
-                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
-                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
+                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[0]):"00";
+                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[1]):"00";
+                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[2]):"00";
                     eleve_data.recapGeneral.sanction    = punitionEleve.length>0? punitionEleve.split("*"):"R.A.S";
                     
                     eleves_data.push(eleve_data);
@@ -363,9 +368,9 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     //Infos Discipline
                     var absencesEleve = currentElvData[ligne+1].split("&")[0];
                     var punitionEleve = currentElvData[ligne+1].split("&")[1];
-                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? absencesEleve.split("_")[0]:"00";
-                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? absencesEleve.split("_")[1]:"00";
-                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? absencesEleve.split("_")[2]:"00";
+                    eleve_data.recapGeneral.absTotal    = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[0]):"00";
+                    eleve_data.recapGeneral.absJ        = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[1]):"00";
+                    eleve_data.recapGeneral.absNJ       = absencesEleve.length>0? twoDigits(absencesEleve.split("_")[2]):"00";
                     eleve_data.recapGeneral.sanction    = punitionEleve.length>0? punitionEleve.split("*"):"R.A.S";
                 
                     eleves_data.push(eleve_data);

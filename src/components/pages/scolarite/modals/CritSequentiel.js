@@ -228,7 +228,7 @@ function CriteresGeneration(props) {
             
             <div className={classes.searchFormContainer} style={{marginTop:'7vh'}}>               
               
-                <div className={classes.legend} style={{marginRight:"0.3vw", top:'11.3vh'}}> <label style={{/*color:'#e0e06c',*/ color:"white",  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("Les éleves vérifiants les criteres suivants seront selectionnés pour génération des bulletins")}</i></label></div>                    
+                <div className={classes.legend} style={{marginRight:"0.3vw", top:'11.3vh'}}> <label style={{/*color:'#e0e06c',*/ color:"white",  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("selected_student_for_generation")}</i></label></div>                    
                 <div className={classes.container} style={{marginTop:'1.3vw',  borderRadius:'7px', marginLeft:"-0.77vw", border:"solid 1.87px gray", justifyContent:'center', alignItems:'center', width:'95%', height:'33vh', paddingLeft:"1vw"}}> 
                     
                     <div className={classes.container} style={{marginBottom:'3.7vh', marginTop:'3.3vh',width:'100%'}}>
@@ -236,7 +236,7 @@ function CriteresGeneration(props) {
                             <div className={classes.container}>
                                 <div className={classes.inputRowLeft} style={{marginTop:"1.3vh",marginBottom:"0.7vh"}}>                                        
                                     <div style={{width:'30.3vw',fontWeight:570}}>
-                                        {t('Nbre Max de matières sans notes')}:  
+                                        {t('max_laking_notes')}:  
                                     </div>
                                     <input type='number' id="matSansNote" defaultValue={2} style={{fontSize:"1.03vw", textAlign:"center", width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  /*onClick={matieresSansNoteHandler}*//>                                                                             
                                     
@@ -244,7 +244,7 @@ function CriteresGeneration(props) {
 
                                 <div className={classes.inputRowLeft}>                                        
                                     <div style={{width:'30.3vw',fontWeight:570}}>
-                                        {t('Total max de coefficients manquants')}:  
+                                        {t('laking_coefs')}:  
                                     </div>
                                     <input type='number' id="totMaxCoef" defaultValue={3} style={{fontSize:"1.03vw", textAlign:"center",width:'3.3vw', height:'3.3vh', marginTop:'0.7vh', border:"1px solid black", borderRadius:3}}  /*onClick={totalCoefMinHandler}*//>                                       
                                 </div>
@@ -252,7 +252,7 @@ function CriteresGeneration(props) {
                                 {(matieresSpe.length>0) &&
                                     <div className={classes.inputRowLeft} style={{marginTop:"0.7vh"}}>                                       
                                         <div style={{width:'37.3vw',fontWeight:570}}>
-                                            {t('Matières de spécialité qui doivent avoir des notes')}:  
+                                            {t('required_lesson')}:  
                                         </div>                                    
                                     </div>                                
                                 }

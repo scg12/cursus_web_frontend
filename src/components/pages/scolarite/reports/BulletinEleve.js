@@ -453,7 +453,7 @@ function BulletinEleve(props) {
                                     props.recapGeneral.sanction.map((sct)=>{
                                         return (
                                             <View style={{display:"flex",flexDirection:"row", paddingHorizontal:"0.7vw", justifyContent:"flex-start"}}>
-                                                <Text style={{fontSize:"9.7px", width:"50%", marginLeft:"0vw"}}>{sct.split("_")[0]}</Text>
+                                                <Text style={{fontSize:"9.7px", width:"50%", /*textOverflow:"ellipsis",*/ marginLeft:"0vw"}}>{sct.split("_")[0]}:</Text>
                                                 <Text style={{fontSize:"9.7px", width:"50%", fontFamily:"MyBold", marginLeft:"0.7vw"}}>{sct.split("_")[1]}</Text>
                                             </View>
                                         )
