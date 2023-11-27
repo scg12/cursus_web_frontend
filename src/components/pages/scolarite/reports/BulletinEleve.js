@@ -399,36 +399,41 @@ function BulletinEleve(props) {
         return(
             <View style={styles.footer}> 
                 <View style={styles.footer_row1}>
-                    <View style={styles.footer_row1_box}>
+                    <View style={{...styles.footer_row1_box, width:props.typeBulletin==1? "38.3%":"26.7%"}}>
                         <View style={styles.box_header}><Text>{t('student_results_M')}</Text></View>
-                        <View style={{...styles.box_corps, paddingTop:"1.7vh"}}>
-                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
-                              <Text style={{fontFamily:"MyBold", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Points')}:  </Text>
-                              <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalPoints}</Text>
+                        <View style={{...styles.box_corps,  widht:"100%", marginLeft:"1.3vw", paddingTop:"1.7vh"}}>
+                            <View style={{...styles.box_corps_ligne, justifyContent:"flex-start", widht:"100%", marginBottom:"2vh"}}>
+                              <Text style={{/*fontFamily:"MyBold",*/ width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Points')}:  </Text>
+                              <Text style={{/*fontFamily:"MyBold"*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
                             </View>
-                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
-                              <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Coefs')}:  </Text>
-                              <Text style={[styles.special_text,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.totalcoef}</Text>
+                            <View style={{...styles.box_corps_ligne, justifyContent:"flex-start", widht:"100%", marginBottom:"2vh"}}>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('Total Coefs')}:  </Text>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalcoef}</Text>
                             </View>
-                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                            <View style={{...styles.box_corps_ligne, justifyContent:"flex-start", widht:"100%", marginBottom:"2vh"}}>
                               <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moyenne')}:  </Text>
-                              <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"0.7vw"}]}>{props.recapGeneral.MoyGenerale}</Text>
+                              <Text style={[styles.special_textP,{fontFamily:"MyBold",width:"7vw", marginRight:"1.7vw"}]}>{props.recapGeneral.MoyGenerale}</Text>
                             </View>
-                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                            <View style={{...styles.box_corps_ligne, justifyContent:"flex-start", widht:"100%", marginBottom:"2vh"}}>
                               <Text style={{fontFamily:"MyBold",width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('rang')}:  </Text>
-                              <View style={{...styles.special_textP,display:"flex",flexDirection:"row",width:"7vw",marginRight:"0.7vw"}}> 
-                                  <Text style={{fontFamily:"MyBold",}}>{props.recapGeneral.rangGeneral}</Text>
+                              <View style={{...styles.special_textP,display:"flex",flexDirection:"row",justifyContent:"center",minWidth:"7vw", maxWidth:"13vw",  width:"auto", marginRight:"1.7vw"}}> 
+                                <Text style={{fontFamily:"MyBold",}}>{props.recapGeneral.rangGeneral}</Text>
 
-                                  {props.isElevesclasse&&
+                                {(props.isElevesclasse) &&
                                     <Text style={{fontFamily:"MyBold", verticalAlign:"super",marginRight:"0.7vw",paddingTop:"0.7vh", fontSize:"0.7vh"}}>{getPrefixeRang(props.recapGeneral.rangGeneral)} {props.recapGeneral.isExeco ? " ex":""}</Text>
-                                  }
+                                }
+                                
+                                {(props.isElevesclasse) &&
+                                    <Text style={{fontFamily:"MyBold",}}> / {props.effectifTotal}</Text>
+                                }
+
                               </View>
-                              
+                           
                             </View>
                         </View>
                     </View>
                   
-                    <View style={styles.footer_row1_box}>
+                    <View style={{...styles.footer_row1_box, width:props.typeBulletin==1? "38.3%":"26.7%"}}>
                         <View style={styles.box_header}><Text>{t('disciplin_M')}</Text></View>
                         <View style={{...styles.box_corps, alignItems:"flex-start", paddingLeft:"0.3vw", paddingBottom:"0.3vh"}}>
                             <Text style={{fontFamily:"MyBold",fontSize:"11px", marginBottom:"0.27vh", marginLeft:"1.3vw"}}>{t('absences')}</Text>
@@ -465,22 +470,88 @@ function BulletinEleve(props) {
                         </View>
                     </View>
 
-                    <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>{t('score_remind_M')}</Text></View>
-                        <View style={styles.box_corps}>         
-                        </View>
-                    </View>
+                    {(props.typeBulletin>1) &&
+                        <View style={{...styles.footer_row1_box, width:"23%"}}>
+                            <View style={styles.box_header}>
+                                <Text>{t('score_remind_M')}</Text>
+                            </View>
+                            {(props.typeBulletin==2)?
+                                <View style={styles.box_corps}>
+                                    <View style={{...styles.box_corps_ligne, marginBottom:"2vh",marginTop:"1.3vh"}}>
+                                        <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_seq')}{seq1}:  </Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                    </View>
 
-                    <View style={styles.footer_row1_box}>
+                                    <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                                        <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_seq')}{seq2}:  </Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                    </View>
+
+                                    <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                                        <Text style={{fontFamily:"MyBold", fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_generale')}:  </Text>
+                                        <Text style={{...styles.special_textP, fontFamily:"MyBold", width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.MoyGenerale}</Text>
+                                    </View>
+                                </View> 
+                                :
+                                <View style={styles.box_corps}>
+                                    <View style={{...styles.box_corps_ligne, marginBottom:"2vh",marginTop:"1.3vh"}}>
+                                        <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_trim')}1:  </Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                    </View>
+
+                                    <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                                        <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_trim')}2:  </Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                    </View>
+
+                                    <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                                        <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_trim')}3:  </Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                        </View>
+
+                                    <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                                        <Text style={{fontFamily:"MyBold", fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>%  {t('moy_generale')}:  </Text>
+                                        <Text style={{...styles.special_text, fontFamily:"MyBold", width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.MoyGenerale}</Text>
+                                    </View>
+                                </View> 
+                            }     
+                        
+                        </View>
+                    }
+
+                    <View style={{...styles.footer_row1_box, width:"23%"}}>
                         <View style={styles.box_header}><Text>{t('class_results_M')}</Text></View>
-                        <View style={styles.box_corps}></View>
-                    </View>
-                  
-                    <View style={styles.footer_row1_box}>
-                        <View style={styles.box_header}><Text>{t('work_M')}</Text></View>
-                            <View style={styles.box_corps}></View>
+                        <View style={styles.box_corps}>
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh",marginTop:"1.3vh"}}>
+                              <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_generale')}:  </Text>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                            </View>
+
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                              <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_max')}:  </Text>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                            </View>
+
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                              <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_min')}:  </Text>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                            </View>
+
+                            <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
+                              <Text style={{fontFamily:"MyBold", fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>%  {t('reussite')}:  </Text>
+                              <Text style={{...styles.special_text,fontFamily:"MyBold", width:"7vw", marginRight:"0.7vw", color:"white"}}>{54}%</Text>
+                            </View>
+
                         </View>
                     </View>
+                                   
+                    {/* <View style={styles.footer_row1_box}>
+                        <View style={styles.box_header}>
+                            <Text>{t('work_M')}</Text>
+                        </View>
+                        <View style={styles.box_corps}></View>
+                    </View> */}
+                    </View> 
 
                     <View style={styles.footer_ligne2}>
                         <View style={styles.footer_ligne2_1}>
@@ -550,7 +621,7 @@ function BulletinEleve(props) {
                         </View> 
                         
                         <View style={styles.footer}> 
-                                <EleveRecap  recapGeneral = {eleve.recapGeneral} isElevesclasse = {props.data.isElevesclasse}/>
+                            <EleveRecap  typeBulletin = {props.data.typeBulletin} recapGeneral = {eleve.recapGeneral} isElevesclasse = {props.data.isElevesclasse} effectifTotal={props.data.effectif}/>
                         </View>
                     </Page>
                 ))

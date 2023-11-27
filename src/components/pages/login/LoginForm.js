@@ -589,14 +589,14 @@ function LoginForm(props){
                             }
                         </form>
 
-                        <div class="input-field center">
+                        <div class="input-field center" style={{marginTop:"-1vh"}}>
                             <button class="btn-small button" style={{fontSize:'1vw', fontWeight:555, width:'10vw', height:'5.3vh', borderRadius:3}} onClick={connectHandler}>{t("Connexion")}</button>
                         </div>
-                        {isLoading &&
+                        {isLoading && 
                             <div style={{display:"flex", flexDirection:'column', justifyContent:'center', alignItems:"center", width:"100%", height:"3vw", overflow:'hidden'}}>
                                 <img alt="Loading..." src="images/Loading_icon.gif" style={{height:"7vw"}}/>
                             </div>
-                        }
+                        } 
                         
                     </div>
                 </div>
