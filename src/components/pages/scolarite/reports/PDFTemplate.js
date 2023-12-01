@@ -10,6 +10,7 @@ import {useTranslation} from "react-i18next";
 
 
 
+
 function PDFTemplate(props) {
     const currentUiContext = useContext(UiContext);
    // const currentAppContext = useContext(AppContext);
@@ -31,9 +32,9 @@ function PDFTemplate(props) {
     /************************************ JSX Code ************************************/
 
     return (
-        <div style={{height:"73vh", width: "100%", backgroundColor:isMobile?'white':null, display:'flex', flexDirection:'column', justifyContent:'center', zIndex:1200, position:'absolute'}}>
+        <div style={{height:"73vh", width: "100%", backgroundColor:isMobile?'rgba(0,0,0,0.5)':null, display:'flex', flexDirection:'column', justifyContent:'center', zIndex:1200, position:'absolute'}}>
            
-            <div style={{ alignSelf: 'center',  position: 'absolute', top:'50%', fontWeight:'bolder', color:'#fffbfb',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+            <div style={{ alignSelf: 'center',  position: 'absolute', top:isMobile?'47%':'50%', fontWeight:'bolder', color:'#fffbfb', marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
                 {t('traitement')}...
             </div>                 
         
@@ -58,9 +59,9 @@ function PDFTemplate(props) {
             <div style={{position:"relative", zIndex:1207}}>
                 {props.children}
             </div>
-            <div style={{height: "7vh", width: "100%", display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1vh'}}>
+            <div style={{height: "7vh", width: "100%", display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1vh', position: isMobile?'absolute':null, bottom:isMobile ? 2:null}}>
                 <CustomButton
-                    btnText={"Fermer l'apercu"}
+                    btnText={t('close_preview')}
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.gridBtnTextStyle}
                     btnClickHandler={props.previewCloseHandler}                

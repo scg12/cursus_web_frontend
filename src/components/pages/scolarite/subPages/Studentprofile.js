@@ -825,7 +825,7 @@ const columnsFr = [
                 <PDFTemplate previewCloseHandler={closePreview}>
                     {   isMobile?
                         <PDFDownloadLink  document ={ <StudentListTemplate pageSet={ElevePageSet}/>} fileName={printedETFileName}>
-                            {({blob, url, loading, error})=> loading ? "loading...":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                            {({blob, url, loading, error})=> loading ? "":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>                    
                         :
                         <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
@@ -840,7 +840,7 @@ const columnsFr = [
                 <PDFTemplate previewCloseHandler={closePreview}>
                     { isMobile?
                         <PDFDownloadLink  document ={ <FicheDReport pageSet={ElevePageSet}/>} fileName={printedETFileName}>
-                            {({blob, url, loading, error})=> loading ? "loading...":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                            {({blob, url, loading, error})=> loading ? "":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>                    
                         :
                         <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>

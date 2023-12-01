@@ -1,4 +1,6 @@
-{   "sanctions":"Sanctions",
+{   
+    "close_preview":"Fermer l'apercu",
+    "sanctions":"Sanctions",
     "moy_generale":"Moy. générale",
     "moy_max" :"Moy. max",
     "moy_min" :"Moy. min",

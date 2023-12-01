@@ -1,4 +1,6 @@
-{   "sanctions":"Sanctions",
+{   
+    "close_preview":"Close preview",
+    "sanctions":"Sanctions",
     "moy_generale":"Overall AVG.",
     "moy_max" :"Max AVG.",
     "moy_min" :"Min AVG.",

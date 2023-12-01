@@ -84,10 +84,12 @@ function ScolaritePage(){
 
   
   function showSideMenu(e) {
+   
     currentUiContext.setIsParentMsgBox(false);
     
     const itemId = e.currentTarget.id
     setMenuItemPId(itemId);
+
 
     currentUiContext.setPreviousSelectedMenuID(currentUiContext.currentSelectedMenuID);
     currentUiContext.setCurrentSelectedMenuID(itemId);
@@ -267,7 +269,7 @@ function ScolaritePage(){
             {(currentAppContext.enableProfiles["SCOLARITE_B3"]=='1') ? <MenuItemP isModal={true} menuItemId ='108' imgSource='images/FicheProgession.png'      libelle={t("fiches_progression")}  itemSelected={showFicheView} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP}>                                                  </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_B4"]=='1') ? <MenuItemP menuItemId ='109' imgSource='images/FicheProgession.png'                     libelle={t("suivi_fiche_p")}       itemSelected={showSideMenu}  customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP}>                                                   </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_B5"]=='1') ? <MenuItemP menuItemId ='110' imgSource='images/ProgramClasse.png'                       libelle={t("programmes_classes")}  itemSelected={showSideMenu}  style={isMobile?{ marginLeft:'-0.089vw'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP}>   </MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_B6"]=='1') ? <MenuItemP menuItemId ='111' imgSource='images/CahierTexte.png'                         libelle={t("cahier_textes")}       itemSelected={showSideMenu}  style={isMobile?{ marginLeft:'-0.089vw'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP} >   </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_B6"]=='1') ? <MenuItemP menuItemId ='111' imgSource='images/CahierTexte.png'                         libelle={t("cahier_textes")}       itemSelected={showSideMenu}  style={isMobile?{ marginLeft:'-0.089vw'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP} >  </MenuItemP> : null}
           </MenuItemListP>
           :
           null
@@ -277,10 +279,10 @@ function ScolaritePage(){
           <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("suivi_devoir_notes")} theme={selectedTheme}>
             {(currentAppContext.enableProfiles["SCOLARITE_D1"]=='1') ? <MenuItemP isModal={true} menuItemId ='118' imgSource='images/DossierAcad.png'       libelle={t("look_academic_history")}     itemSelected={showDossierAcadView}                                               customImg={true} customImgStyle={isMobile ? M_classes.iconStyle4 : classes.customimgStyle6}>       </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_D2"]=='1') ? <MenuItemP isModal={true} menuItemId ='119' imgSource='images/activateNotes.png'     libelle={t("new_evaluation")}            itemSelected={showActivationSaisieView}                                          customImg={true} customImgStyle={isMobile ? M_classes.iconStyle4 : classes.customimgStyle6}>       </MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_D3"]=='1') ? <MenuItemP menuItemId ='120'                imgSource='images/SaveNotesP.png'        libelle={t("saisie_note")}               itemSelected={showSideMenu}  style={isMobile?{marginLeft:'1vw'}:null}            customImg={true} customImgStyle={isMobile ? M_classes.iconStyle4P : classes.customimgStyle4}>      </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_D3"]=='1') ? <MenuItemP menuItemId ='120'                imgSource='images/SaveNotesP.png'        libelle={t("saisie_note")}               itemSelected={showSideMenu} style={isMobile?{marginLeft:'1vw'}:null}            customImg={true} customImgStyle={isMobile ? M_classes.iconStyle4P : classes.customimgStyle4}>      </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_D4"]=='1') ? <MenuItemP menuItemId ='121'                imgSource='images/LookNotes.png'         libelle={t("consult_notes")}             itemSelected={showSideMenu} style={isMobile?{marginLeft:'0.33vw'}:null}          customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3P1 :classes.customimgStyle5}>      </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_D5"]=='1') ? <MenuItemP menuItemId ='122'                imgSource='images/genBulletinsP.png'     libelle={t("generate_report")}           itemSelected={showSideMenu} style={isMobile?{marginLeft:'1vw', marginRight:'0.57vw', marginTop:'1vh', marginBottom:'-0.57vh'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}> </MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_D6"]=='1') ? <MenuItemP menuItemId ='123'                imgSource='images/printReport.png'       libelle={t("print_report")}              itemSelected={showSideMenu} style={isMobile?{marginLeft:'1vw', marginRight:'0.57vw', marginTop:'1vh', marginBottom:'-0.57vh'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}> </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_D6"]=='1') ? <MenuItemP menuItemId ='123'                imgSource='images/printReport.png'       libelle={t("print_report")}              itemSelected={showSideMenu} style={isMobile?{marginLeft:'1vw', marginRight:'0.57vw', marginTop:'1.9vh', marginBottom:'-0.57vh'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}> </MenuItemP> : null}
           </MenuItemListP>
           :
           null

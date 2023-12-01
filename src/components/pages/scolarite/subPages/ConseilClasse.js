@@ -1225,7 +1225,7 @@ const columnsFr = [
                 <PDFTemplate previewCloseHandler={closePreview}>
                     { isMobile?
                         <PDFDownloadLink  document ={ <PVCCMeeting pageSet={CCPageSet}/>} fileName={printedETFileName}>
-                            {({blob, url, loading, error})=> loading ? "loading...":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                            {({blob, url, loading, error})=> loading ? "":  <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>                    
                         :
                         <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
