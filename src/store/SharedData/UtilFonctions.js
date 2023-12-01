@@ -246,7 +246,7 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     
                     eleve_data.recapGeneral.moy_seq1     = currentElvData[ligne].split("²²")[2].split('&')[0];
                     eleve_data.recapGeneral.moy_seq2     = currentElvData[ligne].split("²²")[2].split('&')[1];
-                    eleve_data.recapGeneral.MoyGenerale = currentElvData[ligne].split("²²")[2].split('&')[2];
+                    eleve_data.recapGeneral.MoyGenerale  = currentElvData[ligne].split("²²")[2].split('&')[2];
 
                     eleve_data.recapGeneral.rangGeneral = areElevesClasse ? parseInt(currentElvData[ligne].split("²²")[5]) : "N.C.";
                     eleve_data.recapGeneral.isExeco     = (eleve_data.recapGeneral.rangGeneral == currentRang);

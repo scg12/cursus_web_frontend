@@ -479,12 +479,12 @@ function BulletinEleve(props) {
                                 <View style={styles.box_corps}>
                                     <View style={{...styles.box_corps_ligne, marginBottom:"2vh",marginTop:"1.3vh"}}>
                                         <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_seq')}{seq1}:  </Text>
-                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moy_seq1}</Text>
                                     </View>
 
                                     <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                                         <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_seq')}{seq2}:  </Text>
-                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moy_seq2}</Text>
                                     </View>
 
                                     <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
@@ -496,17 +496,17 @@ function BulletinEleve(props) {
                                 <View style={styles.box_corps}>
                                     <View style={{...styles.box_corps_ligne, marginBottom:"2vh",marginTop:"1.3vh"}}>
                                         <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_trim')}1:  </Text>
-                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moy_trim1}</Text>
                                     </View>
 
                                     <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                                         <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_trim')}2:  </Text>
-                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moy_trim2}</Text>
                                     </View>
 
                                     <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                                         <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_trim')}3:  </Text>
-                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                                        <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moy_trim3}</Text>
                                         </View>
 
                                     <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
