@@ -34,7 +34,7 @@ function PDFTemplate(props) {
     return (
         <div style={{height:"73vh", width: "100%", backgroundColor:isMobile?'rgba(0,0,0,0.5)':null, display:'flex', flexDirection:'column', justifyContent:'center', zIndex:1200, position:'absolute'}}>
            
-            <div style={{ alignSelf: 'center',  position: 'absolute', top:isMobile?'47%':'50%', fontWeight:'bolder', color:'#fffbfb', marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+            <div style={{ alignSelf: 'center',  position: 'absolute', top:isMobile?'47%':'49.3%', fontWeight:'bolder', color:'#fffbfb', marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
                 {t('traitement')}...
             </div>                 
         

@@ -95,17 +95,61 @@ function ConseilClasse(props) {
         getEtabListClasses();
     },[]);
 
-    function updateCalendarTheme2(){
-        const calendarBorder = document.querySelector('.react-calendar__month-view__days');
-        calendarBorder.style.borderColor='rgb(35, 88, 187)';
-        
-        const calendarWeekLabelStyle = document.querySelector('.react-calendar__month-view__weekdays');
-        calendarWeekLabelStyle.style.color= 'rgb(35, 88, 187)';
+  
+    function getClassMeetingData(classId){
+        var listConseils = [];
+        setModalOpen(5);
+        axiosInstance.post(`list-conseil-classes/`, {
+            id_classe: classId,
+            id_sousetab: currentAppContext.currentEtab
+        }).then((res)=>{
+            console.log("donnees",res.data);
+            if(res.data!= undefined && res.data!=null){
+                LIST_CONSEILS_INFOS = [...res.data.conseil_classes];
 
-        const calendarNowDate = document.querySelector('.react-calendar__tile--now')
-        calendarNowDate.style.backgroundColor = 'rgb(35, 88, 187)';
-        calendarNowDate.style.color = 'white';
+                CURRENT_PROF_PP_ID      = res.data.prof_principal.id;
+                CURRENT_PROF_PP_USERID  = res.data.prof_principal.user_id;
+                CURRENT_PROF_PP_LABEL   = res.data.prof_principal.nom;
+                
+                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_classe];
+                OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
+                PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
+
+                SEQUENCES_DISPO   =  createLabelValueTableDejaTenu(res.data.seqs_dispo);
+                TRIMESTRES_DISPO  =  createLabelValueTableDejaTenu(res.data.trims_dispo);
+                
+                ANNEE_DISPO       = [{value:-1,label:t("annee")+' '+CURRENT_ANNEE_SCOLAIRE}];
+
+                listConseils = [...formatList(res.data.conseil_classes,res.data.prof_principal,res.data.seqs_dispo, res.data.trims_dispo)]
+                console.log(listConseils);                
+            }
+
+            axiosInstance.post(`get-classes-prochaines/`, {
+                id_classe: classId,
+            }).then((res)=>{
+
+                console.log("classes prochaines",res.data);
+                LIST_NEXT_CLASSES = createLabelValueTable(res.data.next_classes);
+
+                axiosInstance.post(`list-eleves/`, {
+                    id_classe: classId,
+                }).then((res)=>{
+                    console.log(res.data);
+                    LIST_ELEVES = [...getElevesTab(res.data)];
+                    currentUiContext.setFormIsloading(false);
+                   
+                    setGridMeeting(listConseils);
+                    console.log(gridMeeting);
+                    
+                    setIsloading(false)
+                    setModalOpen(0);
+                });
+                
+            });           
+     
+        });
     }
+
 
     
     const getEtabListClasses=()=>{
@@ -140,13 +184,6 @@ function ConseilClasse(props) {
             console.log(res.data);
             LIST_ELEVES = [...getElevesTab(res.data)];
             currentUiContext.setFormIsloading(false);
-            // console.log(LIST_ELEVES) ;  
-            // if(LIST_ELEVES.length>0){
-            //     LIST_ELEVES.map((elt)=>{
-            //         list_decisions_conseil_eleves.push(undefined);
-            //         list_classes_promotions_eleves.push(undefined);
-            //     }) 
-            // }       
         })  
     }
 
@@ -286,10 +323,11 @@ function ConseilClasse(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
-            currentUiContext.setFormIsloading(true);
-            getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
-            getNextClassPossibles(CURRENT_CLASSE_ID); 
-            getClassStudentList(CURRENT_CLASSE_ID); 
+            //currentUiContext.setFormIsloading(true);
+            // getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
+            // getNextClassPossibles(CURRENT_CLASSE_ID); 
+            // getClassStudentList(CURRENT_CLASSE_ID); 
+            getClassMeetingData(CURRENT_CLASSE_ID)
             
               
         } else {
@@ -628,7 +666,16 @@ const columnsFr = [
     }
     
 /*************************** Handler functions ***************************/
-    
+function setEditMeetingGlobalData(meeting){
+    return new Promise(function(resolve, reject){
+        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(meeting.membres, true, 1);
+        OTHER_MEMBERS     =  createLabelValueTableWithUserS(meeting.membres_a_ajouter,false, -1);
+        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(meeting.membres_presents,true, 0);
+        INFO_ELEVES       =  meeting.info_eleves;
+        resolve(1);
+    });
+
+}
 
     function handleDeleteRow(params){
         if(params.field=='id'){
@@ -658,66 +705,70 @@ const columnsFr = [
     }
 
     function handleEditRow(row){   
-        //currentUiContext.setFormIsloading(false);    
+        
         var inputs=[];       
         var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
         console.log("hhhjki",CURRENT_CC.membres_presents, CURRENT_CC.info_eleves);
+
+        setEditMeetingGlobalData(CURRENT_CC).then(()=>{
+            inputs[0] = row.id;
+            inputs[1] = row.date_prevue;
+            inputs[2] = row.heure_prevue;
+            inputs[3] = row.type_conseil;
+            inputs[4] = row.id_type_conseil;
+            
+            inputs[5] = row.periode;
+            inputs[6] = row.nom;
+            inputs[7] = row.user_id;
+
+            inputs[8]  = row.status;
+            inputs[9]  = row.statusLabel;
+            inputs[10] = [...INFO_ELEVES];
+            inputs[11] = row.resume_general_decisions;
+    
+    
+            currentUiContext.setFormInputs(inputs);
+
+            console.log("laligne",row, currentUiContext.formInputs);
+            setModalOpen(2);       
+
+        });
       
-        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
-        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
-        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CC.membres_presents,true, 0);
-        INFO_ELEVES       =  CURRENT_CC.info_eleves;
-        
-        inputs[0] = row.id;
-        inputs[1] = row.date_prevue;
-        inputs[2] = row.heure_prevue;
-        inputs[3] = row.type_conseil;
-        inputs[4] = row.id_type_conseil;
-        
-        inputs[5] = row.periode;
-        inputs[6] = row.nom;
-        inputs[7] = row.user_id;
-
-        inputs[8]  = row.status;
-        inputs[9]  = row.statusLabel;
-        inputs[10] = [...INFO_ELEVES];
-        inputs[11] = row.resume_general_decisions;
-  
-  
-        currentUiContext.setFormInputs(inputs);
-
-        console.log("laligne",row, currentUiContext.formInputs);
-        setModalOpen(2);       
+        // DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
+        // OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
+        // PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CC.membres_presents,true, 0);
+        // INFO_ELEVES       =  CURRENT_CC.info_eleves;
     }
 
     function consultRowData(row){
-        //currentUiContext.setFormIsloading(false); 
+        
         var inputs=[];
         var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
+        setEditMeetingGlobalData(CURRENT_CC).then(()=>{
+            inputs[0] = row.id;
+            inputs[1] = row.date_prevue;
+            inputs[2] = row.heure_prevue;
+            inputs[3] = row.type_conseil;
+            inputs[4] = row.id_type_conseil;
+            
+            inputs[5] = row.periode;
+            inputs[6] = row.nom;
+            inputs[7] = row.user_id;
+    
+            inputs[8]  = row.status;
+            inputs[9]  = row.statusLabel;
+            inputs[10] = [...INFO_ELEVES];
+            inputs[11] = row.resume_general_decisions;
+    
+            console.log("laligne",row, currentUiContext.formInputs);  
+            currentUiContext.setFormInputs(inputs)
+            setModalOpen(3);
+        });
       
-        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
-        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
-        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CC.membres_presents,true, 0);
-        INFO_ELEVES       =  CURRENT_CC.info_eleves;
-        
-        inputs[0] = row.id;
-        inputs[1] = row.date_prevue;
-        inputs[2] = row.heure_prevue;
-        inputs[3] = row.type_conseil;
-        inputs[4] = row.id_type_conseil;
-        
-        inputs[5] = row.periode;
-        inputs[6] = row.nom;
-        inputs[7] = row.user_id;
-
-        inputs[8]  = row.status;
-        inputs[9]  = row.statusLabel;
-        inputs[10] = [...INFO_ELEVES];
-        inputs[11] = row.resume_general_decisions;
-
-        console.log("laligne",row, currentUiContext.formInputs);  
-        currentUiContext.setFormInputs(inputs)
-        setModalOpen(3);
+        // DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CC.membres, true, 1);
+        // OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CC.membres_a_ajouter,false, -1);
+        // PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CC.membres_presents,true, 0);
+        // INFO_ELEVES       =  CURRENT_CC.info_eleves;
     }
 
     function getTypeConseil(code){
@@ -885,33 +936,34 @@ const columnsFr = [
         //ClearForm();
         setModalOpen(0)
     }
-   
-    function AddNewMeetingHandler(e){
-       
-        if(CURRENT_CLASSE_ID != undefined){         
+
+    function setMeetingGlobalData(){
+        return new Promise(function(resolve, reject){
             DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,   true,   1);
             OTHER_MEMBERS     =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,     false, -1);
             PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD,  true,   0);
+            resolve(1);
+        });
 
-            //setIsloading(true);
-            currentUiContext.setFormIsloading(true);
-           
-            setModalOpen(1); 
-            initFormInputs();
-            
-            // if(isLoading==false){
-               
-            //     setLoadingVisible(false);
-            // }else{
-            //     setLoadingVisible(true);
-            // }
-          
+    }
+
+
+   
+    function AddNewMeetingHandler(e){       
+        if(CURRENT_CLASSE_ID != undefined){  
+            setMeetingGlobalData().then(()=>{
+                setModalOpen(1); 
+                initFormInputs();
+            })       
+            // DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,   true,   1);
+            // OTHER_MEMBERS     =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,     false, -1);
+            // PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD,  true,   0);
         } else{
             chosenMsgBox = MSG_WARNING;
             currentUiContext.showMsgBox({
                 visible  : true, 
                 msgType  : "warning", 
-                msgTitle : t("ATTENTION!"), 
+                msgTitle : t("warning_M"), 
                 message  : t("must_select_class")
             })            
         }
@@ -1251,6 +1303,32 @@ const columnsFr = [
                     buttonRejectHandler = {rejectHandler}            
                 />               
             }
+
+            {(modalOpen==5) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                    {t('traitement')}...
+                </div>                    
+            }
+            {(modalOpen==5) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'50%',
+                    zIndex: '1200',
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
+            }
+
             <div className={classes.inputRow} >
                 {(props.formMode=='ajout')?  
                     <div className={classes.formTitle}>

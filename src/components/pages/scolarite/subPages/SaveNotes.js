@@ -644,7 +644,7 @@ function SaveNotes(props) {
            
             {(modalOpen==4) && <BackDrop/>}
             {(modalOpen==4) &&
-                <div style={{ alignSelf: 'center',position:'absolute', top:'50%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
                     {t('loading')}...
                 </div>                    
             }
