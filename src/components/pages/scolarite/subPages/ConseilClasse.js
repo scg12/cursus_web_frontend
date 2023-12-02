@@ -235,6 +235,33 @@ function ConseilClasse(props) {
     }
 
 
+    function formatList(listConseil,ProfInfo,seqInfos,trimInfos){
+        var rang = 1;
+        var formattedList =[]
+        listConseil.map((elt)=>{
+            listElt={};
+            listElt.id = elt.id;
+            listElt.date_prevue  = elt.date_prevue;
+            listElt.heure_prevue = elt.heure_prevue;
+            listElt.type_conseil = elt.type_conseil;
+            listElt.id_type_conseil = elt.id_type_conseil;
+            listElt.nom = (ProfInfo!= undefined && ProfInfo!= {})?  ProfInfo.nom : t("non_defini");
+            listElt.user_id = ProfInfo.user_id;
+            listElt.rang = rang; 
+            listElt.status = elt.status; 
+            listElt.resume_general_decisions = elt.resume_general_decisions;
+            listElt.periodeId = elt.id_type_conseil;
+            listElt.periode = getPeriodeLabel(elt.type_conseil, listElt.periodeId, seqInfos, trimInfos);
+            listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
+            listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
+            formattedList.push(listElt);            
+            rang ++;
+        })
+        return formattedList;
+    }
+
+
+
     function createLabelValueTableDejaTenu(tab){
         var resultTab = [];
         if(tab.length>0){
@@ -268,48 +295,32 @@ function ConseilClasse(props) {
     }
     
 
-    function formatList(listConseil,ProfInfo,seqInfos,trimInfos){
-        var rang = 1;
-        var formattedList =[]
-        listConseil.map((elt)=>{
-            listElt={};
-            listElt.id = elt.id;
-            listElt.date_prevue  = elt.date_prevue;
-            listElt.heure_prevue = elt.heure_prevue;
-            listElt.type_conseil = elt.type_conseil;
-            listElt.id_type_conseil = elt.id_type_conseil;
-            listElt.nom = (ProfInfo!= undefined && ProfInfo!= {})?  ProfInfo.nom : t("non_defini");
-            listElt.user_id = ProfInfo.user_id;
-            listElt.rang = rang; 
-            listElt.status = elt.status; 
-            listElt.resume_general_decisions = elt.resume_general_decisions;
-            listElt.periodeId = elt.id_type_conseil;
-            listElt.periode = (elt.type_conseil=='annuel')? CURRENT_ANNEE_SCOLAIRE:getPeriodeLabel(listElt.periodeId,seqInfos,trimInfos);
-            listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
-            listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
-            formattedList.push(listElt);            
-            rang ++;
-        })
-        return formattedList;
-    }
-
-
-    function getPeriodeLabel(idPeriode,listSequence, listTrimestres){
+    function getPeriodeLabel(typePeriode, idPeriode, listSequence, listTrimestres){
         var foundedPeriode={id:-1, libelle:''};     
         
         if(listSequence   == undefined) listSequence   = {};
         if(listTrimestres == undefined) listTrimestres = {};
            
-        
-        foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
-        if (foundedPeriode == undefined){
-            foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
-            if (foundedPeriode == undefined){
-                foundedPeriode = {id:-1, libelle:t('conseil_anuuel')};
+        switch(typePeriode){
+            case "sequentiel":{
+                foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
+                break; 
             }
-        }
 
-        return foundedPeriode.libelle;
+            case "trimestriel":{
+                foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
+                break; 
+            }
+
+            case "annuel":{
+                foundedPeriode = {id:-1, libelle:CURRENT_ANNEE_SCOLAIRE};
+                break; 
+            }
+         
+        }
+       
+        if (foundedPeriode == undefined) return "";
+        else return foundedPeriode.libelle;
     }
 
 
