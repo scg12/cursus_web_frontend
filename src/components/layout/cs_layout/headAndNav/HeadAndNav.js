@@ -300,6 +300,8 @@ function HeadAndNav(props) {
                 :
                 null
             }
+
+           
    
        
             <div className={classes.etabInfos}>

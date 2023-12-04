@@ -300,18 +300,18 @@ function ConseilDiscipline(props) {
         (listConseil||[]).map((elt)=>{
             listElt={};
             listElt.id = elt.id;
-            listElt.date_prevue  = elt.date_prevue;
-            listElt.heure_prevue = elt.heure_prevue;
-            listElt.type_conseil = elt.type_conseil;
+            listElt.date_prevue     = elt.date_prevue;
+            listElt.heure_prevue    = elt.heure_prevue;
+            listElt.type_conseil    = elt.type_conseil;
             listElt.id_type_conseil = elt.id_type_conseil;
             listElt.resume_general_decisions = elt.resume_general_decisions;
-            listElt.nom = elt.convoque_par.nom;
-            listElt.user_id = elt.convoque_par.id_user;
-            listElt.rang = rang; 
-            listElt.status = elt.status; 
-            listElt.periodeId = listElt.id_type_conseil;
-            listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos, trimInfos);
-            listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
+            listElt.nom            = elt.convoque_par.nom;
+            listElt.user_id        = elt.convoque_par.id_user;
+            listElt.rang           = rang; 
+            listElt.status         = elt.status; 
+            listElt.periodeId      = listElt.id_type_conseil;
+            listElt.periode        = getPeriodeLabel(listElt.id_type_conseil, listElt.periodeId, seqInfos, trimInfos);
+            listElt.etatLabel      = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);
             rang ++;
@@ -319,18 +319,31 @@ function ConseilDiscipline(props) {
         return formattedList;
     }
 
-    function getPeriodeLabel(idPeriode, listSequence, listTrimestres){
-        var foundedPeriode={};        
-        foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
-        if (foundedPeriode== undefined){
-            foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
-            if (foundedPeriode== undefined){
-                foundedPeriode = {id:-1, libelle:t('conseil_anuuel')};
+    
+    function getPeriodeLabel(typeConseil, idPeriode, listSequence, listTrimestres){
+        var foundedPeriode={id:-1, libelle:''};     
+        
+        if(listSequence   == undefined) listSequence   = [];
+        if(listTrimestres == undefined) listTrimestres = [];
+           
+        switch(typeConseil){
+            case "sequentiel":{
+                foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
+                break; 
             }
+
+            case "trimestriel":{
+                foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
+                break; 
+            }
+         
         }
-        return foundedPeriode.libelle;
+       
+        if (foundedPeriode == undefined) return "";
+        else return foundedPeriode.libelle;
     }
 
+    
    
     function dropDownHandler(e){
         //console.log(e.target.value)

@@ -1,4 +1,6 @@
 {   
+    "confirm_meeting_closure_M":"CONFIRMATION",
+    "confirm_meeting_closure"  :"Do you really want to terminate the meeting ?",
     "close_preview":"Close preview",
     "sanctions":"Sanctions",
     "moy_generale":"Overall AVG.",

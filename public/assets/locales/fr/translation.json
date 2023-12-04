@@ -1,4 +1,6 @@
 {   
+    "confirm_meeting_closure_M":"CONFIRMATION",
+    "confirm_meeting_closure"  :"Voulez-vous vraiment terminer le conseil ?",
     "close_preview":"Fermer l'apercu",
     "sanctions":"Sanctions",
     "moy_generale":"Moy. générale",

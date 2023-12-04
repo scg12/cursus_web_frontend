@@ -69,6 +69,7 @@ const MSG_SUCCESS_CREATE       = 1;
 const MSG_SUCCESS_UPDATE       = 2;
 const MSG_SUCCESS_UPDATE_PRINT = 3;
 const MSG_WARNING              = 4;
+const MSG_CONFIRM              = 5;
 
 const ROWS_PER_PAGE            = 40;
 const FIRST_PAGE_ROWS_COUNT    = 20;
@@ -84,8 +85,8 @@ function ConseilClasse(props) {
     const [isValid, setIsValid] = useState(false);
     const [gridMeeting, setGridMeeting]= useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optClasse, setOpClasse] = useState([]);
-    const[isLoading,setIsloading] = useState(false);
+    const [optClasse, setOpClasse]  = useState([]);
+    const [isLoading, setIsloading] = useState(false);
     const[LoadingVisible,setLoadingVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
@@ -136,7 +137,7 @@ function ConseilClasse(props) {
                 }).then((res)=>{
                     console.log(res.data);
                     LIST_ELEVES = [...getElevesTab(res.data)];
-                    currentUiContext.setFormIsloading(false);
+                   
                    
                     setGridMeeting(listConseils);
                     console.log(gridMeeting);
@@ -183,7 +184,7 @@ function ConseilClasse(props) {
         }).then((res)=>{
             console.log(res.data);
             LIST_ELEVES = [...getElevesTab(res.data)];
-            currentUiContext.setFormIsloading(false);
+            
         })  
     }
 
@@ -247,11 +248,11 @@ function ConseilClasse(props) {
             listElt.id_type_conseil = elt.id_type_conseil;
             listElt.nom = (ProfInfo!= undefined && ProfInfo!= {})?  ProfInfo.nom : t("non_defini");
             listElt.user_id = ProfInfo.user_id;
-            listElt.rang = rang; 
+            listElt.rang   = rang; 
             listElt.status = elt.status; 
             listElt.resume_general_decisions = elt.resume_general_decisions;
             listElt.periodeId = elt.id_type_conseil;
-            listElt.periode = getPeriodeLabel(elt.type_conseil, listElt.periodeId, seqInfos, trimInfos);
+            listElt.periode   = getPeriodeLabel(elt.type_conseil, listElt.periodeId, seqInfos, trimInfos);
             listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);            
@@ -298,8 +299,8 @@ function ConseilClasse(props) {
     function getPeriodeLabel(typePeriode, idPeriode, listSequence, listTrimestres){
         var foundedPeriode={id:-1, libelle:''};     
         
-        if(listSequence   == undefined) listSequence   = {};
-        if(listTrimestres == undefined) listTrimestres = {};
+        if(listSequence   == undefined) listSequence   = [];
+        if(listTrimestres == undefined) listTrimestres = [];
            
         switch(typePeriode){
             case "sequentiel":{
@@ -334,7 +335,7 @@ function ConseilClasse(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
             
-            //currentUiContext.setFormIsloading(true);
+          
             // getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
             // getNextClassPossibles(CURRENT_CLASSE_ID); 
             // getClassStudentList(CURRENT_CLASSE_ID); 
@@ -677,16 +678,27 @@ const columnsFr = [
     }
     
 /*************************** Handler functions ***************************/
-function setEditMeetingGlobalData(meeting){
-    return new Promise(function(resolve, reject){
-        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(meeting.membres, true, 1);
-        OTHER_MEMBERS     =  createLabelValueTableWithUserS(meeting.membres_a_ajouter,false, -1);
-        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(meeting.membres_presents,true, 0);
-        INFO_ELEVES       =  meeting.info_eleves;
-        resolve(1);
-    });
+    function setEditMeetingGlobalData(meeting){
+        return new Promise(function(resolve, reject){
+            DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(meeting.membres, true, 1);
+            OTHER_MEMBERS     =  createLabelValueTableWithUserS(meeting.membres_a_ajouter,false, -1);
+            PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(meeting.membres_presents,true, 0);
+            INFO_ELEVES       =  meeting.info_eleves;
+            resolve(1);
+        });
 
-}
+    }
+
+    function setConsultMeetingGlobalData(meeting){
+        return new Promise(function(resolve, reject){
+            DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(meeting.membres, true, 1);
+            OTHER_MEMBERS     =  createLabelValueTableWithUserS(meeting.membres_a_ajouter,false, -1);
+            PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(meeting.membres_presents,true, 1);
+            INFO_ELEVES       =  meeting.info_eleves;
+            resolve(1);
+        });
+
+    }
 
     function handleDeleteRow(params){
         if(params.field=='id'){
@@ -755,7 +767,7 @@ function setEditMeetingGlobalData(meeting){
         
         var inputs=[];
         var CURRENT_CC    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
-        setEditMeetingGlobalData(CURRENT_CC).then(()=>{
+        setConsultMeetingGlobalData(CURRENT_CC).then(()=>{
             inputs[0] = row.id;
             inputs[1] = row.date_prevue;
             inputs[2] = row.heure_prevue;
@@ -842,7 +854,7 @@ function setEditMeetingGlobalData(meeting){
     function addClassMeeting(meeting) {       
         console.log('Ajout',meeting);
         CURRENT_MEETING = meeting;
-           
+        setIsloading(true);
         axiosInstance.post(`create-conseil-classe/`, {
             id_sousetab     : meeting.id_sousetab,
             id_classe       : meeting.classeId,
@@ -854,12 +866,14 @@ function setEditMeetingGlobalData(meeting){
             id_periode      : meeting.id_periode,
             alerter_membres : meeting.alerter_membres,
             id_membres      : meeting.id_membres,
-            roles_membres   : meeting.roles_membres
+            roles_membres   : meeting.roles_membres,
+            membres_presents: meeting.membre_presents
             
         }).then((res)=>{
            var gridData = formatList(res.data.conseil_classes, res.data.prof_principal, res.data.seqs_dispo, res.data.trims_dispo)
             setGridMeeting(gridData);
             console.log(res.data);
+            setIsloading(false);
             //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
@@ -870,11 +884,26 @@ function setEditMeetingGlobalData(meeting){
             })
         })    
     }
+
+    function meetingClosureHandler(meeting){
+        CURRENT_MEETING = meeting; 
+        if(CURRENT_MEETING.status == 1){
+            chosenMsgBox = MSG_CONFIRM;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("confirm_meeting_closure_M"), 
+                message:t("confirm_meeting_closure")
+            });
+        }
+
+    }
     
     function modifyClassMeeting(meeting) {
         console.log('Modif',meeting);
-        CURRENT_MEETING = meeting;
-           
+        CURRENT_MEETING = meeting;       
+      
+        setIsloading(true);
         axiosInstance.post(`update-conseil-classe/`, {
             id_conseil_classe              : meeting.id_conseil_classe,
             id_sousetab                    : meeting.id_sousetab,
@@ -901,7 +930,7 @@ function setEditMeetingGlobalData(meeting){
            var gridData = createGridData(res.data.conseil_classes)
             setGridMeeting(gridData);
             console.log(res.data);
-
+            setIsloading(false);
            //setModalOpen(0);
            if(meeting.to_close==1){                
             chosenMsgBox = MSG_SUCCESS_UPDATE_PRINT;
@@ -1021,9 +1050,7 @@ function setEditMeetingGlobalData(meeting){
                 printMeetingReport() 
                 //setModalOpen(0); 
                 return 1;
-            }
-
-           
+            }           
 
             case MSG_WARNING: {
                     currentUiContext.showMsgBox({
@@ -1034,6 +1061,18 @@ function setEditMeetingGlobalData(meeting){
                 })  
                 return 1;
             }
+
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                modifyClassMeeting(CURRENT_MEETING);
+                return 1;
+            }
+
             
            
             default: {
@@ -1091,6 +1130,17 @@ function setEditMeetingGlobalData(meeting){
                     msgTitle:"", 
                     message:""
                 })  
+                return 1;
+            }
+
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                // modifyClassMeeting(CURRENT_MEETING);
                 return 1;
             }
             
@@ -1280,6 +1330,7 @@ function setEditMeetingGlobalData(meeting){
                     eleves             = {[...LIST_ELEVES]}
                     formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
                     actionHandler      = {(modalOpen==1) ? addClassMeeting : modifyClassMeeting} 
+                    closeHandler       = {meetingClosureHandler}
                     printReportHandler = {printReport}
                     cancelHandler      = {quitForm}
                 />
@@ -1314,10 +1365,35 @@ function setEditMeetingGlobalData(meeting){
                     buttonRejectHandler = {rejectHandler}            
                 />               
             }
+            {(isLoading) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:"56.7vh",  fontSize:'1.2vw', fontWeight:'800', color:'#4d4848', zIndex:'1207',marginTop:'-5.7vh'}}> 
+                    {t('traitement')}...
+                </div>                    
+            }
+            {(isLoading) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'54.3vh',
+                    backgroundColor: 'white',
+                    zIndex: 1207,
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
+            }
 
             {(modalOpen==5) &&
                 <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
-                    {t('traitement')}...
+                    {t('loading')}...
                 </div>                    
             }
             {(modalOpen==5) &&
