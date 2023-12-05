@@ -93,7 +93,7 @@ function AddDisciplinMeeting(props) {
     }
 
     const nonDefini=[        
-        {value: -1,   label:'-----'+ t('non defini') +'-----' },
+        {value: -1,   label:'-----'+ t('not_defined') +'-----' },
     ];
 
     const choisir = [        
