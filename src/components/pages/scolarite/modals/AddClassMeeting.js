@@ -188,7 +188,7 @@ function AddClassMeeting(props) {
 
             tempTab = [...props.presentsMembres];
             setTabProfsPresents(tempTab);
-            console.log("prepeh",tempTab)
+            console.log("prepeh",tempTab);
 
             tempTab = []; // a initialiser d'abord...
             tempTab.unshift(choisir);
@@ -691,9 +691,7 @@ function AddClassMeeting(props) {
         });
         setPresents(tabPresent);
         setEtats(tabEtats);
-                 
         
-
         console.log("presents absents",tabProfsPresents, profPresent,tempTab, presents)
         
 

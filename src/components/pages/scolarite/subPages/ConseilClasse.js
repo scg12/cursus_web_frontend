@@ -231,7 +231,7 @@ function ConseilClasse(props) {
             setGridMeeting(listConseils);
             console.log(gridMeeting);
             
-            setIsloading(false);
+           // setIsloading(false);
         })  
     }
 
@@ -885,20 +885,6 @@ const columnsFr = [
         })    
     }
 
-    function meetingClosureHandler(meeting){
-        CURRENT_MEETING = meeting; 
-        if(CURRENT_MEETING.status == 1){
-            chosenMsgBox = MSG_CONFIRM;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"question", 
-                msgTitle:t("confirm_meeting_closure_M"), 
-                message:t("confirm_meeting_closure")
-            });
-        }
-
-    }
-    
     function modifyClassMeeting(meeting) {
         console.log('Modif',meeting);
         CURRENT_MEETING = meeting;       
@@ -954,7 +940,19 @@ const columnsFr = [
         })    
     }
 
-    
+
+    function meetingClosureHandler(meeting){
+        CURRENT_MEETING = meeting; 
+        if(CURRENT_MEETING.status == 1){
+            chosenMsgBox = MSG_CONFIRM;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("confirm_meeting_closure_M"), 
+                message:t("confirm_meeting_closure")
+            });
+        }
+    }    
 
     function deleteRow(rowId) {
        // alert(rowId);
@@ -1036,7 +1034,6 @@ const columnsFr = [
                 getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
                 //setModalOpen(0); 
                 return 1;
-
             }
 
             case MSG_SUCCESS_UPDATE_PRINT:{
@@ -1073,8 +1070,6 @@ const columnsFr = [
                 return 1;
             }
 
-            
-           
             default: {
                 currentUiContext.showMsgBox({
                     visible:false, 

@@ -74,6 +74,7 @@ function AddDisciplinMeeting(props) {
    
     const [optPeriode, setOptPeriode] = useState([]);
     const [presents, setPresents]= useState([]);
+    const [etats, setEtats]= useState([]);
    
     const [tabSanctions, setTabSanctions] = useState([]);
     const [tabMotifs, setTabMotifs] = useState([]);
@@ -167,6 +168,10 @@ function AddDisciplinMeeting(props) {
             OTHER_MEMBRES_ORIGIN = [...tempTab];
             //tempTab.unshift(firstSelectItem1);
             setOptAutresMembres(tempTab);
+
+            tempTab = [...props.presentsMembres];
+            setTabProfsPresents(tempTab);
+            console.log("prepeh",tempTab);
 
             console.log("les tableaux",optConvocateurs,optMembres,optAutresMembres);
 
@@ -264,11 +269,12 @@ function AddDisciplinMeeting(props) {
                 PERIODE_LABEL = periode.label;
 
                 setOptPeriode(tabPeriode);
-
-            } else {
-                tempTab = [...props.defaultMembres];
-                setTabProfsPresents(tempTab);
             }
+
+            // } else {
+            //     tempTab = [...props.defaultMembres];
+            //     setTabProfsPresents(tempTab);
+            // }
 
         } 
 
@@ -520,7 +526,7 @@ function AddDisciplinMeeting(props) {
             MEETING.status = 1 ;
             MEETING.statLabel = t('cloture') ; 
             MEETING.to_close = true;      
-            props.actionHandler(MEETING);
+            props.closeHandler(MEETING);  
 
         } else {
             errorDiv.className = classes.formErrorMsg;
@@ -614,7 +620,11 @@ function AddDisciplinMeeting(props) {
         MEETING.id_type_sanction_generale_classe = getListElementByFields(tabElevesDecisions, "decisionId"); //Sanction generale si toute la classe est convoquee
 
         //----- 3ieme partie du formulaire2 -----
-        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
+        if(props.formMode == 'creation'){
+            MEETING.membre_presents = getListElementByFields(optMembres, "value");                         //Liste des membres presents
+        } else {
+            MEETING.membre_presents = getListElementByFields(tabProfsPresents.filter((prof)=>prof.present == true), "value");  //Liste des membres presents
+        }
 
         MEETING.to_close = false;
 
@@ -651,17 +661,39 @@ function AddDisciplinMeeting(props) {
       
         var tabDecisions = [];
         var elvDecision  = {};     
-        var profPresent  = [];
+        // var profPresent  = [];
 
-        optMembres.map((elt, index)=>{profPresent[index]=true});
-        setPresents(profPresent);
+        // optMembres.map((elt, index)=>{profPresent[index]=true});
+        // setPresents(profPresent);
 
-        profPresent = [];
+        var profPresent = [];
         optMembres.map((elt)=>{
-            profPresent.push({value:elt.value, label:elt.label, role:elt.role, present:elt.present, etat:0});
+            profPresent.push({value:elt.value, label:elt.label, role:elt.role, present:true, etat:0});
+        });      
+      
+        console.log("presents absents",tabProfsPresents, profPresent)
+        var tempTab = [];
+
+        profPresent.map((elt1)=>{
+            var result = tabProfsPresents.find((elt2)=>elt2.value == elt1.value);
+            if(result!= undefined){
+                elt1.present = true;
+                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:result.present, etat:result.etat});
+            } else {
+                elt1.present = false;
+                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:false, etat:0});
+            }
         })
 
-        setTabProfsPresents(profPresent);
+        setTabProfsPresents(tempTab);
+        var tabPresent = []; var tabEtats = []
+        tempTab.map((elt)=> {
+            tabPresent.push(elt.present);
+            tabEtats.push(elt.etat);
+        });
+
+        setPresents(tabPresent);
+        setEtats(tabEtats);
 
         if(props.formMode!="consult"){
 
@@ -1282,25 +1314,47 @@ function AddDisciplinMeeting(props) {
 //----------------------- PROFS PRESENTS -----------------------
    
     function managePresent(e){
+        // e.preventDefault();
+        // var participants = [...optMembres];
+        // var tabPresent = [...presents];
+        // var row = e.target.id;
+
+        // if(e.target.checked){
+        //     tabPresent[row]=true;
+        //     participants[row].present= true;
+        //     e.target.checked = true;
+        //     setPresents(tabPresent);
+        //     setOptMembres(participants);
+
+        // } else {
+        //     tabPresent[row]=false;
+        //     participants[row].present= false;
+        //     e.target.checked = false;
+        //     setPresents(tabPresent);
+        //     setOptMembres(participants);
+        // }
+
         e.preventDefault();
-        var participants = [...optMembres];
+        //var participants = [...optMembres];
+        var profPresents = [...tabProfsPresents];
         var tabPresent = [...presents];
         var row = e.target.id;
 
         if(e.target.checked){
-            tabPresent[row]=true;
-            participants[row].present= true;
-            e.target.checked = true;
+            tabPresent[row] = true;
+            profPresents[row].present = true;
+            //e.target.checked = true;
+            //setOptMembres(participants);
             setPresents(tabPresent);
-            setOptMembres(participants);
-
+            setTabProfsPresents(profPresents);
         } else {
-            tabPresent[row]=false;
-            participants[row].present= false;
-            e.target.checked = false;
+            tabPresent[row] = false;
+            profPresents[row].present = false;
+            //e.target.checked = false;
             setPresents(tabPresent);
-            setOptMembres(participants);
+            setTabProfsPresents(profPresents);
         }
+        console.log("profs presents",profPresents);
     }
 
     const LignePresentsHeader=(props)=>{
@@ -1318,9 +1372,10 @@ function AddDisciplinMeeting(props) {
                 <div style={{width:'17vw'}}>               
                     {props.nom}                   
                 </div>
-                
+               
+
                 <div style={{display:'flex',  flexDirection:'row', alignItems:'center'}}> 
-                    <input type='checkbox' style={{width:'1vw', height:'2vh'}} checked={presents[props.rowIndex]}  id={props.rowIndex} name ={'Present'+props.rowIndex} onChange={managePresent}/>                    
+                    <input type='checkbox' disabled={etats[props.rowIndex]==1} style={{width:'1vw', height:'2vh'}} checked={presents[props.rowIndex]==true}  id={props.rowIndex} name ={'Present'+props.rowIndex} onChange={managePresent}/>                    
                 </div>              
             </div>
         );
