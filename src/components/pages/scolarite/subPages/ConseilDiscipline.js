@@ -86,7 +86,7 @@ function ConseilDiscipline(props) {
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
     const[isLoading,setIsloading] = useState(false);
-    const[LoadingVisible,setLoadingVisible] = useState(false);
+    // const[LoadingVisible,setLoadingVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
     
@@ -97,6 +97,49 @@ function ConseilDiscipline(props) {
         getMotifConvocation();
         getTypeSAnction();
     },[]);
+
+    function getDisciplinMeetingData(classId){
+        var listConseils = [];
+        setModalOpen(5);
+        axiosInstance.post(`list-conseil-disciplines/`, {
+            id_classe  : classId,
+            id_sousetab: currentAppContext.currentEtab
+        }).then((res)=>{
+            console.log("donnees",res.data);
+
+            if(res.data!= undefined && res.data!=null){
+                LIST_CONSEILS_INFOS = [...res.data.conseil_disciplines];
+                
+                CONVOQUE_PAR_ADD     = [...res.data.enseignants_conv];
+                DEFAULT_MEMBERS_ADD  = [...res.data.enseignants_classe];
+                OTHER_MEMBERS_ADD    = [...res.data.autres_enseignants];
+                PRESENTS_MEMBERS_ADD = [...res.data.enseignants_classe];
+                
+
+                SEQUENCES_DISPO   =  createLabelValueTable(res.data.seqs);
+                TRIMESTRES_DISPO  =  createLabelValueTable(res.data.trims);
+                ANNEE_DISPO = [{value:"annee",label:t("annee")+' '+new Date().getFullYear()}];
+
+                listConseils = [...formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims)]
+                console.log(listConseils);   
+            }
+
+            var listEleves = []
+            axiosInstance.post(`list-eleves/`, {
+                id_classe: classId,
+            }).then((res)=>{
+                console.log(res.data);
+                console.log(listEleves);
+                LIST_ELEVES= [...getElevesTab(res.data)];
+                console.log("Eleves",LIST_ELEVES) ; 
+                setIsloading(false);
+
+                setGridMeeting(listConseils);
+                console.log(gridMeeting);
+                setModalOpen(0);
+            })  
+        })
+    }
 
     
     const getEtabListClasses=()=>{
@@ -293,15 +336,15 @@ function ConseilDiscipline(props) {
         //console.log(e.target.value)
         var grdRows;
         if(e.target.value != optClasse[0].value){
-             //----ici je dois charger les membres(enseignants, responsables...)
             
             setIsValid(true);            
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse.find((classe)=>(classe.value == CURRENT_CLASSE_ID)).label;
 
-            setIsloading(true);
-            getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
-            getClassStudentList(CURRENT_CLASSE_ID);
+            //setIsloading(true);
+            getDisciplinMeetingData(CURRENT_CLASSE_ID);
+            // getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
+            // getClassStudentList(CURRENT_CLASSE_ID);
                
         }else{
             CURRENT_CLASSE_ID = undefined;
@@ -624,7 +667,33 @@ const columnsFr = [
     }
     
 /*************************** Handler functions ***************************/
-    
+function setEditMeetingGlobalData(meeting){
+    return new Promise(function(resolve, reject){
+
+        var convoquePar      =  meeting.convoque_par;
+        if(CONVOQUE_PAR_ADD != undefined){
+            if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
+                CONVOQUE_PAR_ADD.unshift(convoquePar);
+            }           
+        }
+      
+        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(meeting.membres, true, 1);
+        OTHER_MEMBERS     =  createLabelValueTableWithUserS(meeting.membres_a_ajouter,false, -1);
+        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(meeting.membres_presents,true, 0);
+        CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 0);
+       
+        if(meeting.is_all_class_convoke){
+            ELEVES_SANCTIONS  = createListElevesSanctions(meeting.sanction_generale_classe,0);
+            ELEVES_MOTIFS     = createListElevesMotifs(meeting.motif_generale_classe,0);
+        } else {
+            ELEVES_SANCTIONS  =  createListElevesSanctions(meeting.sanctions_car_par_cas,0);
+            ELEVES_MOTIFS     =  createListElevesMotifs(meeting.motif_cas_par_cas,0);
+        } 
+
+        resolve(1);
+    });
+
+}
 
     function handleDeleteRow(params){
         if(params.field=='id'){
@@ -658,100 +727,129 @@ const columnsFr = [
         var inputs=[];   
         
         var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
-        var convoquePar   =  CURRENT_CD.convoque_par;
+        // var convoquePar   =  CURRENT_CD.convoque_par;
 
-        console.log("le meeting", CONVOQUE_PAR_ADD, CURRENT_CD);
+        // console.log("le meeting", CONVOQUE_PAR_ADD, CURRENT_CD);
 
-        if(CONVOQUE_PAR_ADD != undefined){
-            if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
-                CONVOQUE_PAR_ADD.unshift(convoquePar);
-            }           
-        }//else CONVOQUE_PAR_ADD = [];
+        // if(CONVOQUE_PAR_ADD != undefined){
+        //     if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
+        //         CONVOQUE_PAR_ADD.unshift(convoquePar);
+        //     }           
+        // }//else CONVOQUE_PAR_ADD = [];
       
-        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
-        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
-        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 0);
-        CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 0);
+        // DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
+        // OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
+        // PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 0);
+        // CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 0);
        
-        if(CURRENT_CD.is_all_class_convoke){
-            ELEVES_SANCTIONS  = createListElevesSanctions(CURRENT_CD.sanction_generale_classe,0);
-            ELEVES_MOTIFS     = createListElevesMotifs(CURRENT_CD.motif_generale_classe,0);
-        } else {
-            ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,0);
-            ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,0);
-        } 
+        // if(CURRENT_CD.is_all_class_convoke){
+        //     ELEVES_SANCTIONS  = createListElevesSanctions(CURRENT_CD.sanction_generale_classe,0);
+        //     ELEVES_MOTIFS     = createListElevesMotifs(CURRENT_CD.motif_generale_classe,0);
+        // } else {
+        //     ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,0);
+        //     ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,0);
+        // } 
 
+        setEditMeetingGlobalData(CURRENT_CD).then(()=>{
+            console.log("convocateurs",CONVOQUE_PAR);    
+            inputs[0] = row.id;
+            inputs[1] = row.date_prevue;
+            inputs[2] = row.heure_prevue;
+            inputs[3] = row.type_conseil;
+            inputs[4] = row.id_type_conseil;
+            
+            inputs[5] = row.periode;
+            inputs[6] = row.nom;
+            inputs[7] = row.user_id;
 
-        console.log("convocateurs",CONVOQUE_PAR);
-    
-        inputs[0] = row.id;
-        inputs[1] = row.date_prevue;
-        inputs[2] = row.heure_prevue;
-        inputs[3] = row.type_conseil;
-        inputs[4] = row.id_type_conseil;
+            inputs[8] = row.status;
+            inputs[9] = row.statusLabel;
+
+            inputs[10] = [...ELEVES_MOTIFS];
+            inputs[11] = [...ELEVES_SANCTIONS];
         
-        inputs[5] = row.periode;
-        inputs[6] = row.nom;
-        inputs[7] = row.user_id;
+            inputs[12] = row.is_all_class_convoke;
+            inputs[13] = row.resume_general_decisions;      
+            
+            currentUiContext.setFormInputs(inputs);
+            console.log("laligne",row, currentUiContext.formInputs);
+            setModalOpen(2);
+        })
 
-        inputs[8] = row.status;
-        inputs[9] = row.statusLabel;
 
-        inputs[10] = [...ELEVES_MOTIFS];
-        inputs[11] = [...ELEVES_SANCTIONS];
-       
-        inputs[12] = row.is_all_class_convoke;
-        inputs[13] = row.resume_general_decisions;      
         
-        currentUiContext.setFormInputs(inputs);
-        console.log("laligne",row, currentUiContext.formInputs);
-        setModalOpen(2);
     }
 
+    function setConsMeetingGlobalData(meeting){
+        return new Promise(function(resolve, reject){
+    
+            var convoquePar      =  meeting.convoque_par;
+            if(CONVOQUE_PAR_ADD != undefined){
+                if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
+                    CONVOQUE_PAR_ADD.unshift(convoquePar);
+                }           
+            }
+          
+            DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(meeting.membres, true, 1);
+            OTHER_MEMBERS     =  createLabelValueTableWithUserS(meeting.membres_a_ajouter,false, -1);
+            PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(meeting.membres_presents,true, 1);
+            ELEVES_SANCTIONS  =  createListElevesSanctions(meeting.sanctions_car_par_cas,1);
+            ELEVES_MOTIFS     =  createListElevesMotifs(meeting.motif_cas_par_cas,1);
+            CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 1);
+    
+            resolve(1);
+        });
+    
+    }
+    
+
     function consultRowData(row){
-        var inputs=[];
-       
-
+        var inputs=[];       
         var CURRENT_CD    =  LIST_CONSEILS_INFOS.find((cd)=>cd.id == row.id);
-        var convoquePar   =  CURRENT_CD.convoque_par;
+        // var convoquePar   =  CURRENT_CD.convoque_par;
 
-        console.log("le meeting", CONVOQUE_PAR_ADD, CURRENT_CD);
+        // console.log("le meeting", CONVOQUE_PAR_ADD, CURRENT_CD);
 
-        if(CONVOQUE_PAR_ADD != undefined){
-            if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
-                CONVOQUE_PAR_ADD.unshift(convoquePar);
-            }           
-        }
+        // if(CONVOQUE_PAR_ADD != undefined){
+        //     if(CONVOQUE_PAR_ADD.find((elt)=>elt.id_user==convoquePar.id_user)==undefined){
+        //         CONVOQUE_PAR_ADD.unshift(convoquePar);
+        //     }           
+        // }
 
-        DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
-        OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
-        PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 1);
-        ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,1);
-        ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,1);
-        CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 1);
+        // DEFAULT_MEMBERS   =  createLabelValueTableWithUserS(CURRENT_CD.membres, true, 1);
+        // OTHER_MEMBERS     =  createLabelValueTableWithUserS(CURRENT_CD.membres_a_ajouter,false, -1);
+        // PRESENTS_MEMBERS  =  createLabelValueTableWithUserS(CURRENT_CD.membres_presents,true, 1);
+        // ELEVES_SANCTIONS  =  createListElevesSanctions(CURRENT_CD.sanctions_car_par_cas,1);
+        // ELEVES_MOTIFS     =  createListElevesMotifs(CURRENT_CD.motif_cas_par_cas,1);
+        // CONVOQUE_PAR      =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,true, 1);
+
+        setConsMeetingGlobalData(CURRENT_CD).then(()=>{
+            inputs[0]= row.id;
+            inputs[1]= row.date_prevue;
+            inputs[2]= row.heure_prevue;
+            inputs[3]= row.type_conseil;
+            inputs[4]= row.id_type_conseil;
+            
+            inputs[5]= row.periode;
+            inputs[6]= row.nom;
+            inputs[7]= row.user_id;
+
+            inputs[8] = row.status;
+            inputs[9] = row.statusLabel;
+
+            inputs[10]= [...ELEVES_MOTIFS];
+            inputs[11]= [...ELEVES_SANCTIONS];
+
+            inputs[12]= row.is_all_class_convoke;
+            inputs[13]= row.resume_general_decisions;
+            
+            currentUiContext.setFormInputs(inputs)
+            setModalOpen(3);
+
+        });
         
 
-        inputs[0]= row.id;
-        inputs[1]= row.date_prevue;
-        inputs[2]= row.heure_prevue;
-        inputs[3]= row.type_conseil;
-        inputs[4]= row.id_type_conseil;
         
-        inputs[5]= row.periode;
-        inputs[6]= row.nom;
-        inputs[7]= row.user_id;
-
-        inputs[8] = row.status;
-        inputs[9] = row.statusLabel;
-
-        inputs[10]= [...ELEVES_MOTIFS];
-        inputs[11]= [...ELEVES_SANCTIONS];
-
-        inputs[12]= row.is_all_class_convoke;
-        inputs[13]= row.resume_general_decisions;
-        
-        currentUiContext.setFormInputs(inputs)
-        setModalOpen(3);
     }
 
     function getTypeConseil(code){
@@ -895,23 +993,33 @@ const columnsFr = [
         //ClearForm();
         setModalOpen(0)
     }
-   
-    function AddNewMeetingHandler(e){
-        if(CURRENT_CLASSE_ID != undefined){   
+
+    
+    function setMeetingGlobalData(){
+        return new Promise(function(resolve, reject){
             DEFAULT_MEMBERS  =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,  true,   1);     
             CONVOQUE_PAR     =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,     true,   1);
             OTHER_MEMBERS    =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,    false, -1);            
             
             ELEVES_SANCTIONS =  [];
             ELEVES_MOTIFS    =  [];
+            resolve(1);
+        });
+
+    }
+   
+    function AddNewMeetingHandler(e){
+        if(CURRENT_CLASSE_ID != undefined){   
+            // DEFAULT_MEMBERS  =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,  true,   1);     
+            // CONVOQUE_PAR     =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,     true,   1);
+            // OTHER_MEMBERS    =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,    false, -1);            
             
-            if(isLoading==false){
+            // ELEVES_SANCTIONS =  [];
+            // ELEVES_MOTIFS    =  [];
+            setMeetingGlobalData().then(()=>{
                 setModalOpen(1); 
                 initFormInputs();
-                setLoadingVisible(false);
-            }else{
-                setLoadingVisible(true);
-            }
+            });
            
         } else{
             chosenMsgBox = MSG_WARNING;
@@ -1130,11 +1238,11 @@ const columnsFr = [
     return (
         <div className={classes.formStyleP}>
             
-            {LoadingVisible && 
+            {/* {LoadingVisible && 
                 <div className={classes.formET} style={{alignItems:"center", width:'100%', height:'100%', backgroundColor:"white"}}>
                     <img src='images/Loading_icon.gif' alt="loading..." />
                 </div>
-            }
+            } */}
 
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen>0 && modalOpen<4) && 
@@ -1186,6 +1294,31 @@ const columnsFr = [
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
                />             
+            }
+
+            {(modalOpen==5) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                    {t('traitement')}...
+                </div>                    
+            }
+            {(modalOpen==5) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'50%',
+                    zIndex: '1200',
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
             }
             <div className={classes.inputRow} >
                 {(props.formMode=='ajout')?  
