@@ -71,7 +71,9 @@ var chosenMsgBox;
 const MSG_SUCCESS_CREATE       = 1;
 const MSG_SUCCESS_UPDATE       = 2;
 const MSG_SUCCESS_UPDATE_PRINT = 3;
-const MSG_WARNING = 4; 
+const MSG_WARNING              = 4; 
+const MSG_CONFIRM              = 5;
+
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var CCPageSet=[];
@@ -300,18 +302,18 @@ function ConseilDiscipline(props) {
         (listConseil||[]).map((elt)=>{
             listElt={};
             listElt.id = elt.id;
-            listElt.date_prevue  = elt.date_prevue;
-            listElt.heure_prevue = elt.heure_prevue;
-            listElt.type_conseil = elt.type_conseil;
+            listElt.date_prevue     = elt.date_prevue;
+            listElt.heure_prevue    = elt.heure_prevue;
+            listElt.type_conseil    = elt.type_conseil;
             listElt.id_type_conseil = elt.id_type_conseil;
             listElt.resume_general_decisions = elt.resume_general_decisions;
-            listElt.nom = elt.convoque_par.nom;
-            listElt.user_id = elt.convoque_par.id_user;
-            listElt.rang = rang; 
-            listElt.status = elt.status; 
-            listElt.periodeId = listElt.id_type_conseil;
-            listElt.periode = getPeriodeLabel(listElt.periodeId,seqInfos, trimInfos);
-            listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
+            listElt.nom            = elt.convoque_par.nom;
+            listElt.user_id        = elt.convoque_par.id_user;
+            listElt.rang           = rang; 
+            listElt.status         = elt.status; 
+            listElt.periodeId      = listElt.id_type_conseil;
+            listElt.periode        = getPeriodeLabel(listElt.id_type_conseil, listElt.periodeId, seqInfos, trimInfos);
+            listElt.etatLabel      = (elt.status == 0) ? t('en_cours') :t('cloture');
             listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);
             rang ++;
@@ -319,18 +321,31 @@ function ConseilDiscipline(props) {
         return formattedList;
     }
 
-    function getPeriodeLabel(idPeriode, listSequence, listTrimestres){
-        var foundedPeriode={};        
-        foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
-        if (foundedPeriode== undefined){
-            foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
-            if (foundedPeriode== undefined){
-                foundedPeriode = {id:-1, libelle:t('conseil_anuuel')};
+    
+    function getPeriodeLabel(typeConseil, idPeriode, listSequence, listTrimestres){
+        var foundedPeriode={id:-1, libelle:''};     
+        
+        if(listSequence   == undefined) listSequence   = [];
+        if(listTrimestres == undefined) listTrimestres = [];
+           
+        switch(typeConseil){
+            case "sequentiel":{
+                foundedPeriode = listSequence.find((seq)=>(seq.id==idPeriode));
+                break; 
             }
+
+            case "trimestriel":{
+                foundedPeriode = listTrimestres.find((trim)=>(trim.id==idPeriode));
+                break; 
+            }
+         
         }
-        return foundedPeriode.libelle;
+       
+        if (foundedPeriode == undefined) return "";
+        else return foundedPeriode.libelle;
     }
 
+    
    
     function dropDownHandler(e){
         //console.log(e.target.value)
@@ -881,7 +896,7 @@ function setEditMeetingGlobalData(meeting){
     function addMeeting(meeting) {       
         console.log('Ajout',meeting);
         CURRENT_MEETING = meeting;
-           
+        setIsloading(true);
         axiosInstance.post(`create-conseil-discipline/`, {
             id_sousetab               : meeting.id_sousetab,
             id_classe                 : meeting.classeId,
@@ -895,6 +910,7 @@ function setEditMeetingGlobalData(meeting){
             alerter_membres           : meeting.alerter_membres,
             id_membres                : meeting.id_membres,
             roles_membres             : meeting.roles_membres,
+            membres_presents          : meeting.membre_presents,
             list_motifs_covocations   : meeting.list_motifs_covocations
             
         }).then((res)=>{
@@ -902,7 +918,7 @@ function setEditMeetingGlobalData(meeting){
          
             setGridMeeting(gridData);
             console.log(res.data);
-
+            setIsloading(false);
             //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
@@ -919,7 +935,7 @@ function setEditMeetingGlobalData(meeting){
     function modifyMeeting(meeting) {
         console.log('Modif',meeting);
         CURRENT_MEETING = meeting;
-           
+        setIsloading(true);
         axiosInstance.post(`update-conseil-discipline/`, {
             id_conseil_discipline            : meeting.id_conseil_discipline,
             id_sousetab                      : meeting.id_sousetab,
@@ -947,7 +963,7 @@ function setEditMeetingGlobalData(meeting){
            var gridData = formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims);
             setGridMeeting(gridData);
             console.log(res.data);
-
+            setIsloading(false);
             //setModalOpen(0);
            
             if(meeting.to_close==1){                
@@ -972,6 +988,20 @@ function setEditMeetingGlobalData(meeting){
            
         })
     }
+
+    function meetingClosureHandler(meeting){
+        CURRENT_MEETING = meeting; 
+        if(CURRENT_MEETING.status == 1){
+            chosenMsgBox = MSG_CONFIRM;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("confirm_meeting_closure_M"), 
+                message:t("confirm_meeting_closure")
+            });
+        }
+    }
+
 
     function deleteRow(rowId) {
        // alert(rowId);
@@ -999,7 +1029,8 @@ function setEditMeetingGlobalData(meeting){
         return new Promise(function(resolve, reject){
             DEFAULT_MEMBERS  =  createLabelValueTableWithUserS(DEFAULT_MEMBERS_ADD,  true,   1);     
             CONVOQUE_PAR     =  createLabelValueTableWithUserS(CONVOQUE_PAR_ADD,     true,   1);
-            OTHER_MEMBERS    =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,    false, -1);            
+            OTHER_MEMBERS    =  createLabelValueTableWithUserS(OTHER_MEMBERS_ADD,    false, -1);
+            PRESENTS_MEMBERS =  createLabelValueTableWithUserS(PRESENTS_MEMBERS_ADD,  true,  0);            
             
             ELEVES_SANCTIONS =  [];
             ELEVES_MOTIFS    =  [];
@@ -1080,6 +1111,17 @@ function setEditMeetingGlobalData(meeting){
                 })  
                 return 1;
             }
+
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                modifyMeeting(CURRENT_MEETING);
+                return 1;
+            }
             
            
             default: {
@@ -1127,6 +1169,16 @@ function setEditMeetingGlobalData(meeting){
                 }) 
                 getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab); 
                 setModalOpen(0);
+                return 1;
+            }
+
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
                 return 1;
             }
 
@@ -1260,6 +1312,7 @@ function setEditMeetingGlobalData(meeting){
                     eleves             = {LIST_ELEVES}
                     formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}
                     actionHandler      = {(modalOpen==1) ? addMeeting : modifyMeeting}
+                    closeHandler       = {meetingClosureHandler}
                     printReportHandler = {printReport}
                     cancelHandler      = {quitForm} 
                 />
@@ -1294,6 +1347,33 @@ function setEditMeetingGlobalData(meeting){
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
                />             
+            }
+
+            {(isLoading) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:"60.7vh",  fontSize:'1.2vw', fontWeight:'800', color:'#4d4848', zIndex:'1207',marginTop:'-5.7vh'}}> 
+                    {t('traitement')}...
+                </div>                    
+            }
+
+            {(isLoading) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'58.3vh',
+                    backgroundColor: 'white',
+                    zIndex: 1207,
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
             }
 
             {(modalOpen==5) &&

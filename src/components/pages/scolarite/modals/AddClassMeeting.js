@@ -76,6 +76,8 @@ function AddClassMeeting(props) {
    
     const [optPeriode, setOptPeriode] = useState([]);
     const [presents, setPresents]= useState([]);
+    const [etats, setEtats]= useState([]);
+    
 
     const [optDecisions, setOptDecisions] = useState([]);
     const [optVerdict, setOptVerdict] = useState([]);
@@ -186,6 +188,7 @@ function AddClassMeeting(props) {
 
             tempTab = [...props.presentsMembres];
             setTabProfsPresents(tempTab);
+            console.log("prepeh",tempTab);
 
             tempTab = []; // a initialiser d'abord...
             tempTab.unshift(choisir);
@@ -454,6 +457,7 @@ function AddClassMeeting(props) {
   
     function saveMeetingHandler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
+        currentUiContext.setFormIsloading(true);
         getFormData();
       
         if(formDataCheck1().length==0){
@@ -466,6 +470,7 @@ function AddClassMeeting(props) {
             MEETING.status = 0 ;
             MEETING.statusLabel = t('en_cours') ;
 
+           
             props.actionHandler(MEETING);
            // else props.modifyClassMeeting(MEETING);
            
@@ -521,7 +526,7 @@ function AddClassMeeting(props) {
             MEETING.status = 1 ;
             MEETING.statusLabel = t('cloture') ; 
             MEETING.to_close = true;    
-            props.actionHandler(MEETING);  
+            props.closeHandler(MEETING);  
             //props.modifyMeetingHandler(MEETING);
 
         } else {
@@ -585,30 +590,29 @@ function AddClassMeeting(props) {
                 dateDeb  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;
                 heureDeb = document.getElementById('heure').value+':'+ document.getElementById('min').value ;
                     
-                MEETING.date  = dateDeb;
-                MEETING.heure = heureDeb;
+                MEETING.date   = dateDeb;
+                MEETING.heure  = heureDeb;
             } else{
-                MEETING.date  = dateDeb;
-                MEETING.heure = heureDeb;
+                MEETING.date   = dateDeb;
+                MEETING.heure  = heureDeb;
             }
         } else {
-            MEETING.date         = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
-            MEETING.heure        = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
+            MEETING.date       = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
+            MEETING.heure      = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
         }
 
-        MEETING.date_effective   = getTodayDate();
+        MEETING.date_effective = getTodayDate();
             
         //----- 2ieme partie du formulaire1 ----- 
-        MEETING.id_eleves = getListElementByFields(tabEleves, "value");                 //Mettre la chaine des eleves separe par²²
+        MEETING.id_eleves      = getListElementByFields(tabEleves, "value");               //Mettre la chaine des eleves separe par²²
 
         //----- 3ieme partie du formulaire1 ----- 
-        MEETING.id_membres      = getListElementByFields(optMembres, "value");          //Mettre la liste des membres separe par²²
-        MEETING.roles_membres   = getListElementByFields(optMembres, "role");           //Roles des membres
-        //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");    //Mettre la liste des membres presents separe par²²
-        
+        MEETING.id_membres     = getListElementByFields(optMembres, "value");              //Mettre la liste des membres separe par²²
+        MEETING.roles_membres  = getListElementByFields(optMembres, "role");               //Roles des membres
+        //MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");     //Mettre la liste des membres presents separe par²²
         
         //----- 1ere partie du formulaire2 -----
-        MEETING.resume_general_decisions = MEETING_GEN_DECISION;                        //Resumer des decisions
+        MEETING.resume_general_decisions = MEETING_GEN_DECISION;                           //Resumer des decisions
 
         //----- 2ieme partie du formulaire2 -----
         MEETING.id_eleves  =  getListElementByFields(infosEleves, "id");
@@ -616,7 +620,14 @@ function AddClassMeeting(props) {
         MEETING.list_classes_promotions_eleves = [...listPromotions].join("²²");
 
         //----- 3ieme partie du formulaire2 -----
-        MEETING.membre_presents = getListElementByFields(tabProfsPresents, "value");  //Liste des membres presents
+        
+        if(props.formMode == 'creation'){
+            MEETING.membre_presents = getListElementByFields(optMembres, "value");        //Liste des membres presents
+        } else {
+            MEETING.membre_presents = getListElementByFields(tabProfsPresents.filter((prof)=>prof.present == true), "value");  //Liste des membres presents
+        }
+
+       
         MEETING.to_close = false;
 
         //-------------- Pour les besoin d'impression -------------
@@ -626,7 +637,7 @@ function AddClassMeeting(props) {
         MEETING.infoGeneralesEleves  = [...infosEleves];
         MEETING.listParticipants     = [...tabProfsPresents];
        
-        console.log(MEETING);       
+        console.log("donnees du meeting",MEETING);       
     }
 
 
@@ -646,18 +657,43 @@ function AddClassMeeting(props) {
     }
   
     function setFormData2(){
-        var tabEleve=[];       
- 
-        var profPresent =[];
-        optMembres.map((elt, index)=>{profPresent[index]=true});
-        setPresents(profPresent);
+        var tabEleve=[]; 
+   
+        // var profPresent =[];
+        // optMembres.map((elt)=>{profPresent.push(true)});
+        // setPresents(profPresent);
 
-        profPresent = [];
+        var profPresent = [];
         optMembres.map((elt)=>{
-            profPresent.push({value:elt.value, label:elt.label, role:elt.role, present:elt.present, etat:0});
+            profPresent.push({value:elt.value, label:elt.label, role:elt.role, present:true, etat:0});
+        })
+      
+      
+        console.log("presents absents",tabProfsPresents, profPresent)
+        var tempTab = [];
+
+        profPresent.map((elt1)=>{
+            var result = tabProfsPresents.find((elt2)=>elt2.value == elt1.value);
+            if(result!= undefined){
+                elt1.present = true;
+                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:result.present, etat:result.etat});
+            } else {
+                elt1.present = false;
+                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:false, etat:0});
+            }
         })
 
-        setTabProfsPresents(profPresent);
+        setTabProfsPresents(tempTab);
+        var tabPresent = []; var tabEtats = []
+        tempTab.map((elt)=> {
+            tabPresent.push(elt.present);
+            tabEtats.push(elt.etat);
+        });
+        setPresents(tabPresent);
+        setEtats(tabEtats);
+        
+        console.log("presents absents",tabProfsPresents, profPresent,tempTab, presents)
+        
 
         tabEleve[0]  =  MEETING.id_conseil_classe;
         tabEleve[1]  =  convertDateToUsualDate(MEETING.date); 
@@ -1196,25 +1232,26 @@ function AddClassMeeting(props) {
 
     function managePresent(e){
         e.preventDefault();
-        var participants = [...optMembres];
+        //var participants = [...optMembres];
+        var profPresents = [...tabProfsPresents];
         var tabPresent = [...presents];
         var row = e.target.id;
 
         if(e.target.checked){
-            tabPresent[row]=true;
-            participants[row].present= true;
-            e.target.checked = true;
+            tabPresent[row] = true;
+            profPresents[row].present = true;
+            //e.target.checked = true;
+            //setOptMembres(participants);
             setPresents(tabPresent);
-            setOptMembres(participants);
-
+            setTabProfsPresents(profPresents);
         } else {
-           tabPresent[row]=false;
-           participants[row].present= false;
-           e.target.checked = false;
+            tabPresent[row] = false;
+            profPresents[row].present = false;
+            //e.target.checked = false;
             setPresents(tabPresent);
-            setOptMembres(participants);
+            setTabProfsPresents(profPresents);
         }
-
+        console.log("profs presents",profPresents);
     }
 
     const LignePresentsHeader=(props)=>{
@@ -1232,10 +1269,11 @@ function AddClassMeeting(props) {
                 <div style={{width:'17vw'}}>               
                     {props.nom}                   
                 </div>
-                
+               
                 <div style={{display:'flex',  flexDirection:'row', alignItems:'center'}}> 
-                    <input type='checkbox' style={{width:'1vw', height:'2vh'}} checked={presents[props.rowIndex]}  id={props.rowIndex} name ={'Present'+props.rowIndex} onChange={managePresent}/>                    
-                </div>              
+                    <input type='checkbox' disabled={etats[props.rowIndex]==1} style={{width:'1vw', height:'2vh'}} checked={presents[props.rowIndex]==true}  id={props.rowIndex} name ={'Present'+props.rowIndex} onChange={managePresent}/>                    
+                </div>   
+                           
             </div>
         );
     }
@@ -1244,33 +1282,6 @@ function AddClassMeeting(props) {
 
     return (
         <div className={'card '+ classes.formContainerP}>
-            {(currentUiContext.formIsloading) && <BackDrop/>}
-            {(currentUiContext.formIsloading) &&
-                <div style={{ alignSelf: 'center',position:'absolute', top:"60vh",  fontSize:'0.9vw', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-5.7vh'}}> 
-                    {t('loading')}...
-                </div>                    
-            }
-            {(currentUiContext.formIsloading) &&
-                <div style={{   
-                    alignSelf: 'center',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '13vw',
-                    height: '3.13vh',
-                    position: 'absolute',
-                    top:'57vh',
-                    backgroundColor: 'white',
-                    zIndex: '1200',
-                    overflow: 'hidden'
-                }}
-                >
-                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
-                </div>                    
-            }
-
             {LargeViewOpen && 
                 <DecisionCCAnnuel 
                     infosEleves    = {infosEleves} 
@@ -1389,7 +1400,7 @@ function AddClassMeeting(props) {
                                     <div style ={{display:'flex', flexDirection:'row'}}> 
                                         <input id="jour"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      className={classes.inputRowControl}  style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw'}}  defaultValue={currentUiContext.formInputs[1].split("/")[0]} />/
                                         <input id="mois"  type="text"  maxLength={2}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      className={classes.inputRowControl}  style={{width:'1.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[1].split("/")[1]} />/
-                                        <input id="anne" type="text"  maxLength={4}   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     className={classes.inputRowControl}  style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[1].split("/")[2]} />
+                                        <input id="anne" type="text"   maxLength={4}  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("heure"))}}     className={classes.inputRowControl}  style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[1].split("/")[2]} />
                                     </div>
                                 }
 
@@ -1668,7 +1679,7 @@ function AddClassMeeting(props) {
                                 <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh', minWidth:'40vw', overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LignePresentsHeader/>
                                     {(tabProfsPresents||[]).map((participant, index)=>{
-                                        return <LignePresent id={participant.value} rowIndex={index} nom={participant.label}/>
+                                        return <LignePresent id={participant.value} rowIndex={index} nom={participant.label} />
                                         })
                                     }
                                 </div>
