@@ -964,11 +964,11 @@ const columnsSeq = [
             ELEVES_DATA = res.data;
             console.log("RESULTATS GENSEQ", ELEVES_DATA);
 
-            ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+            ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs,true);
             console.log("eleves_data",ELEVES_C_TO_PRINT);  
             setEleveCL(ELEVES_C_TO_PRINT); 
 
-            ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+            ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs,false);
             setEleveNCL(ELEVES_NC_TO_PRINT);
 
             setModalOpen(6);
@@ -1017,11 +1017,11 @@ const columnsSeq = [
                 ELEVES_DATA = res.data;
                 console.log("RESULTATS GENSEQ", ELEVES_DATA);
 
-                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs, true)
                 console.log("eleves_data",ELEVES_C_TO_PRINT);  
                 setEleveCL(ELEVES_C_TO_PRINT); 
     
-                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs, false);
                 setEleveNCL(ELEVES_NC_TO_PRINT);
 
                 setModalOpen(6);
@@ -1089,11 +1089,11 @@ const columnsSeq = [
                 console.log(res);
                 ELEVES_DATA = res.data;
           
-                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_c, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,true)
+                ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs, true);
                 console.log("eleves_data",ELEVES_C_TO_PRINT);  
                 setEleveCL(ELEVES_C_TO_PRINT); 
     
-                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA.eleve_results_nc, ELEVES_DATA.groupe_recap_results, ELEVES_DATA.note_recap_results,listMatiereEtProfs,false)
+                ELEVES_NC_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs, false);
                 setEleveNCL(ELEVES_NC_TO_PRINT);
 
                 setModalOpen(6);
