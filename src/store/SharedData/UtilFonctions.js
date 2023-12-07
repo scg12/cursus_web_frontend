@@ -50,15 +50,16 @@ function twoDigits(val){
     else return val;
 }
 
-export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapData, notesData, listMatieresWithTeacherNames,areElevesClasse){
+export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elevesData, groupeRecapData, notesData,*/ listMatieresWithTeacherNames,areElevesClasse){
     
     //return new Promise(function(resolve, reject){
-        var ElevesInfo  = [];
-        var NotesData   = [];
-        var GroupesData = [];
-        var resultatElev = []; 
-        var eleves_data  = [];  
-        var eleve_data   = {};
+        var ElevesInfo     = [];
+        var NotesData      = [];
+        var GroupesData    = [];
+        var resultatElev   = []; 
+        var eleves_data    = [];  
+        var eleve_data     = {};
+        var resultatClasse = {};
 
         var GroupesCount;
 
@@ -66,25 +67,42 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
         var elvDataSize  = 0, tail    = 0;
         var currentRang  = 0, cptExco = 1;
 
-        elevesData.map((elv)=>{
-            resultatElev  = elv.resultat.split("~~~");
-            elvDataSize = resultatElev.length;
-            resultatElev  = resultatElev.splice(1,elvDataSize-1);
-            resultatElev.push(elv.absences+"&"+elv.sanctions);
-            ElevesInfo.push(resultatElev)
-        });
+        if(areElevesClasse){
+            eleveToPrintData.eleve_results_c.map((elv)=>{
+                resultatElev  = elv.resultat.split("~~~");
+                elvDataSize   = resultatElev.length;
+                resultatElev  = resultatElev.splice(1,elvDataSize-1);
+                resultatElev.push(elv.absences+"&"+elv.sanctions);
+                ElevesInfo.push(resultatElev)
+            });
+        } else {
+            eleveToPrintData.eleve_results_nc.map((elv)=>{
+                resultatElev  = elv.resultat.split("~~~");
+                elvDataSize   = resultatElev.length;
+                resultatElev  = resultatElev.splice(1,elvDataSize-1);
+                resultatElev.push(elv.absences+"&"+elv.sanctions);
+                ElevesInfo.push(resultatElev)
+            });
+        } 
+           
 
-        console.log("eleves transform", ElevesInfo, elevesData);
+        console.log("eleves transform", ElevesInfo, eleveToPrintData.elevesData);
 
-        NotesData    = notesData[0].resultat.split("~~");
+        NotesData    = eleveToPrintData.note_recap_results[0].resultat.split("~~");
         tail         = NotesData.length;
         NotesData    = NotesData.splice(1, tail-1);
 
-        GroupesData  = groupeRecapData[0].resultat.split("~~");
+        GroupesData  = eleveToPrintData.groupe_recap_results[0].resultat.split("~~");
         tail         = GroupesData.length;
         GroupesData  = GroupesData.splice(1, tail-1);
 
         GroupesCount = GroupesData.length;
+
+        //Preparation de resultats de la classe
+        var resultClasse = eleveToPrintData.recap_results[0].resultat.split("²²");
+
+        
+
 
         switch(typeBulletin){
             case 1:{
@@ -161,10 +179,16 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     }
                     
                     //Resultats scolaires
-                    eleve_data.recapGeneral.totalPoints = currentElvData[ligne].split("²²")[3];
-                    eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
-                    eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
-                    eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
+                    eleve_data.recapGeneral.totalPoints   = currentElvData[ligne].split("²²")[3];
+                    eleve_data.recapGeneral.totalcoef     = currentElvData[ligne].split("²²")[1];
+                    eleve_data.recapGeneral.apprecGen     = currentElvData[ligne].split("²²")[6];
+                    eleve_data.recapGeneral.admis         = currentElvData[ligne].split("²²")[4];
+                    
+                    //Resultat de la classe                    
+                    eleve_data.recapGeneral.moyMinClasse  = resultClasse[0];
+                    eleve_data.recapGeneral.moyMaxClasse  = resultClasse[1];
+                    eleve_data.recapGeneral.moyGenClasse  = resultClasse[2];                    
+                    eleve_data.recapGeneral.tauxReussite  = resultClasse[4];
 
                     //Infos Discipline
                     var absencesEleve = currentElvData[ligne+1].split("&")[0];
@@ -265,6 +289,12 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
                     eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
 
+                    //Resultat de la classe                    
+                    eleve_data.recapGeneral.moyMinClasse  = resultClasse[0];
+                    eleve_data.recapGeneral.moyMaxClasse  = resultClasse[1];
+                    eleve_data.recapGeneral.moyGenClasse  = resultClasse[2];                    
+                    eleve_data.recapGeneral.tauxReussite  = resultClasse[4];
+
                     //Infos Discipline
                     var absencesEleve = currentElvData[ligne+1].split("&")[0];
                     var punitionEleve = currentElvData[ligne+1].split("&")[1];
@@ -364,6 +394,12 @@ export function createBulletinToPrintData(typeBulletin, elevesData, groupeRecapD
                     eleve_data.recapGeneral.totalcoef   = currentElvData[ligne].split("²²")[1];
                     eleve_data.recapGeneral.apprecGen   = currentElvData[ligne].split("²²")[6];
                     eleve_data.recapGeneral.admis       = currentElvData[ligne].split("²²")[4];
+
+                    //Resultat de la classe                    
+                    eleve_data.recapGeneral.moyMinClasse  = resultClasse[0];
+                    eleve_data.recapGeneral.moyMaxClasse  = resultClasse[1];
+                    eleve_data.recapGeneral.moyGenClasse  = resultClasse[2];                    
+                    eleve_data.recapGeneral.tauxReussite  = resultClasse[4];
 
                     //Infos Discipline
                     var absencesEleve = currentElvData[ligne+1].split("&")[0];

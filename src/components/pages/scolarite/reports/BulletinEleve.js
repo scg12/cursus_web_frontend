@@ -298,8 +298,7 @@ function BulletinEleve(props) {
                         </View>
                         
                         <View style={[styles.ligne_entete_groupe__borne,{fontFamily:"MyBold"}]}>
-                            <Text>[{props.eleveGroupRecap.borneInf},{props.eleveGroupRecap.borneSup}]</Text>
-                                
+                            <Text style={{fontSize:"1.7vw"}}>[{props.eleveGroupRecap.borneInf},{props.eleveGroupRecap.borneSup}]</Text>                                
                         </View>
         
                         <View style={styles.ligne_entete_groupe__appreciation}>
@@ -524,22 +523,22 @@ function BulletinEleve(props) {
                         <View style={styles.box_corps}>
                             <View style={{...styles.box_corps_ligne, marginBottom:"2vh",marginTop:"1.3vh"}}>
                               <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_generale')}:  </Text>
-                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moyGenClasse}</Text>
                             </View>
 
                             <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                               <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_max')}:  </Text>
-                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moyMaxClasse}</Text>
                             </View>
 
                             <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                               <Text style={{fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>{t('moy_min')}:  </Text>
-                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.totalPoints}</Text>
+                              <Text style={{/*fontFamily:"MyBold",*/width:"7vw", marginRight:"0.7vw"}}>{props.recapGeneral.moyMinClasse}</Text>
                             </View>
 
                             <View style={{...styles.box_corps_ligne, marginBottom:"2vh"}}>
                               <Text style={{fontFamily:"MyBold", fontSize:"10px", width:"20vw", textAlign:"left", marginLeft:"1.3vw"}}>%  {t('reussite')}:  </Text>
-                              <Text style={{...styles.special_text,fontFamily:"MyBold", width:"7vw", marginRight:"0.7vw", color:"white"}}>{54}%</Text>
+                              <Text style={{...styles.special_text,fontFamily:"MyBold", width:"9vw", marginRight:"0.7vw", color:"white"}}>{props.recapGeneral.tauxReussite}%</Text>
                             </View>
 
                         </View>
