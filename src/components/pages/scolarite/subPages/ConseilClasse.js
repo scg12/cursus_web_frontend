@@ -874,7 +874,7 @@ const columnsFr = [
             setGridMeeting(gridData);
             console.log(res.data);
             setIsloading(false);
-            //setModalOpen(0);
+            setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
                 visible:true, 

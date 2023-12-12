@@ -328,7 +328,7 @@
     "presi_conseil":"Président de Conseil",
     "date_conseil":"Date prévue du conseil",
     "heure_conseil":"Heure Prévue",
-    "eleves_convoques":"Liste des élèves convoques",
+    "eleves_convoques":"Liste des élèves convoqués",
     "profs_convoques":"Liste des participants",
     "closing_meeting":"Saisie des decisions et clôture du conseil",
     "general_decisions":"Décisions generales du conseil",
@@ -562,7 +562,7 @@
     
     "scolarite": "Scolarite",
     "scolariteM": "SCOLARITE",
-    "enreg_admis": "Enregistrement Et Admissions en Classe Superieure", 
+    "enreg_admis": "Enregistrement Et Admissions en Classe Supérieure", 
     "schedule_courses" : "Emploi de Temps, Cours et Programme" ,
     "discipline_assiduite": "Discipline Et Assiduite", 
     "suivi_devoir_notes": "Suivi Scolaire-Evaluations De Classe Et Notes", 

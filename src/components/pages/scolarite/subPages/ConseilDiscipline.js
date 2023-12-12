@@ -83,10 +83,11 @@ function ConseilDiscipline(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
-    const [gridMeeting, setGridMeeting]= useState([]);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optClasse, setOpClasse] = useState([]);
+    const [isValid, setIsValid]  = useState(false);
+    const [gridMeeting, setGridMeeting] = useState([]);
+    const [modalOpen, setModalOpen]     = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
+    const [optClasse, setOpClasse]      = useState([]);
+    const [listClasses, setListClasses] = useState([]);
     const[isLoading,setIsloading] = useState(false);
     // const[LoadingVisible,setLoadingVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
@@ -145,16 +146,19 @@ function ConseilDiscipline(props) {
 
     
     const getEtabListClasses=()=>{
-       var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
+       var tempTable  = [{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }];
+       var tempTableP = [];
         axiosInstance.post(`list-classes/`, {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-                console.log(tempTable);
-           })         
+            console.log(res.data);
+            res.data.map((classe)=>{
+                tempTable.push({value:classe.id, label:classe.libelle});
+                tempTableP.push({value:classe.id, label:classe.libelle});
+            })
+            setOpClasse(tempTable);
+            setListClasses(tempTableP);
+            console.log(tempTable);                 
         }) 
     }
 
@@ -919,7 +923,7 @@ function setEditMeetingGlobalData(meeting){
             setGridMeeting(gridData);
             console.log(res.data);
             setIsloading(false);
-            //setModalOpen(0);
+            setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS_CREATE;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -956,8 +960,8 @@ function setEditMeetingGlobalData(meeting){
             membre_presents                  : meeting.membre_presents,            
             id_eleves                        : meeting.id_eleves,
             list_motifs_covocations          : meeting.list_motifs_covocations,
-            list_decisions_conseil_eleves    : meeting.list_decisions_conseil_eleves,
-            id_type_sanction_generale_classe : meeting.id_type_sanction_generale_classe
+            list_decisions_conseil_eleves    : meeting.to_close ? meeting.list_decisions_conseil_eleves    : "",
+            id_type_sanction_generale_classe : meeting.to_close ? meeting.id_type_sanction_generale_classe : "",
 
         }).then((res)=>{
            var gridData = formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims);
@@ -1310,6 +1314,7 @@ function setEditMeetingGlobalData(meeting){
                     motifsConv         = {LIST_MOTIFS}
                     sanctionsConv      = {LIST_SANCTIONS}
                     eleves             = {LIST_ELEVES}
+                    listClasses        = {listClasses}
                     formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}
                     actionHandler      = {(modalOpen==1) ? addMeeting : modifyMeeting}
                     closeHandler       = {meetingClosureHandler}
