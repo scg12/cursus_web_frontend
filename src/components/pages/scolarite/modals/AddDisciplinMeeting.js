@@ -81,6 +81,7 @@ function AddDisciplinMeeting(props) {
     const [tabElevesMotifs, setTabElevesMotifs]= useState([]);
     const [allStudentsConvocated, setAllStudentsConvocated] = useState(false);
     const [elevesSanctions, setElevesSanctions] = useState([]);
+   
     
     var firstSelectItem1 = {
         value: 0,   
@@ -99,8 +100,6 @@ function AddDisciplinMeeting(props) {
     const choisir = [        
         {value: undefined,   label:'-----'+ t('choisir') +'-----' },
     ];
-
-  
 
     const tabTypeConseil=[
         {value:"sequentiel",  label:"Conseil bilan sequentiel" },
@@ -128,7 +127,7 @@ function AddDisciplinMeeting(props) {
         }
        
         setTabElevesMotifs([]);
-       
+    
         if (props.formMode == 'creation'){
 
             console.log("Motifs",tabElevesMotifs, LIST_MOTIFS,ELEVES_MOTIFS, CURRENT_POS, LIST_ELEVES);
@@ -193,7 +192,7 @@ function AddDisciplinMeeting(props) {
                 setTabElevesDecisions(tabDecisions);
             } 
 
-           
+           console.log("dicisions",ListElevesDecision);
 
             MEETING = {};
         
@@ -283,16 +282,19 @@ function AddDisciplinMeeting(props) {
     },[]);
 
     
-    const  getClassStudentList=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
-        }).then((res)=>{
-            console.log(res.data);
-            console.log(listEleves);
-            LIST_ELEVES= [...getElevesTab(res.data)];
-            console.log(LIST_ELEVES) ; 
-        })  
+    const  getClassStudentList=(classId)=>{      
+        return new Promise(function(resolve, reject){
+            var listEleves = [];
+            axiosInstance.post(`list-eleves/`, {
+                id_classe: classId,
+            }).then((res)=>{
+                console.log(res.data);
+                console.log(listEleves);
+                LIST_ELEVES= [...getElevesTab(res.data)];
+                // setElevesList(LIST_ELEVES);
+                resolve(LIST_ELEVES); 
+            });
+        });      
     }
 
     function getElevesTab(elevesTab){
@@ -328,10 +330,13 @@ function AddDisciplinMeeting(props) {
             for(i=0; i<LIST_SANCTIONS.length; i++){
                 tab.push(-1);                
             }       
-            sanctionsEleves[rowIndex]=[...tab];
-            tab = [];
+            // sanctionsEleves[rowIndex]=[...tab];
+            // tab = [];
+            sanctionsEleves[rowIndex] =  LIST_SANCTIONS[0].value;
         });
-        console.log("eleves sanctions", sanctionsEleves,lisElevestSanctions);
+
+        SANCTIONS_PAR_ELEVES = [...sanctionsEleves];
+        console.log("eleves sanctions", sanctionsEleves,lisElevestSanctions, SANCTIONS_PAR_ELEVES);
         setElevesSanctions(sanctionsEleves);
     }
  
@@ -616,7 +621,7 @@ function AddDisciplinMeeting(props) {
         //----- 2ieme partie du formulaire2 -----
         //MEETING.id_eleves  =  getListElementByFields(tabElevesDecisions, "id");
         console.log("decisions", tabElevesDecisions);
-        MEETING.list_decisions_conseil_eleves    = getListElementByFields(tabElevesDecisions, "decisionId");; //Liste des decisions pour chaque eleves separe par²²
+        MEETING.list_decisions_conseil_eleves    = getListElementByFields(tabElevesDecisions, "decisionId"); //Liste des decisions pour chaque eleves separe par²²
         MEETING.id_type_sanction_generale_classe = getListElementByFields(tabElevesDecisions, "decisionId"); //Sanction generale si toute la classe est convoquee
 
         //----- 3ieme partie du formulaire2 -----
@@ -1030,7 +1035,6 @@ function AddDisciplinMeeting(props) {
     }
 
     //------------------------- ELEVES CONVOQUES ---------------------------
-
     function eleveChangeHandler(e){
 
         var index  = LIST_ELEVES.findIndex((elt)=>elt.value == e.target.value);
@@ -1039,8 +1043,7 @@ function AddDisciplinMeeting(props) {
         if(e.target.value<0){  // aucune selection
            
             document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid red';
-           
+            document.getElementById('eleveId').style.border = '0.47vh solid red';           
 
             // document.getElementById('eleveId').style.borderRadius = '1vh';
             // document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
@@ -1118,6 +1121,19 @@ function AddDisciplinMeeting(props) {
     }
 
 
+    function motifChangeHandler(row,e){
+        var cur_motif_value = e.target.value;
+
+        var eleveMotifs = [...tabElevesMotifs];
+        var motif = tabMotifs.find((elt)=>elt.value == cur_motif_value);
+
+        eleveMotifs[row].motifId    = motif.value;
+        eleveMotifs[row].motifLabel = motif.label; 
+
+       // setTabElevesMotifs(eleveMotifs);
+        console.log("yyyyy", eleveMotifs[row],motif.label);
+    }
+
     function updateMotif(e, row, index){
         var motif = tabMotifs[index];
         var eleveMotifs = [...tabElevesMotifs];
@@ -1132,83 +1148,96 @@ function AddDisciplinMeeting(props) {
 
     const LigneEleveHeader=(props)=>{
         return(
+           
             <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'30vw'}}>{t("motif")}</div>
-                <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
+                <div style={{width:'19vw'}}>{t("nom")}</div>
+                <div style={{width:'20vw'}}>{t("motif")}</div>
+                <div style={{width:'7vw', marginLeft:'-2.7vw'}}>{t("action")}</div>               
             </div>
+     
         );
     }
 
     const LigneEleve=(props)=>{
         return(
             <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>
-                    {(props.etat >= 0) ? 
-                        props.nom
+                {(props.etat >= 0) ? 
+                    <div style={{minWidth:'17vw', marginRight:"0vw"}}>                    
+                        {props.nom}                                    
+                    </div>
                       
-                        :
+                    :
 
-                        <select id='eleveId' style={{height:'3.5vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={eleveChangeHandler}>
-                            {(LIST_ELEVES||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    }                   
-                </div>
-
+                    <select id='eleveId' style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.87vw', width:'14.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={eleveChangeHandler}>
+                        {(LIST_ELEVES||[]).map((option)=> {
+                            return(
+                                <option  value={option.value}>{option.label}</option>
+                            );
+                        })}
+                    </select>                
+                }   
 
                 {(props.etat >= 0) ?
-                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.motif} </div>
-                   
+                   <div style={{minWidth:'13vw', fontWeight:"bolder", marginRight:"-4vw",}}> {props.motif} </div>
                    :
-                        <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
-                        { 
-                            tabMotifs.map((motif,index)=>{
-                                return (
-                                    <div style={{display:'flex', flexDirection:'row',}}>
-                                        <input type='radio' id={'motif'+props.rowIndex+'_'+index} style={{width:'0.8vw', height:'1.57vh', marginLeft:"0.45vw"}} checked={tabElevesMotifs[props.rowIndex].motifId == tabMotifs[index].value}   name={'eleveConv'+props.rowIndex} onClick={(e)=>{updateMotif(e,props.rowIndex,index)}}/>
-                                        <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"5vw"}}>{motif.label} </label>
-                                    </div>    
-                                )                                
-                            })
+                    <select id='eleveId' style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.87vw', marginLeft:"2vw", width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>motifChangeHandler(props.rowIndex,e)}>
+                        {(tabMotifs||[]).map((option)=> {
+                            return(
+                                <option  value={option.value}>{option.label}</option>
+                            );
+                        })}
+                    </select>
+                        // <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}> 
+                        // { 
+                        //     tabMotifs.map((motif,index)=>{
+                        //         return (
+                        //             <div style={{display:'flex', flexDirection:'row',}}>
+                        //                 <input type='radio' id={'motif'+props.rowIndex+'_'+index} style={{width:'0.8vw', height:'1.57vh', marginLeft:"0.45vw"}} checked={tabElevesMotifs[props.rowIndex].motifId == tabMotifs[index].value}   name={'eleveConv'+props.rowIndex} onClick={(e)=>{updateMotif(e,props.rowIndex,index)}}/>
+                        //                 <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"fit-content"}}>{motif.label} </label>
+                        //             </div>    
+                        //         )                                
+                        //     })
 
                             
-                        }  
-                        </div>
-                    }
+                        // }  
+                        // </div>
+                }
               
-                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {(props.etat<=0)&&
+                {(props.etat<=0)&&
+                    <div style={{width:'7vw', marginLeft:'7.7vw', display:'flex', flexDirection:'row'}}>                    
                         <img src="images/cancel_trans.png"
                             id={props.eleveId}  
-                            width={ isMobile? '10vw':25} 
-                            height={isMobile? '13.7vw':33}
-                            className={classes.cellPointer} 
-                            onClick={deleteEleve}                         
+                            width     = {isMobile? '10vw'  :25} 
+                            height    = {isMobile? '13.7vw':33}
+                            className = {classes.cellPointer} 
+                            onClick   = {deleteEleve}                         
                             alt=''
                         />
-                    }
-                  
-                    {(props.etat==-1)&&
-                        <img src="images/checkp_trans.png"  
-                            width={ isMobile? '7.7vw':19} 
-                            height={isMobile? '7.7vw':19} 
-                            className={classes.cellPointer} 
-                            onClick={()=>{addEleve(props.rowIndex)}}                         
-                            alt=''
-                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
-                        />
-                    }
-                </div>
+                    </div>                
+                }
+
+                {(props.etat==-1)&&
+                    <div style={{width:'7vw', marginLeft:'-4.7vw', display:'flex', flexDirection:'row'}}> 
+                    
+                            <img src="images/checkp_trans.png"  
+                                width     = {isMobile? '7.7vw':19.7} 
+                                height    = {isMobile? '7.7vw':19} 
+                                className = {classes.cellPointer} 
+                                style     = {{marginLeft:'1vw', marginTop:'0.04vh'}}
+                                onClick={()=>{addEleve(props.rowIndex)}}                         
+                                alt=''                            
+                            />
+                        
+                    </div>
+                }
 
             </div>
         );
     }
 
-    //----------------- DECISION AU CAS PAR CAS ------------
+
+
+//----------------- DECISION AU CAS PAR CAS ------------
 
     function updateEleve(e,rowIndex){
         eleves_data = [...tabElevesDecisions];
@@ -1219,8 +1248,10 @@ function AddDisciplinMeeting(props) {
         var index = eleves_data.findIndex((eleve)=>eleve.id == cur_eleveId);
         var cur_eleve = eleves_data.find((eleve)=>eleve.id == cur_eleveId);
 
-        var sanctions  = elevesSanctions[rowIndex];
-        var sanctionId = sanctions.find((elt)=>elt > 0)
+        //var sanctionId  = elevesSanctions[rowIndex];
+        
+        var sanctionId  = SANCTIONS_PAR_ELEVES[rowIndex];
+        //var sanctionId = sanctions.find((elt)=>elt > 0)
 
         cur_eleve.etat = 1;
         cur_eleve.decisionId   = sanctionId;
@@ -1230,12 +1261,37 @@ function AddDisciplinMeeting(props) {
 
         eleves_data.splice(index,1,cur_eleve);
        
-        setTabElevesDecisions(eleves_data);     
+        setTabElevesDecisions(eleves_data);    
+       // setElevesSanctions(SANCTIONS_PAR_ELEVES); 
+    }
+
+
+    function decisionChangeHandler(e, row){
+        var cur_sanction_value  = e.target.value;
+        // var sanctionEleves      = [...elevesSanctions];
+        // sanctionEleves[row] = cur_sanction_value;
+        SANCTIONS_PAR_ELEVES[row] = cur_sanction_value;
+
+        //setElevesSanctions(sanctionEleves);
+        // var sanctionRow         = tabSanctions.find((elt)=>elt.value == cur_sanction_value);
+        
+
+        // //var lastCheckedPos = sanctionRow.findIndex((elt)=> elt > 0);
+        // console.log("lastPos", lastCheckedPos);
+        // if(lastCheckedPos >= 0 && lastCheckedPos!=index ){
+        //     sanctionEleves[row][lastCheckedPos] = -1;
+        //     sanctionEleves[row][index] = cur_sanction_value;
+
+        // }else{
+        //     if(lastCheckedPos < 0) sanctionEleves[row][index] = cur_sanction_value;
+        // }
+        
     }
 
 
     function updateSanction(e, row, index){
         var lastCheckedPos ;
+       
         console.log("types sanctions",tabSanctions)
         var sanctionEleves = [...elevesSanctions];
         var sanctionRow    = [...sanctionEleves[row]];
@@ -1257,7 +1313,7 @@ function AddDisciplinMeeting(props) {
     const LigneEleveDecisionHeader=(props)=>{
         return(
             <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
+                <div style={{width:'30vw'}}>{t("nom")}</div>
                 <div style={{width:'30vw'}}>{t("decision")}</div>
                 <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
             </div>
@@ -1268,42 +1324,46 @@ function AddDisciplinMeeting(props) {
         return(
             <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
               
-                <div style={{width:'17vw'}}>
+                <div style={{minWidth:'17vw'}}>
                     {props.nom}
                 </div>
 
                 {(props.etat == 1) ?
-                   <div style={{marginLeft:'0vw', width:'30vw'}}> {props.decision} </div>
-                   
+                   <div style={{minWidth:'20vw', fontWeight:"bolder"}}> {props.decision} </div>                   
                    :
-                        <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}>
-                            {tabSanctions.map((sanction, index)=>{
-                                return (
-                                    <div> 
-                                        <input type='radio' id={'sanction'+props.rowIndex+'_'+index} style={{marginLeft:'0.45vw',width:'0.8vw', height:'1.57vh'}} checked={elevesSanctions[props.rowIndex][index]>0}  value={0} name={'eleveDecision'+props.rowIndex} onClick={(e)=>{updateSanction(e,props.rowIndex,index)}}/>
-                                        <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"5vw", display:"contents"}}>{sanction.label}</label>
-                                   </div>
+                    <select id={'eleveId'+props.rowIndex} style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.87vw', width:'11.3vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>decisionChangeHandler(e, props.rowIndex)}>
+                        {(tabSanctions||[]).map((option)=> {
+                            return(
+                                <option  value={option.value}>{option.label}</option>
+                            );
+                        })}
+                    </select>
+                        // <div style={{display:'flex',  flexDirection:'row',   width:'30vw', alignItems:'center'}}>
+                        //     {tabSanctions.map((sanction, index)=>{
+                        //         return (
+                        //             <div> 
+                        //                 <input type='radio' id={'sanction'+props.rowIndex+'_'+index} style={{marginLeft:'0.45vw',width:'0.8vw', height:'1.57vh'}} checked={elevesSanctions[props.rowIndex][index]>0}  value={0} name={'eleveDecision'+props.rowIndex} onClick={(e)=>{updateSanction(e,props.rowIndex,index)}}/>
+                        //                 <label style={{ color:'black', fontWeight:"bold", fontSize:"0.67vw", marginLeft:'0.13vw', marginRight:"1vw", width:"5vw", display:"contents"}}>{sanction.label}</label>
+                        //            </div>
 
-                                )
-                            })}
+                        //         )
+                        //     })}
                         
-                        </div>
-                    }
-              
-                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                   
-                {(props.etat!=1)&&
-                    <img src="images/checkp_trans.png"  
-                        width={ isMobile? '7.7vw':19} 
-                        height={isMobile? '7.7vw':19} 
-                        id={props.eleveId}
-                        className={classes.cellPointer} 
-                        onClick={(e)=>{updateEleve(e,props.rowIndex)}}                         
-                        alt=''
-                        style={{marginLeft:'1vw', marginTop:'0.3vh'}}
-                    />
+                        // </div>
                 }
-                   
+              
+                <div style={{width:'7vw', marginLeft:'8.7vw', display:'flex', flexDirection:'row'}}> 
+                    {(props.etat!=1)&&
+                        <img src="images/checkp_trans.png"  
+                            width  = {isMobile? '7.7vw':19} 
+                            height = {isMobile? '7.7vw':19} 
+                            id     = {props.eleveId}
+                            style  = {{marginLeft:'1vw', marginTop:'0.3vh'}}
+                            className={classes.cellPointer} 
+                            onClick={(e)=>{updateEleve(e,props.rowIndex)}}                         
+                            alt=''                        
+                        />
+                    }
                 </div>
 
             </div>

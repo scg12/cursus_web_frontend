@@ -135,16 +135,16 @@ function FormLayout(props){
             case '402':  return  "Relation Avec Les Parents D'Elèves";
             case '403':  return  'Orientation Et suivi Des Elèves';
             case '404':  return  'Envoi De Message';
+            case '405':  return  t('synchro_data')
 
             //----EXTRAS ----
-            case '500':  return  t('Changement de classe');
             case '501':  return  t('gest_stageAcad');
-            case '503':  return  t('distance_learning');
+            case '502':  return  t('distance_learning');
+            case '503':  return  t('gest_cantine');
 
-            case '504':  return  t('gest_cantine');
-            case '505':  return  t('gest_transfort');
-            case '506':  return  t('gest_biblio');
-            case '507':  return  t('gest_dortoir');
+            case '504':  return  t('gest_transfort');
+            case '505':  return  t('gest_biblio');
+            case '506':  return  t('gest_dortoir');
 
             //----CONFIG ----
 
@@ -215,6 +215,7 @@ function FormLayout(props){
             case '402':  return  'images/RelationAvcParent.png';
             case '403':  return  'images/Orientation.png';
             case '404':  return  'images/SmsP.png';
+            case '405':  return  t('images/synchro.png')
 
            
             //----EXTRAS ----

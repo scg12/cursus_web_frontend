@@ -253,10 +253,11 @@ function ScolaritePage(){
           <MenuItemListP minWtdhStyle={classes.size72Vw}  libelle= {t("enreg_admis")} theme={selectedTheme}>
             {(currentAppContext.enableProfiles["SCOLARITE_A1"]=='1') ?   <MenuItemP menuItemId ='100'  imgSource='images/NewStudent.png'        libelle={t("add_student")}         itemSelected={showSideMenu}>                                                           </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_A2"]=='1') ?   <MenuItemP menuItemId ='101'  imgSource='images/ListStudent.png'       libelle={t("consult_lists")}       itemSelected={showSideMenu}>                                                           </MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_A3"]=='1') ?   <MenuItemP menuItemId ='102'  imgSource='images/certificateP.png'      libelle={t("school_certificate")}  itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}> </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_A6"]=='1') ?   <MenuItemP menuItemId ='105'  imgSource='images/ChangemtClass.png'     libelle={t('changemnt_class')}     itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}>       </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_A3"]=='1') ?   <MenuItemP menuItemId ='102'  imgSource='images/certificateP.png'      libelle={t("school_certificate")}  itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}>  </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_A4"]=='1') ?   <MenuItemP menuItemId ='103'  imgSource='images/PrintSchoolCard.png'   libelle={t("gen_cartes")}          itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1 : classes.customimgStyle8}> </MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_A5"]=='1') ?   <MenuItemP menuItemId ='104'  imgSource='images/ConseilClasse.png'     libelle={t("conseils_classses")}   itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}>                                                           </MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_A6"]=='1') ?   <MenuItemP menuItemId ='105'  imgSource='images/ClassSup.png'          libelle={t("classes_sup")}         itemSelected={showSideMenu} style={isMobile?{ marginBottom:'-2vh'}:null}>               </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_A5"]=='1') ?   <MenuItemP menuItemId ='104'  imgSource='images/ConseilClasse.png'     libelle={t("conseils_classses")}   itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}>       </MenuItemP> : null}
+            {/* {(currentAppContext.enableProfiles["SCOLARITE_A6"]=='1') ?   <MenuItemP menuItemId ='105'  imgSource='images/ClassSup.png'          libelle={t("classes_sup")}         itemSelected={showSideMenu} style={isMobile?{ marginBottom:'-2vh'}:null}>               </MenuItemP> : null} */}
           </MenuItemListP>
           :
           null
@@ -321,8 +322,9 @@ function ScolaritePage(){
           {curentMenuItemPId== 101  && <ListeDesEleves formMode='liste'/>      }
           {curentMenuItemPId== 102  && <CertificatScolarite/>                  }                    
           {curentMenuItemPId== 103  && <CarteScolaire formMode='generation'/>  }
-          {curentMenuItemPId== 104  && <ConseilClasse formMode='ajout'/>       } 
-          {curentMenuItemPId== 105  && <AdmissionClasseSup/>                   }
+          {curentMenuItemPId== 104  && <ConseilClasse formMode='ajout'/>       }
+          {curentMenuItemPId== 105  &&  <ChangementClasse/>                    }          
+          {/* {curentMenuItemPId== 105  && <AdmissionClasseSup/>           } */}
           
           {/*-------SCOLARITE-2 : Emploi de temps - cours et programmes------*/}
           {curentMenuItemPId== 106  && <EmploiDeTemps formMode='ajout'/>       }

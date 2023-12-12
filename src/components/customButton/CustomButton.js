@@ -1,7 +1,7 @@
 import React from 'react'; 
 function CustomButton(props) {
    return (
-        <div id={props.id} className={(props.disable) ? 'buttonDefault disable ' + props.buttonStyle : 'buttonDefault ' + props.buttonStyle } onClick={(props.disable==false || props.disable==undefined) ? props.btnClickHandler:null} style={props.style}> 
+        <div id={props.id} className={(props.disable) ? 'buttonDefault disable ' + props.buttonStyle : 'buttonDefault ' + props.buttonStyle } onClick={(props.disable==false || props.disable==undefined) ? props.btnClickHandler:props.disabledBtnHandler} style={props.style}> 
             {(props.hasIconImg) ?
                 <img src={props.imgSrc}  className={props.imgStyle}  alt="my image"/>
                 :
