@@ -489,6 +489,11 @@ function PrintStudentReport(props) {
 
 
     function dropDownHandler(e){ 
+
+        if(!document.getElementById("eleves_C").classList.contains("disable")){
+            document.getElementById("eleves_C").classList.add("disable");
+        } 
+
         if(e.target.value != optClasse[0].value){
             console.log("valeures",e.target.value, optClasse[0].value)
             CURRENT_CLASSE_ID = e.target.value; 
@@ -522,13 +527,16 @@ function PrintStudentReport(props) {
 
     
     function dropDownPeriodHandler(e){
+
+        if(!document.getElementById("eleves_C").classList.contains("disable")){
+            document.getElementById("eleves_C").classList.add("disable");
+        } 
+
         if(e.target.value != optPeriode[0].value){
             CURRENT_PERIOD_ID    = e.target.value; 
             console.log("PP:",PROF_PRINCIPAL);
             CURRENT_PERIOD_LABEL = optPeriode.find((elt)=>elt.value == CURRENT_PERIOD_ID).label;
             getBulletinInfos(CURRENT_TYPE_BULLETIN_ID, CURRENT_CLASSE_ID, CURRENT_PERIOD_ID, listEleves);           
-            // if(CURRENT_CLASSE_ID!=undefined) setIsValid(true);
-            // else setIsValid(false);
         }else{
             CURRENT_PERIOD_ID    = undefined;
             CURRENT_PERIOD_LABEL = ''; 
@@ -1162,6 +1170,8 @@ function PrintStudentReport(props) {
     const printOrderedStudentReports=(e)=>{
         var elevesToPrint = [];      
        
+        if(document.getElementById("eleves_C").classList.contains("disable")) return;
+
         if(ELEVES_C_TO_PRINT != {}){
 
             if(selectedElevesIds[0].length < ELEVES_C_TO_PRINT.length){
@@ -1189,6 +1199,7 @@ function PrintStudentReport(props) {
             ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
             printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4); 
+            document.getElementById("eleves_C").classList.add("disable");
                           
         } else{
             chosenMsgBox = MSG_WARNING_PrRPT;
@@ -1204,10 +1215,12 @@ function PrintStudentReport(props) {
     const printNOrderedStudentReports=(e)=>{
         var elevesToPrint = [];
 
+        if(document.getElementById("eleves_NC").classList.contains("disable")) return;
+
         if(ELEVES_NC_TO_PRINT != {}){
 
-            if(selectedElevesIds[0].length < ELEVES_NC_TO_PRINT.length){
-                selectedElevesIds[0].map((id)=>{
+            if(selectedNCElevesIds[0].length < ELEVES_NC_TO_PRINT.length){
+                selectedNCElevesIds[0].map((id)=>{
                     var eleve = ELEVES_NC_TO_PRINT.find((elv)=>elv.entete.matricule == id);
                     elevesToPrint.push(eleve);
                 })
@@ -1229,6 +1242,7 @@ function PrintStudentReport(props) {
             ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
             printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4);
+            document.getElementById("eleves_NC").classList.add("disable");
                           
         } else{
             chosenMsgBox = MSG_WARNING_PrRPT;
@@ -1455,13 +1469,14 @@ function PrintStudentReport(props) {
                     <div className={classes.gridAction}> 
                         <CustomButton                          
                             id="eleves_C"
-                            btnText={t('imprimer')}
-                            hasIconImg= {true}
-                            imgSrc='images/printing1.png'
-                            imgStyle = {classes.grdBtnImgStyle}  
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printOrderedStudentReports}
+                            btnText            = {t('imprimer')}
+                            hasIconImg         = {true}
+                            imgSrc             = 'images/printing1.png'
+                            imgStyle           = {classes.grdBtnImgStyle}  
+                            buttonStyle        = {getGridButtonStyle()}
+                            btnTextStyle       = {classes.gridBtnTextStyle}
+                            btnClickHandler    = {printOrderedStudentReports}
+                            disabledBtnHandler = {printOrderedStudentReports}
                             disable={(isValid1==false)}   
                         />
                     </div>
@@ -1484,9 +1499,12 @@ function PrintStudentReport(props) {
                         checkboxSelection = {true}
                             
                         onSelectionModelChange={(id)=>{
-                            selectedElevesIds = new Array(id);
-                            if(selectedElevesIds[0].length>0) setIsValid1(true);
-                            else setIsValid1(false);
+                            selectedElevesIds = new Array(id);                           
+                            if(selectedElevesIds[0].length>0){
+                                if(document.getElementById("eleves_C").classList.contains("disable")){
+                                    document.getElementById("eleves_C").classList.remove("disable");
+                                }
+                            } else  document.getElementById("eleves_C").classList.add("disable");                            
                             console.log("selections",selectedElevesIds);
                         }}
 
@@ -1542,7 +1560,8 @@ function PrintStudentReport(props) {
                                 imgStyle = {classes.grdBtnImgStyle}  
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={printNOrderedStudentReports}
+                                btnClickHandler    = {printNOrderedStudentReports}
+                                disabledBtnHandler = {printNOrderedStudentReports}                              
                                 disable={(isValid2==false)}   
                             />
                         </div>
@@ -1562,8 +1581,12 @@ function PrintStudentReport(props) {
                                 
                             onSelectionModelChange={(id)=>{
                                 selectedNCElevesIds = new Array(id);
-                                if(selectedNCElevesIds[0].length>0) setIsValid2(true);
-                                else setIsValid2(false);
+                                if(selectedNCElevesIds[0].length>0)  {
+                                    if(document.getElementById("eleves_NC").classList.contains("disable")){
+                                        document.getElementById("eleves_NC").classList.remove("disable");
+                                    }
+                                }                                
+                                else  document.getElementById("eleves_NC").classList.add("disable");
                                 console.log("selections",selectedNCElevesIds);
                             }}
 

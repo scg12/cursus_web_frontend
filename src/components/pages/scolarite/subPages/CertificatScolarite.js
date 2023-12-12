@@ -158,17 +158,20 @@ function CertificatScolarite(props) {
     }
 
     function dropDownHandler(e){
-        //console.log(e.target.value)
-        var grdRows;
+       
+        if(!document.getElementById("btnGen").classList.contains("disable")){
+            document.getElementById("btnGen").classList.add("disable");
+        } 
+         
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getClassStudentList(CURRENT_CLASSE_ID);   
             console.log(CURRENT_CLASSE_LABEL)          
-        }else{
+        }else{            
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
-            setIsValid(false);
+            setIsValid(false);                    
             setGridRows([]);
         }
     }
@@ -747,7 +750,8 @@ const columnsFr = [
 
     const printStudentList=()=>{
         
-        
+        if(document.getElementById("btnGen").classList.contains("disable")) return;
+
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
                 currentClasse: CURRENT_CLASSE_LABEL,
@@ -770,6 +774,7 @@ const columnsFr = [
             ElevePageSet={};
             //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
             ElevePageSet = {...PRINTING_DATA};
+            document.getElementById("btnGen").classList.add("disable");
             console.log("ici la",ElevePageSet);                    
         } else{
             chosenMsgBox = MSG_WARNING;
@@ -868,14 +873,16 @@ const columnsFr = [
                         */}
 
                         <CustomButton
-                            btnText=  {t('generer')}
-                            hasIconImg= {true}
-                            imgSrc='images/printing1.png'
-                            imgStyle = {classes.grdBtnImgStyle}  
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printStudentList}
-                            disable={(isValid==false)}   
+                            id                 = {"btnGen"}
+                            btnText            = {t('generer')}
+                            hasIconImg         = {true}
+                            imgSrc             ='images/printing1.png'
+                            imgStyle           = {classes.grdBtnImgStyle}  
+                            buttonStyle        = {getGridButtonStyle()}
+                            btnTextStyle       = {classes.gridBtnTextStyle}
+                            btnClickHandler    = {printStudentList}
+                            disabledBtnHandler = {printStudentList}
+                            disable            = {(isValid==false)}   
                         />
 
                         {/*<CustomButton
@@ -904,8 +911,14 @@ const columnsFr = [
                                 
                             onSelectionModelChange={(id)=>{
                                 selectedElevesIds = new Array(id);
-                                if(selectedElevesIds[0].length>0) setIsValid(true);
-                                else setIsValid(false);                             
+                                // if(selectedElevesIds[0].length>0) setIsValid(true);
+                                // else setIsValid(false); 
+                                if(selectedElevesIds[0].length>0){
+                                    if(document.getElementById("btnGen").classList.contains("disable")){
+                                        document.getElementById("btnGen").classList.remove("disable");
+                                    }
+                                } else  document.getElementById("btnGen").classList.add("disable");                             
+                                
                                 console.log(selectedElevesIds);
                             }}
 
