@@ -1,5 +1,5 @@
 {  
-    
+    "synchro_data"    : "Synchronistaion des données",
     "conf_param_perso":"Configuration des Paramètres Personnels",
     "modif_login":"Modification Du Login",
     "modif_pswd" :"Modification Du Mot de Passe",
@@ -532,12 +532,12 @@
     "join_file":"Joindre fichier",
     "ok":"Ok",
     "add":"Ajouter",
-    "summary_list":"Liste des resumes",
+    "summary_list":"Liste des resumés",
     "homework" : "Devoir",
     "homework_list":"Liste des devoirs",
     "lesson_summary":"Resume de la lecon",
     "summary":"Resumer",
-    "given_homework":"Devoir donnes",
+    "given_homework":"Devoir donnés",
     "lesson_title":"Lecon",
     "chapter":"Chapitre",
     "date":"Date",

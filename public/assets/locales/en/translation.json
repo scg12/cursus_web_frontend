@@ -1,4 +1,5 @@
 {   
+    "synchro_data"    : "Data synchronisation",
     "conf_param_perso":"Set Account Personal Parameters",
     "modif_login":"Change your login",
     "modif_pswd" :"Change your password",

@@ -14,6 +14,7 @@ import ConsultMsg from './subPages/ConsultMsg';
 import RelationAvcParents from './subPages/RelationAvcParents';
 import StagesAcad from './subPages/StagesAcad';
 import OrientationEleves from "./subPages/OrientationEleves";
+import SynchroData from "./subPages/SynchroData";
 import EnvoiMsg from './subPages/EnvoiMsg';
 
 import { useState,useContext } from "react";
@@ -90,8 +91,9 @@ function CommParentPage() {
           {(currentAppContext.enableProfiles["COMM_PARENT_B"]=='1') ? 
             <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("comm_externe")}  theme={selectedTheme}>
               {(currentAppContext.enableProfiles["COMM_PARENT_B1"]=='1') ? <MenuItemP menuItemId ='402'  imgSource='images/RelationAvcParent.png'          libelle={t("Relation_parent")} itemSelected={showSideMenu}></MenuItemP> : null}
+              {(currentAppContext.enableProfiles["COMM_PARENT_B1"]=='1') ? <MenuItemP menuItemId ='405'  imgSource='images/synchro.png'                    libelle={t("synchro_data")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle7}> </MenuItemP> : null}
               {(currentAppContext.enableProfiles["COMM_PARENT_B3"]=='1') ? <MenuItemP menuItemId ='403'  imgSource='images/Orientation.png'                libelle={t("suivi_orientation")} itemSelected={showSideMenu}></MenuItemP> :null}
-              {(currentAppContext.enableProfiles["COMM_PARENT_B4"]=='1') ? <MenuItemP menuItemId ='404'  imgSource='images/SmsP.png'                        libelle={t("envoi_msg")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}></MenuItemP> : null }
+              {(currentAppContext.enableProfiles["COMM_PARENT_B4"]=='1') ? <MenuItemP menuItemId ='404'  imgSource='images/SmsP.png'                       libelle={t("envoi_msg")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}></MenuItemP> : null }
             </MenuItemListP>
             :
             null
@@ -106,6 +108,7 @@ function CommParentPage() {
           {curentMenuItemPId==402 && <RelationAvcParents/>  }
           {curentMenuItemPId==403 && <OrientationEleves/>   } 
           {curentMenuItemPId==404 && <EnvoiMsg/>            }
+          {curentMenuItemPId==405 && <SynchroData/>            }
          
         </FormLayout>     
          

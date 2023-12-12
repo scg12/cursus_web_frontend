@@ -135,6 +135,7 @@ function FormLayout(props){
             case '402':  return  "Relation Avec Les Parents D'Elèves";
             case '403':  return  'Orientation Et suivi Des Elèves';
             case '404':  return  'Envoi De Message';
+            case '405':  return  t('synchro_data')
 
             //----EXTRAS ----
             case '501':  return  t('gest_stageAcad');
@@ -214,6 +215,7 @@ function FormLayout(props){
             case '402':  return  'images/RelationAvcParent.png';
             case '403':  return  'images/Orientation.png';
             case '404':  return  'images/SmsP.png';
+            case '405':  return  t('images/synchro.png')
 
            
             //----EXTRAS ----
