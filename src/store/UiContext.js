@@ -46,6 +46,7 @@ const UiContext = createContext({
 
     //pour le CT
     bookInActivity : false,
+    CURRENT_CT_COURS_ID : {},
 
     //Pour les MsgBoxes 
     isParentMsgBox : false,
@@ -132,6 +133,9 @@ const UiContext = createContext({
 
     //gestion du loading lors chargement des formulaires
     setFormIsloading  : (boolVal) => {}, 
+
+    //Cahier de texte id_cours selectionné
+    setCURRENT_CT_COURS_ID : (idcours)=>{},
     
 });
 
@@ -190,7 +194,9 @@ export function UiContextProvider(props)
     //ID du menu actuel sur lequel on est et de son precedent
     const [currentSelectedMenuID, setCurrentSelectedMenuID]    = useState('0');
     const [previousSelectedMenuID, setPreviousSelectedMenuID]  = useState('0');
-
+    
+    // ID Cours Cahier de texte
+    const [CURRENT_CT_COURS_ID, setCURRENT_CT_COURS_ID]    = useState(0);
     //Emploi de temps Matiere et prof principal
     const [isMatiereEnable, setIsMatiereEnable] = useState(true);
 
@@ -381,9 +387,13 @@ export function UiContextProvider(props)
     function currentSelectedMenuIDHandler(idMenu){
         setCurrentSelectedMenuID(idMenu)
     }
-
+    
     function previousSelectedMenuIDHandler(idMenu){
         setPreviousSelectedMenuID(idMenu)
+    }
+    //ID cours ct
+    function CURRENT_CT_COURS_IDHandler(idCours){
+        setCURRENT_CT_COURS_ID(idCours)
     }
 
     //Emploi de temps Matiere et prof principal
@@ -457,6 +467,9 @@ export function UiContextProvider(props)
         //ID du menu actuel sur lequel on est et de son precedent
         currentSelectedMenuID : currentSelectedMenuID,
         previousSelectedMenuID : previousSelectedMenuID,
+        
+        //ID cours ct
+        CURRENT_CT_COURS_ID : CURRENT_CT_COURS_ID,
 
         prgramCoverSelectedLevel : prgramCoverSelectedLevel,
 
@@ -533,7 +546,9 @@ export function UiContextProvider(props)
         //ID du menu actuel sur lequel on est et de son precedent
         setCurrentSelectedMenuID :currentSelectedMenuIDHandler,
         setPreviousSelectedMenuID : previousSelectedMenuIDHandler,
-
+        
+        //ID cours ct
+        setCURRENT_CT_COURS_ID :CURRENT_CT_COURS_IDHandler,
         //pour Dashboard
         setPrgramCoverSelectedLevel:setPrgramCoverSelectedLevelHandler,
 

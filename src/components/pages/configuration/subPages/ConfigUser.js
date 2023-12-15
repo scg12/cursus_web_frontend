@@ -337,6 +337,7 @@ function ConfigUser(props) {
             }
         }
         console.log(infos)
+        console.log(document.getElementById('checkbox_ens').checked);
                         
             axiosInstance.post(`create-user/`, {
                     infos: infos,

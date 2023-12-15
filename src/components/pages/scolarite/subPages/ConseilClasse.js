@@ -154,17 +154,49 @@ function ConseilClasse(props) {
 
     
     const getEtabListClasses=()=>{
-       var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
-        axiosInstance.post(`list-classes/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-                console.log(tempTable);
-           })         
-        }) 
+        var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }];
+        let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+        console.log(classes)
+        let classes_user;
+        if(currentAppContext.infoUser.is_pp){
+            if(currentAppContext.infoUser.is_prof_only) 
+                classes_user = currentAppContext.infoUser.pp_classes;
+            else{
+                // On verifie que admin_classes inclut pp_classes sinon on lui ajoute pp_classes
+                classes_user = currentAppContext.infoUser.admin_classes;
+                let pp_classes = currentAppContext.infoUser.pp_classes;
+                // console.log(pp_classes)
+                pp_classes.forEach(classe => {
+                    if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
+                        classes_user.push({"id":classe.id,"libelle":classe.libelle})
+
+                });
+            }
+        }
+        else{
+            classes_user = currentAppContext.infoUser.admin_classes;
+        }
+            
+        classes_user.forEach(classe => {
+        console.log(classe.id);
+        if((classes.filter( cl => cl.id_classe === classe.id)).length>0){
+            // classes_user.push({"id":classe.id,"libelle":classe.libelle})
+            tempTable.push({value:classe.id, label:classe.libelle})
+        }
+
+        });
+           
+        setOpClasse(tempTable);
+        // axiosInstance.post(`list-classes/`, {
+        //     id_sousetab: currentAppContext.currentEtab,
+        // }).then((res)=>{
+        //         console.log(res.data);
+        //         res.data.map((classe)=>{
+        //         tempTable.push({value:classe.id, label:classe.libelle})
+        //         setOpClasse(tempTable);
+        //         console.log(tempTable);
+        //    })         
+        // }) 
     }
 
     const getNextClassPossibles =(classeId) =>{

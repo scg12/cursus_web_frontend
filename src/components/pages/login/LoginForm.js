@@ -314,7 +314,7 @@ function LoginForm(props){
     }
 
     function generateFeaturesCodeFromString(string){
-        console.log(string.length)
+        console.log(string)
         let codes = string.split('');
         FeaturesCode["SCOLARITE"] = codes[0];
         FeaturesCode["SCOLARITE_A"] = codes[1];
@@ -500,6 +500,7 @@ function LoginForm(props){
             currentAppContext.setCurrentEtab(res.data.id_etab_init);
             currentAppContext.setActivatedYear(res.data.activated_year);
             currentAppContext.setInfoSetabs(res.data.info_setabs);
+            currentAppContext.setInfoUser(res.data.info_user);
             currentAppContext.setInfoCycles(res.data.info_cycles);
             currentAppContext.setInfoNiveaux(res.data.info_niveaux);
             currentAppContext.setInfoClasses(res.data.info_classes);

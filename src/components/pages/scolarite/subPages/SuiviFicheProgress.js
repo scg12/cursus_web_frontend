@@ -67,16 +67,46 @@ function SuiviFicheProgress(props) {
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
-        axiosInstance.post(`list-classes/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-                console.log(tempTable);
-           })         
-        }) 
+       let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+       let classes_user;
+       
+           classes_user = currentAppContext.infoUser.pp_classes;
+           let admin_classes = currentAppContext.infoUser.admin_classes;
+           // console.log(pp_classes)
+           admin_classes.forEach(classe => {
+               if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
+                   classes_user.push({"id":classe.id,"libelle":classe.libelle})
+
+           });
+       
+
+       let n = classes_user.length;
+       let m = classes.length;
+       let i = 0;
+       let j = 0;
+      while(i<n){
+       j = 0;
+       while(j<m){
+           if(classes_user[i].id==classes[j].id_classe){
+               tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+               break;
+           }
+           j++;
+       }
+       i++;
+      }
+       // axiosInstance.post(`list-classes/`, {
+        //     id_sousetab: currentAppContext.currentEtab,
+        // }).then((res)=>{
+        //         console.log(res.data);
+        //         res.data.map((classe)=>{
+        //         tempTable.push({value:classe.id, label:classe.libelle})
+        //         setOpClasse(tempTable);
+        //         console.log(tempTable);
+        //    })         
+        // }) 
+        setOpClasse(tempTable);
+
     }
 
     

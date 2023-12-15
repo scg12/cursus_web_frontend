@@ -119,15 +119,21 @@ function ChangementClasse(props) {
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label:(i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  ', id_niveau:0    }]
-        axiosInstance.post(`list-classes/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle, id_niveau:classe.id_niveau})
-                setOpClasseDep(tempTable);
-           })         
-        }) 
+       let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+       console.log(classes)
+       classes.map(classe=>
+        tempTable.push({value:classe.id_classe, label:classe.libelle, id_niveau:classe.id_niveau})
+        );
+        setOpClasseDep(tempTable); 
+    //    axiosInstance.post(`list-classes/`, {
+    //         id_sousetab: currentAppContext.currentEtab,
+    //     }).then((res)=>{
+    //             console.log(res.data);
+    //             res.data.map((classe)=>{
+    //             tempTable.push({value:classe.id, label:classe.libelle, id_niveau:classe.id_niveau})
+    //             setOpClasseDep(tempTable);
+    //        })         
+    //     }) 
     }
 
     const  getClassStudentListDep=(classId)=>{

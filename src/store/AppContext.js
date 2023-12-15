@@ -16,6 +16,7 @@ const AppContext = createContext({
     currentCycle : {},
     infoAnnees : {},
     infoSetabs : {},
+    infoUser : {},
     infoCycles : {},
     infoNiveaux : {},
     infoClasses : {},
@@ -43,6 +44,7 @@ const AppContext = createContext({
     setActivatedYear :(givenYear) => {},
     setInfoAnnees :(givenAnnee) => {},
     setInfoSetabs :(infoSetab) => {},
+    setInfoUser :(infoUser) => {},
     setInfoCycles :(infoCycle) => {},
     setInfoNiveaux :(infoNiveau) => {},
     setInfoClasses :(infoClasse) => {},
@@ -71,6 +73,7 @@ export function AppContextProvider(props)
     const [activatedYear, setActivatedYear] = useState();
     const [infoAnnees, setInfoAnnees] = useState();
     const [infoSetabs, setInfoSetabs] = useState([]);
+    const [infoUser, setInfoUser] = useState([]);
     const [infoCycles, setInfoCycles] = useState([]);
     const [infoNiveaux, setInfoNiveaux] = useState([]);
     const [infoClasses, setInfoClasses] = useState([]);
@@ -134,6 +137,9 @@ export function AppContextProvider(props)
     function setInfoSetabsHandler(infoSetab) {
         setInfoSetabs(infoSetab)
     }
+    function setInfoUserHandler(infoUser) {
+        setInfoUser(infoUser)
+    }
     function setInfoCyclesHandler(infoCycle) {
         setInfoCycles(infoCycle)
     }
@@ -178,6 +184,7 @@ export function AppContextProvider(props)
         activatedYear  : activatedYear,
         infoAnnees     : infoAnnees,
         infoSetabs     : infoSetabs,
+        infoUser     : infoUser,
         infoCycles     : infoCycles,
         infoNiveaux    : infoNiveaux,
         infoClasses    : infoClasses,
@@ -202,6 +209,7 @@ export function AppContextProvider(props)
         setActivatedYear  : setActivatedYearHandler,
         setInfoAnnees     : setInfoAnneesHandler,
         setInfoSetabs     : setInfoSetabsHandler,
+        setInfoUser     : setInfoUserHandler,
         setInfoCycles     : setInfoCyclesHandler,
         setInfoNiveaux    : setInfoNiveauxHandler,
         setInfoClasses    : setInfoClassesHandler,

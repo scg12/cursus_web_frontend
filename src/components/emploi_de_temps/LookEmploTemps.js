@@ -129,11 +129,52 @@ function LookEmploTemps(props) {
         if(currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID){
             if(currentUiContext.TAB_CRENEAU_PAUSE.length>0)
             {   
-                
+                let prof_list;
                 console.log("00000 ",currentUiContext)
+                if(currentAppContext.infoUser.is_prof_only){
+                    prof_list = currentUiContext.listProfs.filter(prof=>prof.id_user===currentAppContext.idUser);
+                    setOptTeachers(createOption1(prof_list));
+                }
+                else{
+                    prof_list = currentUiContext.listProfs;
+                    setOptTeachers(createOption1(currentUiContext.listProfs));
+                }
+                    // setOptClasse(createOption2(currentUiContext.classeEmploiTemps));
+                let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+                let tempTable=[]
                 
-                setOptTeachers(createOption1(currentUiContext.listProfs));
-                setOptClasse(createOption2(currentUiContext.classeEmploiTemps));
+                console.log(classes);
+                let classes_user;
+                if(currentAppContext.infoUser.is_prof_only) 
+                    classes_user = currentAppContext.infoUser.prof_classes;
+                else{
+                    classes_user = currentAppContext.infoUser.admin_classes;
+                    let prof_classes = currentAppContext.infoUser.prof_classes;
+                    // console.log(pp_classes)
+                    prof_classes.forEach(classe => {
+                        if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
+                            classes_user.push({"id":classe.id,"libelle":classe.libelle})
+
+                    });
+                }
+
+                let n = classes_user.length;
+                let m = classes.length;
+                let i = 0;
+                let j = 0;
+                while(i<n){
+                    j = 0;
+                    while(j<m){
+                        if(classes_user[i].id==classes[j].id_classe){
+                            tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+                            break;
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+                setOptClasse(tempTable);
+
                 setByClassEnable(true);
 
                 console.log("init TAB_VALEUR_HORAIRE",currentUiContext.listProfs,currentUiContext.TAB_VALEUR_HORAIRE)
@@ -150,8 +191,10 @@ function LookEmploTemps(props) {
                     currentClasseLabel = currentUiContext.classeEmploiTemps[0].libelle;
                 }
 
-                currentTeacherId = currentUiContext.listProfs[0].id;
-                currentTeacherLabel = currentUiContext.listProfs[0].nom +' '+currentUiContext.listProfs[0].prenom;
+                // currentTeacherId = currentUiContext.listProfs[0].id;
+                // currentTeacherLabel = currentUiContext.listProfs[0].nom +' '+currentUiContext.listProfs[0].prenom;
+                currentTeacherId = prof_list[0].id;
+                currentTeacherLabel = prof_list[0].nom +' '+prof_list[0].prenom;
 
 
                 console.log("currentClasseId: ",currentClasseId,currentUiContext.classeEmploiTemps)
@@ -187,6 +230,8 @@ function LookEmploTemps(props) {
                 CURRENT_DROPPED_MATIERE_LIST = liste_dropped_matiere;
                 currentUiContext.addMatiereToDroppedMatiereList(liste_dropped_matiere,-2);            
                 console.log("currentUiContext.CURRENT_DROPPED_MATIERE_LIST: ",currentUiContext.CURRENT_DROPPED_MATIERE_LIST);                    
+                
+
             }  
         }
 
