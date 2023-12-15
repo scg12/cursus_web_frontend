@@ -1,3 +1,8 @@
+.MenuClose{
+    color :red;
+    font-weight: bold;
+}
+
 .size72Vw{
     min-width:72vw;    
 }
