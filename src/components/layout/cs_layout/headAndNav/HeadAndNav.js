@@ -167,7 +167,7 @@ function HeadAndNav(props) {
     }
 
     function closeSchoolYear(){
-        alert("Mettre le code ici!!!");
+        alert("Mettre le code ici!!!");        
     }
 
 
@@ -230,7 +230,10 @@ function HeadAndNav(props) {
                     msgTitle:"", 
                     message:""
                 })  
-                closeSchoolYear();
+                if(currentUiContext.yearToClose==0){
+                    closeSchoolYear();
+                }
+                
                 return 1;
             }
         }

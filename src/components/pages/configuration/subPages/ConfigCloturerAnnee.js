@@ -65,12 +65,13 @@ function ConfigCloturerAnnee(props) {
    
     function closeSchoolYearHandler(){
         chosenMsgBox = MSG_CONFIRM_CLOSE;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"question", 
-                msgTitle:t("confirm_year_closure_M"), 
-                message:t("confirm_year_closure")
-            });
+        currentUiContext.setYearToClose(0);
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType:"question", 
+            msgTitle:t("confirm_year_closure_M"), 
+            message:t("confirm_year_closure")
+        });
 
     }
 
@@ -269,7 +270,7 @@ function ConfigCloturerAnnee(props) {
                     buttonStyle={getButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler = {closeSchoolYearHandler}
-                    disable = {(areAllMeetingDone==false)}
+                    disable = {(areAllMeetingDone==false && currentUiContext.yearToClose==-1)}
 
                 />                
             </div>
