@@ -1,4 +1,6 @@
-{   "annual_meeting_already_created" :"An yearly meeting has already been created !!!",
+{   "confirm_year_closure"   : "Confirm school year closure ?",
+    "confirm_year_closure_M" : "SCHOOL YEAR CLOSURE",
+    "annual_meeting_already_created" :"An yearly meeting has already been created !!!",
     "taux_de_reussite_general_exams" :"Exams General success rate",
     "taux_de_reussite_general" : "General success rate",
     "year_closure_M":"SCHOOL YEAR TERMINATION",

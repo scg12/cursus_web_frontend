@@ -166,8 +166,13 @@ function HeadAndNav(props) {
         toggleActiveMenu(firstMenu);
     }
 
+    function closeSchoolYear(){
+        alert("Mettre le code ici!!!");
+    }
+
 
     const acceptHandler=()=>{
+        console.log("code MSG",chosenMsgBox);
         switch(chosenMsgBox){
             case MSG_SUCCESS: {
                 currentUiContext.showMsgBox({
@@ -225,6 +230,7 @@ function HeadAndNav(props) {
                     msgTitle:"", 
                     message:""
                 })  
+                closeSchoolYear();
                 return 1;
             }
         }

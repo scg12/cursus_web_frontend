@@ -2,6 +2,8 @@ import React from 'react';
 import axiosInstance from '../../../../axios';
 import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
+import BackDrop from '../../../backDrop/BackDrop';
+import MsgBox from '../../../msgBox/MsgBox';
 import UiContext from "../../../../store/UiContext";
 import AppContext from "../../../../store/AppContext";
 import { useContext, useState, useEffect } from "react";
@@ -11,6 +13,16 @@ var login;
 var CURRENT_ANNEE_SCOLAIRE;
 var ARE_ALMEETIN_DONE;
 var tabPendingMeeting;
+
+
+var chosenMsgBox;
+const MSG_SUCCESS_CLOSE  = 1;
+const MSG_WARNING_CLOSE  = 2;
+const MSG_CONFIRM_CLOSE  = 3;
+
+
+
+
 function ConfigCloturerAnnee(props) {
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -20,6 +32,7 @@ function ConfigCloturerAnnee(props) {
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
+        currentUiContext.setIsParentMsgBox(true);
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
         getNonCloseYearMeeting();
         
@@ -36,8 +49,9 @@ function ConfigCloturerAnnee(props) {
     }
 
 /************************************ Handlers ************************************/
-
-    function getNonCloseYearMeeting() {
+    //GE tu vas ecrire la requete qui cherche tous les CC annuels non clotures
+    //Voici son corps
+    function getNonCloseYearMeeting() {  
         axiosInstance.post(`get-non-close-year-meeting/`, {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
@@ -48,16 +62,145 @@ function ConfigCloturerAnnee(props) {
 
     }    
 
-
-    function closeSchoolYear(){
+   
+    function closeSchoolYearHandler(){
+        chosenMsgBox = MSG_CONFIRM_CLOSE;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("confirm_year_closure_M"), 
+                message:t("confirm_year_closure")
+            });
 
     }
+
+    //GE tu vas ecrire la fonction pour cloturer l'annee
+   //Voici son corps
+    function closeSchoolYear(){
+        alert("Mettre le code ici!!!");
+    }
+
+    const acceptHandler=()=>{
+        
+        switch(chosenMsgBox){
+
+            case MSG_SUCCESS_CLOSE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //setModalOpen(0);  
+                return 1;
+            }
+
+            case MSG_WARNING_CLOSE:{
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //setModalOpen(0); 
+                return 1;
+            }
+
+            case MSG_CONFIRM_CLOSE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                closeSchoolYear();
+                //setModalOpen(0);  
+                return 1;
+            }
+
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                closeSchoolYear();
+            }
+        }        
+    }
+
+    const rejectHandler=()=>{
+        switch(chosenMsgBox){
+
+            case MSG_SUCCESS_CLOSE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                //getClassStudentList(CURRENT_CLASSE_ID); 
+                return 1;
+            }
+
+           
+            case MSG_WARNING_CLOSE: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+
+            case MSG_CONFIRM_CLOSE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                // modifyClassMeeting(CURRENT_MEETING);
+                return 1;
+            }
+            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+            }
+        }
+        
+    }
+
+    
     
     
 /************************************ JSX CODE ************************************/
 
     return (
         <div className={classes.formStyle}>
+            {(currentUiContext.msgBox.visible == true && !currentUiContext.isParentMsgBox) &&
+                <MsgBox 
+                    msgTitle            = {currentUiContext.msgBox.msgTitle} 
+                    msgType             = {currentUiContext.msgBox.msgType} 
+                    message             = {currentUiContext.msgBox.message} 
+                    customImg           = {true}
+                    customStyle         = {true}
+                    contentStyle        = {classes.msgContent}
+                    imgStyle            = {classes.msgBoxImgStyleP}
+                    buttonAcceptText    = {(currentUiContext.msgBox.msgType  == "question")? t("yes") : t("ok")}
+                    buttonRejectText    = {t("no")}  
+                    buttonAcceptHandler = {acceptHandler}  
+                    buttonRejectHandler = {rejectHandler}            
+                />               
+            }
             <div id='errMsgPlaceHolder'></div>
             <div className={classes.inputRow}> 
                 <div className={classes.inputRowLabel} style={{width:"auto",justifyContent:"center"}}>
@@ -122,7 +265,7 @@ function ConfigCloturerAnnee(props) {
                     btnText={t('close_year')} 
                     buttonStyle={getButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler = {closeSchoolYear}
+                    btnClickHandler = {closeSchoolYearHandler}
                     disable = {(areAllMeetingDone==false)}
 
                 />                

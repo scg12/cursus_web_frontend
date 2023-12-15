@@ -53,8 +53,6 @@ import ConfigCloturerAnnee from "./subPages/ConfigCloturerAnnee";
 
 
 
-
-
 function ConfigPage(props) {
    
     const { t, i18n } = useTranslation();
@@ -157,6 +155,8 @@ function ConfigPage(props) {
             setCurrentActiveMenuID(NewActiveMenuId);
         }        
     }
+
+    
     
     
     return ( 

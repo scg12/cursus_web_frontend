@@ -1,3 +1,35 @@
+.msgContent{
+    display: flex;
+    color:black;
+    font-size: 1vw;
+    font-weight: 657;
+    align-self: center;
+    margin-left: 0.17vw;
+
+}
+
+
+.msgBoxImgStyle{
+    width:4vw;
+    height: 4vw;
+    }
+    
+    
+    .msgBoxImgStyleP{
+    width:2.7vw;
+    height: 2.7vw;
+    }
+
+.msgContentP{
+    display: flex;
+    color:black;
+    font-size: 0.9vw;
+    font-weight: 750;
+    align-self: center;
+    margin-left: 0.17vw;
+
+}
+
 .comboBoxStyle{
     font-weight: 600;
     font-size: 0.97vw;
