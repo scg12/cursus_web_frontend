@@ -87,16 +87,18 @@
 .Theme1_MenuItemSectionDetails {
     display:flex;
     flex-direction:column;
-    justify-content:flex-start;
+    justify-content:center;
     align-items: center;
     border-radius: 5px;
     border-style: solid;
     border-width: 1.5px;
+    align-self: flex-start;
     border-color: rgb(60, 160, 21);
     min-width: 37vw;
     min-height: 12vh;
     padding:7px;
 }
+
 
 .Theme1_mainContentPosition {
     position: absolute;
