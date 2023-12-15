@@ -262,6 +262,9 @@ function ConfigCloturerAnnee(props) {
             
             <div className={classes.buttonRow} style={{justifyContent:"flex-end"}}>
                 <CustomButton
+                    hasIconImg= {true}
+                    imgSrc='images/checkImg.png'
+                    imgStyle = {classes.grdBtnImgStyle}
                     btnText={t('close_year')} 
                     buttonStyle={getButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}

@@ -1,3 +1,13 @@
+.grdBtnImgStyle{
+    position: relative;
+    z-index: 100;
+    width: 2vw;
+    height: 2vw;
+    margin-right: 1px;
+    border-radius: 1.03vw; 
+}
+
+
 .msgContent{
     display: flex;
     color:black;
