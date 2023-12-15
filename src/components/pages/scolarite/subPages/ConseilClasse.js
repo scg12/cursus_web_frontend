@@ -50,6 +50,8 @@ var LIST_CONSEILS_INFOS    = [];
 var LIST_ELEVES            = [];
 var CURRENT_ANNEE_SCOLAIRE = '';
 
+var CCA_CREATED = false;
+
 
 
 var listElt ={};
@@ -347,6 +349,7 @@ function ConseilClasse(props) {
 
             case "annuel":{
                 foundedPeriode = {id:-1, libelle:CURRENT_ANNEE_SCOLAIRE};
+                CCA_CREATED = true;
                 break; 
             }
          
@@ -1342,6 +1345,7 @@ const columnsFr = [
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddClassMeeting 
+                    cca_created        = {CCA_CREATED}
                     defaultMembres     = {DEFAULT_MEMBERS}  
                     otherMembres       = {OTHER_MEMBERS} 
                     presentsMembres    = {PRESENTS_MEMBERS} 

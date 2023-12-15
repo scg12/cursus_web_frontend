@@ -54,7 +54,7 @@ function MenuItem(props) {
     return(
         <div id = {props.menuItemId} className={(props.isSimple) ? getCurrentThemeSimple() : getCurrentTheme()  + ' sidenav-trigger'} data-target='side-menu' onClick={props.itemSelected}>
             <img src={props.imgSource} className={(props.withCustomImage) ? props.imageStyle : (isMobile) ? M_classes.imgStyle: classes.imgStyle}>{props.iconImg}</img>
-            <span className={classes.menuLibelle} >{props.libelle}</span>
+            <span className={(props.isSpecial) ? props.menuTextStyle : classes.menuLibelle}> {props.libelle}</span>
             {props.children}
         </div>
 

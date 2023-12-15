@@ -29,7 +29,7 @@ function MsgBox(props) {
 
     return (
             
-        <div className={'card '+ classes.msgBoxContainer} style={isMobile?{left:'35%'}:null}>
+        <div className={'card '+ classes.msgBoxContainer} style={isMobile?{left:'35%',...props.containerStyle}:props.containerStyle}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.msgBoxImageContainer}>
                     <img alt='logoCursus' className={classes.formHeaderImg} src='images/cursusLogo_Mob.png'/>

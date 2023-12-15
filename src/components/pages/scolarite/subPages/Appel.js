@@ -129,7 +129,12 @@ function Appel(props) {
         LISTE_COURS = [];    
        
         if(classeId!=0){
-            LISTE_COURS = currentAppContext.infoUser.prof_cours.filter(cours=>cours.id_classe == classeId)
+            if(currentAppContext.infoUser.is_prof_only)
+                LISTE_COURS = currentAppContext.infoUser.prof_cours.filter(cours=>cours.id_classe == classeId)
+            else
+                LISTE_COURS = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
+
+
                 LISTE_COURS.map((cours)=>{
                 tempTable.push({value:cours.id_cours, label:cours.libelle_cours});
                 }) 

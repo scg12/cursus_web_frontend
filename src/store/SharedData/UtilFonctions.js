@@ -101,9 +101,6 @@ export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elev
         //Preparation de resultats de la classe
         var resultClasse = eleveToPrintData.recap_results[0].resultat.split("²²");
 
-        
-
-
         switch(typeBulletin){
             case 1:{
                 for(var elv=0; elv<ElevesInfo.length; elv++){

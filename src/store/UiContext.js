@@ -76,6 +76,9 @@ const UiContext = createContext({
 
     // Langue de l'utilisateur
 
+    //gestion de la cloture de l'annee
+    yearToClose : -1,
+
 
 
 
@@ -136,7 +139,9 @@ const UiContext = createContext({
 
     //Cahier de texte id_cours selectionné
     setCURRENT_CT_COURS_ID : (idcours)=>{},
-    
+
+    //gestion de la cloture de l'annee
+    setYearToClose : (boolVal) => {},    
 });
 
 export function UiContextProvider(props)
@@ -205,6 +210,10 @@ export function UiContextProvider(props)
 
     //gestion du loading lors chargement des formulaires
     const [formIsloading, setFormIsloading] = useState(false);
+
+    //gestion de la cloture de l'annee
+    const [yearToClose, setYearToClose] = useState(false);
+   
       
    
 
@@ -410,6 +419,12 @@ export function UiContextProvider(props)
     function formIsloadingHandler(boolVal){
         setFormIsloading(boolVal)
     }
+
+    //gestion de la cloture de l'annee
+    function yearToCloseHandler(boolVal){
+        setYearToClose(boolVal)
+    }
+     
    
      
 
@@ -482,6 +497,8 @@ export function UiContextProvider(props)
         //gestion du loading lors chargement des formulaires
         formIsloading : false,
 
+        //gestion de la cloture de l'annee
+        yearToClose : false,
 
 
        
@@ -559,7 +576,10 @@ export function UiContextProvider(props)
         setCurrentPPList:currentPPlistHandler,
 
         //gestion du loading lors chargement des formulaires
-        setFormIsloading:formIsloadingHandler
+        setFormIsloading:formIsloadingHandler,
+
+        //gestion de la cloture de l'annee
+        setYearToClose:yearToCloseHandler
 
     };
 
