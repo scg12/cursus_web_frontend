@@ -12,7 +12,8 @@ import { useTranslation } from "react-i18next";
 var login;
 var CURRENT_ANNEE_SCOLAIRE;
 var ARE_ALMEETIN_DONE;
-var tabPendingMeeting;
+var tabPendingMeeting = [];
+
 
 
 var chosenMsgBox;
@@ -27,6 +28,7 @@ function ConfigCloturerAnnee(props) {
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [areAllMeetingDone,setAreAllMeetingDone] = useState(true);
+    const [tabPendingClass, setTabPendingClass] = useState([]);
     const { t, i18n } = useTranslation();
     const [isValid, setIsValid] = useState(false);
     const selectedTheme = currentUiContext.theme;
@@ -51,15 +53,19 @@ function ConfigCloturerAnnee(props) {
 /************************************ Handlers ************************************/
     //GE tu vas ecrire la requete qui cherche tous les CC annuels non clotures
     //Voici son corps
-    function getNonCloseYearMeeting() {  
-        axiosInstance.post(`get-non-close-year-meeting/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-            tabPendingMeeting = []
-            setAreAllMeetingDone(tabPendingMeeting.length > 0) ;
-               
-        }) 
+    function getNonCloseYearMeeting() { 
+        tabPendingMeeting = ['6ieme','Tlec'];
+        setTabPendingClass(tabPendingMeeting);
+        setAreAllMeetingDone(tabPendingMeeting.length <= 0) ;
 
+        /*---------Voici le vrai code---------*/
+        // axiosInstance.post(`get-non-close-year-meeting/`, {
+        //     id_sousetab: currentAppContext.currentEtab,
+        // }).then((res)=>{
+        //     tabPendingMeeting = ['6ieme','Tlec'];
+        //     setTabPendingClass(tabPendingMeeting);
+        //     setAreAllMeetingDone(tabPendingMeeting.length <= 0) ;               
+        // })
     }    
 
    
@@ -72,136 +78,12 @@ function ConfigCloturerAnnee(props) {
             msgTitle:t("confirm_year_closure_M"), 
             message:t("confirm_year_closure")
         });
-
     }
-
-    //GE tu vas ecrire la fonction pour cloturer l'annee
-   //Voici son corps
-    function closeSchoolYear(){
-        alert("Mettre le code ici!!!");
-    }
-
-    const acceptHandler=()=>{
-        
-        switch(chosenMsgBox){
-
-            case MSG_SUCCESS_CLOSE: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
-                //setModalOpen(0);  
-                return 1;
-            }
-
-            case MSG_WARNING_CLOSE:{
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
-                //setModalOpen(0); 
-                return 1;
-            }
-
-            case MSG_CONFIRM_CLOSE: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-                closeSchoolYear();
-                //setModalOpen(0);  
-                return 1;
-            }
-
-            default: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-                closeSchoolYear();
-            }
-        }        
-    }
-
-    const rejectHandler=()=>{
-        switch(chosenMsgBox){
-
-            case MSG_SUCCESS_CLOSE: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
-                //getClassStudentList(CURRENT_CLASSE_ID); 
-                return 1;
-            }
-
-           
-            case MSG_WARNING_CLOSE: {
-                    currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-                return 1;
-            }
-
-            case MSG_CONFIRM_CLOSE: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-                // modifyClassMeeting(CURRENT_MEETING);
-                return 1;
-            }
-            
-           
-            default: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
-            }
-        }
-        
-    }
-
-    
-    
-    
+ 
 /************************************ JSX CODE ************************************/
 
     return (
-        <div className={classes.formStyle}>
-            {(currentUiContext.msgBox.visible == true && !currentUiContext.isParentMsgBox) &&
-                <MsgBox 
-                    msgTitle            = {currentUiContext.msgBox.msgTitle} 
-                    msgType             = {currentUiContext.msgBox.msgType} 
-                    message             = {currentUiContext.msgBox.message} 
-                    customImg           = {true}
-                    customStyle         = {true}
-                    contentStyle        = {classes.msgContent}
-                    imgStyle            = {classes.msgBoxImgStyleP}
-                    buttonAcceptText    = {(currentUiContext.msgBox.msgType  == "question")? t("yes") : t("ok")}
-                    buttonRejectText    = {t("no")}  
-                    buttonAcceptHandler = {acceptHandler}  
-                    buttonRejectHandler = {rejectHandler}            
-                />               
-            }
+        <div className={classes.formStyle}>          
             <div id='errMsgPlaceHolder'></div>
             <div className={classes.inputRow}> 
                 <div className={classes.inputRowLabel} style={{width:"auto",justifyContent:"center"}}>
@@ -258,6 +140,20 @@ function ConfigCloturerAnnee(props) {
                     :{areAllMeetingDone ? t("yes"):t("no")}
                 </div>
             </div>
+
+            {!areAllMeetingDone &&
+                <div className={classes.inputRowLeft}> 
+                    <div className={classes.inputRowLabel} style={{width:"23vw"}}>
+                        {t("classes_with_annual_meeting_not_done")} 
+                    </div> 
+                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center", fontWeight:"bold", color:"#131f4c"}}> 
+                        {tabPendingClass.map((cls)=>{   
+                                                  
+                            return <div>:{cls}</div>                               
+                        })}
+                    </div>
+                </div>
+            }
 
 
             

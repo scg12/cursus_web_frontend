@@ -1,4 +1,5 @@
-{   "confirm_year_closure"   : "Confirmer la clôture de l'année ?",
+{   "classes_with_annual_meeting_not_done":"Classes ayant des conseils annuels non tenus",
+    "confirm_year_closure"   : "Confirmer la clôture de l'année ?",
     "confirm_year_closure_M" : "CLOTURE D'ANNE SCOLAIRE",
     "annual_meeting_already_created" :"Un conseil de classe annuel a déja été crée !!!",
     "taux_de_reussite_general_exams" :"Taux de réussite général aux examens",

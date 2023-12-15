@@ -1,4 +1,5 @@
-{   "confirm_year_closure"   : "Confirm school year closure ?",
+{   "classes_with_annual_meeting_not_done":"Classes with annual meeting not done",
+    "confirm_year_closure"   : "Confirm school year closure ?",
     "confirm_year_closure_M" : "SCHOOL YEAR CLOSURE",
     "annual_meeting_already_created" :"An yearly meeting has already been created !!!",
     "taux_de_reussite_general_exams" :"Exams General success rate",
