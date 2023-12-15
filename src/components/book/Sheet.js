@@ -38,11 +38,15 @@ function Sheet(props){
     const [devoirTab, setDevoirTab]= useState(createCTDataTable(props.contenu.tabDevoirs));
     const [resumeTab, setResumeTab]= useState(createCTDataTable(props.contenu.tabResumes));
     const [etatLesson, setEtaLesson] = useState(0);
+    const [displayModif, setDisplayModif] = useState(false);
 
     const [resumeOpen, setResumeOpen] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
+        let p = (currentAppContext.infoUser.prof_cours.filter( c => c.id_cours == CURRENT_SELECTED_COURS_ID)).length>0
+        console.log("ffffffffff ",p,CURRENT_SELECTED_COURS_ID)
+        setDisplayModif(p);
         setEtaLesson(props.etat);
         console.log("props.contenu.tabDevoirs: ",props.contenu.tabDevoirs)       
     },[CURRENT_SELECTED_COURS_ID]);
@@ -234,9 +238,8 @@ function Sheet(props){
             <div className={classes.dateZone}>
                 <div className={classes.inputRow}>
                     <div style={{marginRight:'-1vw', fontWeight:'700', fontSize:'1vw', width:'7vw'}}>
-                        {t("date_deb")} :                
+                    {t("date_deb")} :                
                     </div>
-                        
                     <div style={{marginTop:isMobile&&window.matchMedia("screen and (max-height: 420px)").matches ? '-2vh':null}}> 
                         <input id="date" type="text" onChange={getLessonBeginDate}  disabled={true}  value={(props.contenu.date_debut == undefined || props.contenu.date_debut == "") ? new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() : props.contenu.date_debut} style={{fontSize:'1vw', height: isMobile? '0.7vw':'1.3vw', width:'5.3vw', borderBottom:'1px dotted rgb(195 189 189)'}}/>
                     </div>
@@ -357,6 +360,7 @@ function Sheet(props){
                 
             </div>
            
+            { displayModif?
             <div className={classes.attachFileZone} >
                 <CustomButton
                     btnText={t("join_file")} 
@@ -404,7 +408,7 @@ function Sheet(props){
                     btnClickHandler={()=>getPreviousHandler(props.id,props.contenu)}
                     disable={(isValid == false)}
                 />*/}                
-            </div>
+            </div>:null}
 
             <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', alignSelf:'center', width:'97%' }}>
                 <CustomButton

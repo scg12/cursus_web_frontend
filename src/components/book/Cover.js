@@ -47,36 +47,69 @@ function Cover(props){
 
     const getEtabListClasses=()=>{
         var tempTable=[{value: '0',      label: (i18n.language=='fr') ? ' Choisir ' : ' Choose'  }]
-         axiosInstance.post(`list-classes/`, {
-             id_sousetab: currentAppContext.currentEtab,
-         }).then((res)=>{
-                 console.log(res.data);
-                 res.data.map((classe)=>{
-                 tempTable.push({value:classe.id, label:classe.libelle})
-                 setOpClasse(tempTable);
-                 console.log(tempTable);
-            })         
-         }) 
+        let classes_user;
+        let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+
+        if(currentAppContext.infoUser.is_prof_only) 
+            classes_user = currentAppContext.infoUser.prof_classes;
+        else {
+            classes_user = currentAppContext.infoUser.admin_classes;
+            let prof_classes = currentAppContext.infoUser.prof_classes;
+            // console.log(pp_classes)
+            prof_classes.forEach(classe => {
+                if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
+                    classes_user.push({"id":classe.id,"libelle":classe.libelle})
+
+            });
+        }
+                let n = classes_user.length;
+                let m = classes.length;
+                let i = 0;
+                let j = 0;
+            while(i<n){
+                j = 0;
+                while(j<m){
+                    if(classes_user[i].id==classes[j].id_classe){
+                        tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+                        break;
+                    }
+                    j++;
+                }
+                i++;
+            }
+
+            // classes_user.map((classe)=>{
+            //              tempTable.push({value:classe.id, label:classe.libelle})})
+
+        setOpClasse(tempTable);
+
     }
 
     const getClassListCours=(classeId)=>{
         var tempTable=[{value: '0',      label: (i18n.language=='fr') ? ' Choisir ' : ' Choose'  }]
-         
+        let tabCours = []
         if(classeId!=0){
-            axiosInstance.post(`list-cours-classe/`, {
-                id_sousetab: currentAppContext.currentEtab,
-                id_classe : classeId
-            }).then((res)=>{
-                console.log(res.data);
-                var cours = [...res.data[0].id_cours.split('_')];
-                var libellesCours = [...res.data[0].libelle_cours.split(',')]; 
+            // tabCours = currentAppContext.infoUser.prof_cours.filter(cours=>cours.id_classe ==classeId);
+            tabCours = currentAppContext.infoCours.filter((cours)=>cours.id_setab==currentAppContext.currentEtab && cours.id_classe == classeId)
+            tabCours.map((cours)=>{
+                tempTable.push({value:cours.id_cours, label:cours.libelle_cours});
+                }) 
+            setOpCours(tempTable);        
+
+            // axiosInstance.post(`list-cours-classe/`, {
+            //     id_sousetab: currentAppContext.currentEtab,
+            //     id_classe : classeId
+            // }).then((res)=>{
+            //     console.log(res.data);
+            //     var cours = [...res.data[0].id_cours.split('_')];
+            //     var libellesCours = [...res.data[0].libelle_cours.split(',')]; 
                 
-                for(var i = 0; i< cours.length; i++) {
-                    tempTable.push({value:cours[i], label:libellesCours[i]})
-                } 
-                setOpCours(tempTable);        
-                console.log("iciciicic",tempTable);                        
-            }) 
+            //     for(var i = 0; i< cours.length; i++) {
+            //         tempTable.push({value:cours[i], label:libellesCours[i]})
+            //     } 
+            //     setOpCours(tempTable);        
+            //     console.log("iciciicic",tempTable);                        
+            // }) 
 
         } else  setOpCours(tempTable);
               
@@ -107,13 +140,14 @@ function Cover(props){
             CURRENT_COURS_ID = e.target.value; 
             CURRENT_COURS_LABEL = optCours[optCours.findIndex((cours)=>(cours.value == CURRENT_COURS_ID))].label;          
             createFicheProgression(CURRENT_COURS_ID);
-            console.log('cours', CURRENT_COURS_ID);
+            console.log('****************cours', CURRENT_COURS_ID);
         }else{
             setIsValid(false);
             //initTableOfContent();
             CURRENT_COURS_ID =undefined; 
             CURRENT_COURS_LABEL ='';
         }
+        currentUiContext.setCURRENT_CT_COURS_ID(CURRENT_COURS_ID);
     }
 
     const createFicheProgression=(coursId)=>{  

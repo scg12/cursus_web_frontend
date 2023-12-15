@@ -2,7 +2,8 @@ import axios from 'axios';
 import {Buffer} from 'buffer';
 
 const baseURL = 'http://127.0.0.1:8000/api/';
-//const baseURL = 'http://192.168.43.99:8000/api/';
+
+// const baseURL = 'http://192.168.43.99:8000/api/';
 //const baseURL = 'http://192.168.87.235:8000/api/';
 //const baseURL = 'http://192.168.61.235:8000/api/';
 //const baseURL = 'http://192.168.89.235:8000/api/';
@@ -77,7 +78,7 @@ axiosInstance.interceptors.response.use(
 					return axiosInstance
 						.post('/token/refresh/', { refresh: refreshToken })
 						.then((response) => {
-							console.log("RETOUR REFRESH: ",response)
+							console.log("RETURN REFRESH: ",response)
 							localStorage.setItem('access', response.data.access);
 							// localStorage.setItem('refresh', response.data.refresh);
 

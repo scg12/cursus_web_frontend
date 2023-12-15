@@ -67,22 +67,46 @@ function Appel(props) {
         getEtabListClasses();  
         getCoursClasse(currentAppContext.currentEtab, 0);  
         console.log(currentUiContext.emploiDeTemps);
+        console.log(currentAppContext.infoUser);
        
       
     },[]);
 
     const getEtabListClasses=()=>{
         var tempTable=[{value: '0',      label:'Choisir une classe'    }]
-        
-        axiosInstance.post(`list-classes/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-            })         
-        }) 
+        let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+        console.log(classes)
+        let classes_user;
+        if(currentAppContext.infoUser.is_prof_only) 
+            classes_user = currentAppContext.infoUser.prof_classes;
+        else{
+            classes_user = currentAppContext.infoUser.admin_classes;
+            let prof_classes = currentAppContext.infoUser.prof_classes;
+            // console.log(pp_classes)
+            prof_classes.forEach(classe => {
+                if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
+                    classes_user.push({"id":classe.id,"libelle":classe.libelle})
+
+            });
+        }
+
+        let n = classes_user.length;
+        let m = classes.length;
+        let i = 0;
+        let j = 0;
+       while(i<n){
+        j = 0;
+        while(j<m){
+            if(classes_user[i].id==classes[j].id_classe){
+                tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+                break;
+            }
+            j++;
+        }
+        i++;
+       }
+           
+        setOpClasse(tempTable); 
     }
 
     const  getClassStudentList=(classId)=>{
@@ -105,10 +129,19 @@ function Appel(props) {
         LISTE_COURS = [];    
        
         if(classeId!=0){
-            LISTE_COURS = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
-            LISTE_COURS.map((cours)=>{
+            if(currentAppContext.infoUser.is_prof_only)
+                LISTE_COURS = currentAppContext.infoUser.prof_cours.filter(cours=>cours.id_classe == classeId)
+            else
+                LISTE_COURS = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
+
+
+                LISTE_COURS.map((cours)=>{
                 tempTable.push({value:cours.id_cours, label:cours.libelle_cours});
-            })
+                }) 
+            // LISTE_COURS = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
+            // LISTE_COURS.map((cours)=>{
+            //     tempTable.push({value:cours.id_cours, label:cours.libelle_cours});
+            // })
         }       
         
         console.log('cours',LISTE_COURS,tempTable);

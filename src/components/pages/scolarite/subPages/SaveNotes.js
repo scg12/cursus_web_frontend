@@ -96,16 +96,36 @@ function SaveNotes(props) {
 
     const getEtabListClasses=()=>{
         var tempTable=[{value: '0',      label:'Choisir une classe'    }];
+        let classes_user;
+        let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
 
-        axiosInstance.post(`list-classes/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-            })         
-        }) 
+            classes_user = currentAppContext.infoUser.prof_classes;
+            let n = classes_user.length;
+            let m = classes.length;
+            let i = 0;
+            let j = 0;
+            while(i<n){
+                j = 0;
+                while(j<m){
+                    if(classes_user[i].id==classes[j].id_classe){
+                        tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+                        break;
+                    }
+                    j++;
+                }
+                i++;
+            }
+
+        setOpClasse(tempTable);
+        // axiosInstance.post(`list-classes/`, {
+        //     id_sousetab: currentAppContext.currentEtab,
+        // }).then((res)=>{
+        //         console.log(res.data);
+        //         res.data.map((classe)=>{
+        //         tempTable.push({value:classe.id, label:classe.libelle})
+        //         setOpClasse(tempTable);
+        //     })         
+        // }) 
     }
 
     const  getClassStudentList=(classId)=>{
@@ -189,12 +209,11 @@ function SaveNotes(props) {
         var tabCours;    
        
         if(classeId!=0){
-            tabCours = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
-            tabCours.map((cours)=>{
+            tabCours = currentAppContext.infoUser.prof_cours.filter(cours=>cours.id_classe ==classeId)
+        
+                tabCours.map((cours)=>{
                 tempTable.push({value:cours.id_cours, label:cours.libelle_cours, coef:cours.coef_cours, groupeId:cours.id_groupe});
-            })
-
-            console.log("liste cours", tabCours);
+                })
 
         }       
         

@@ -93,15 +93,41 @@ function ListeEleves(props) {
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
-        axiosInstance.post(`list-classes/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-                console.log(res.data)
-           })         
-        }) 
+       let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+       console.log(classes)
+       let classes_user;
+       if(currentAppContext.infoUser.is_prof_only) 
+            classes_user = currentAppContext.infoUser.prof_classes;
+       else
+            classes_user = currentAppContext.infoUser.admin_classes;
+       console.log(currentAppContext.infoUser.is_prof_only,classes_user)
+
+       let n = classes_user.length;
+       let m = classes.length;
+       let i = 0;
+       let j = 0;
+       while(i<n){
+        j = 0;
+        while(j<m){
+            if(classes_user[i].id==classes[j].id_classe){
+                tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+                break;
+            }
+            j++;
+        }
+        i++;
+       }
+           
+        setOpClasse(tempTable);
+        // axiosInstance.post(`list-classes/`, {
+        //     id_sousetab: currentAppContext.currentEtab,
+        // }).then((res)=>{
+        //         res.data.map((classe)=>{
+        //         tempTable.push({value:classe.id, label:classe.libelle})
+        //         setOpClasse(tempTable);
+        //         console.log(res.data)
+        //    })         
+        // }) 
        
     }
 

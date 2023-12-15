@@ -115,7 +115,8 @@ function GrilleEmploiTemps(props) {
             if(currentUiContext.TAB_CRENEAU_PAUSE.length>0) {
            
                 console.log("00000 ",currentUiContext)
-                setOptClasse(createOption2(currentUiContext.classeEmploiTemps));
+                // setOptClasse(createOption2(currentUiContext.classeEmploiTemps));
+                setOptClasse(createOption2(currentAppContext.infoUser.admin_classes));
                 console.log("init TAB_VALEUR_HORAIRE",currentUiContext.classeEmploiTemps.length,currentUiContext.TAB_VALEUR_HORAIRE)
             
 

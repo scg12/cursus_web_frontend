@@ -90,21 +90,26 @@ function CertificatScolarite(props) {
     },[]);
 
     const getEtabListClasses=()=>{
-       var tempTable=[
+        var tempTable=[
             {value: '-1',      label:(i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  ' },
             {value: '0',       label:'Toutes les classes'   },           
         ]
+        let classes_prof = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+        classes_prof.map((classe)=>{
+        tempTable.push({value:classe.id_classe, label:classe.libelle});
+        })
+        setOpClasse(tempTable);
 
-        axiosInstance.post(`list-classes/`, {
-            id_sousetab: currentAppContext.currentEtab,
-        }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-                console.log(tempTable);
-           })         
-        }) 
+        // axiosInstance.post(`list-classes/`, {
+        //     id_sousetab: currentAppContext.currentEtab,
+        // }).then((res)=>{
+        //         console.log(res.data);
+        //         res.data.map((classe)=>{
+        //         tempTable.push({value:classe.id, label:classe.libelle})
+        //         setOpClasse(tempTable);
+        //         console.log(tempTable);
+        //    })         
+        // }) 
     }
 
     const  getClassStudentList=(classId)=>{
