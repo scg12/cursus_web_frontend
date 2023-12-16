@@ -487,7 +487,7 @@ function LoginForm(props){
             axiosInstance.defaults.headers['Authorization'] =
                 'JWT ' + localStorage.getItem('access');
             // history.push('/test');
-            console.log(res.data);
+            console.log("login",res.data);
             userProfile = 'admin';
             profileAuthorisationString = getRightsStringFromProfile(userProfile)
            
@@ -589,7 +589,7 @@ function LoginForm(props){
                             }
                         </form>
 
-                        <div class="input-field center" style={{marginTop:"-0.8vh"}}>
+                        <div class="input-field center" style={{marginTop:passWordError ? "-3vh":isLoading ? "-0.8vh": null}}>
                             <button class="btn-small button" style={{fontSize:'1vw', fontWeight:555, width:'10vw', height:'5.3vh', borderRadius:3}} onClick={connectHandler}>{t("Connexion")}</button>
                         </div>
                         {isLoading && 
