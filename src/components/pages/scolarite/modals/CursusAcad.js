@@ -348,7 +348,7 @@ function CursusAcad(props) {
             
             </div>
 
-            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', marginTop:'1.7vh', paddingTop:'23vh', paddingBottom:'7vh', marginBottom:'3vh', height:'auto', overflowY:'scroll'}}>
+            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', marginTop:'1.7vh', paddingTop:'27vh', paddingBottom:'7vh', marginBottom:'3vh', height:'auto', overflowY:'scroll'}}>
                 {tabResultat.map((resultat,index)=>{
                     return(
                         <div style={{display:'flex', flexDirection:'column',fontSize:'1vw', fontWeight:'bold', marginLeft:'0vw', marginBottom:'2.3vh', justifyContent:'space-between', width:"107%"}}>

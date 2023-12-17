@@ -1102,11 +1102,18 @@ width: 23vw;
 }
 
 .gridRowStyleBOLD{
-    min-height: 5vh !important;
-    max-height: 5vh !important;
-    font-size: 0.9vw;   
+    min-height : 5vh !important;
+    max-height : 5vh !important;
+    font-size  : 0.9vw;   
     font-weight: bolder; 
+    
 }
+
+/*----------------------------------*/
+[class*="gridRowStyleBOLD"] div::first-letter{
+    text-transform: capitalize;
+}
+  
     
 
 .gridAddedRows{

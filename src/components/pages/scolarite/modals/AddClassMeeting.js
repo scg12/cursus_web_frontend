@@ -755,7 +755,7 @@ function AddClassMeeting(props) {
         }
         //au cas ou on veut creer un conseil annuel, on test si un conseil annuel a deja ete cree avant
 
-        if(MEETING.type_conseilId=="annuel" && props.cca_created){
+        if(props.formMode == "creation" && MEETING.type_conseilId=="annuel" && props.cca_created){
             errorMsg = t("annual_meeting_already_created");
             return errorMsg;
         }

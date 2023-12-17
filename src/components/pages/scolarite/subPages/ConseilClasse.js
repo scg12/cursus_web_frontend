@@ -1523,8 +1523,7 @@ const columnsFr = [
                                 : (params.field==='etatLabel' && params.row.status==0) ? 
                                 classes.enCoursStyle 
                                 : (params.field==='type_conseil'|| params.field==='date_effective') ? 
-                                classes.gridRowStyleBOLD :
-                                classes.gridRowStyle 
+                                classes.gridRowStyleBOLD :  classes.gridRowStyle                                
                             }
                             onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
