@@ -273,108 +273,6 @@ function SearchAcademicHistory(props) {
         setElevesP([]);
     }
     
-
-    
-
-    function downloadHandler(e){
-
-        fetch('http://localhost:3000/fiches/FicheProgression.xlsx',{
-            method: 'GET',
-            headers:{
-                'Content-Type':'blob'
-            },
-            responseType:'arraybuffer'
-        })
-        .then(response =>{
-            response.blob().then(blob=> {
-                let url = window.URL.createObjectURL(blob);
-                let a = document.createElement('a');
-                a.href = url;
-                a.download ='FicheProgression.xls';
-                a.click();
-            })
-            //window.location.href=response.url;
-        })
-        /*axios.post('http://localhost:3000/fiches', {
-            method: 'GET',
-            responseType: 'blob', // important
-        }).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${Date.now()}.xlsx`);
-            document.body.appendChild(link);
-            link.click();
-        });*/
-        
-
-    }
-
-
-
-    function storeFicheProgress(coursId){
-
-        axiosInstance.post(`sauvegarder-fiche-progression/`, {
-            id_cours : coursId,
-            id_sousetab : currentAppContext.idEtabInit, 
-           
-        }).then((res)=>{
-            console.log("cours, sous etab:", coursId, currentAppContext.idEtabInit);
-            console.log("fiche cree:",res.data);
-            
-           //ici il faut ajouter un if si l'operation se passe bien afficher ceci
-            chosenMsgBox = MSG_SUCCESS_FP;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_operation_M"), 
-                message:t("success_operation")
-            })
-           
-            //sinon afficher ceci
-            /*chosenMsgBox = MSG_ERROR;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_operation_M"), 
-                message:t("success_operation")
-            })*/
-                
-        })
-
-    }
-
-    function saveFicheProgressChanges(e){
-        uploadFile(cur_fileToUpload);
-    }
-
-    function uploadFile(){
-        var form_data= new FormData();
-
-        form_data.append('desciption','Fiche de progression par classe' );
-        form_data.append('file_type','fiche-progression' );
-        form_data.append('timestamp','' );
-        form_data.append('file',cur_fileToUpload);
-
-        axios.post(`http://127.0.0.1:8000/api/upload-fiche-progression/`,form_data, {
-            header:{
-                'Content-type': 'multipart/form-data'
-            }
-                 
-        }).then((res)=>{
-            console.log(res.data);
-            storeFicheProgress(cur_coursId);  
-           // setFileUploaded(true);           
-        })
-
-    }
-
-
-    function saveOrUploadFP(e){
-        if(isActualStudent) props.cancelHandler();
-        else  uploadFile(cur_fileToUpload);
-    }
-
     function anneeChangeHandler(){
 
     }
@@ -475,7 +373,7 @@ function SearchAcademicHistory(props) {
            
 
         }).then((res)=>{
-            console.log("reultats",res.data);
+            console.log("resultats eleves",res.data);
                        
             if(matriculeEnable) {
                 searchedEleves.push(res.data);
@@ -763,7 +661,7 @@ function SearchAcademicHistory(props) {
                     <div className={classes.dataZone}>                
                         {eleves.map((eleve, pos)=>{
                             return(
-                                <LigneEleve index={pos} nom = {eleve.nom} prenom={eleve.prenom} eleveData={eleve}/>
+                                <LigneEleve index={pos}  nom={eleve.nom} prenom={eleve.prenom} eleveData={eleve}/>
                             );
                         })}
                     </div>

@@ -87,7 +87,7 @@ function MenuItemList(props){
 
     return (
         
-        <div className={getCurrentTheme()+ ' ' + props.minWtdhStyle}>
+        <div id={props.id} className={getCurrentTheme()+ ' ' + props.minWtdhStyle}>
             <div className= {getCurrentItemHeadTheme()+ ' ' + props.minWtdhStyle} style={props.banStyle}>
                 <span style={props.puceImgStyle}> {props.iconImg} </span>
                 <span style={props.puceTextStyle}> {props.libelle} </span>

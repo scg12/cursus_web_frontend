@@ -108,6 +108,12 @@ function CursusAcad(props) {
         return tabResultat;
     }
 
+    function calculAgeEnFonctionDateNaiss(dateNaiss){
+        var age = 0;
+
+        return age;
+    }
+
 
 
 
@@ -282,17 +288,17 @@ function CursusAcad(props) {
         return(
             <div style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', width:'93%'}}>
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"#065386", color:'white', width:'100%', height:"3vh"}}>
-                    <div style={{display:'flex', flexDirection:'colunm', justifyContent:'center', width:'40%', fontSize:'0.87vw', borderRight:'solid 1.5px white'}} > {t("academic_history_M")}</div> 
+                    <div style={{display:'flex', flexDirection:'colunm', justifyContent:'center', width:'37%', fontSize:'0.87vw', borderRight:'solid 1.5px white'}} > {t("academic_history_M")}</div> 
                     <div style={{display:'flex', flexDirection:'colunm', justifyContent:'center', width:'54%', fontSize:'0.87vw', marginLeft:'2vw'}}> {t("disciplin_history_M")}</div>
                 </div>
                 
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"white", color:'black', width:'100%', height:"3vh", borderLeft:'solid 1px black', borderRight:'solid 1px black', borderBottom:'solid 1px black'}}>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}>{t("annual_result")}</div>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("exam_result")} </div>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("absences")}</div>              
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("consigne")}s</div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Excl. temp.")}</div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{t("Excl. def.")}</div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black', fontWeight:"bolder"}}>{t("annual_result")}</div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black', fontWeight:"bolder"}}>{t("exam_result")} </div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black', fontWeight:"bolder"}}>{t("absences")}</div>              
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'36%',fontSize:'0.77vw', borderRight:'solid 1px black', fontWeight:"bolder"}}>{t("sanctions")}s</div> 
+                    {/* <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Excl. temp.")}</div> 
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{t("Excl. def.")}</div> */}
                 </div>
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"white", color:'black', width:'100%', height:"3vh", borderLeft:'solid 1px black', borderRight:'solid 1px black', borderBottom:'solid 1px black'}}>
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}><div style={props.resultatAnnuel.resultat_final== "Admis"? {color:"green"}:{color:"red"}}>{props.resultatAnnuel.resultat_final}</div> <div>({props.resultatAnnuel.moyenne_finale})</div> </div>
@@ -338,7 +344,7 @@ function CursusAcad(props) {
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                         <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t('class_M')} : </div> <div> 6eA1</div>
                         <div style={{fontWeight:'700', marginRight:'0.3vw', marginLeft:'4.3vw'}}> {t('matricule_M')}  : </div> <div>{props.eleve.matricule}</div>
-                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> 10 ans</div>
+                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> {calculAgeEnFonctionDateNaiss(props.eleve.date_naissance)}</div>
                     </div>
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                         <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t("entree_M")} : </div> <div> {props.eleve.date_entree} </div>

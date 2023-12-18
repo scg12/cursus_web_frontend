@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 
 var login;
 var CURRENT_ANNEE_SCOLAIRE;
-var ARE_ALMEETIN_DONE;
 var tabPendingMeeting = [];
 
 

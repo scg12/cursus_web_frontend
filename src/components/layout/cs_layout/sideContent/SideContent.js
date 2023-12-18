@@ -22,7 +22,7 @@ function SideContent(props) {
     const selectedTheme = currentUiContext.theme;
     const[optEtab, setOpEtab] = useState([]);
     const[optAnnee, setOpAnnee] = useState([]);
-    const[optCycle, setOptCycle] = useState([]);
+    const[optTrimestre, setOptTrimestre] = useState([]);
     const[optNiveau, setOptNiveau] = useState([]);
     const[idAnnee, setIdAnnee] = useState([]);
     const[idEtab, setIdEtab] = useState([]);
@@ -87,7 +87,8 @@ function SideContent(props) {
         currentAppContext.setCurrentYear(id_annee_init);
         currentAppContext.setCurrentEtab(id_etab_init);
         setOpEtab(createOption(currentAppContext.infoSetabs.filter((etab)=>etab.id_annee == id_annee_init),'id_setab','libelle')); 
-        setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab_init),'id_cycle','libelle')); 
+        setOptTrimestre([{value:1,label:"Mettre le bon trimestre ici"}]);
+        //setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab_init),'id_cycle','libelle')); 
         // console.log("BOBO: ",currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab_init))
         setOptNiveau(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == id_etab_init),"id_niveau","libelle"));
         setChangeEtabSelected(createOption(currentAppContext.infoSetabs.filter((etab)=>etab.id_annee == id_annee_init),'id_cycle','libelle')[0]);
@@ -136,7 +137,7 @@ function SideContent(props) {
 
         currentAppContext.setCurrentYear(idAnnee);
 
-        setOptCycle(null);
+        //setOptCycle(null);
         setOptNiveau(null);
 
         setOpAnnee(createOption(currentAppContext.infoAnnees,'id_annee','libelle')); 
@@ -154,7 +155,7 @@ function SideContent(props) {
         
         setOpEtab(createOption(currentAppContext.infoSetabs.filter((etab)=>etab.id_annee == e.value),'id_setab','libelle')); 
         setChangeEtabSelected(createOption(currentAppContext.infoSetabs.filter((etab)=>etab.id_annee == e.value),'id_cycle','libelle')[0]); 
-        setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab),'id_cycle','libelle')); 
+        //setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab),'id_cycle','libelle')); 
         setOptNiveau(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == id_etab),"id_niveau","libelle"));
         setChangeCycleSelected(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab),'id_cycle','libelle')[0]);
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == id_etab),'id_cycle','libelle')[0]);
@@ -164,20 +165,20 @@ function SideContent(props) {
         setIdEtab(e.value);
         currentAppContext.setCurrentEtab(e.value);
         setOpEtab(null);
-        setOptCycle(null);
+        //setOptCycle(null);
         setOptNiveau(null);
         setOpEtab(createOption(currentAppContext.infoSetabs.filter((etab)=>etab.id_annee == idAnnee),'id_setab','libelle')); 
         setChangeEtabSelected(createOption(currentAppContext.infoSetabs.filter((etab)=>etab.id_setab == e.value),'id_cycle','libelle')); 
-        setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == e.value),'id_cycle','libelle')); 
+        ///setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == e.value),'id_cycle','libelle')); 
         setOptNiveau(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == e.value),"id_niveau","libelle"));
         setChangeCycleSelected(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == e.value),'id_cycle','libelle')[0]);
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == e.value),'id_cycle','libelle')[0]);
 
     }
     function onChangeCycleHandler(e){
-        setOptCycle(null);
+        //setOptCycle(null);
         setOptNiveau(null);
-        setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == idEtab),'id_cycle','libelle')); 
+        //setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == idEtab),'id_cycle','libelle')); 
         setOptNiveau(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_cycle == e.value),"id_niveau","libelle"));
         setChangeCycleSelected(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_cycle == e.value),'id_cycle','libelle')[0]);
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_cycle == e.value),'id_cycle','libelle')[0]);
@@ -229,18 +230,18 @@ function SideContent(props) {
 
                 <div> 
                     <label className= {getCurrentThemeSideLabel() +' '+ classes.upperCase}> 
-                        {t("trimestre")} 1
+                        {t("trimestre")} 
                     </label> 
                 </div>
-                {/* <div id='trimestre'>
+                { <div id='trimestre'>
                     <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'14.3vw',borderColor:getSelectDropDownTextColr()}}>
-                        {(optCycle||[]).map((option)=> {
+                        {(optTrimestre||[]).map((option)=> {
                             return(
                                 <option style={{color:'black'}} value={option.value}>{option.label}</option>
                             );
                         })}
                     </select>
-                </div> */}
+                </div> }
 
                {/* <div> 
                     <label className= {getCurrentThemeSideLabel() +' '+ classes.upperCase}> 

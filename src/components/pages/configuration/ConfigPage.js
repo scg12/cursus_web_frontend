@@ -49,6 +49,7 @@ import ConfigConditionRedoublementExclusion from "./subPages/ConfigConditionRedo
 import ConfigTypeSanction from "./subPages/ConfigTypeSanction";
 import ConfigClassesPassages from "./subPages/ConfigClassesPassages";
 import ConfigCloturerAnnee from "./subPages/ConfigCloturerAnnee";
+import { $CombinedState } from "redux";
 
 
 
@@ -153,15 +154,35 @@ function ConfigPage(props) {
         }else{
             NewActiveDiv.classList.add('activeP');
             setCurrentActiveMenuID(NewActiveMenuId);
-        }        
-    }
+        }  
 
-    
-    
+        if(parseInt(NewActiveMenuId)>=1 && parseInt(NewActiveMenuId)<=4) {
+            document.getElementById("link_head_conf_1").click(); 
+        }
+        
+        if(parseInt(NewActiveMenuId)>=5 && parseInt(NewActiveMenuId)<=31) {
+            document.getElementById("link_head_conf_2").click(); 
+        }
+
+        if(parseInt(NewActiveMenuId)>=32 && parseInt(NewActiveMenuId)<=34) {
+            document.getElementById("link_head_conf_3").click(); 
+        }
+
+        if(parseInt(NewActiveMenuId)>=35 && parseInt(NewActiveMenuId)<=38) {
+            document.getElementById("link_head_conf_4").click(); 
+        }
+
+        if(parseInt(NewActiveMenuId)>=39)  {
+            document.getElementById("link_head_conf_5").click(); 
+        }
+            
+    }
+  
+
     
     return ( 
 
-        <div className= {classes.viewContent}>
+        <div id="confs" className= {classes.viewContent}>
             {/*<div className= {classes.pageTitle}>
                 <div className={classes.rowDisplay}>
                     <img src="images/configuration4.png"  className={classes.imageMargin1} id='en' width ='75px' height='80px' alt="my image"/>
@@ -179,16 +200,15 @@ function ConfigPage(props) {
                 
                 <div className={(isMobile)? M_classes.titleHmself : classes.titleHmself}>
                     {t("configurationM")} 
-                </div>
-                
+                </div>                
             </div>
 
-    
+            <a id="link_head_conf_1" href="#conf_1"/>    
 
             <div className= {getCurrentContaintTheme()}>
                 {(currentAppContext.enableProfiles["CONFIG_A"]=='1') ? 
-                    <MenuItemList minWtdhStyle={classes.size72Vw} libelle= {t("conf_param_perso")} theme={selectedTheme}>
-                        <div className={classes.MenuGroup}>
+                    <MenuItemList id="conf_1" minWtdhStyle={classes.size72Vw} libelle= {t("conf_param_perso")} theme={selectedTheme}>
+                        <div  className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
                                 {(currentAppContext.enableProfiles["CONFIG_A1"]=='1') ? <MenuItem menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle={t('modif_login')}       itemSelected={()=>{toggleActiveMenu('1'); (sectionSelectedItem == 0) ? setSectionSelectedItem(1):(sectionSelectedItem == 1) ? setSectionSelectedItem(0):setSectionSelectedItem(1)}}> </MenuItem>  :  null}
                                 {(currentAppContext.enableProfiles["CONFIG_A2"]=='1') ? <MenuItem menuItemId ='2' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}    libelle={t('modif_pswd')}        itemSelected={()=>{toggleActiveMenu('2'); (sectionSelectedItem == 0) ? setSectionSelectedItem(2):(sectionSelectedItem == 2) ? setSectionSelectedItem(0):setSectionSelectedItem(2)}}> </MenuItem>  :  null}
@@ -231,10 +251,14 @@ function ConfigPage(props) {
                     :
                     null
                 }
-        
+
+                <a id="link_head_conf_2" href="#conf_2"/> 
+                
                 {(currentAppContext.enableProfiles["CONFIG_B"]=='1') ? 
-                    <MenuItemList minWtdhStyle={classes.size72Vw} libelle= {t("conf_etab_struct")} theme={selectedTheme}>
-                        <div className={classes.MenuGroup}>
+                    <MenuItemList id="conf_2" minWtdhStyle={classes.size72Vw} libelle= {t("conf_etab_struct")} theme={selectedTheme}>
+                        <div  className={classes.MenuGroup}>
+                        
+                           
                             <div className={classes.MenuItemsection} > 
                                 {(currentAppContext.enableProfiles["CONFIG_B1"]=='1') ?   <MenuItem menuItemId ='5'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle ={t("modif_etab_gen_info")}             itemSelected={()=>{toggleActiveMenu('5');   (sectionSelectedItem == 0) ? setSectionSelectedItem(5):  (sectionSelectedItem == 5)  ? setSectionSelectedItem(0):setSectionSelectedItem(5)}}>   </MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?   <MenuItem menuItemId ='6'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle ={t("gest_cycle")}                      itemSelected={()=>{toggleActiveMenu('6');   (sectionSelectedItem == 0) ? setSectionSelectedItem(6):  (sectionSelectedItem == 6)  ? setSectionSelectedItem(0):setSectionSelectedItem(6)}}>   </MenuItem> : null}
@@ -442,9 +466,11 @@ function ConfigPage(props) {
                     :
                     null
                 }
+                
+                <a id="link_head_conf_3" href="#conf_3"/>  
 
                 {(currentAppContext.enableProfiles["CONFIG_C"]=='1') ? 
-                    <MenuItemList minWtdhStyle={classes.size72Vw}  libelle= {t("conf_users_and_roles")} theme={selectedTheme}>
+                    <MenuItemList id="conf_3" minWtdhStyle={classes.size72Vw}  libelle= {t("conf_users_and_roles")} theme={selectedTheme}>
                         <div className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
                                 {(currentAppContext.enableProfiles["CONFIG_C1"]=='1') ?  <MenuItem menuItemId ='32' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle={t('gest_users')}      itemSelected={()=>{toggleActiveMenu('32'); (sectionSelectedItem == 0) ? setSectionSelectedItem(32):(sectionSelectedItem == 32) ? setSectionSelectedItem(0):setSectionSelectedItem(32)}}> </MenuItem> : null}
@@ -477,8 +503,10 @@ function ConfigPage(props) {
                     null
                 }
 
+                <a id="link_head_conf_4" href="#conf_4"/>  
+
                 {(currentAppContext.enableProfiles["CONFIG_D"]=='1') ? 
-                    <MenuItemList minWtdhStyle={classes.size72Vw}   libelle={t("conf_payments" )} theme={selectedTheme}>
+                    <MenuItemList id="conf_4" minWtdhStyle={classes.size72Vw}   libelle={t("conf_payments" )} theme={selectedTheme}>
                         <div className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
                                 {(currentAppContext.enableProfiles["CONFIG_D1"]=='1') ?  <MenuItem menuItemId ='35' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle={t('conf_payment_elv')}                 itemSelected={()=>{toggleActiveMenu('35'); (sectionSelectedItem == 0) ? setSectionSelectedItem(35):(sectionSelectedItem == 35) ? setSectionSelectedItem(0):setSectionSelectedItem(35)}}></MenuItem> : null}
@@ -519,9 +547,11 @@ function ConfigPage(props) {
                     null
                 }  
 
+                <a id="link_head_conf_5" href="#conf_5"/>  
+
                 {(currentAppContext.enableProfiles["CONFIG_E"]=='1') ? 
-                    <MenuItemList minWtdhStyle={classes.size72Vw}  libelle= {t("conf_messages")} theme={selectedTheme}>
-                        <div className={classes.MenuGroup}>
+                    <MenuItemList id="conf_5" minWtdhStyle={classes.size72Vw}  libelle= {t("conf_messages")} theme={selectedTheme}>
+                        <div  className={classes.MenuGroup}>
                             <div className={classes.MenuItemsection}>
                                 {(currentAppContext.enableProfiles["CONFIG_E1"]=='1') ?  <MenuItem menuItemId ='39'isSimple={true}  imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle={t('budget_evolution_cf')}      itemSelected={()=>{toggleActiveMenu('39'); (sectionSelectedItem == 0) ? setSectionSelectedItem(39):(sectionSelectedItem == 39) ? setSectionSelectedItem(0):setSectionSelectedItem(389)}}></MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_E2"]=='1') ?  <MenuItem menuItemId ='40' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle={t("interactions_evolution")}   itemSelected={()=>{toggleActiveMenu('40'); (sectionSelectedItem == 0) ? setSectionSelectedItem(40):(sectionSelectedItem == 40) ? setSectionSelectedItem(0):setSectionSelectedItem(40)}}> </MenuItem> : null}
