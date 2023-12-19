@@ -171,13 +171,13 @@ function CursusAcad(props) {
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{t("Excl. def.")}</div> */}
                 </div>
                 <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"white", color:'black', width:'100%',height:"auto", borderLeft:'solid 1px black', borderRight:'solid 1px black', borderBottom:'solid 1px black'}}>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}><div style={props.resultatAnnuel.resultat_final== "Admis"? {color:"green"}:{color:"red"}}>{props.resultatAnnuel.resultat_final}</div> <div>({props.resultatAnnuel.resultat_annuel})</div> </div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}><div style={props.resultatAnnuel.decision_finale_CCA=="admis"? {color:"green"}:{color:"red"}}>{props.resultatAnnuel.decision_finale_CCA== "admis"? "Admis" : props.resultatAnnuel.decision_finale_CCA}</div> <div>({props.resultatAnnuel.resultat_annuel})</div> </div>
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{props.resultatAnnuel.classe_examen? props.resultatAnnuel.examen+'('+ props.resultatAnnuel.resultat_exam +' '+ props.resultatAnnuel.mention_examen+')' :'R.A.S'}</div>
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("justified")} :  <div style={{color:'green', marginRight:'0.3vw'}}>{props.resultatAnnuel.absences_j}h</div> {t("non_justified")} :  <div style={{color:'red'}}> {props.resultatAnnuel.absences_nj}h</div></div>    
-                    <div style={{display:'flex', flexDirection:'column', justifyContent:'center', paddingLeft:"2vw", width:'36%',fontSize:'0.77vw', borderRight:'solid 1px black'}}>
+                    <div style={{display:'flex', flexDirection:'column', justifyContent:'center', paddingLeft:props.resultatAnnuel.sanctions.split("_").length == 1 ? "0vw":"2vw", width:'36%',fontSize:'0.77vw', borderRight:'solid 1px black'}}>
                         {(props.resultatAnnuel.sanctions.split("_")||[]).map((sanction)=>{
                             return(
-                                <div style={{display:"flex", flexDirection:"row", justifyContent:"center",  alignSelf:"flex-start"}}>
+                                <div style={{display:"flex", flexDirection:"row", justifyContent:"center",  alignSelf:props.resultatAnnuel.sanctions.split("_").length == 1 ? "center":"flex-start"}}>
                                     <div style={{width:"100%"}}>
                                         {sanction} 
                                     </div>
@@ -223,7 +223,7 @@ function CursusAcad(props) {
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                         <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t('class_M')} : </div> <div>{props.dossierEleve[0].classe}</div>
                         <div style={{fontWeight:'700', marginRight:'0.3vw', marginLeft:'4.3vw'}}> {t('matricule_M')}  : </div> <div>{props.eleve.matricule}</div>
-                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> {props.eleve.age != null? props.eleve.age : calculAgeEnFonctionDateNaiss(props.eleve.date_naissance)}</div>
+                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> {props.eleve.age} </div>
                     </div>
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                         <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t("entree_M")} : </div> <div> {props.eleve.date_entree} </div>

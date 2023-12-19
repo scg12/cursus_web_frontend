@@ -1184,8 +1184,8 @@ function AddClassMeeting(props) {
                 <div style={{width:'17vw', fontSize:'0.67vw', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', paddingTop:"0.7vh"}}>                            
                     {(props.convocations.split('_')||[]).map((elt)=>{                        
                         return (
-                            <div style ={{width:'100%', display:'flex', flexDirection:'row', justifyContent:"center"}}> 
-                                <div style={{fontWeight:'bold', marginRight:"0.3vw", justifyContent:"center"}}>  
+                            <div style ={{width:'100%', display:'flex', flexDirection:'row', justifyContent:"flex-start"}}> 
+                                <div style={{fontWeight:'bold', paddingLeft:"2vw", marginRight:"0.3vw", justifyContent:"center"}}>  
                                     {elt.split(' ')[0]} 
                                 </div>
                                 <div>  {elt.split(' ')[1]} </div>                              
