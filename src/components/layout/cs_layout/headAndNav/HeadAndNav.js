@@ -167,7 +167,16 @@ function HeadAndNav(props) {
     }
 
     function closeSchoolYear(){
-        alert("Mettre le code ici!!!");        
+        // alert("Mettre le code ici!!!"); 
+        axiosInstance.post(`migrations/`, {
+            id_sousetab: currentAppContext.currentEtab,
+            date_deb: "2024-09-05",
+            date_fin: "2025-07-31",
+            date_essaie_cursus:"2024-10-02",
+            date_limite_cursus:"2025-07-31"
+        }).then((res)=>{
+           alert("MIGRATION TERMINEE AVEC SUCCESS !")              
+        })      
     }
 
 
