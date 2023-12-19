@@ -28,55 +28,28 @@ var exclusions_data =[];
 var other_data =[];
 
 
-var CURSUS_SCOLAIRE=[];
-var BILAN_ANNUEL={
-    /*----donnees generales----*/  
-    annee:"",
-    classe:"",
-    isExamClass:false,
-    resultat_final:"",
-    moyenne_finale:"",
-    
-    /*----Examen----*/
-    examen:"",
-    resultat_examen:"",
-    mention_examen:"",
-
-    /*----Conduite----*/
-    absences_justifiees:"",
-    absences_nonJustifiees:"",
-    consignes:"",
-    exclusion_temp:"",
-    exclusion_definitive:"",
-}
+const LIST_HEIGHT = 20;
 
 
+var dossierEleve=[];
 
-var tabResultat=[];
 
 function CursusAcad(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
-    const [isValid, setIsValid] = useState(false);
+    
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const selectedTheme = currentUiContext.theme;
-  
-  
-    const [gridAbsences, setGridAbsences]= useState([]);
-    const [gridConsignes, setGridConsignes]= useState([]);
-    const [gridExclusions, setGridExclusions]= useState([]);
-    const [gridOther, setGgridOther]= useState([]);
-    const[justiViewOpen, setjustifViewOpen]=useState(false);
-    
-    const [consignes, setConsignes] = useState([]);
-    const [exclusions, setExclusion] = useState([]);
-    const [autreSanction, setAutreSanction] = useState([]);
+    // const [dossierEleve, setDossierEleve] = useState([]);
+   
     
     
     useEffect(()=> {
-        getClassStudentList(props.currentClasseId);
-        getdossierData();
+        //getClassStudentList(props.currentClasseId);
+        console.log("dossier+eleve", props.dossierEleve,props.eleve);
+        dossierEleve = props.dossierEleve;
+        // props.eleve.persoData       
       
     },[]);
   
@@ -94,20 +67,21 @@ function CursusAcad(props) {
     }
 
 
-    function getdossierData(){
-        /* var tabResultat=[];
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
-        }).then((res)=>{
-            console.log(res.data);
-            console.log(listEleves);
-            //LIST_ELEVES= [...getElevesTab(res.data)];
-            //console.log(LIST_ELEVES) ;          
-        })  */
+    // function getdossierData(){
+      
+    //     axiosInstance.post(`get-dossier-eleve/`, {
 
-        return tabResultat;
-    }
+    //         id_eleve      : props.eleve.id,
+    //         id_sousetab   : currentAppContext.currentEtab,
+    //         est_scolarise : props.est_scolarise
 
+    //     }).then((res)=>{            
+    //         setDossierEleve(res.data.dossier_eleve); 
+    //         console.log(res.data);       
+    //     });        
+    // }
+
+    
     function calculAgeEnFonctionDateNaiss(dateNaiss){
         var age = 0;
 
@@ -169,119 +143,15 @@ function CursusAcad(props) {
       }
     }
 
+
+    function printDossierEleve(){
+
+    }
+
     function cancelHandler(){
         //MEETING={};
         props.cancelHandler();
     }
-
-
-    /*------------------------------ End Design Fonctions -------------------------------*/
-
-    
-    
-    function saveStudenFiche(){
-
-    }
-
-    function printStudentFiche(){
-
-    }
-
-    tabResultat =[    
-        {   annee:"2018-2019", 
-            classe:"6eA", 
-            isExamClass:false, 
-            resultat_final:"Admis", 
-
-            examen:"",
-            resultat_examen:"",
-            mention_examen:"",
-
-            moyenne_finale:"11.47",
-            absences_justifiees:"12",
-            absences_nonJustifiees:"05",
-            consignes:"00",
-            exclusion_temp:"00",
-            exclusion_definitive:false, 
-
-        },
-
-        {   annee:"2019-2020", 
-            classe:"5eA", 
-            isExamClass:false, 
-            resultat_final:"Admis", 
-
-            examen:"",
-            resultat_examen:"",
-            mention_examen:"",
-
-            moyenne_finale:"12.47",
-            absences_justifiees:"20",
-            absences_nonJustifiees:"05",
-            consignes:"00",
-            exclusion_temp:"00",
-            exclusion_definitive:false, 
-
-        },
-
-        {   annee:"2020-2021", 
-            classe:"4eA", 
-            isExamClass:false, 
-            resultat_final:"Admis", 
-
-            examen:"",
-            resultat_examen:"",
-            mention_examen:"",
-
-            moyenne_finale:"14.47",
-            absences_justifiees:"20",
-            absences_nonJustifiees:"05",
-            consignes:"00",
-            exclusion_temp:"00",
-            exclusion_definitive: false, 
-
-        },
-
-        {   annee:"2021-2022", 
-            classe:"3eA", 
-            isExamClass:true, 
-            resultat_final:"Admis", 
-
-            examen:"BEPC",
-            resultat_examen:"Admis",
-            mention_examen:"AB",
-
-            moyenne_finale:"13.47",
-            absences_justifiees:"20",
-            absences_nonJustifiees:"05",
-            consignes:"00",
-            exclusion_temp:"00",
-            exclusion_definitive: false, 
-
-        },
-
-        {   annee:"2022-2023", 
-            classe:"2ndC", 
-            isExamClass:false, 
-            resultat_final:"Echec", 
-
-            examen:"",
-            resultat_examen:"",
-            mention_examen:"",
-
-            moyenne_finale:"08.47",
-            absences_justifiees:"20",
-            absences_nonJustifiees:"05",
-            consignes:"00",
-            exclusion_temp:"00",
-            exclusion_definitive: false, 
-        }
-
-
-
-    ];
-  
-   
 
     /************************************ JSX Code ************************************/
     const LigneResultat=(props)=>{
@@ -296,17 +166,26 @@ function CursusAcad(props) {
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black', fontWeight:"bolder"}}>{t("annual_result")}</div>
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black', fontWeight:"bolder"}}>{t("exam_result")} </div>
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black', fontWeight:"bolder"}}>{t("absences")}</div>              
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'36%',fontSize:'0.77vw', borderRight:'solid 1px black', fontWeight:"bolder"}}>{t("sanctions")}s</div> 
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'36%',fontSize:'0.77vw', borderRight:'solid 1px black', fontWeight:"bolder"}}>{t("sanctions")}</div> 
                     {/* <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Excl. temp.")}</div> 
                     <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{t("Excl. def.")}</div> */}
                 </div>
-                <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"white", color:'black', width:'100%', height:"3vh", borderLeft:'solid 1px black', borderRight:'solid 1px black', borderBottom:'solid 1px black'}}>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}><div style={props.resultatAnnuel.resultat_final== "Admis"? {color:"green"}:{color:"red"}}>{props.resultatAnnuel.resultat_final}</div> <div>({props.resultatAnnuel.moyenne_finale})</div> </div>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{props.resultatAnnuel.isExamClass? props.resultatAnnuel.examen+'('+ props.resultatAnnuel.resultat_examen +' '+ props.resultatAnnuel.mention_examen+')' :'R.A.S'}</div>
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("justified")}:<div style={{color:'green', marginRight:'0.3vw'}}>{props.resultatAnnuel.absences_justifiees}h</div>{t("non_justified")}:<div style={{color:'red'}}>{props.resultatAnnuel.absences_nonJustifiees}h</div></div>              
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Total")}:<div style={{fontWeight:'bolder'}}>{props.resultatAnnuel.consignes} {t("days_ab")}</div></div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'13%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("Total")}:<div style={{fontWeight:'bolder'}}>{props.resultatAnnuel.exclusion_temp} {t("days_ab")}</div></div> 
-                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'10%',fontSize:'0.77vw'}}>{props.resultatAnnuel.exclusion_definitive ? t('yes'):t('no')}</div>
+                <div style={{display:'flex', flexDirection:'row', alignItems:'center', backgroundColor:"white", color:'black', width:'100%',height:"auto", borderLeft:'solid 1px black', borderRight:'solid 1px black', borderBottom:'solid 1px black'}}>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center', width:'17%',fontSize:'0.77vw', borderRight:'solid 1px black', color:'black'}}><div style={props.resultatAnnuel.resultat_final== "Admis"? {color:"green"}:{color:"red"}}>{props.resultatAnnuel.resultat_final}</div> <div>({props.resultatAnnuel.resultat_annuel})</div> </div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'20%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{props.resultatAnnuel.classe_examen? props.resultatAnnuel.examen+'('+ props.resultatAnnuel.resultat_exam +' '+ props.resultatAnnuel.mention_examen+')' :'R.A.S'}</div>
+                    <div style={{display:'flex', flexDirection:'row',alignItems:'center', justifyContent:'center',width:'27%',fontSize:'0.77vw', borderRight:'solid 1px black',}}>{t("justified")} :  <div style={{color:'green', marginRight:'0.3vw'}}>{props.resultatAnnuel.absences_j}h</div> {t("non_justified")} :  <div style={{color:'red'}}> {props.resultatAnnuel.absences_nj}h</div></div>    
+                    <div style={{display:'flex', flexDirection:'column', justifyContent:'center', paddingLeft:"2vw", width:'36%',fontSize:'0.77vw', borderRight:'solid 1px black'}}>
+                        {(props.resultatAnnuel.sanctions.split("_")||[]).map((sanction)=>{
+                            return(
+                                <div style={{display:"flex", flexDirection:"row", justifyContent:"center",  alignSelf:"flex-start"}}>
+                                    <div style={{width:"100%"}}>
+                                        {sanction} 
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>          
+                 
                 </div>
             
             </div>
@@ -317,7 +196,7 @@ function CursusAcad(props) {
     
 
     return (
-        <div className={'card '+ classes.formContainerP}>          
+        <div className={'card '+ classes.formContainerP} style={{height:(props.dossierEleve.length*LIST_HEIGHT)+ "vh", justifyContent:"flex-start", maxHeight:"97.3vh", minHeight:"67vh"}}>          
            
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
@@ -342,9 +221,9 @@ function CursusAcad(props) {
                     </div>
 
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
-                        <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t('class_M')} : </div> <div> 6eA1</div>
+                        <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t('class_M')} : </div> <div>{props.dossierEleve[0].classe}</div>
                         <div style={{fontWeight:'700', marginRight:'0.3vw', marginLeft:'4.3vw'}}> {t('matricule_M')}  : </div> <div>{props.eleve.matricule}</div>
-                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> {calculAgeEnFonctionDateNaiss(props.eleve.date_naissance)}</div>
+                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> {props.eleve.age != null? props.eleve.age : calculAgeEnFonctionDateNaiss(props.eleve.date_naissance)}</div>
                     </div>
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                         <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t("entree_M")} : </div> <div> {props.eleve.date_entree} </div>
@@ -354,10 +233,10 @@ function CursusAcad(props) {
             
             </div>
 
-            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', marginTop:'1.7vh', paddingTop:'27vh', paddingBottom:'7vh', marginBottom:'3vh', height:'auto', overflowY:'scroll'}}>
-                {tabResultat.map((resultat,index)=>{
+            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', marginTop:'1.7vh', /*paddingTop:'27vh',*/ paddingBottom:'7vh', marginBottom:'3vh', height:'auto', overflowY:'scroll'}}>
+                {props.dossierEleve.map((resultat,index)=>{
                     return(
-                        <div style={{display:'flex', flexDirection:'column',fontSize:'1vw', fontWeight:'bold', marginLeft:'0vw', marginBottom:'2.3vh', justifyContent:'space-between', width:"107%"}}>
+                        <div style={{display:'flex', flexDirection:'column',fontSize:'1vw', fontWeight:'bold', marginLeft:'0vw', marginBottom:'2.3vh', justifyContent:'center', width:"107%"}}>
                             <FormPuce menuItemId ='1' 
                                 isSimple={true} 
                                 noSelect={true} 
@@ -400,7 +279,7 @@ function CursusAcad(props) {
                     btnText={t('imprimer')} 
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={printStudentFiche}
+                    btnClickHandler={printDossierEleve}
                 />
 
             </div>

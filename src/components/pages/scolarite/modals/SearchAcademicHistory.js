@@ -99,9 +99,35 @@ function SearchAcademicHistory(props) {
     }
 
 
+    function getEleveData(eleveData){
+        var dataEleve = {};
+        return new Promise(function(resolve, reject){
+
+            axiosInstance.post(`get-dossier-eleve/`, {
+                id_eleve      : eleveData.id,
+                id_sousetab   : currentAppContext.currentEtab,
+                est_scolarise : isActualStudent
+    
+            }).then((res)=>{    
+                // var tab = res.data.dossier_eleve[0]; 
+                // dataEleve.historic = [];    
+                // for(var p=0; p<7; p++)  dataEleve.historic.push(tab);
+                
+                dataEleve.persoData = eleveData; 
+                dataEleve.historic  = res.data.dossier_eleve;                
+                
+                console.log("fffff",dataEleve);   
+                resolve(dataEleve);    
+            });        
+           
+        });
+        
+    }
+
+
     const LigneEleve= (props)=>{
         return(
-            <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center', width:'100%', height:'5vh', paddingTop:'1vh', paddingBottom:'1vh', borderTop:'solid 0.7px black', backgroundColor: (props.index % 2 ==0)? '#dce4eb':'white'}} onDoubleClick={()=>{ SEARCHED_ELEVE = props.eleveData; setModalOpen(1)}}>
+            <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center', width:'100%', height:'5vh', paddingTop:'1vh', paddingBottom:'1vh', borderTop:'solid 0.7px black', backgroundColor: (props.index % 2 ==0)? '#dce4eb':'white'}} onDoubleClick={()=>{getEleveData(props.eleveData).then((elvData)=>{SEARCHED_ELEVE={...elvData}; console.log("elvdata",SEARCHED_ELEVE); setModalOpen(1);})}}>
                <img  src={'images/dossierEleve.png'} alt='dossierIcon' style={{width:'1.63vw', height:'1.87vw', marginRight:'1vw',}}/>
                <label style={{fontSize:'0.9vw', color:'black', fontWeight:'bold'}}>{props.nom +' '+ props.prenom}</label>
             </div>
@@ -408,7 +434,16 @@ function SearchAcademicHistory(props) {
                     {t("student_history_search_M")}
                 </div>                
             </div>
-            {(modalOpen == 1)&& <CursusAcad eleve={SEARCHED_ELEVE} cancelHandler={quitForm}/> }
+
+            {(modalOpen == 1)&& 
+                <CursusAcad 
+                    est_scolarise =  {isActualStudent}
+                    eleve         =  {SEARCHED_ELEVE.persoData} 
+                    dossierEleve  =  {SEARCHED_ELEVE.historic}
+                    cancelHandler =  {quitForm}
+                /> 
+            }
+
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
                 <MsgBox 
