@@ -112,8 +112,8 @@ function SearchAcademicHistory(props) {
                 // var tab = res.data.dossier_eleve[0]; 
                 // dataEleve.historic = [];    
                 // for(var p=0; p<7; p++)  dataEleve.historic.push(tab);
-                
-                dataEleve.persoData = eleveData; 
+                eleveData.age       =  res.data.age_actuel;
+                dataEleve.persoData =  eleveData; 
                 dataEleve.historic  = res.data.dossier_eleve;                
                 
                 console.log("fffff",dataEleve);   

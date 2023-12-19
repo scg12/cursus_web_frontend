@@ -733,8 +733,7 @@ display: flex;
 flex-direction: column;
 justify-content: flex-start;
 width: 47.7vw;
-/* height: 97.3vh; */
-height: auto;
+height: 97.3vh;
 
 background-color: rgb(255, 255, 255);
 position: fixed;
