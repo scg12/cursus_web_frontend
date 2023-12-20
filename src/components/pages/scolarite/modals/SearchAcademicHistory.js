@@ -104,7 +104,7 @@ function SearchAcademicHistory(props) {
         return new Promise(function(resolve, reject){
 
             axiosInstance.post(`get-dossier-eleve/`, {
-                id_eleve      : eleveData.id,
+                id_eleve      : isActualStudent ? eleveData.id : eleveData.id_eleve,
                 id_sousetab   : currentAppContext.currentEtab,
                 est_scolarise : isActualStudent
     
@@ -291,7 +291,6 @@ function SearchAcademicHistory(props) {
         console.log('classe Id :',selected_classe);
     }
 
-
     function niveauChangeHandler(e){
         selected_niveau = e.target.value;
         searchedEleves = [];
@@ -299,8 +298,11 @@ function SearchAcademicHistory(props) {
         setElevesP([]);
     }
     
-    function anneeChangeHandler(){
-
+    function anneeChangeHandler(e){
+        selected_annee = e.target.value;
+        searchedEleves = [];
+        setEleves([]);
+        setElevesP([]);
     }
 
     function matriculeActivateHandler(){
@@ -388,10 +390,38 @@ function SearchAcademicHistory(props) {
     }
 
     function searchStudent(){
-        //setEleves(tabEleves)
+
         var listEleves=[];
         setEleves([]);
         axiosInstance.post(`find-eleve/`, {
+            matricule   : matriculeEnable ? matricule      :'',
+            id_niveau   : niveauEnable    ? selected_niveau:'',
+            id_classe   : classeEnable    ? selected_classe:'',
+           
+
+        }).then((res)=>{
+            console.log("resultats eleves",res.data);
+                       
+            if(matriculeEnable) {
+                searchedEleves.push(res.data);
+                listEleves.push(res.data);
+                setEleves(listEleves);
+                setElevesP(listEleves); 
+            } else {               
+                res.data.map((elt)=>{listEleves.push(elt); searchedEleves.push(elt);})
+                setEleves(listEleves);   
+                setElevesP(listEleves);           
+            }       
+            console.log(eleves)
+        })  
+        
+    }
+
+    function searchArchivedStudent(){
+
+        var listEleves=[];
+        setEleves([]);
+        axiosInstance.post(`find-archive-eleve/`, {
             matricule   : matriculeEnable ? matricule      :'',
             id_niveau   : niveauEnable    ? selected_niveau:'',
             id_classe   : classeEnable    ? selected_classe:'',
@@ -416,10 +446,6 @@ function SearchAcademicHistory(props) {
         
     }
 
-    const  getClassStudentList=(classId)=>{
-        var listEleves = []
-             
-    }
 
     /************************************ JSX Code ************************************/
 
@@ -470,7 +496,7 @@ function SearchAcademicHistory(props) {
                     <label style={{color:'black', fontWeight:"bold", fontSize:"1vw", marginLeft:'0.13vw', marginRight:"1vw",marginTop:"0vw" }}>{t("not_current_student")}</label>
                 </div> 
                 <div className={classes.legend} style={{ marginRight:"0.3vw", top:'17vh'}}> <label style={{/*color:'#e0e06c',*/ color:"white",  fontWeight:"bold", fontSize:"0.83vw",}}><i>{t("select_criteria")}</i></label></div>                    
-                <div className={classes.container} style={{marginBottom:'2vw', borderRadius:'7px', marginLeft:"-0.77vw", border:"solid 1.87px gray", justifyContent:'center', alignItems:'center', width:'95%', height:'20vh', paddingLeft:"1vw"}}> 
+                <div className={classes.container} style={{marginBottom:'2vw', borderRadius:'7px', marginLeft:"-0.77vw", border:"solid 1.87px gray", justifyContent:'center', alignItems:'center', width:'95%', height:'22vh', paddingLeft:"1vw"}}> 
                     {isActualStudent ?
                         <div className={classes.container} style={{marginBottom:'3.7vh', marginTop:'4.3vh',width:'100%'}}>
                             <div className={classes.inputRowLeft} style={{marginTop:"3.7vh"}}>
@@ -551,28 +577,28 @@ function SearchAcademicHistory(props) {
 
                         </div>
                         :                                
-                        <div className={classes.container} style={{marginBottom:'3.7vh', marginTop:'4.3vh',width:'100%'}}>
+                        <div className={classes.container} style={{marginBottom:'3.7vh', height:"22vh", marginTop:'4.3vh',width:'100%'}}>
                             <div className={classes.inputRowLeft} style={{marginTop:"3.7vh"}}>
                                 <div className={classes.container}>
                                     <div className={classes.inputRowLeft}>
                                         <input type='radio' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}} checked={matriculeEnable}  value={'presents'} name='matri' onClick={()=>{matriculeActivateHandler()}}/>
                                         <div style={{width:'5.3vw',fontWeight:570}}>
-                                            {t('Matricule')}:  
+                                            {t('matricule_short')}:  
                                         </div>
                                         
                                         <div style={{marginBottom:'1.3vh'}}>
-                                            <input type='text' disabled={!matriculeEnable} style={{height:'3.3vh', fontSise:'0.9rem', width:'10vw', border:'solid 1px gray', borderRadius:4}} onChange={matriculeChangeHandler}/>
+                                            <input type='text' disabled={!matriculeEnable} style={{height:'3.3vh', marginLeft:"1.7vw", fontSise:'0.9rem', width:'10vw', border:'solid 1px gray', borderRadius:4}} onChange={matriculeChangeHandler}/>
                                         </div>
                                     </div>
 
                                     <div className={classes.inputRowLeft} style={{marginTop:"1vh"}}>
                                         <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}} checked={niveauEnable}  value={'presents'} name='matri' onClick={()=>{niveauActiveHandler()}}/>
-                                        <div style={{width:'7.3vw', fontWeight:570}}>
-                                            {t('Niveau')}:  
+                                        <div style={{width:'12.3vw', fontWeight:570}}>
+                                            {t('last_level')}:  
                                         </div>
                                         
                                         <div style={{marginBottom:'1.3vh', marginLeft:'6.3vw'}}> 
-                                            <select id='optNiveau' disabled={!niveauEnable} defaultValue={1} onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'4vh',width:'8vw'}}>
+                                            <select id='optNiveau' disabled={!niveauEnable} defaultValue={1} onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-9.3vw', height:'4vh',width:'8vw'}}>
                                                 {(optNiveau||[]).map((option)=> {
                                                     return(
                                                         <option  value={option.value}>{option.label}</option>
@@ -585,11 +611,11 @@ function SearchAcademicHistory(props) {
 
                                 </div>
 
-                                <div className={classes.container} style={{alignItems:'flex-start', marginLeft:'-7.7vw'}}>
-                                    <div className={classes.inputRowLeft} style={{marginTop:"1vh"}}>
-                                        <div className={classes.inputRowLabel} style={{fontWeight:570, width:'16.3vw'}}>
+                                <div className={classes.container} style={{alignItems:'flex-start'}}>
+                                    <div className={classes.inputRowLeft} style={{marginTop:"-1.7vh", marginBottom:"1vh"}}>
+                                        <div className={classes.inputRowLabel} style={{fontWeight:570, width:'19.3vw'}}>
                                             <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}} checked={anneeEnable}  value={'presents'} name='matri' onClick={()=>{AnneeActivateHandler()}}/>
-                                            {t('Annee depart')}:   
+                                            {t('last_year')}:                                          
                                         </div>
                                     
                                         <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
@@ -604,9 +630,9 @@ function SearchAcademicHistory(props) {
                                     </div>     
 
                                     <div className={classes.inputRowLeft} style={{marginTop:"1vh"}}>
-                                        <div className={classes.inputRowLabel} style={{fontWeight:570}}>
+                                        <div className={classes.inputRowLabel} style={{fontWeight:570, width:'15.3vw'}}>
                                             <input type='checkbox' style={{width:'1.3vw', height:'2vh', marginTop:'0.7vh'}} checked={classeEnable}  value={'presents'} name='matri' onClick={()=>{classeActiteHandler()}}/>
-                                            {t('class')}:   
+                                            {t('last_class')}:   
                                         </div>
                                     
                                         <div style={{marginBottom:'1.3vh', marginLeft:'6.3vw'}}> 
@@ -622,7 +648,7 @@ function SearchAcademicHistory(props) {
                                 </div>
                             </div>
 
-                            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'flex-end', marginRight:'1.3vw', marginTop:'-3vh', width:'100%'}}>
+                            <div style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'flex-end', marginRight:'1.3vw', marginTop:'-1vh', width:'100%'}}>
                                 <CustomButton
                                     btnText={t('Rechercher')}
                                     hasIconImg= {true}
@@ -630,7 +656,7 @@ function SearchAcademicHistory(props) {
                                     imgStyle = {classes.searchImgStyle}  
                                     buttonStyle={getGridButtonStyle()}
                                     btnTextStyle = {classes.gridBtnTextStyle}
-                                    btnClickHandler={()=>{searchStudent();}}
+                                    btnClickHandler={()=>{searchArchivedStudent();}}
                                     disable={!matriculeComplete &&!anneeEnable&&!niveauEnable&&!classeEnable }   
                                 />
                             </div>    
@@ -689,8 +715,8 @@ function SearchAcademicHistory(props) {
                     </div>
                 }
 
-                {elevesP.length==1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'41.87vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("results"):t("result")}</i></label></div>}
-                {elevesP.length>1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'48.87vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ?  t("results"):t("result")}</i></label></div>}
+                {elevesP.length==1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'50.3vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("results"):t("result")}</i></label></div>}
+                {elevesP.length>1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'51.3vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ?  t("results"):t("result")}</i></label></div>}
                 
                 {elevesP.length>0 &&
                     <div className={classes.dataZone}>                
@@ -703,8 +729,7 @@ function SearchAcademicHistory(props) {
                 }
             </div>
             {eleves.length < 6 && 
-                <div className={classes.formButtonRowPP}>
-                
+                <div className={classes.formButtonRowPP}>                
                     <CustomButton
                         btnText={t('cancel')}
                         buttonStyle={getGridButtonStyle()}

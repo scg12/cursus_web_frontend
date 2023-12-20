@@ -1,4 +1,8 @@
-{   "classes_with_annual_meeting_not_done":"Classes ayant des conseils annuels non tenus",
+{   
+    "last_level": "Niveau de départ",
+    "last_class": "Classe de départ",
+    "last_year" : "Année  de départ",
+    "classes_with_annual_meeting_not_done":"Classes ayant des conseils annuels non tenus",
     "confirm_year_closure"   : "Confirmer la clôture de l'année ?",
     "confirm_year_closure_M" : "CLOTURE D'ANNE SCOLAIRE",
     "annual_meeting_already_created" :"Un conseil de classe annuel a déja été crée !!!",

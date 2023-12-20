@@ -1,4 +1,8 @@
-{   "classes_with_annual_meeting_not_done":"Classes with annual meeting not done",
+{   
+    "last_level":"Last reached level",
+    "last_class":"Last reached class",
+    "last_year":"Last school year",
+    "classes_with_annual_meeting_not_done":"Classes with annual meeting not done",
     "confirm_year_closure"   : "Confirm school year closure ?",
     "confirm_year_closure_M" : "SCHOOL YEAR CLOSURE",
     "annual_meeting_already_created" :"An yearly meeting has already been created !!!",
