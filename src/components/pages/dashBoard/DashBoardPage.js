@@ -515,7 +515,7 @@ const resultatsMatiereHandler=(e)=>{
             
             
           <div className={classes.column25}>
-            <div className={classes.selectZone} style={{marginLeft:'-5.7vw'}}>
+            <div className={classes.selectZone} style={{marginLeft:'-3.7vw'}}>
               <div className={classes.labelTitle}>{t('level')} : </div>
               <select id='selectNiveau1' onChange={progCompletionLevelHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optNiveauPC||[]).map((option)=> {
@@ -579,7 +579,7 @@ const resultatsMatiereHandler=(e)=>{
           </div>
           
           <div className={classes.column30}>
-            <div className={classes.selectZone} style={{marginLeft:'-5.7vw'}}>
+            <div className={classes.selectZone} style={{marginLeft:'-4.7vw'}}>
               <div className={classes.labelTitle}> {t('level')}   : </div>
               <select id='selectNiveau2' onChange={effectifNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optNiveauEFF||[]).map((option)=> {
@@ -638,7 +638,7 @@ const resultatsMatiereHandler=(e)=>{
           </div>
             
           <div className={classes.column30}>
-            <div className={classes.selectZone} style={{marginLeft:'-5.7vw'}}>
+            <div className={classes.selectZone} style={{marginLeft:'-4.3vw'}}>
               <div className={classes.labelTitle}> {t('level')}   : </div>
               <select id='selectNiveau3' onChange={fraisNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optNiveauFR||[]).map((option)=> {
@@ -701,8 +701,8 @@ const resultatsMatiereHandler=(e)=>{
           
             
           <div className={classes.column25}>
-            <div className={classes.selectZone} style={{marginLeft:'-5.7vw'}}>
-              <div className={classes.labelTitle}> {t('level')}   : </div>
+            <div className={classes.selectZone} style={{marginLeft:'-1vw'}}>
+              <div className={classes.labelTitle} style={{width:'4vw'}}> {t('level')} : </div>
               <select id='selectNiveau4' onChange={assiduiteNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optNiveauASS||[]).map((option)=> {
                       return(
@@ -711,7 +711,7 @@ const resultatsMatiereHandler=(e)=>{
                   })}
               </select>
 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
+              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'7.7vw'}}>
                 <div style={{display:'flex', flexDirection:'row'}}>
                   <input type='radio' checked={assiduiteLevel==1}  value={'enreg'} name='AssiduiteLevel' onClick={()=> {setAssiduiteLevel(1)}}/>
                   <label style={{color:'grey', marginLeft:'0vw', marginRight:1}}> Absences </label>
@@ -817,8 +817,8 @@ const resultatsMatiereHandler=(e)=>{
           
             
           <div className={classes.column25}>
-            <div className={classes.selectZone} style={{marginLeft:'-5.7vw'}}>
-              <div className={classes.labelTitle}> {t('level')}   : </div>
+            <div className={classes.selectZone} style={{marginLeft:'-1vw'}}>
+              <div className={classes.labelTitle} style={{width:'4vw'}}> {t('level')}   : </div>
               <select id='selectNiveau5' onChange={resultatsNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optNiveauRES||[]).map((option)=> {
                     return(
@@ -826,7 +826,7 @@ const resultatsMatiereHandler=(e)=>{
                     );
                 })}
               </select> 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
+              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'10vw'}}>
                 <div style={{display:'flex', flexDirection:'row', width:'8.7vw'}}>
                   <input type='radio' checked={resultatLevel==1}  value={'enreg'} name='resultatLevel'   onClick={()=> {setResultatLevel(1)}}/>
                   <label style={{color:'grey', marginLeft:'0.1vw', marginRight:1}}> {t('resultats_scolaires')} </label>

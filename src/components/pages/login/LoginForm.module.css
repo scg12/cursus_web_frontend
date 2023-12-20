@@ -78,14 +78,21 @@
 
 .aboutApp {
     align-self: flex-end;
-    width:200px;
-    margin-right: -70%;
+    margin-right: -65%;
     margin-bottom: 1%;
+
+    width:200px;
+    display:flex;
+    flex-direction : column;
+    justify-content: center;  
 }
 
 .aboutAppTextStyle {
-    font-size: smaller;
+    font-size: smaller; 
     width: 230px; 
+    margin-left: 2vw;
+    font-size: 0.93vw;
+    font-family: cursive;
 }
 
 .logoStyle {

@@ -43,6 +43,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items:flex-start;
+    min-height: 7vh;
     max-height: 40vh;
     height: auto;
     width: 93%;

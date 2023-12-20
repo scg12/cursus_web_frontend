@@ -679,6 +679,7 @@
     "Connexion" : "Connexion",
     "forgetPwd" : "Mot de passe oublié? ",
     "aboutApp":"Cursus.net est un produit conçu et propriétaire de BOGEDEV Corporation.",
+    "is_aproduct_of":"est un produit conçu et propriétaire de", 
     "rightsReserve":"Tous droits reservés.",
     "incorrectPwd" : "Login ou mot de passe incorrect!",
     "server_error" : "Une erreur est survenue au niveau du serveur!"

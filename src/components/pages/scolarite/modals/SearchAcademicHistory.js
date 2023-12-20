@@ -715,8 +715,8 @@ function SearchAcademicHistory(props) {
                     </div>
                 }
 
-                {elevesP.length==1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'50.3vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("results"):t("result")}</i></label></div>}
-                {elevesP.length>1 && <div className={classes.legend} style={{ marginLeft:"0.7vw",top:'51.3vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ?  t("results"):t("result")}</i></label></div>}
+                {elevesP.length==1 && <div className={classes.legend} style={{marginLeft:"0.7vw",top:'43.3vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("results"):t("result")}</i></label></div>}
+                {elevesP.length>1 &&  <div className={classes.legend} style={{marginLeft:"0.7vw",top:eleves.length>1 ? '51.3vh':'50.7vh'}}> <label style={{color:'white',  fontWeight:"bold", fontSize:"0.83vw",}}><i>{eleves.length} {eleves.length>1 ? t("results"):t("result")}</i></label></div>}
                 
                 {elevesP.length>0 &&
                     <div className={classes.dataZone}>                
