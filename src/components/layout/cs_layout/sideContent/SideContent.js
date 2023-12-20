@@ -87,7 +87,7 @@ function SideContent(props) {
         currentAppContext.setCurrentYear(id_annee_init);
         currentAppContext.setCurrentEtab(id_etab_init);
         setOpEtab(createOption(currentAppContext.infoSetabs.filter((etab)=>etab.id_annee == id_annee_init),'id_setab','libelle')); 
-        setOptTrimestre([{value:1,label:"Mettre le bon trimestre ici"}]);
+        setOptTrimestre([{value:1,label:currentAppContext.infoUser.trimestre_courant}]);
         //setOptCycle(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab_init),'id_cycle','libelle')); 
         // console.log("BOBO: ",currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab_init))
         setOptNiveau(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == id_etab_init),"id_niveau","libelle"));

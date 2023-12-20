@@ -53,18 +53,18 @@ function ConfigCloturerAnnee(props) {
     //GE tu vas ecrire la requete qui cherche tous les CC annuels non clotures
     //Voici son corps
     function getNonCloseYearMeeting() { 
-        tabPendingMeeting = ['6ieme','Tlec'];
-        setTabPendingClass(tabPendingMeeting);
-        setAreAllMeetingDone(tabPendingMeeting.length <= 0) ;
+        // tabPendingMeeting = ['6ieme','Tlec'];
+        // setTabPendingClass(tabPendingMeeting);
+        // setAreAllMeetingDone(tabPendingMeeting.length <= 0) ;
 
         /*---------Voici le vrai code---------*/
-        // axiosInstance.post(`get-non-close-year-meeting/`, {
-        //     id_sousetab: currentAppContext.currentEtab,
-        // }).then((res)=>{
-        //     tabPendingMeeting = ['6ieme','Tlec'];
-        //     setTabPendingClass(tabPendingMeeting);
-        //     setAreAllMeetingDone(tabPendingMeeting.length <= 0) ;               
-        // })
+        axiosInstance.post(`get-non-close-year-meeting/`, {
+            id_sousetab: currentAppContext.currentEtab,
+        }).then((res)=>{
+            tabPendingMeeting = res.data.classes;
+            setTabPendingClass(tabPendingMeeting);
+            setAreAllMeetingDone(tabPendingMeeting.length <= 0) ;               
+        })
     }    
 
    
@@ -165,7 +165,8 @@ function ConfigCloturerAnnee(props) {
                     buttonStyle={getButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler = {closeSchoolYearHandler}
-                    disable = {(areAllMeetingDone==false && currentUiContext.yearToClose==-1)}
+                    // disable = {(areAllMeetingDone==true && currentUiContext.yearToClose==-1)}
+                    disable = {areAllMeetingDone}
 
                 />                
             </div>
