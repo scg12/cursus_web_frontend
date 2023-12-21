@@ -118,14 +118,17 @@ function FormLayout(props){
             case '207':  return   'Montant Total perÇu';
 
             //----STATS ----
-            case '300':  return  'Evolution Des Effectifs';
-            case '301':  return  'Taux De Réussite aux Examens';
-            case '302':  return  'Evolution Du Niveau académique';
-            case '303':  return  'Taux De Couverture Des Programmes';
-            case '304':  return  'EVolution Du Budget';
-            case '305':  return  "Evolution de l'Interaction Avec les Parents D'Elèves";
-            case '306':  return  'Taux de Ralisation Des Investissements';
-
+            case '300':  return  t('evolution_effectifs');
+            case '301':  return  t('taux_reussite');
+            case '302':  return  t('evolution_niv_acad');
+            case '303':  return  t('couverture_programs');
+            case '304':  return  t('couv_prog_cours');
+            case '305':  return  t("stat_absences");
+            case '306':  return  t('paiement_profs');
+            case '307':  return  t('travail_scolaire');
+            case '308':  return  t("evolution_budget");
+            case '309':  return  t('evolution_comParents');
+            case '310':  return  t('taux_realisation_invest');
            
             //----COMMUNICATION ----
             case '400':  return  'Nouveau Communiqué Interne';
@@ -201,10 +204,13 @@ function FormLayout(props){
             case '301':  return  'images/EvolutionReussite.png';
             case '302':  return  'images/EvolutionNiveauAcad.png';
             case '303':  return  'images/TauxCouvProg.png';
-
-            case '304':  return  'images/EvolutionBudget.png';
-            case '305':  return  'images/TauxInteractionPrt.png';
-            case '306':  return  'images/TauxInvestissement.png';
+            case '304':  return  'images/statCouverture.png';
+            case '305':  return  'images/statPresence.png';
+            case '306':  return  'images/statPaieProfs.png';
+            case '307':  return  'images/statTravail.png';
+            case '308':  return  'images/EvolutionBudget.png';
+            case '309':  return  'images/TauxInteractionPrt.png';
+            case '310':  return  'images/statTravail.png';
           
             //----COMMUNICATION ----
             case '400':  return  'images/NewComInterne.png';

@@ -1,4 +1,9 @@
 {   
+    "couv_prog_cours"   : "Couverture par cours",
+    "stat_absences"     : "Statistiques des présence",
+    "paiement_profs"    : "Statistiques sur les paiements des profs",
+    "travail_scolaire"  : "Statistiques sur le travail scolaire",
+
     "last_level": "Niveau de départ",
     "last_class": "Classe de départ",
     "last_year" : "Année  de départ",
