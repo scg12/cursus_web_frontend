@@ -43,7 +43,7 @@ var sectionTitle1 = "Evolution effectifs sur les 5 dernieres Annees";
 var sectionTitle2 = "Evolution effectifs par sexe Sur les 5 dernieres Annees";
 
 
-function EvolutionEffectifs(props){
+function CouvertureParProg(props){
     
     const currentUiContext = useContext(UiContext);
     const [isValid, setIsValid] = useState(false);
@@ -83,7 +83,7 @@ function EvolutionEffectifs(props){
            
         currentBarChartData = {
             label:'',
-            backgroundColor: '#9c42c6',
+            backgroundColor: '#6800B4',
             borderColor:  'rgba(255,255,255,1)',
             borderWidth:2,
             data:[]
@@ -264,7 +264,7 @@ function EvolutionEffectifs(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#9c42c6',
+                        backgroundColor: 'rgb(221, 93, 19)',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -331,7 +331,7 @@ function EvolutionEffectifs(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#9c42c6',
+                        backgroundColor: 'rgb(221, 93, 19)',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -398,7 +398,7 @@ function EvolutionEffectifs(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#9c42c6',
+                        backgroundColor: 'rgb(221, 93, 19)',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -464,7 +464,7 @@ function EvolutionEffectifs(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#9c42c6',
+                        backgroundColor: 'rgb(221, 93, 19)',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -661,4 +661,4 @@ function EvolutionEffectifs(props){
      );
  }
  
- export default EvolutionEffectifs;
+ export default CouvertureParProg;

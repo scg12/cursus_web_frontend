@@ -17,6 +17,8 @@ import TauxCouvertureProgs from './subPages/TauxCouvertureProgs';
 import EvolutionBudget from './subPages/EvolutionBudget';
 import EvolutionCommParents from './subPages/EvolutionCommParents';
 import TauxInvestissmts from './subPages/TauxInvestissmts';
+import CouvertureParProg from './subPages/CouvertureParProg';
+import CouvertureParCours from "./subPages/CouvertureParCours";
 
 import { useState,useContext } from "react";
 import UiContext from '../../../store/UiContext';
@@ -119,8 +121,8 @@ function StatsEtMonitoringPage() {
       <div id="side-menu" class="sidenav side-menu">
         <FormLayout formCode={curentMenuItemPId}>
           {curentMenuItemPId==300 && <EvolutionEffectifs/>  }
-          {curentMenuItemPId==301 && <TauxCouvertureProgs/> }
-          {curentMenuItemPId==302 && <TauxCouvertureProgs/> }
+          {curentMenuItemPId==301 && <CouvertureParProg/> }
+          {curentMenuItemPId==302 && <CouvertureParCours/> }
           {curentMenuItemPId==303 && <TauxCouvertureProgs/> }
           {curentMenuItemPId==304 && <EvolutionBudget/>     } 
 
