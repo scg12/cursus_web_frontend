@@ -82,10 +82,14 @@ function StatsEtMonitoringPage() {
       <div className= {getCurrentContaintTheme()}>
         {(currentAppContext.enableProfiles["STATS_A"]=='1') ? 
           <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("acad_stats")} theme={selectedTheme}>
-            {(currentAppContext.enableProfiles["STATS_A1"]=='1') ? <MenuItemP menuItemId ='300'  imgSource='images/EvolutionReussite.png'     libelle={t("taux_reussite")}    itemSelected={showSideMenu} ></MenuItemP> : null}
-            {(currentAppContext.enableProfiles["STATS_A2"]=='1') ? <MenuItemP menuItemId ='301'  imgSource='images/EvolutionEffectifs.png'    libelle={t("evolution_effectifs")}    itemSelected={showSideMenu}></MenuItemP> : null}
-            {(currentAppContext.enableProfiles["STATS_A3"]=='1') ? <MenuItemP menuItemId ='302'  imgSource='images/EvolutionNiveauAcad.png'   libelle={t("evolution_niv_acad")}    itemSelected={showSideMenu}></MenuItemP> : null}
-            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='303'  imgSource='images/TauxCouvProg.png'          libelle={t("couverture_programs")}    itemSelected={showSideMenu}> </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["STATS_A2"]=='1') ? <MenuItemP menuItemId ='300'  imgSource='images/EvolutionEffectifs.png'    libelle={t("evolution_effectifs")}    itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyleP}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A1"]=='1') ? <MenuItemP menuItemId ='301'  imgSource='images/EvolutionReussite.png'     libelle={t("taux_reussite")}          itemSelected={showSideMenu} ></MenuItemP> : null}
+            {(currentAppContext.enableProfiles["STATS_A3"]=='1') ? <MenuItemP menuItemId ='302'  imgSource='images/EvolutionNiveauAcad.png'   libelle={t("evolution_niv_acad")}     itemSelected={showSideMenu}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='303'  imgSource='images/TauxCouvProg.png'          libelle={t("couverture_programs")}    itemSelected={showSideMenu}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='307'  imgSource='images/TauxCouvProg.png'          libelle={t("couverture programs par cours")}    itemSelected={showSideMenu}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='308'  imgSource='images/TauxCouvProg.png'          libelle={t("Statistiques Absences")}    itemSelected={showSideMenu}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='309'  imgSource='images/TauxCouvProg.png'          libelle={t("Paiements profs etablissements")}    itemSelected={showSideMenu}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='310'  imgSource='images/TauxCouvProg.png'          libelle={t("Evaluation du travail scolaire")}    itemSelected={showSideMenu}></MenuItemP>  : null}
           </MenuItemListP>
           :
           null
@@ -106,20 +110,15 @@ function StatsEtMonitoringPage() {
             
       <div id="side-menu" class="sidenav side-menu">
         <FormLayout formCode={curentMenuItemPId}>
-            {curentMenuItemPId==300 && <TauxDeReussite/>          } 
-            {curentMenuItemPId==301 && <EvolutionEffectifs/>      }
-            {curentMenuItemPId==302 && <EvolutionNiveauAcad/>     }
-            {curentMenuItemPId==303 && <TauxCouvertureProgs/>     }
+          {curentMenuItemPId==300 && <EvolutionEffectifs/>      }
+          {curentMenuItemPId==301 && <TauxDeReussite/>          }
+          {curentMenuItemPId==302 && <EvolutionNiveauAcad/>     }
+          {curentMenuItemPId==303 && <TauxCouvertureProgs/>     }
 
-            {curentMenuItemPId==304 && <EvolutionBudget/>         } 
-            {curentMenuItemPId==305 && <EvolutionCommParents/>    }
-            {curentMenuItemPId==306 && <TauxInvestissmts/>        }
+          {curentMenuItemPId==304 && <EvolutionBudget/>         } 
+          {curentMenuItemPId==305 && <EvolutionCommParents/>    }
+          {curentMenuItemPId==306 && <TauxInvestissmts/>        }
         </FormLayout>
-          {/*curentMenuItemPId==1 ? <Enregistrement/> : null}
-        {curentMenuItemPId==2 ? <ListeDesEleves/> : null}
-        {curentMenuItemPId==3 ? <CarteScolaire/> : null}
-        {curentMenuItemPId==4 ? <ChangementClasse/> : null}
-        {curentMenuItemPId==5 ? <AdmissionClasseSup/> : null*/}
       </div>
     </div>
   );

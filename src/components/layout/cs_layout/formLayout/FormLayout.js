@@ -118,11 +118,10 @@ function FormLayout(props){
             case '207':  return   'Montant Total perÇu';
 
             //----STATS ----
-            case '300':  return  'Taux De Réussite aux Examens';
-            case '301':  return  'Evolution Des Effectifs';
+            case '300':  return  'Evolution Des Effectifs';
+            case '301':  return  'Taux De Réussite aux Examens';
             case '302':  return  'Evolution Du Niveau académique';
             case '303':  return  'Taux De Couverture Des Programmes';
-
             case '304':  return  'EVolution Du Budget';
             case '305':  return  "Evolution de l'Interaction Avec les Parents D'Elèves";
             case '306':  return  'Taux de Ralisation Des Investissements';
@@ -141,7 +140,6 @@ function FormLayout(props){
             case '501':  return  t('gest_stageAcad');
             case '502':  return  t('distance_learning');
             case '503':  return  t('gest_cantine');
-
             case '504':  return  t('gest_transfort');
             case '505':  return  t('gest_biblio');
             case '506':  return  t('gest_dortoir');
@@ -199,8 +197,8 @@ function FormLayout(props){
             case '207':  return  'images/EtatPaiement.png';
 
             //----STATS ----
-            case '300':  return  'images/EvolutionReussite.png';
-            case '301':  return  'images/EvolutionEffectifs.png';
+            case '300':  return  'images/EvolutionEffectifs.png';
+            case '301':  return  'images/EvolutionReussite.png';
             case '302':  return  'images/EvolutionNiveauAcad.png';
             case '303':  return  'images/TauxCouvProg.png';
 

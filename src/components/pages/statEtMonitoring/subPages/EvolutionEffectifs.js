@@ -37,7 +37,7 @@ ChartJS.register(
 );
 
 var libelleClasse='';
-var curentClasse=''
+var curentClasse= '6em1';
 var suffixeClasse='';
 var sectionTitle1 = "Evolution effectifs sur les 5 dernieres Annees";
 var sectionTitle2 = "Evolution effectifs par sexe Sur les 5 dernieres Annees";
@@ -52,6 +52,13 @@ function EvolutionEffectifs(props){
 
     useEffect(()=> {
         createGenChartStates(listProgressionsGen);
+        //setTitleSuffix(suffixeClasse);          
+        EvolutionDiagram(curentClasse);  
+        EvolutionDiagramSexe1(curentClasse);  
+        EvolutionDiagramSexe2(curentClasse);  
+        EvolutionDiagramSexe3(curentClasse);  
+        EvolutionDiagramCycles(curentClasse);
+
     },[]);
 
     var chartLegend ='Evolution generale des effectifs'
@@ -138,7 +145,7 @@ function EvolutionEffectifs(props){
     }
 
     const optClasse=[
-        {value: '0',      label:'Choisir une classe' },
+        // {value: '0',      label:'Choisir une classe' },
         {value: '6em1',   label:'6ieme 1'            },
         {value: '5em2',   label:'5ieme 2'            },
         {value: '4A2',    label:'4ieme A2'           },
@@ -265,7 +272,7 @@ function EvolutionEffectifs(props){
         
     }
 
-    function EvolutionDiagramSexe(classeId){
+    function EvolutionDiagramSexe1(classeId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
@@ -293,13 +300,123 @@ function EvolutionEffectifs(props){
                     }
                 ]
             }
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm');       
+            containerDiv = document.getElementById('effectifsSexeProgressDiagramm1');       
             ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm');       
+            containerDiv = document.getElementById('effectifsSexeProgressDiagramm1');       
             ReactDOM.render(null,containerDiv);
         }        
     }
+
+
+    function EvolutionDiagramSexe2(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif'+ ' en '+libelleClasse;
+        if(classeId != undefined) {
+            currentProgressionList = getProgressionsSexe(classeId);
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Garcons '+libelleClasse,
+                        backgroundColor: 'rgb(14, 94, 199)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    },
+                    {
+                        label: 'Filles '+libelleClasse,
+                        backgroundColor: 'rgb(250, 19, 19)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[2].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsSexeProgressDiagramm2');       
+            ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsSexeProgressDiagramm2');       
+            ReactDOM.render(null,containerDiv);
+        }        
+    }
+
+    function EvolutionDiagramSexe3(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif'+ ' en '+libelleClasse;
+        if(classeId != undefined) {
+            currentProgressionList = getProgressionsSexe(classeId);
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Garcons '+libelleClasse,
+                        backgroundColor: 'rgb(14, 94, 199)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    },
+                    {
+                        label: 'Filles '+libelleClasse,
+                        backgroundColor: 'rgb(250, 19, 19)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[2].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsSexeProgressDiagramm3');       
+            ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsSexeProgressDiagramm3');       
+            ReactDOM.render(null,containerDiv);
+        }        
+    }
+
+    function EvolutionDiagramCycles(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif'+ ' en '+libelleClasse;
+        if(classeId != undefined) {
+            currentProgressionList = getProgressionsSexe(classeId);
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Garcons '+libelleClasse,
+                        backgroundColor: 'rgb(14, 94, 199)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    },
+                    {
+                        label: 'Filles '+libelleClasse,
+                        backgroundColor: 'rgb(250, 19, 19)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[2].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsCycleProgressDiagramm');       
+            ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsCycleProgressDiagramm');       
+            ReactDOM.render(null,containerDiv);
+        }        
+    }
+
 
     function dropDownHandler(e){
         if(e.target.value != optClasse[0].value){
@@ -317,21 +434,24 @@ function EvolutionEffectifs(props){
         
         setTitleSuffix(suffixeClasse);          
         EvolutionDiagram(curentClasse);  
-        EvolutionDiagramSexe(curentClasse);  
+        EvolutionDiagramSexe1(curentClasse); 
+        EvolutionDiagramSexe2(curentClasse); 
+        EvolutionDiagramSexe3(curentClasse); 
+        EvolutionDiagramCycles(curentClasse);
+
     }
 
 /******************************* JSX Code *******************************/
     return (        
         <div className={classes.formStyle}>
-            <div className={classes.inputRow}> 
-                <div className={classes.formTitle +' '+classes.margBottom3}>
-                    TABLEAU DE BORD DE PRESENTATION DE L'EVOLUTION DES EFFECTIFS
-                </div>
-            </div>
-
-            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle='Evolution Generale des effectifs dur les 5 dernieres annees'  itemSelected={null}> </FormPuce>
+      
+            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle='Evolution Generale des effectifs dur les 5 dernieres annees'  itemSelected={null}> </FormPuce> 
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
-                <div id='effectifsGenProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround}/>
+                {/* <div style={{width:"2vw",height:"107%", backgroundColor:"green"}}>
+
+                </div> */}
+                <div id='effectifsGenProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsSexeProgressDiagramm1' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>
 
             <div className={classes.inputRow}>
@@ -352,10 +472,57 @@ function EvolutionEffectifs(props){
             
                 
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle1 + titleSuffix}  itemSelected={null}> </FormPuce>
-            <div id='effectifsProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround}/>
+            <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
+                <div id='effectifsProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsSexeProgressDiagramm2' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+            </div>
+
+            <div className={classes.inputRow}>
+                <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
+                    NIVEAU  :                       
+                </div>
+                <div>
+                    <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                        {(optClasse||[]).map((option)=> {
+                            return(
+                                <option  value={option.value}>{option.label}</option>
+                            );
+                        })}
+                    </select>
+                </div>               
+                
+            </div>  
+            
              
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle2 + titleSuffix}  itemSelected={null}> </FormPuce>
-            <div id='effectifsSexeProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround}/>
+            <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
+                <div id='effectifsProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsSexeProgressDiagramm3' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+            </div>
+
+
+            <div className={classes.inputRow}>
+                <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
+                    CYCLE  :                       
+                </div>
+                <div>
+                    <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                        {(optClasse||[]).map((option)=> {
+                            return(
+                                <option  value={option.value}>{option.label}</option>
+                            );
+                        })}
+                    </select>
+                </div>               
+                
+            </div>  
+
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle2 + titleSuffix}  itemSelected={null}> </FormPuce>
+            <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
+                <div id='effectifsGenProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsCycleProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+            </div>
+            
                     
 
                
