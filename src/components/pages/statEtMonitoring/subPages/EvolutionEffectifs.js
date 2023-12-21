@@ -52,12 +52,22 @@ function EvolutionEffectifs(props){
 
     useEffect(()=> {
         createGenChartStates(listProgressionsGen);
-        //setTitleSuffix(suffixeClasse);          
-        EvolutionDiagram(curentClasse);  
-        EvolutionDiagramSexe1(curentClasse);  
-        EvolutionDiagramSexe2(curentClasse);  
-        EvolutionDiagramSexe3(curentClasse);  
-        EvolutionDiagramCycles(curentClasse);
+        //setTitleSuffix(suffixeClasse);  
+        /*---- Stats ETAB ----*/        
+        drawEffectifGenEtab(curentClasse);  
+        drawEffectifEtabParSexe(curentClasse);  
+
+        /*---- Stats CYCLE ----*/
+        drawEffectifParCycle(curentClasse);  
+        drawEffectifParCycleParSexe(curentClasse);   
+
+        /*---- Stats NIVEAU ----*/
+        drawEffectifParNiveau(curentClasse);  
+        drawEffectifParNiveauParSexe(curentClasse); 
+
+        /*---- Stats CLASSE ----*/
+        drawEffectifParClasse(curentClasse);  
+        drawEffectifParClasseParSexe(curentClasse); 
 
     },[]);
 
@@ -89,7 +99,7 @@ function EvolutionEffectifs(props){
         currentBarChartState.labels =  resultDataTab[0].split('_');;
         currentBarChartState.datasets.push({...currentBarChartData});
 
-        var containerDiv = document.getElementById('effectifsGenProgressDiagramm');       
+        var containerDiv = document.getElementById('effectifsGenEtab');       
         ReactDOM.render(<EffectigProgressGenDiagram ChartTextTitle= {titleGen} state={currentBarChartState}/>,containerDiv);
 
     }
@@ -200,7 +210,7 @@ function EvolutionEffectifs(props){
         }      
     }
 
-    const EffectifsProgressDiagram =(props) =>{
+    const SimpleBarDiagram =(props) =>{
         return(
             <Bar
                 data={props.state}
@@ -219,7 +229,7 @@ function EvolutionEffectifs(props){
         );
     }
 
-    const EffectifsSexeProgressDiagram =(props) =>{
+    const GenderBarDiagram =(props) =>{
         return(
             <Bar
                 data={props.state}
@@ -239,7 +249,7 @@ function EvolutionEffectifs(props){
     }
 
     /******************************* Handlers *******************************/
-    function EvolutionDiagram(classeId){
+    function drawEffectifGenEtab(classeId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
@@ -261,18 +271,15 @@ function EvolutionEffectifs(props){
                     }
                 ]
             }
-            containerDiv = document.getElementById('effectifsProgressDiagramm');       
-            ReactDOM.render(<EffectifsProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            containerDiv = document.getElementById('effectifsGenEtab');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('effectifsProgressDiagramm');  
+            containerDiv = document.getElementById('effectifsGenEtab');  
             ReactDOM.render(null,containerDiv);
         }
-                
-
-        
     }
 
-    function EvolutionDiagramSexe1(classeId){
+    function drawEffectifEtabParSexe(classeId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
@@ -300,16 +307,46 @@ function EvolutionEffectifs(props){
                     }
                 ]
             }
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm1');       
-            ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            containerDiv = document.getElementById('effectifsEtabParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm1');       
+            containerDiv = document.getElementById('effectifsEtabParSexe');       
             ReactDOM.render(null,containerDiv);
         }        
     }
 
 
-    function EvolutionDiagramSexe2(classeId){
+    function drawEffectifParCycle(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(classeId!= undefined){        
+            currentProgressionList = getProgressions(classeId);
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Evolution des effectifs en '+libelleClasse,
+                        backgroundColor: 'rgb(221, 93, 19)',
+                        borderColor: 'rgb(255, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsEtabParCycle');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParCycle');  
+            ReactDOM.render(null,containerDiv);
+        }
+    }
+
+    function drawEffectifParCycleParSexe(classeId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
@@ -337,15 +374,46 @@ function EvolutionEffectifs(props){
                     }
                 ]
             }
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm2');       
-            ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            containerDiv = document.getElementById('effectifsParCycleParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm2');       
+            containerDiv = document.getElementById('effectifsParCycleParSexe');       
             ReactDOM.render(null,containerDiv);
         }        
     }
 
-    function EvolutionDiagramSexe3(classeId){
+
+    function drawEffectifParNiveau(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(classeId!= undefined){        
+            currentProgressionList = getProgressions(classeId);
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Evolution des effectifs en '+libelleClasse,
+                        backgroundColor: 'rgb(221, 93, 19)',
+                        borderColor: 'rgb(255, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsEtabParNiveau');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParNiveau');  
+            ReactDOM.render(null,containerDiv);
+        }
+    }
+
+    function drawEffectifParNiveauParSexe(classeId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
@@ -373,15 +441,45 @@ function EvolutionEffectifs(props){
                     }
                 ]
             }
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm3');       
-            ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            containerDiv = document.getElementById('effectifsParNiveauParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('effectifsSexeProgressDiagramm3');       
+            containerDiv = document.getElementById('effectifsParNiveauParSexe');       
             ReactDOM.render(null,containerDiv);
         }        
     }
 
-    function EvolutionDiagramCycles(classeId){
+    function drawEffectifParClasse(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(classeId!= undefined){        
+            currentProgressionList = getProgressions(classeId);
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Evolution des effectifs en '+libelleClasse,
+                        backgroundColor: 'rgb(221, 93, 19)',
+                        borderColor: 'rgb(255, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsEtabParClasse');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParClasse');  
+            ReactDOM.render(null,containerDiv);
+        }
+    }
+
+    function drawEffectifParClasseParSexe(classeId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
@@ -409,14 +507,16 @@ function EvolutionEffectifs(props){
                     }
                 ]
             }
-            containerDiv = document.getElementById('effectifsCycleProgressDiagramm');       
-            ReactDOM.render(<EffectifsSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            containerDiv = document.getElementById('effectifsParClasseParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('effectifsCycleProgressDiagramm');       
+            containerDiv = document.getElementById('effectifsParClasseParSexe');       
             ReactDOM.render(null,containerDiv);
         }        
     }
 
+
+   
 
     function dropDownHandler(e){
         if(e.target.value != optClasse[0].value){
@@ -432,12 +532,22 @@ function EvolutionEffectifs(props){
             suffixeClasse = '';
         }  
         
-        setTitleSuffix(suffixeClasse);          
-        EvolutionDiagram(curentClasse);  
-        EvolutionDiagramSexe1(curentClasse); 
-        EvolutionDiagramSexe2(curentClasse); 
-        EvolutionDiagramSexe3(curentClasse); 
-        EvolutionDiagramCycles(curentClasse);
+        //setTitleSuffix(suffixeClasse);          
+        /*---- Stats ETAB ----*/        
+        drawEffectifGenEtab(curentClasse);  
+        drawEffectifEtabParSexe(curentClasse);  
+
+        /*---- Stats CYCLE ----*/
+        drawEffectifParCycle(curentClasse);  
+        drawEffectifParCycleParSexe(curentClasse);   
+
+        /*---- Stats NIVEAU ----*/
+        drawEffectifParNiveau(curentClasse);  
+        drawEffectifParNiveauParSexe(curentClasse); 
+
+        /*---- Stats CLASSE ----*/
+        drawEffectifParClasse(curentClasse);  
+        drawEffectifParClasseParSexe(curentClasse); 
 
     }
 
@@ -447,16 +557,13 @@ function EvolutionEffectifs(props){
       
             <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle='Evolution Generale des effectifs dur les 5 dernieres annees'  itemSelected={null}> </FormPuce> 
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
-                {/* <div style={{width:"2vw",height:"107%", backgroundColor:"green"}}>
-
-                </div> */}
-                <div id='effectifsGenProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsSexeProgressDiagramm1' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                <div id='effectifsGenEtab' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsEtabParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>
 
             <div className={classes.inputRow}>
                 <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                    CLASSE  :                       
+                    CYCLE  :                       
                 </div>
                 <div>
                     <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
@@ -473,8 +580,8 @@ function EvolutionEffectifs(props){
                 
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle1 + titleSuffix}  itemSelected={null}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
-                <div id='effectifsProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsSexeProgressDiagramm2' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                <div id='effectifsEtabParCycle' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>
 
             <div className={classes.inputRow}>
@@ -496,14 +603,14 @@ function EvolutionEffectifs(props){
              
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle2 + titleSuffix}  itemSelected={null}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
-                <div id='effectifsProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsSexeProgressDiagramm3' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                <div id='effectifsEtabParNiveau' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsParNiveauParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>
 
 
             <div className={classes.inputRow}>
                 <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                    CYCLE  :                       
+                    CLASSE  :                       
                 </div>
                 <div>
                     <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
@@ -519,8 +626,8 @@ function EvolutionEffectifs(props){
 
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle2 + titleSuffix}  itemSelected={null}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
-                <div id='effectifsGenProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsCycleProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                <div id='effectifsEtabParClasse' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsParClasseParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>
             
                     
