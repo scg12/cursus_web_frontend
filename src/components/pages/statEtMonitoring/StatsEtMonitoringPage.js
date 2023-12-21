@@ -118,14 +118,20 @@ function StatsEtMonitoringPage() {
             
       <div id="side-menu" class="sidenav side-menu">
         <FormLayout formCode={curentMenuItemPId}>
-          {curentMenuItemPId==300 && <EvolutionEffectifs/>      }
-          {curentMenuItemPId==301 && <TauxDeReussite/>          }
-          {curentMenuItemPId==302 && <EvolutionNiveauAcad/>     }
-          {curentMenuItemPId==303 && <TauxCouvertureProgs/>     }
+          {curentMenuItemPId==300 && <EvolutionEffectifs/>  }
+          {curentMenuItemPId==301 && <TauxCouvertureProgs/> }
+          {curentMenuItemPId==302 && <TauxCouvertureProgs/> }
+          {curentMenuItemPId==303 && <TauxCouvertureProgs/> }
+          {curentMenuItemPId==304 && <EvolutionBudget/>     } 
 
-          {curentMenuItemPId==304 && <EvolutionBudget/>         } 
-          {curentMenuItemPId==305 && <EvolutionCommParents/>    }
-          {curentMenuItemPId==306 && <TauxInvestissmts/>        }
+          {curentMenuItemPId==305 && <EvolutionNiveauAcad/>}
+          {curentMenuItemPId==306 && <TauxDeReussite/>    }
+          {curentMenuItemPId==307 && <EvolutionNiveauAcad/>    }
+
+          {curentMenuItemPId==308 && <EvolutionBudget/>    }
+          {curentMenuItemPId==309 && <TauxInvestissmts/>    }
+          {curentMenuItemPId==310 && <TauxInvestissmts/>    }
+          {curentMenuItemPId==311 && <TauxInvestissmts/>    }
         </FormLayout>
       </div>
     </div>

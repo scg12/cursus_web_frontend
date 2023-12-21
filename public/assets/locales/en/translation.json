@@ -1,7 +1,7 @@
 {   
     "stat_school_fees"  : "Statistics on school Fees",
     "couv_prog_cours"   : "Statistics on course completion",
-    "stat_absences"     : "Statistics on students Atendance",
+    "stat_absences"     : "Statistics on Attendance",
     "paiement_profs"    : "Statistics on teachers salary",
     "travail_scolaire"  : "Statistics on students school work",
 
@@ -646,7 +646,7 @@
     "taux_reussite" : "Exams statistics",
     "evolution_effectifs" : "Students' Count Evolution",
     "evolution_niv_acad" : "Students' Academic Level Evolution",
-    "couverture_programs" : "Courses Programs Completion",
+    "couverture_programs" : "Programs Completion",
 
     "non_acad_stats" : "Non Academic Statistics",
     "evolution_budget" : "Budget Evolution",
