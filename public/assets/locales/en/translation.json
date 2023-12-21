@@ -1,4 +1,5 @@
 {   
+    "stat_school_fees"  : "Statistics on school Fees",
     "couv_prog_cours"   : "Statistics on course completion",
     "stat_absences"     : "Statistics on students Atendance",
     "paiement_profs"    : "Statistics on teachers salary",
@@ -638,8 +639,11 @@
     "total_percu":"Total Amount Perceived",
     "budget_evolution":"Budget Evolution",
 
-    "acad_stats" : "Academic Statistics",
-    "taux_reussite" : "Exams Succes Average",
+    "acad_stats"   : "Academic Statistics",
+    "acad_results" : "Statistics on academic results",
+    "acad_bilan"   : "Statistics on academic assessment",
+    
+    "taux_reussite" : "Exams statistics",
     "evolution_effectifs" : "Students' Count Evolution",
     "evolution_niv_acad" : "Students' Academic Level Evolution",
     "couverture_programs" : "Courses Programs Completion",
