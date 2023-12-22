@@ -1,4 +1,10 @@
 {   
+    "stat_school_fees"  : "Evolution frais scolarité",
+    "couv_prog_cours"   : "Couverture par cours",
+    "stat_absences"     : "Statistiques des présence",
+    "paiement_profs"    : "Statistiques sur les paiements des profs",
+    "travail_scolaire"  : "Statistiques sur le travail scolaire",
+
     "last_level": "Niveau de départ",
     "last_class": "Classe de départ",
     "last_year" : "Année  de départ",
@@ -634,13 +640,16 @@
     "total_percu":"Montant Total perçu",
     "budget_evolution":"Evolution du Budget",
 
-    "acad_stats" : "Statistiques Académiques",
+    "acad_stats"   : "Statistiques académiques",
+    "acad_results" : "Statistiques sur les résultats académiques",
+    "acad_bilan"   : "Statistiques de bilan académiques ",
+
     "taux_reussite" : "Statistiques aux Examens",
     "evolution_effectifs" : "Evolution des Effectifs",
     "evolution_niv_acad" : "Evolution du Niveau Académique",
     "couverture_programs" : "Couverture des Programmes",
 
-    "non_acad_stats" : "Statistiques Non Académiques",
+    "non_acad_stats" : "Statistiques Non académiques",
     "evolution_budget" : "Evolution du Budget",
     "evolution_comParents" : "Echanges avec les Parents",
     "taux_realisation_invest" : "Taux Réalisation des Projets",

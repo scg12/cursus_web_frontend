@@ -1,7 +1,13 @@
 {   
+    "stat_school_fees"  : "Statistics on school Fees",
+    "couv_prog_cours"   : "Statistics on course completion",
+    "stat_absences"     : "Statistics on Attendance",
+    "paiement_profs"    : "Statistics on teachers salary",
+    "travail_scolaire"  : "Statistics on students school work",
+
     "last_level":"Last reached level",
     "last_class":"Last reached class",
-    "last_year":"Last school year",
+    "last_year" :"Last school year",
     "classes_with_annual_meeting_not_done":"Classes with annual meeting not done",
     "confirm_year_closure"   : "Confirm school year closure ?",
     "confirm_year_closure_M" : "SCHOOL YEAR CLOSURE",
@@ -633,11 +639,14 @@
     "total_percu":"Total Amount Perceived",
     "budget_evolution":"Budget Evolution",
 
-    "acad_stats" : "Academic Statistics",
-    "taux_reussite" : "Exams Succes Average",
+    "acad_stats"   : "Academic Statistics",
+    "acad_results" : "Statistics on academic results",
+    "acad_bilan"   : "Statistics on academic assessment",
+    
+    "taux_reussite" : "Exams statistics",
     "evolution_effectifs" : "Students' Count Evolution",
     "evolution_niv_acad" : "Students' Academic Level Evolution",
-    "couverture_programs" : "Courses Programs Complition",
+    "couverture_programs" : "Programs Completion",
 
     "non_acad_stats" : "Non Academic Statistics",
     "evolution_budget" : "Budget Evolution",

@@ -9,6 +9,14 @@
     margin-bottom: 1vh;
 }
 
+.imgStyle {
+    width: 7.3vw;
+    height: 7.3vw;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    border-radius: 15px;
+}
+
 
 .titleHmself{
     align-self: flex-end;
