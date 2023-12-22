@@ -73,6 +73,8 @@ function DashBoardPage() {
   
   const [effectifLevel, setEffectifLevel]       = useState({'id':'0','label':"Tous"});
   const [effectifClass, setEffectifClass]       = useState({'id':'0','label':"Toutes"});
+  const [effectifLevelFrais, setEffectifLevelFrais]       = useState({'id':'0','label':"Tous"});
+  const [effectifClassFrais, setEffectifClassFrais]       = useState({'id':'0','label':"Toutes"});
 
   const [assiduiteLevel, setAssiduiteLevel]     = useState(1);
   const [assiduiteClass, setAssiduiteClass]     = useState(1);
@@ -85,7 +87,11 @@ function DashBoardPage() {
 
     const [DoughnutData, setDoughnutData] = useState([100,0]);
     const [BarchartData, setBarChartData] = useState([0,0,0]);
+    const [LabelsFrais, setLabelsFrais] = useState([]);
+    const [LabelsFraisClasse, setLabelsFraisClasse] = useState([]);
+    const [BarchartDataFrais, setBarChartDataFrais] = useState([]);
     const [BarchartClasseData, setBarChartClasseData] = useState([0,0,0]);
+    const [BarchartClasseDataFrais, setBarChartClasseDataFrais] = useState([]);
     const [barchartDataLabels, setBarchartDataLabels] = useState([]);
     const [barchartDataValues, setBarchartDataValues] = useState([]);
     const [niveau_effectif_selected, setNiveau_effectif_selected] = useState('0');
@@ -240,6 +246,7 @@ function init(){
 
   getData('0');
   getEffectifData('0');
+  getFraisNiveau('0');
   console.log(level)
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
@@ -328,6 +335,38 @@ function getEffectifClassesData2(){
   }).then((res)=>{
       console.log("getEffectifClassesData2: ",res.data);
       setBarChartClasseData(res.data.effectif_classe_data)
+  })
+}
+function getFraisNiveau(niveauId){
+  let selectedClass = document.querySelector('#selectclass3').value;
+  // console.log("SALUT Eff: ",niveauId," isInscritLevelChart: ",isInscritLevelChart," classe: ",selectedClass);
+  axiosInstance.post(`frais-data-niveau/`, {
+      id_niveau : niveauId,
+      id_classe : selectedClass,
+      option : "niveau",
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getFraisNiveau: ",res.data);
+      setLabelsFrais(res.data.frais_labels);
+      setLabelsFraisClasse(res.data.frais_labels_classe);
+      setBarChartDataFrais(res.data.frais_niveau_data);
+      setBarChartClasseDataFrais(res.data.frais_classe_data)
+
+  })
+}
+function getFraisClasse(classeId){
+  axiosInstance.post(`frais-data-niveau/`, {
+      id_classe : classeId,
+      id_niveau : effectifLevelFrais.id,
+      option : "classe",
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getFraisClasse: ",res.data);
+      // setLabelsFrais(res.data.frais_labels);
+      setLabelsFraisClasse(res.data.frais_labels_classe);
+      setBarChartClasseDataFrais(res.data.frais_classe_data)
   })
 }
 
@@ -434,11 +473,28 @@ const fraisNiveauHandler=(e)=>{
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
   setOptClasseFR(tabClasses);
+  setEffectifClassFrais(tabClasses[0])
+  setEffectifLevelFrais(level);
+  var select = document.querySelector('#selectclass3');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+  getFraisNiveau(curentLevel);
   //set (level);  
 }
 
 const fraisClasseHandler=(e)=>{
- 
+  curentClass = e.target.value;  
+  var cur_index = optClasseFR.findIndex((index)=>index.value == curentClass);
+  var libelleClass = optClasseFR[cur_index].label;
+  
+  var classe ={};
+  classe.id = curentClass;
+  classe.label = libelleClass;
+
+  getFraisClasse(curentClass)
+  console.log(classe)
+  setEffectifClassFrais(classe); 
 }
 
 //---------------- Assiduite -----------------//
@@ -658,7 +714,7 @@ const resultatsMatiereHandler=(e)=>{
           
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-                <Frais selectedClass='' selectedNiveau={effectifLevel} isSchoolFees={!isFraisScolaireLevel}/>
+                <Frais LabelsFraisClasse={LabelsFraisClasse} LabelsFrais={LabelsFrais} BarchartData={BarchartDataFrais} selectedClass='' selectedNiveau={effectifLevelFrais} isSchoolFees={!isFraisScolaireLevel}/>
               </div>             
             </div>
           </div>
@@ -684,7 +740,7 @@ const resultatsMatiereHandler=(e)=>{
             
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-                <Frais selectedNiveau='' selectedClass={effectifClass} isSchoolFees={isFraisScolaireClass}/>
+                <Frais LabelsFraisClasse={LabelsFraisClasse} LabelsFrais={LabelsFrais} BarchartData={BarchartClasseDataFrais} selectedNiveau='' selectedClass={effectifClassFrais} isSchoolFees={isFraisScolaireClass}/>
               </div>             
             </div> 
           </div>
