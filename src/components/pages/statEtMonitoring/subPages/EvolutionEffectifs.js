@@ -6,8 +6,11 @@ import FormPuce from "../../../formPuce/FormPuce";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Select from 'react-select';
 
-import UiContext from "../../../../store/UiContext";
+import UiContext  from '../../../../store/UiContext';
+import AppContext from '../../../../store/AppContext';
 import { useContext, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
 import {Bar} from 'react-chartjs-2';
 
 
@@ -37,92 +40,59 @@ ChartJS.register(
 );
 
 var libelleClasse='';
-var curentClasse= '6em1';
+
+var currentCycle  = 0
+var currentNiveau = 0
+var currentClasse  = 0;
+
 var suffixeClasse='';
 var sectionTitle1 = "Evolution effectifs sur les 5 dernieres Annees";
 var sectionTitle2 = "Evolution effectifs par sexe Sur les 5 dernieres Annees";
+
+var selected_cycle;
+var selected_niveau;
+var selected_classe;
 
 
 function EvolutionEffectifs(props){
     
     const currentUiContext = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
+    const { t, i18n } = useTranslation();
+
     const [isValid, setIsValid] = useState(false);
     const [titleSuffix, setTitleSuffix] = useState('');
     const selectedTheme = currentUiContext.theme;
 
+    const [optCycle, setOptCycle]   = useState([]);   
+    const [optNiveau, setOptNiveau] = useState([]);
+    const [optClasse, setOptClasse] = useState([]);
+    
+
     useEffect(()=> {
-        createGenChartStates(listProgressionsGen);
+
+        getEtabCycles();
+        getEtabNiveaux();
+        getEtabClasses();
+        
         //setTitleSuffix(suffixeClasse);  
         /*---- Stats ETAB ----*/        
-        drawEffectifGenEtab(curentClasse);  
-        drawEffectifEtabParSexe(curentClasse);  
+        drawEffectifGenEtab(currentAppContext.currentEtab);  
+        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
 
         /*---- Stats CYCLE ----*/
-        drawEffectifParCycle(curentClasse);  
-        drawEffectifParCycleParSexe(curentClasse);   
+        drawEffectifParCycle(currentCycle);  
+        drawEffectifParCycleParSexe(currentCycle);   
 
         /*---- Stats NIVEAU ----*/
-        drawEffectifParNiveau(curentClasse);  
-        drawEffectifParNiveauParSexe(curentClasse); 
+        drawEffectifParNiveau(currentClasse);  
+        drawEffectifParNiveauParSexe(currentClasse); 
 
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(curentClasse);  
-        drawEffectifParClasseParSexe(curentClasse); 
+        drawEffectifParClasse(currentClasse);  
+        drawEffectifParClasseParSexe(currentClasse); 
 
     },[]);
-
-    var chartLegend ='Evolution generale des effectifs'
-
-    function createGenChartStates(chartData){
-        var resultDataTab=[];
-        var currentBarChartData;
-        var currentBarChartState;
-        var titleGen = 'Evolution generale des effectifs sur les 5 dernieres annees'
-        
-        resultDataTab = chartData.split('*');       
-           
-        currentBarChartData = {
-            label:'',
-            backgroundColor: '#9c42c6',
-            borderColor:  'rgba(255,255,255,1)',
-            borderWidth:2,
-            data:[]
-        };
-
-        currentBarChartState =  {
-            labels:[],
-            datasets:[],
-        }         
-         
-        currentBarChartData.label = chartLegend;
-        currentBarChartData.data = resultDataTab[1].split('_');
-        currentBarChartState.labels =  resultDataTab[0].split('_');;
-        currentBarChartState.datasets.push({...currentBarChartData});
-
-        var containerDiv = document.getElementById('effectifsGenEtab');       
-        ReactDOM.render(<EffectigProgressGenDiagram ChartTextTitle= {titleGen} state={currentBarChartState}/>,containerDiv);
-
-    }
-
-    const EffectigProgressGenDiagram=(props) =>{
-        return(
-            <Bar
-                data={props.state}
-                options={{
-                    title:{
-                        display:true,
-                        text: props.ChartTextTitle, 
-                        fontSize:20
-                    },
-                    legend:{
-                        display:true,
-                        position:'right'
-                    }
-                }}
-            />
-        );
-    }
-
 
     function getButtonStyle()
     { // Choix du theme courant
@@ -154,16 +124,54 @@ function EvolutionEffectifs(props){
         }
     }
 
-    const optClasse=[
-        // {value: '0',      label:'Choisir une classe' },
-        {value: '6em1',   label:'6ieme 1'            },
-        {value: '5em2',   label:'5ieme 2'            },
-        {value: '4A2',    label:'4ieme A2'           },
-        {value: '3E',     label:'3ieme Esp'          },
-        {value: '2c1',    label:'2nd C1'             },
-        {value: '1L',     label:'1ere L'             },
-        {value: 'TD',     label:'Tle D'              }
-    ];
+
+
+    function getEtabCycles(){
+        var tempTable=[]
+        var tabCycles=[];
+         
+        tabCycles =  currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == currentAppContext.currentEtab)
+        tabCycles.map((cycle)=>{
+            tempTable.push({value:cycle.id_cycle, label:cycle.libelle});
+        });
+        selected_cycle = tempTable[0].value;
+        setOptCycle(tempTable);
+    }
+
+    function getEtabNiveaux(){
+        var tempTable=[]
+        var tabNiveau=[];
+         
+        tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab)
+        tabNiveau.map((nivo)=>{
+            tempTable.push({value:nivo.id_niveau, label:nivo.libelle});
+        });
+        selected_niveau = tempTable[0].value;
+        setOptNiveau(tempTable);
+    }
+
+    function getEtabClasses(){
+        var tempTable=[]
+        var tabClasses=[];
+         
+        tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab)
+        tabClasses.map((cls)=>{
+            tempTable.push({value:cls.id_classe, label:cls.libelle});
+        });
+        selected_classe = tempTable[0].value;
+        setOptClasse(tempTable);
+    }
+
+    // const optClasse=[
+    //     // {value: '0',      label:'Choisir une classe' },
+    //     {value: '6em1',   label:'6ieme 1'            },
+    //     {value: '5em2',   label:'5ieme 2'            },
+    //     {value: '4A2',    label:'4ieme A2'           },
+    //     {value: '3E',     label:'3ieme Esp'          },
+    //     {value: '2c1',    label:'2nd C1'             },
+    //     {value: '1L',     label:'1ere L'             },
+    //     {value: 'TD',     label:'Tle D'              }
+    // ];
 
     const listProgressionsGen = "2018_2019_2020_2021_2022*65_59_80_81_56";        
 
@@ -249,14 +257,14 @@ function EvolutionEffectifs(props){
     }
 
     /******************************* Handlers *******************************/
-    function drawEffectifGenEtab(classeId){
+    function drawEffectifGenEtab(etabId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
 
-        if(classeId!= undefined){        
-            currentProgressionList = getProgressions(classeId);
+        if(etabId!= undefined){        
+            currentProgressionList = getProgressions('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -279,13 +287,13 @@ function EvolutionEffectifs(props){
         }
     }
 
-    function drawEffectifEtabParSexe(classeId){
+    function drawEffectifEtabParSexe(etabId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
         var title = 'Effectif'+ ' en '+libelleClasse;
-        if(classeId != undefined) {
-            currentProgressionList = getProgressionsSexe(classeId);
+        if(etabId != undefined) {
+            currentProgressionList = getProgressionsSexe('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -316,14 +324,14 @@ function EvolutionEffectifs(props){
     }
 
 
-    function drawEffectifParCycle(classeId){
+    function drawEffectifParCycle(cycleId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
 
-        if(classeId!= undefined){        
-            currentProgressionList = getProgressions(classeId);
+        if(cycleId!= undefined){        
+            currentProgressionList = getProgressions('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -346,13 +354,13 @@ function EvolutionEffectifs(props){
         }
     }
 
-    function drawEffectifParCycleParSexe(classeId){
+    function drawEffectifParCycleParSexe(cycleId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
         var title = 'Effectif'+ ' en '+libelleClasse;
-        if(classeId != undefined) {
-            currentProgressionList = getProgressionsSexe(classeId);
+        if(cycleId != undefined) {
+            currentProgressionList = getProgressionsSexe('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -383,14 +391,14 @@ function EvolutionEffectifs(props){
     }
 
 
-    function drawEffectifParNiveau(classeId){
+    function drawEffectifParNiveau(niveauId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
 
-        if(classeId!= undefined){        
-            currentProgressionList = getProgressions(classeId);
+        if(niveauId!= undefined){        
+            currentProgressionList = getProgressions('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -413,13 +421,13 @@ function EvolutionEffectifs(props){
         }
     }
 
-    function drawEffectifParNiveauParSexe(classeId){
+    function drawEffectifParNiveauParSexe(niveauId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
         var title = 'Effectif'+ ' en '+libelleClasse;
-        if(classeId != undefined) {
-            currentProgressionList = getProgressionsSexe(classeId);
+        if(niveauId != undefined) {
+            currentProgressionList = getProgressionsSexe('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -456,7 +464,7 @@ function EvolutionEffectifs(props){
         var title = 'Effectif '+ ' en '+libelleClasse;
 
         if(classeId!= undefined){        
-            currentProgressionList = getProgressions(classeId);
+            currentProgressionList = getProgressions('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -485,7 +493,7 @@ function EvolutionEffectifs(props){
         var containerDiv;
         var title = 'Effectif'+ ' en '+libelleClasse;
         if(classeId != undefined) {
-            currentProgressionList = getProgressionsSexe(classeId);
+            currentProgressionList = getProgressionsSexe('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -516,40 +524,73 @@ function EvolutionEffectifs(props){
     }
 
 
-   
+    function dropDownCycleHandler(e){
+        if(e.target.value > 0){
+            currentCycle  = e.target.value;
+            var cur_index = optCycle.findIndex((index)=>index.value == currentCycle);
+            libelleClasse = optCycle[cur_index].label;
 
-    function dropDownHandler(e){
-        if(e.target.value != optClasse[0].value){
-            curentClasse = e.target.value;
-            var cur_index = optClasse.findIndex((index)=>index.value == curentClasse);
+            console.log(libelleClasse);
+            suffixeClasse = ' en '+libelleClasse;     
+        } else {
+            currentCycle  = undefined;
+            libelleClasse ='';
+            suffixeClasse = '';
+        }  
+        
+    }
+
+
+    function dropDownNiveauHandler(e){
+        if(e.target.value > 0){
+            currentNiveau  = e.target.value;
+            var cur_index = optClasse.findIndex((index)=>index.value == currentNiveau);
             libelleClasse = optClasse[cur_index].label;
 
             console.log(libelleClasse);
             suffixeClasse = ' en '+libelleClasse;     
         } else {
-            curentClasse = undefined;
+            currentNiveau  = undefined;
+            libelleClasse ='';
+            suffixeClasse = '';
+        }  
+        
+    }
+
+
+    function droDownClassHandler(e){
+        if(e.target.value > 0){
+            currentClasse  = e.target.value;
+            var cur_index = optClasse.findIndex((index)=>index.value == currentClasse);
+            libelleClasse = optClasse[cur_index].label;
+
+            console.log(libelleClasse);
+            suffixeClasse = ' en '+libelleClasse;     
+        } else {
+            currentClasse  = undefined;
             libelleClasse ='';
             suffixeClasse = '';
         }  
         
         //setTitleSuffix(suffixeClasse);          
         /*---- Stats ETAB ----*/        
-        drawEffectifGenEtab(curentClasse);  
-        drawEffectifEtabParSexe(curentClasse);  
+        drawEffectifGenEtab(currentClasse);  
+        drawEffectifEtabParSexe(currentClasse);  
 
         /*---- Stats CYCLE ----*/
-        drawEffectifParCycle(curentClasse);  
-        drawEffectifParCycleParSexe(curentClasse);   
+        drawEffectifParCycle(currentCycle);  
+        drawEffectifParCycleParSexe(currentCycle);   
 
         /*---- Stats NIVEAU ----*/
-        drawEffectifParNiveau(curentClasse);  
-        drawEffectifParNiveauParSexe(curentClasse); 
+        drawEffectifParNiveau(currentNiveau);  
+        drawEffectifParNiveauParSexe(currentNiveau); 
 
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(curentClasse);  
-        drawEffectifParClasseParSexe(curentClasse); 
-
+        drawEffectifParClasse(currentClasse);  
+        drawEffectifParClasseParSexe(currentClasse); 
     }
+
+    
 
 /******************************* JSX Code *******************************/
     return (        
@@ -563,11 +604,11 @@ function EvolutionEffectifs(props){
 
             <div className={classes.inputRow}>
                 <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                    CYCLE  :                       
+                   {t("cycle_M")}   :                       
                 </div>
                 <div>
-                    <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
-                        {(optClasse||[]).map((option)=> {
+                    <select onChange={dropDownCycleHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                        {(optCycle||[]).map((option)=> {
                             return(
                                 <option  value={option.value}>{option.label}</option>
                             );
@@ -586,11 +627,11 @@ function EvolutionEffectifs(props){
 
             <div className={classes.inputRow}>
                 <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                    NIVEAU  :                       
+                {t("level_M")}  :                       
                 </div>
                 <div>
-                    <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
-                        {(optClasse||[]).map((option)=> {
+                    <select onChange={dropDownNiveauHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                        {(optNiveau||[]).map((option)=> {
                             return(
                                 <option  value={option.value}>{option.label}</option>
                             );
@@ -610,10 +651,10 @@ function EvolutionEffectifs(props){
 
             <div className={classes.inputRow}>
                 <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                    CLASSE  :                       
+                {t("class_M")}  :                       
                 </div>
                 <div>
-                    <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                    <select onChange={droDownClassHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                         {(optClasse||[]).map((option)=> {
                             return(
                                 <option  value={option.value}>{option.label}</option>

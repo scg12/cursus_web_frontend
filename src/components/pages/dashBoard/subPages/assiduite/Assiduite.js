@@ -133,7 +133,7 @@ function Assiduite(props){
 
 
   return(
-    <Doughnut
+    <Doughnut id={props.id}
         data={state}
             options={{
                 title:{

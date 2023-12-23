@@ -54,7 +54,7 @@ var selected_niveau;
 var selected_classe;
 
 
-function CouvertureParCours(props){
+function EvolutionFraisScolarite(props){
     
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -272,7 +272,7 @@ function CouvertureParCours(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#40a316',
+                        backgroundColor: '#574d59',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -339,7 +339,7 @@ function CouvertureParCours(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#40a316',
+                        backgroundColor: '#574d59',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -406,7 +406,7 @@ function CouvertureParCours(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#40a316',
+                        backgroundColor: '#574d59',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -472,7 +472,7 @@ function CouvertureParCours(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#40a316',
+                        backgroundColor:'#574d59',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -702,4 +702,4 @@ function CouvertureParCours(props){
      );
  }
  
- export default CouvertureParCours;
+ export default EvolutionFraisScolarite;
