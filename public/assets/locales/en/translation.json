@@ -2,10 +2,37 @@
     "garcons" : "Garcons",
     "fille"   : "Filles",
 
+
     "evolution_effectif_gen"    : "Students total count evlution",
-    "evolution_effectif_cycle"  : "Student total count evolution by cycle",
-    "evolution_effectif_niveau" : "Student total count evolution by cycle",
-    "evolution_effectif_classe" : "Student total count evolution by class",
+    "evolution_effectif_cycle"  : "Student count evolution by cycle",
+    "evolution_effectif_niveau" : "Student count evolution by cycle",
+    "evolution_effectif_classe" : "Student count evolution by class",
+
+    "couv_progs_gen"   : "Programs completion general evolution",
+    "couv_progs_cycle" : "Programs completion by cycle",
+    "couv_progs_niveau": "Programs completion by level",
+    "couv_progs_classe": "Programs completion by level",
+
+    "couv_progs_cours_gen"   : "Total courses completion general evolution",
+    "couv_progs_cours_cycle" : "courses completion by cycle",
+    "couv_progs_cours_niveau": "courses completion by level",
+    "couv_progs_cours_classe": "courses completion by level",
+
+    "evolution_presence_gen"   :"Student attencance general evolution",
+    "evolution_presence_cycle" :"Student attencance  evolution by sycle",
+    "evolution_presence_niveau":"Student attencance  evolution by level",
+    "evolution_presence_classe":"Student attencance  evolution by classe",
+
+    "evolution_niv_acad_classe"        : "Academic level general evolution",
+    "evolution_niv_acad_classe_cycle"  : "Academic presence by cycle",
+    "evolution_niv_acad_classe_niveau" : "Academic presence by level",
+    "evolution_niv_acad_classe_classe" : "Academic presence by class",
+
+    "school_work_evolution_gen"        :  "School work general evoluton",
+    "school_work_evolution_cycle"      :  "School work evoluton by cycle",
+    "school_work_evolution_niveau"     :  "School work general evoluton by level",
+    "school_work_evolution_classe"     :  "School work general evoluton by class",
+
 
     "stat_school_fees"  : "Statistics on school Fees",
     "couv_prog_cours"   : "Statistics on course completion",

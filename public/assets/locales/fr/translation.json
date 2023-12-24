@@ -1,15 +1,35 @@
 {   "garcons" : "Garcons",
     "fille"   : "Filles",
-    "evolution_effectif_gen"    : "Evolution générale des effectifs",
+    "evolution_effectif_gen"    : "Evolution générale des effectifs de l'établissement",
     "evolution_effectif_cycle"  : "Evolution des effectifs par cycle",
     "evolution_effectif_niveau" : "Evolution des effectifs par niveau",
     "evolution_effectif_classe" : "Evolution des effectifs par classe",
+
+    "couv_progs_gen"   : "Couverture générale des programmes pour l'établissement",
+    "couv_progs_cycle" : "Couverture des programmmes par cycle",
+    "couv_progs_niveau": "Couverture des programmes par niveau",
+    "couv_progs_classe": "Couverture des programmes par classe",
 
     "stat_school_fees"       : "Evolution frais scolarité",
     "couv_prog_cours"        : "Couverture par cours",
     "stat_absences"          : "Statistiques des présence",
     "paiement_profs"         : "Statistiques sur les paiements des profs",
     "travail_scolaire"       : "Statistiques sur le travail scolaire",
+
+    "couv_progs_cours_gen"   : "Couverture des programmes par cours",
+    "couv_progs_cours_cycle" : "Couverture des programmes par cours et par cycle",
+    "couv_progs_cours_niveau": "Couverture des programmes par cours et par niveau",
+
+    
+    "evolution_niv_acad_classe"        : "Evolution générale du niveau académique",
+    "evolution_niv_acad_classe_cycle"  : "Evolution générale du niveau academique  par cycle",
+    "evolution_niv_acad_classe_niveau" : "Evolution générale du niveau academisque par level",
+    "evolution_niv_acad_classe_classe" : "Evolution générale du niveau academisque par class",
+
+    "school_work_evolution_gen"        :  "Evolution générale du travail scolaire",
+    "school_work_evolution_cycle"      :  "Evolution du travail scolaire par cycle",
+    "school_work_evolution_niveau"     :  "Evolution du travail scolaire par level",
+    "school_work_evolution_classe"     :  "Evolution du travail scolaire par class",
 
     "last_level": "Niveau de départ",
     "last_class": "Classe de départ",

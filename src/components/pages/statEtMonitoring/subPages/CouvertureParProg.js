@@ -80,6 +80,7 @@ function CouvertureParProg(props){
         drawEffectifParCycleParSexe(selected_cycle);   
 
         /*---- Stats NIVEAU ----*/
+
         drawEffectifParNiveau(selected_niveau);  
         drawEffectifParNiveauParSexe(selected_niveau); 
 
@@ -608,7 +609,7 @@ function CouvertureParProg(props){
     return (        
         <div className={classes.formStyle}>
       
-            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
+            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsGenEtab' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsEtabParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -631,7 +632,7 @@ function CouvertureParProg(props){
             </div>          
             
                 
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParCycle' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -654,7 +655,7 @@ function CouvertureParProg(props){
             </div>  
             
              
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_niveau')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_niveau')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParNiveau' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParNiveauParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -677,7 +678,7 @@ function CouvertureParProg(props){
                 
             </div>  
 
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_classe')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_classe')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParClasse'    className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParClasseParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
