@@ -1,4 +1,12 @@
 {   
+    "garcons" : "Garcons",
+    "fille"   : "Filles",
+
+    "evolution_effectif_gen"    : "Students total count evlution",
+    "evolution_effectif_cycle"  : "Student total count evolution by cycle",
+    "evolution_effectif_niveau" : "Student total count evolution by cycle",
+    "evolution_effectif_classe" : "Student total count evolution by class",
+
     "stat_school_fees"  : "Statistics on school Fees",
     "couv_prog_cours"   : "Statistics on course completion",
     "stat_absences"     : "Statistics on Attendance",

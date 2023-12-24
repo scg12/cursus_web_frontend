@@ -39,16 +39,11 @@ ChartJS.register(
     Legend   
 );
 
-var libelleClasse='';
+var libelleCycle  = '';
+var libelleNiveau = '';
+var libelleClasse = '';
 
-var currentCycle  = 0
-var currentNiveau = 0
-var currentClasse  = 0;
-
-var suffixeClasse='';
-var sectionTitle1 = "Evolution effectifs sur les 5 dernieres Annees";
-var sectionTitle2 = "Evolution effectifs par sexe Sur les 5 dernieres Annees";
-
+var suffixeClasse = '';
 var selected_cycle;
 var selected_niveau;
 var selected_classe;
@@ -81,16 +76,16 @@ function CouvertureParCours(props){
         drawEffectifEtabParSexe(currentAppContext.currentEtab);  
 
         /*---- Stats CYCLE ----*/
-        drawEffectifParCycle(currentCycle);  
-        drawEffectifParCycleParSexe(currentCycle);   
+        drawEffectifParCycle(selected_cycle);  
+        drawEffectifParCycleParSexe(selected_cycle);   
 
         /*---- Stats NIVEAU ----*/
-        drawEffectifParNiveau(currentClasse);  
-        drawEffectifParNiveauParSexe(currentClasse); 
+        drawEffectifParNiveau(selected_niveau);  
+        drawEffectifParNiveauParSexe(selected_niveau); 
 
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(currentClasse);  
-        drawEffectifParClasseParSexe(currentClasse); 
+        drawEffectifParClasse(selected_classe);  
+        drawEffectifParClasseParSexe(selected_classe); 
 
     },[]);
 
@@ -136,44 +131,34 @@ function CouvertureParCours(props){
         });
         selected_cycle = tempTable[0].value;
         setOptCycle(tempTable);
+        getEtabNiveaux();
     }
 
     function getEtabNiveaux(){
         var tempTable=[]
         var tabNiveau=[];
          
-        tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab)
+        tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab && nivo.id_cycle==selected_cycle)
         tabNiveau.map((nivo)=>{
             tempTable.push({value:nivo.id_niveau, label:nivo.libelle});
         });
         selected_niveau = tempTable[0].value;
         setOptNiveau(tempTable);
+        getEtabClasses();
+        console.log("done well")
     }
 
     function getEtabClasses(){
         var tempTable=[]
         var tabClasses=[];
          
-        tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab)
+        tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab && cls.id_niveau==selected_niveau)
         tabClasses.map((cls)=>{
             tempTable.push({value:cls.id_classe, label:cls.libelle});
         });
         selected_classe = tempTable[0].value;
         setOptClasse(tempTable);
     }
-
-    // const optClasse=[
-    //     // {value: '0',      label:'Choisir une classe' },
-    //     {value: '6em1',   label:'6ieme 1'            },
-    //     {value: '5em2',   label:'5ieme 2'            },
-    //     {value: '4A2',    label:'4ieme A2'           },
-    //     {value: '3E',     label:'3ieme Esp'          },
-    //     {value: '2c1',    label:'2nd C1'             },
-    //     {value: '1L',     label:'1ere L'             },
-    //     {value: 'TD',     label:'Tle D'              }
-    // ];
-
-    const listProgressionsGen = "2018_2019_2020_2021_2022*65_59_80_81_56";        
 
     const listProgressions =[
         "2018_2019_2020_2021_2022*65_59_80_81_56",
@@ -339,7 +324,7 @@ function CouvertureParCours(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: '#40a316',
+                        backgroundColor:'#40a316',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -500,14 +485,14 @@ function CouvertureParCours(props){
                 labels: [...tabProgress[0].split('_')],
                 datasets: [
                     {
-                        label: 'Garcons '+libelleClasse,
+                        label: t('garcons'),
                         backgroundColor: 'rgb(14, 94, 199)',
                         borderColor: 'rgb(250, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
                     },
                     {
-                        label: 'Filles '+libelleClasse,
+                        label: t('filles'),
                         backgroundColor: 'rgb(250, 19, 19)',
                         borderColor: 'rgb(250, 255, 255)',
                         borderWidth: 2,
@@ -526,68 +511,95 @@ function CouvertureParCours(props){
 
     function dropDownCycleHandler(e){
         if(e.target.value > 0){
-            currentCycle  = e.target.value;
-            var cur_index = optCycle.findIndex((index)=>index.value == currentCycle);
-            libelleClasse = optCycle[cur_index].label;
+            selected_cycle = e.target.value;
+            var cur_index  = optCycle.findIndex((index)=>index.value == selected_cycle);
+            libelleCycle   = optCycle[cur_index].label;
+            getEtabNiveaux();
 
             console.log(libelleClasse);
-            suffixeClasse = ' en '+libelleClasse;     
+            suffixeClasse = ' en '+libelleCycle;     
         } else {
-            currentCycle  = undefined;
-            libelleClasse ='';
+            selected_cycle  = undefined;
+            libelleCycle ='';
             suffixeClasse = '';
         }  
+
+        /*---- Stats ETAB ----*/        
+        drawEffectifGenEtab(currentAppContext.currentEtab);  
+        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
+
+        /*---- Stats CYCLE ----*/
+        drawEffectifParCycle(selected_cycle);  
+        drawEffectifParCycleParSexe(selected_cycle);   
+
+        /*---- Stats NIVEAU ----*/
+        drawEffectifParNiveau(selected_niveau);  
+        drawEffectifParNiveauParSexe(selected_niveau); 
+
+        /*---- Stats CLASSE ----*/
+        drawEffectifParClasse(selected_classe);  
+        drawEffectifParClasseParSexe(selected_classe); 
         
     }
 
 
     function dropDownNiveauHandler(e){
         if(e.target.value > 0){
-            currentNiveau  = e.target.value;
-            var cur_index = optClasse.findIndex((index)=>index.value == currentNiveau);
-            libelleClasse = optClasse[cur_index].label;
+            selected_niveau  = e.target.value;
+            var cur_index = optNiveau.findIndex((index)=>index.value == selected_niveau);
+            libelleNiveau = optNiveau[cur_index].label;
+            getEtabClasses();
 
             console.log(libelleClasse);
-            suffixeClasse = ' en '+libelleClasse;     
+            suffixeClasse = ' en '+libelleNiveau;     
         } else {
-            currentNiveau  = undefined;
-            libelleClasse ='';
+            selected_niveau  = undefined;
+            libelleNiveau ='';
             suffixeClasse = '';
         }  
+
+        
+         /*---- Stats NIVEAU ----*/
+         drawEffectifParNiveau(selected_niveau);  
+         drawEffectifParNiveauParSexe(selected_niveau); 
+ 
+         /*---- Stats CLASSE ----*/
+         drawEffectifParClasse(selected_classe);  
+         drawEffectifParClasseParSexe(selected_classe); 
         
     }
 
 
     function droDownClassHandler(e){
         if(e.target.value > 0){
-            currentClasse  = e.target.value;
-            var cur_index = optClasse.findIndex((index)=>index.value == currentClasse);
-            libelleClasse = optClasse[cur_index].label;
+            selected_classe = e.target.value;
+            var cur_index   = optClasse.findIndex((index)=>index.value == selected_classe);
+            libelleClasse   = optClasse[cur_index].label;
 
             console.log(libelleClasse);
             suffixeClasse = ' en '+libelleClasse;     
         } else {
-            currentClasse  = undefined;
+            selected_classe  = undefined;
             libelleClasse ='';
             suffixeClasse = '';
         }  
         
         //setTitleSuffix(suffixeClasse);          
         /*---- Stats ETAB ----*/        
-        drawEffectifGenEtab(currentClasse);  
-        drawEffectifEtabParSexe(currentClasse);  
+        drawEffectifGenEtab(currentAppContext.currentEtab);  
+        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
 
         /*---- Stats CYCLE ----*/
-        drawEffectifParCycle(currentCycle);  
-        drawEffectifParCycleParSexe(currentCycle);   
+        drawEffectifParCycle(selected_cycle);  
+        drawEffectifParCycleParSexe(selected_cycle);   
 
         /*---- Stats NIVEAU ----*/
-        drawEffectifParNiveau(currentNiveau);  
-        drawEffectifParNiveauParSexe(currentNiveau); 
+        drawEffectifParNiveau(selected_niveau);  
+        drawEffectifParNiveauParSexe(selected_niveau); 
 
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(currentClasse);  
-        drawEffectifParClasseParSexe(currentClasse); 
+        drawEffectifParClasse(selected_classe);  
+        drawEffectifParClasseParSexe(selected_classe); 
     }
 
     
@@ -596,7 +608,7 @@ function CouvertureParCours(props){
     return (        
         <div className={classes.formStyle}>
       
-            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle='Evolution Generale des effectifs dur les 5 dernieres annees'  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
+            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsGenEtab' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsEtabParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -619,7 +631,7 @@ function CouvertureParCours(props){
             </div>          
             
                 
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle1 + titleSuffix}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParCycle' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -642,7 +654,7 @@ function CouvertureParCours(props){
             </div>  
             
              
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle2 + titleSuffix}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_niveau')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParNiveau' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParNiveauParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -665,9 +677,9 @@ function CouvertureParCours(props){
                 
             </div>  
 
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle2 + titleSuffix}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_classe')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
-                <div id='effectifsEtabParClasse' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsEtabParClasse'    className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParClasseParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>
             

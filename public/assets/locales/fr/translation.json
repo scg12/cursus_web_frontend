@@ -1,9 +1,15 @@
-{   
-    "stat_school_fees"  : "Evolution frais scolarité",
-    "couv_prog_cours"   : "Couverture par cours",
-    "stat_absences"     : "Statistiques des présence",
-    "paiement_profs"    : "Statistiques sur les paiements des profs",
-    "travail_scolaire"  : "Statistiques sur le travail scolaire",
+{   "garcons" : "Garcons",
+    "fille"   : "Filles",
+    "evolution_effectif_gen"    : "Evolution générale des effectifs",
+    "evolution_effectif_cycle"  : "Evolution des effectifs par cycle",
+    "evolution_effectif_niveau" : "Evolution des effectifs par niveau",
+    "evolution_effectif_classe" : "Evolution des effectifs par classe",
+
+    "stat_school_fees"       : "Evolution frais scolarité",
+    "couv_prog_cours"        : "Couverture par cours",
+    "stat_absences"          : "Statistiques des présence",
+    "paiement_profs"         : "Statistiques sur les paiements des profs",
+    "travail_scolaire"       : "Statistiques sur le travail scolaire",
 
     "last_level": "Niveau de départ",
     "last_class": "Classe de départ",
