@@ -47,7 +47,7 @@ function Resultats(props){
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-    const [barchartData, setBarChartData] = useState([]);
+    const [barchartData, setBarChartData] = useState(props.BarChartData);
     
   useEffect(()=> {
     if(props.selectedNiveau!='') getDataNiveau(props.selectedNiveau, props.codeResultat);
@@ -62,27 +62,38 @@ function Resultats(props){
 
   const state = (props.selectedNiveau!='') ? 
   {
-    labels: (props.codeResultat==1) ? labels1 : labels2,                
+    labels: props.LabelsResult,                
     datasets: [{        
         label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
         backgroundColor:  (props.codeResultat) ? 'green': 'blue',
         borderColor: 'rgba(0,0,0,1)',
         borderWidth: 1,
-        data: barchartData
+        data: props.BarchartData
     },
   ]}
   
-    :
+    :(props.selectedClass!='')?
 
-  {
-    labels: (props.codeResultat==1) ? labels1 : labels2,                
-    datasets: [{        
-        label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
-        backgroundColor:  (props.codeResultat==2) ? 'grey': 'rgb(72 107 218)',
-        borderColor: 'rgba(0,0,0,1)',
-        borderWidth: 1,
-        data: barchartData
-    },
+      {
+        labels: props.LabelsResult,               
+        datasets: [{        
+            label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+            backgroundColor:  (props.codeResultat==2) ? 'grey': 'rgb(72 107 218)',
+            borderColor: 'rgba(0,0,0,1)',
+            borderWidth: 1,
+            data: props.BarchartData
+        },
+      ]}
+    :
+    {
+      labels: props.LabelsResult,               
+      datasets: [{        
+          label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+          backgroundColor:  (props.codeResultat==2) ? 'grey': 'rgb(72 107 218)',
+          borderColor: 'rgba(0,0,0,1)',
+          borderWidth: 1,
+          data: props.BarchartData
+      },
   ]};
 
 
@@ -96,8 +107,9 @@ const getDataNiveau=(niveauId,codeResultat)=>{
         console.log(res.data);
         setBarChartData(res.data);       
     }) */  
-    if(codeResultat==1)  setBarChartData([30,40,15,12,5]);
-    else setBarChartData([56, 45, 62]);
+    // if(codeResultat==1)  setBarChartData([30,40,15,12,5]);
+    // else setBarChartData([56, 45, 62]);
+    setBarChartData(props.BarchartDataResultNiveau);
 }
 
 const getDataClasse=(classeId,codeResultat)=>{
@@ -110,8 +122,9 @@ const getDataClasse=(classeId,codeResultat)=>{
         console.log(res.data);
         setBarChartData(res.data);       
     }) */  
-    if(codeResultat==1)  setBarChartData([30,40,15,12,5]);
-    else setBarChartData([70, 65, 52]);
+    // if(codeResultat==1)  setBarChartData([30,40,15,12,5]);
+    // else setBarChartData([70, 65, 52]);
+    setBarChartData(props.BarChartData);
 }
 
 

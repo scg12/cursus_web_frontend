@@ -59,26 +59,40 @@ function FraisClasse(props){
   const state = (props.selectedNiveau!='') ? 
   {
     labels: props.LabelsFrais,                
+    // datasets: [{        
+    //     label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
+    //     backgroundColor:  (props.isSchoolFees) ? 'rgb(55 192 17)': 'blue',
+    //     borderColor: 'white',
+    //     borderWidth: 1,
+    //     data: props.BarchartData
+    // },
     datasets: [{        
-        label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
-        backgroundColor:  (props.isSchoolFees) ? 'rgb(55 192 17)': 'blue',
-        borderColor: 'white',
-        borderWidth: 1,
-        data: props.BarchartData
-    },
+      label: t('frais_scolariteP'),
+      backgroundColor: 'rgb(55 192 17)',
+      borderColor: 'white',
+      borderWidth: 1,
+      data: props.BarchartData
+  },
   ]}
   
     :
 
   {
     labels: props.LabelsFraisClasse,                
+    // datasets: [{        
+    //     label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
+    //     backgroundColor:  (props.isSchoolFees) ? 'rgb(59 93 173)': 'rgb(55 192 17)',
+    //     borderColor: 'white',
+    //     borderWidth: 1,
+    //     data: props.BarchartData
+    // },
     datasets: [{        
-        label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
-        backgroundColor:  (props.isSchoolFees) ? 'rgb(59 93 173)': 'rgb(55 192 17)',
-        borderColor: 'white',
-        borderWidth: 1,
-        data: props.BarchartData
-    },
+      label: t('frais_scolariteP'),
+      backgroundColor:'rgb(59 93 173)',
+      borderColor: 'white',
+      borderWidth: 1,
+      data: props.BarchartData
+  },
   ]};
 
 const getDataClasse=(classeId,isInscrits)=>{
