@@ -23,10 +23,10 @@
     "evolution_presence_niveau":"Student attencance  evolution by level",
     "evolution_presence_classe":"Student attencance  evolution by classe",
 
-    "evolution_niv_acad_classe"        : "Academic level general evolution",
-    "evolution_niv_acad_classe_cycle"  : "Academic presence by cycle",
-    "evolution_niv_acad_classe_niveau" : "Academic presence by level",
-    "evolution_niv_acad_classe_classe" : "Academic presence by class",
+    "evolution_niv_acad_gen"    : "Academic level general evolution",
+    "evolution_niv_acad_cycle"  : "Academic presence by cycle",
+    "evolution_niv_acad_niveau" : "Academic presence by level",
+    "evolution_niv_acad_classe" : "Academic presence by class",
 
     "school_work_evolution_gen"        :  "School work general evoluton",
     "school_work_evolution_cycle"      :  "School work evoluton by cycle",

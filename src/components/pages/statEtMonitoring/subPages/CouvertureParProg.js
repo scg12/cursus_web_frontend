@@ -132,7 +132,6 @@ function CouvertureParProg(props){
         });
         selected_cycle = tempTable[0].value;
         setOptCycle(tempTable);
-        getEtabNiveaux();
     }
 
     function getEtabNiveaux(){
@@ -145,7 +144,6 @@ function CouvertureParProg(props){
         });
         selected_niveau = tempTable[0].value;
         setOptNiveau(tempTable);
-        getEtabClasses();
         console.log("done well")
     }
 
@@ -516,6 +514,10 @@ function CouvertureParProg(props){
             var cur_index  = optCycle.findIndex((index)=>index.value == selected_cycle);
             libelleCycle   = optCycle[cur_index].label;
             getEtabNiveaux();
+            getEtabClasses();
+
+            document.getElementById("select_level").options[0].selected  = true;
+            document.getElementById("select_classe").options[0].selected = true;
 
             console.log(libelleClasse);
             suffixeClasse = ' en '+libelleCycle;     
@@ -550,6 +552,7 @@ function CouvertureParProg(props){
             var cur_index = optNiveau.findIndex((index)=>index.value == selected_niveau);
             libelleNiveau = optNiveau[cur_index].label;
             getEtabClasses();
+            document.getElementById("select_classe").options[0].selected = true;
 
             console.log(libelleClasse);
             suffixeClasse = ' en '+libelleNiveau;     
@@ -620,7 +623,7 @@ function CouvertureParProg(props){
                    {t("cycle_M")}   :                       
                 </div>
                 <div>
-                    <select onChange={dropDownCycleHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                    <select id="select_cycle" onChange={dropDownCycleHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                         {(optCycle||[]).map((option)=> {
                             return(
                                 <option  value={option.value}>{option.label}</option>
@@ -643,7 +646,7 @@ function CouvertureParProg(props){
                 {t("level_M")}  :                       
                 </div>
                 <div>
-                    <select onChange={dropDownNiveauHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                    <select id="select_level" onChange={dropDownNiveauHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                         {(optNiveau||[]).map((option)=> {
                             return(
                                 <option  value={option.value}>{option.label}</option>
@@ -667,7 +670,7 @@ function CouvertureParProg(props){
                 {t("class_M")}  :                       
                 </div>
                 <div>
-                    <select onChange={droDownClassHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                    <select id="select_classe" onChange={droDownClassHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                         {(optClasse||[]).map((option)=> {
                             return(
                                 <option  value={option.value}>{option.label}</option>
