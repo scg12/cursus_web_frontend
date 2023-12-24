@@ -47,7 +47,8 @@ function FraisClasse(props){
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-    const [barchartData, setBarChartData] = useState([]);
+    const [barchartData, setBarChartData] = useState(props.BarChartData);
+    // const [barchartData, setBarChartData] = useState([]);
     
   useEffect(()=> {
     if(props.selectedNiveau!='') getDataNiveau(props.selectedNiveau, props.isSchoolFees);
@@ -57,27 +58,41 @@ function FraisClasse(props){
 
   const state = (props.selectedNiveau!='') ? 
   {
-    labels: ['En regle', '1ere tranche','2ieme tranche','non paye' ],                
+    labels: props.LabelsFrais,                
+    // datasets: [{        
+    //     label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
+    //     backgroundColor:  (props.isSchoolFees) ? 'rgb(55 192 17)': 'blue',
+    //     borderColor: 'white',
+    //     borderWidth: 1,
+    //     data: props.BarchartData
+    // },
     datasets: [{        
-        label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
-        backgroundColor:  (props.isSchoolFees) ? 'rgb(55 192 17)': 'blue',
-        borderColor: 'white',
-        borderWidth: 1,
-        data: barchartData
-    },
+      label: t('frais_scolariteP'),
+      backgroundColor: 'rgb(55 192 17)',
+      borderColor: 'white',
+      borderWidth: 1,
+      data: props.BarchartData
+  },
   ]}
   
     :
 
   {
-    labels: ['En regle', '1ere tranche','2ieme tranche','non paye' ],                
+    labels: props.LabelsFraisClasse,                
+    // datasets: [{        
+    //     label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
+    //     backgroundColor:  (props.isSchoolFees) ? 'rgb(59 93 173)': 'rgb(55 192 17)',
+    //     borderColor: 'white',
+    //     borderWidth: 1,
+    //     data: props.BarchartData
+    // },
     datasets: [{        
-        label: (props.isSchoolFees) ? t('frais_scolariteP') : t('other_fees'),
-        backgroundColor:  (props.isSchoolFees) ? 'rgb(59 93 173)': 'rgb(55 192 17)',
-        borderColor: 'white',
-        borderWidth: 1,
-        data: barchartData
-    },
+      label: t('frais_scolariteP'),
+      backgroundColor:'rgb(59 93 173)',
+      borderColor: 'white',
+      borderWidth: 1,
+      data: props.BarchartData
+  },
   ]};
 
 const getDataClasse=(classeId,isInscrits)=>{
@@ -90,7 +105,8 @@ const getDataClasse=(classeId,isInscrits)=>{
         console.log(res.data);
         setBarChartData(res.data);       
     }) */  
-    setBarChartData([1500, 1500, 2000, 1500]);
+    // setBarChartData([1500, 1500, 2000, 1500]);
+    setBarChartData(props.BarchartClasseDataFrais);
 }
 
 const getDataNiveau=(niveauId,isInscrits)=>{
@@ -103,7 +119,8 @@ const getDataNiveau=(niveauId,isInscrits)=>{
        console.log(res.data);
        setBarChartData(res.data);       
    }) */  
-   setBarChartData([1500, 1500, 2000, 1500]);
+  //  setBarChartData([1500, 1500, 2000, 1500]);
+   setBarChartData(props.BarChartData);
 }
 
 

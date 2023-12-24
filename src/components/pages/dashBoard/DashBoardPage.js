@@ -73,19 +73,32 @@ function DashBoardPage() {
   
   const [effectifLevel, setEffectifLevel]       = useState({'id':'0','label':"Tous"});
   const [effectifClass, setEffectifClass]       = useState({'id':'0','label':"Toutes"});
+  const [effectifLevelFrais, setEffectifLevelFrais]       = useState({'id':'0','label':"Tous"});
+  const [effectifClassFrais, setEffectifClassFrais]       = useState({'id':'0','label':"Toutes"});
 
   const [assiduiteLevel, setAssiduiteLevel]     = useState(1);
   const [assiduiteClass, setAssiduiteClass]     = useState(1);
   const [assiduiteMatiere, setAssiduiteMatiere] = useState(1);
 
-  const [resultatLevel, setResultatLevel]       = useState(1);
-  const [resultatClass, setResultatClass]       = useState(1);
-  const [resultatMatiere, setResultatMatiere]   = useState(1);
+  const [resultatLevel, setResultatLevel]       = useState({'id':'0','label':"Tous"});
+  const [resultatClass, setResultatClass]       = useState({'id':'0','label':"Tous"});
+  const [resultatMatiere, setResultatMatiere]   = useState({'id':'0','label':"Tous"});
+  // const [resultatLevel, setResultatLevel]       = useState(1);
+  // const [resultatClass, setResultatClass]       = useState(1);
+  // const [resultatMatiere, setResultatMatiere]   = useState(1);
 
 
     const [DoughnutData, setDoughnutData] = useState([100,0]);
     const [BarchartData, setBarChartData] = useState([0,0,0]);
+    const [LabelsFrais, setLabelsFrais] = useState([]);
+    const [LabelsResult, setLabelsResult] = useState([]);
+    const [LabelsFraisClasse, setLabelsFraisClasse] = useState([]);
+    const [BarchartDataFrais, setBarChartDataFrais] = useState([]);
+    const [BarchartDataResultNiveau, setBarChartDataResultNiveau] = useState([]);
+    const [BarchartDataResultClasse, setBarChartDataResultClasse] = useState([]);
+    const [BarchartDataResultMatiere, setBarChartDataResultMatiere] = useState([]);
     const [BarchartClasseData, setBarChartClasseData] = useState([0,0,0]);
+    const [BarchartClasseDataFrais, setBarChartClasseDataFrais] = useState([]);
     const [barchartDataLabels, setBarchartDataLabels] = useState([]);
     const [barchartDataValues, setBarchartDataValues] = useState([]);
     const [niveau_effectif_selected, setNiveau_effectif_selected] = useState('0');
@@ -101,6 +114,7 @@ function DashBoardPage() {
     });
     ;
     var curentClass = {'id':'0','label':"Toutes"};
+    var curentMatiere = {'id':'0','label':"Toutes"};
   useEffect(()=> {
     var tabNiveaux  = [...getEtabNiveaux(currentAppContext.currentEtab)];
     var tabClasses  = [... getEtabClassesNiveau(currentAppContext.currentEtab, 0)];
@@ -199,8 +213,8 @@ function DashBoardPage() {
   function getEtabMatieresClasse(sousEtabId, classeId){
     var tempTable=[{value: 0,      label: (i18n.language=='fr') ? ' Toutes ' : ' All '  }]
     var tabMatieres
-
-    if(classeId==0){
+    console.log("******* classeId: ",classeId);
+    if(classeId==0 ){
       tabMatieres = currentAppContext.infoMatieres.filter((matiere)=>matiere.id_setab==sousEtabId)
       tabMatieres.map((matiere)=>{
         tempTable.push({value:matiere.id_matiere, label:matiere.libelle});
@@ -217,9 +231,7 @@ function DashBoardPage() {
     console.log("hshsh",tempTable, currentAppContext.infoCours);
     return(tempTable);
 
-  }
-
- 
+  } 
 
  const tabMatieres=[
   {value: '0',      label:'Toutes'           },
@@ -240,6 +252,8 @@ function init(){
 
   getData('0');
   getEffectifData('0');
+  getFraisNiveau('0');
+  getResultNiveau('0');
   console.log(level)
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
@@ -328,6 +342,88 @@ function getEffectifClassesData2(){
   }).then((res)=>{
       console.log("getEffectifClassesData2: ",res.data);
       setBarChartClasseData(res.data.effectif_classe_data)
+  })
+}
+function getFraisNiveau(niveauId){
+  let selectedClass = document.querySelector('#selectclass3').value;
+  // console.log("SALUT Eff: ",niveauId," isInscritLevelChart: ",isInscritLevelChart," classe: ",selectedClass);
+  axiosInstance.post(`frais-data-niveau/`, {
+      id_niveau : niveauId,
+      id_classe : selectedClass,
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getFraisNiveau: ",res.data);
+      setLabelsFrais(res.data.frais_labels);
+      setLabelsFraisClasse(res.data.frais_labels_classe);
+      setBarChartDataFrais(res.data.frais_niveau_data);
+      setBarChartClasseDataFrais(res.data.frais_classe_data)
+
+  })
+}
+function getFraisClasse(classeId){
+  axiosInstance.post(`frais-data-niveau/`, {
+      id_classe : classeId,
+      id_niveau : effectifLevelFrais.id,
+      // option : "classe",
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getFraisClasse: ",res.data);
+      // setLabelsFrais(res.data.frais_labels);
+      setLabelsFraisClasse(res.data.frais_labels_classe);
+      setBarChartClasseDataFrais(res.data.frais_classe_data)
+  })
+}
+function getResultNiveau(niveauId){
+  let selectedClass = document.querySelector('#selectClasse5').value;
+  let selectedMatiere = document.querySelector('#selectMatiere5').value;
+  // console.log("SALUT Eff: ",niveauId," isInscritLevelChart: ",isInscritLevelChart," classe: ",selectedClass);
+  axiosInstance.post(`res-data-niveau/`, {
+      id_niveau : niveauId,
+      id_classe : selectedClass,
+      id_matiere : selectedMatiere,
+      option : "niveau",
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getResultNiveau: ",res.data);
+      setLabelsResult(res.data.res_labels);
+      setBarChartDataResultNiveau(res.data.res_niveau_data);
+      setBarChartDataResultClasse(res.data.res_classe_data);
+      setBarChartDataResultMatiere(res.data.res_matiere_data);
+
+  })
+}
+function getResultClasse(classeId){
+  let selectedMatiere = document.querySelector('#selectMatiere5').value;
+  axiosInstance.post(`res-data-niveau/`, {
+      id_classe : classeId,
+      id_niveau : resultatLevel.id,
+      id_matiere : selectedMatiere,
+      option : "classe",
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getResultClasse: ",res.data);
+      setLabelsResult(res.data.res_labels);
+      setBarChartDataResultClasse(res.data.res_classe_data);
+      setBarChartDataResultMatiere(res.data.res_matiere_data);
+
+  })
+}
+function getResultMatiere(matiereId){
+  axiosInstance.post(`res-data-niveau/`, {
+      id_matiere : matiereId,
+      id_classe : resultatClass.id,
+      id_niveau : resultatLevel.id,
+      option : "matiere",
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("getResultMatiere: ",res.data);
+      setLabelsResult(res.data.res_labels);
+      setBarChartDataResultMatiere(res.data.res_matiere_data);
   })
 }
 
@@ -434,11 +530,28 @@ const fraisNiveauHandler=(e)=>{
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
   setOptClasseFR(tabClasses);
+  setEffectifClassFrais(tabClasses[0])
+  setEffectifLevelFrais(level);
+  var select = document.querySelector('#selectclass3');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+  getFraisNiveau(curentLevel);
   //set (level);  
 }
 
 const fraisClasseHandler=(e)=>{
- 
+  curentClass = e.target.value;  
+  var cur_index = optClasseFR.findIndex((index)=>index.value == curentClass);
+  var libelleClass = optClasseFR[cur_index].label;
+  
+  var classe ={};
+  classe.id = curentClass;
+  classe.label = libelleClass;
+
+  getFraisClasse(curentClass)
+  console.log(classe)
+  setEffectifClassFrais(classe); 
 }
 
 //---------------- Assiduite -----------------//
@@ -474,8 +587,8 @@ const assiduiteMatiereHandler=(e)=>{
 
 const resultatsNiveauHandler=(e)=>{
   var curentLevel = e.target.value;  
-  var cur_index = optNiveauEFF.findIndex((index)=>index.value == curentLevel);
-  var libelleLevel = optNiveauEFF[cur_index].label;
+  var cur_index = optNiveauRES.findIndex((index)=>index.value == curentLevel);
+  var libelleLevel = optNiveauRES[cur_index].label;
   
   var level ={};
   level.id = curentLevel;
@@ -484,17 +597,61 @@ const resultatsNiveauHandler=(e)=>{
   console.log(level)
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
+  var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab, 0)
+  console.log(tabClasses[0]," ++++++++++ tabMatieres:", tabMatieres);
   setOptClasseRES(tabClasses);
-  //setEffectifLevel(level); 
+  setResultatClass(tabClasses[0])
+  setResultatLevel(level);
+  setOptMatieresRES(tabMatieres);
+  setResultatMatiere(tabMatieres[0]);
+  var select = document.querySelector('#selectClasse5');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+
+  var select = document.querySelector('#selectMatiere5');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+  getResultNiveau(curentLevel);
   
 }
 
 const resultatsClasseHandler=(e)=>{
+  curentClass = e.target.value;  
+  var cur_index = optClasseRES.findIndex((index)=>index.value == curentClass);
+  var libelleClass = optClasseRES[cur_index].label;
   
+  var classe ={};
+  classe.id = curentClass;
+  classe.label = libelleClass;
+
+  var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab, classe.id)
+  setOptMatieresRES(tabMatieres);
+  setResultatMatiere(tabMatieres[0]);
+  setResultatClass(classe);
+  var select = document.querySelector('#selectMatiere5');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+
+  getResultClasse(curentClass)
+  console.log(classe)
+  // setResultatClass(classe); 
 }
 
 const resultatsMatiereHandler=(e)=>{
- 
+  curentMatiere = e.target.value;  
+  var cur_index = optMatieresRES.findIndex((index)=>index.value == curentMatiere);
+  var libelleMatiere = optMatieresRES[cur_index].label;
+  
+  var matiere ={};
+  matiere.id = curentMatiere;
+  matiere.label = libelleMatiere;
+
+  getResultMatiere(curentMatiere)
+  console.log(matiere)
+  setResultatMatiere(matiere); 
 }
 
 
@@ -647,18 +804,18 @@ const resultatsMatiereHandler=(e)=>{
                     );
                 })}
               </select>
-              <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}>{t('frais_scolariteP')} </label>
-                <input type='radio' checked={!isFraisScolaireLevel}  value={'inscrits'} name='fraisNiveau' onClick={()=> { isFraisScolaireLevel ? setIsFraisScolaireLevel(false) :setIsFraisScolaireLevel(true)}}/>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}> {t('other_fees')} </label>
-                <input type='radio' checked={isFraisScolaireLevel}  value={'enreg'} name='fraisNiveau' onClick={()=> { isFraisScolaireLevel ? setIsFraisScolaireLevel(false) :setIsFraisScolaireLevel(true)}}/>
-              </div> 
+              {/* <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}> */}
+                {/* <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}>{t('frais_scolariteP')} </label> */}
+                {/* <input type='radio' checked={!isFraisScolaireLevel}  value={'inscrits'} name='fraisNiveau' onClick={()=> { isFraisScolaireLevel ? setIsFraisScolaireLevel(false) :setIsFraisScolaireLevel(true)}}/> */}
+                {/* <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}> {t('other_fees')} </label> */}
+                {/* <input type='radio' checked={isFraisScolaireLevel}  value={'enreg'} name='fraisNiveau' onClick={()=> { isFraisScolaireLevel ? setIsFraisScolaireLevel(false) :setIsFraisScolaireLevel(true)}}/> */}
+              {/* </div>  */}
 
             </div>
           
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-                <Frais selectedClass='' selectedNiveau={effectifLevel} isSchoolFees={!isFraisScolaireLevel}/>
+                <Frais LabelsFraisClasse={LabelsFraisClasse} LabelsFrais={LabelsFrais} BarchartData={BarchartDataFrais} selectedClass='' selectedNiveau={effectifLevelFrais} isSchoolFees={!isFraisScolaireLevel}/>
               </div>             
             </div>
           </div>
@@ -674,17 +831,17 @@ const resultatsMatiereHandler=(e)=>{
                 })}
               </select>
 
-              <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}> {t('frais_scolariteP')} </label>
-                <input type='radio' checked={!isFraisScolaireClass}  value={'enreg'} name='fraisClasse' onClick={()=> { isFraisScolaireClass ? setIsFraisScolaireClass(false) :setIsFraisScolaireClass(true)}}/>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}> {t('other_fees')}  </label>
-                <input type='radio' checked={isFraisScolaireClass}  value={'inscrits'} name='fraisClasse' onClick={()=> { isFraisScolaireClass ? setIsFraisScolaireClass(false) :setIsFraisScolaireClass(true)}}/>
-              </div> 
+              {/* <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}> */}
+                {/* <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}> {t('frais_scolariteP')} </label> */}
+                {/* <input type='radio' checked={!isFraisScolaireClass}  value={'enreg'} name='fraisClasse' onClick={()=> { isFraisScolaireClass ? setIsFraisScolaireClass(false) :setIsFraisScolaireClass(true)}}/> */}
+                {/* <label style={{color:'grey', marginLeft:'2vw', marginRight:1}}> {t('other_fees')}  </label> */}
+                {/* <input type='radio' checked={isFraisScolaireClass}  value={'inscrits'} name='fraisClasse' onClick={()=> { isFraisScolaireClass ? setIsFraisScolaireClass(false) :setIsFraisScolaireClass(true)}}/> */}
+              {/* </div>  */}
             </div>    
             
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
               <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-                <Frais selectedNiveau='' selectedClass={effectifClass} isSchoolFees={isFraisScolaireClass}/>
+                <Frais LabelsFraisClasse={LabelsFraisClasse} LabelsFrais={LabelsFrais} BarchartData={BarchartClasseDataFrais} selectedNiveau='' selectedClass={effectifClassFrais} isSchoolFees={isFraisScolaireClass}/>
               </div>             
             </div> 
           </div>
@@ -842,7 +999,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Resultats selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeResultat={resultatLevel}/>
+              <Resultats LabelsResult={LabelsResult} BarchartData={BarchartDataResultNiveau} selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeResultat={resultatLevel}/>
             </div>
             
           </div>
@@ -875,7 +1032,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Resultats selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeResultat={resultatClass}/>
+              <Resultats LabelsResult={LabelsResult} BarchartData={BarchartDataResultClasse} selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeResultat={resultatClass}/>
             </div>
             
           </div>
@@ -899,7 +1056,7 @@ const resultatsMatiereHandler=(e)=>{
               </div> 
             </div>
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Resultats selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeResultat={1}/>
+              <Resultats LabelsResult={LabelsResult} BarchartData={BarchartDataResultMatiere} selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeResultat={1}/>
             </div>  
           </div>
 
