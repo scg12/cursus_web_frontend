@@ -1,4 +1,29 @@
 
+/*------------------------- LES DOUGHNUT CHARTS DE SUPERVISION --------------------*/
+#couvertureByLevel{
+  height: 27vh !important;
+  width:13.7vw !important; 
+}
+
+#Assiduite_niveau {
+  height: 25vh !important;
+  width:11.7vw !important;
+}
+
+
+#Assiduite_classe {
+  height: 25vh !important;
+  width:11.7vw !important;
+}
+
+
+
+#Assiduite_matiere {
+  height: 25vh !important;
+  width:11.7vw !important;
+}
+
+
 /*------------------------- CALENDAR --------------------*/
 .react-calendar__month-view__days {
   border-style: solid;

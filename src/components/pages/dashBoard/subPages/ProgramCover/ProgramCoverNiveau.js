@@ -93,7 +93,7 @@ function getData(niveauId){
 }
 
     return(
-        <Doughnut
+        <Doughnut id={props.id}
             data={state}
                 options={{
                     title:{

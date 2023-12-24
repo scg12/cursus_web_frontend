@@ -19,6 +19,9 @@ import EvolutionCommParents from './subPages/EvolutionCommParents';
 import TauxInvestissmts from './subPages/TauxInvestissmts';
 import CouvertureParProg from './subPages/CouvertureParProg';
 import CouvertureParCours from "./subPages/CouvertureParCours";
+import StatsPresence from "./subPages/StatsPresence";
+import EvolutionFraisScolarite from "./subPages/EvolutionFraisScolarite";
+import TravailScolaire from "./subPages/TravailScolaire";
 
 import { useState,useContext } from "react";
 import UiContext from '../../../store/UiContext';
@@ -120,20 +123,20 @@ function StatsEtMonitoringPage() {
             
       <div id="side-menu" class="sidenav side-menu">
         <FormLayout formCode={curentMenuItemPId}>
-          {curentMenuItemPId==300 && <EvolutionEffectifs/>  }
-          {curentMenuItemPId==301 && <CouvertureParProg/> }
-          {curentMenuItemPId==302 && <CouvertureParCours/> }
-          {curentMenuItemPId==303 && <TauxCouvertureProgs/> }
-          {curentMenuItemPId==304 && <EvolutionBudget/>     } 
+          {curentMenuItemPId==300 && <EvolutionEffectifs/>      }
+          {curentMenuItemPId==301 && <CouvertureParProg/>       }
+          {curentMenuItemPId==302 && <CouvertureParCours/>      }
+          {curentMenuItemPId==303 && <StatsPresence/>           }
+          {curentMenuItemPId==304 && <EvolutionFraisScolarite/> } 
 
-          {curentMenuItemPId==305 && <EvolutionNiveauAcad/>}
-          {curentMenuItemPId==306 && <TauxDeReussite/>    }
-          {curentMenuItemPId==307 && <EvolutionNiveauAcad/>    }
+          {curentMenuItemPId==305 && <TauxDeReussite/>          }
+          {curentMenuItemPId==306 && <EvolutionNiveauAcad/>     }
+          {curentMenuItemPId==307 && <TravailScolaire/>     }
 
-          {curentMenuItemPId==308 && <EvolutionBudget/>    }
-          {curentMenuItemPId==309 && <TauxInvestissmts/>    }
-          {curentMenuItemPId==310 && <TauxInvestissmts/>    }
-          {curentMenuItemPId==311 && <TauxInvestissmts/>    }
+          {curentMenuItemPId==308 && <EvolutionBudget/>         }
+          {curentMenuItemPId==309 && <TauxInvestissmts/>        }
+          {curentMenuItemPId==310 && <TauxInvestissmts/>        }
+          {curentMenuItemPId==311 && <TauxInvestissmts/>        }
         </FormLayout>
       </div>
     </div>

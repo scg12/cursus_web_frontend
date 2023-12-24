@@ -683,7 +683,7 @@ const resultatsMatiereHandler=(e)=>{
               </select> 
             </div>
             <div style={{paddingTop:'13vh', display: 'flex', width:'13vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <ProgramCoverNiveau DoughnutData={DoughnutData} selectedNiveau={currentUiContext.prgramCoverSelectedLevel.id}/>
+              <ProgramCoverNiveau  id='couvertureByLevel' DoughnutData={DoughnutData} selectedNiveau={currentUiContext.prgramCoverSelectedLevel.id}/>
             </div>
           </div>
             
@@ -888,7 +888,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Assiduite selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeAssiduite={assiduiteLevel}/>
+              <Assiduite id='Assiduite_niveau' selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeAssiduite={assiduiteLevel}/>
             </div>
 
           </div>
@@ -924,7 +924,7 @@ const resultatsMatiereHandler=(e)=>{
 
             </div>
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Assiduite selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeAssiduite={assiduiteClass}/>
+              <Assiduite id='Assiduite_classe' selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeAssiduite={assiduiteClass}/>
             </div>
             
           </div>
@@ -960,7 +960,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Assiduite selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeAssiduite={assiduiteMatiere}/>
+              <Assiduite id='Assiduite_matiere' selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeAssiduite={assiduiteMatiere}/>
             </div>
   
           </div> 

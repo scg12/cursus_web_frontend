@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import FormPuce from "../../../formPuce/FormPuce";
+import ProgressBar from 'react-bootstrap/ProgressBar';
 import Select from 'react-select';
 
-import UiContext from "../../../../store/UiContext";
+import UiContext  from '../../../../store/UiContext';
+import AppContext from '../../../../store/AppContext';
 import { useContext, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
 import {Bar} from 'react-chartjs-2';
 
 
@@ -21,7 +25,7 @@ import {
     PointElement,
     LineElement,
     ArcElement
-    } from 'chart.js'; 
+} from 'chart.js'; 
 
 ChartJS.register(
     CategoryScale,
@@ -33,76 +37,59 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend   
-  );
+);
 
-  var libelleClasse='';
-var curentClasse=''
-var suffixeClasse='';
-var sectionTitle1 = "Evolution niveau academique Sur les 5 dernieres Annees";
-var sectionTitle2 = "Evolution niveau academique par sexe Sur les 5 dernieres Annees";
+var libelleCycle  = '';
+var libelleNiveau = '';
+var libelleClasse = '';
+
+
+
+var suffixeClasse = '';
+var selected_cycle;
+var selected_niveau;
+var selected_classe;
 
 
 function EvolutionNiveauAcad(props){
     
     const currentUiContext = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
+    const { t, i18n } = useTranslation();
+
     const [isValid, setIsValid] = useState(false);
     const [titleSuffix, setTitleSuffix] = useState('');
     const selectedTheme = currentUiContext.theme;
 
+    const [optCycle, setOptCycle]   = useState([]);   
+    const [optNiveau, setOptNiveau] = useState([]);
+    const [optClasse, setOptClasse] = useState([]);
+    
+
     useEffect(()=> {
-        createGenChartStates(listProgressionsGen);
-    },[]);
 
-    var chartLegend ='Evolution generale du Niveau academique'
-
-    function createGenChartStates(chartData){
-        var resultDataTab=[];
-        var currentBarChartData;
-        var currentBarChartState;
-        var titleGen = 'Evolution generale du niveau academiaues sur les 5 dernieres annees'
+        getEtabCycles();
+        getEtabNiveaux();
+        getEtabClasses();
         
-        resultDataTab = chartData.split('*');       
-           
-        currentBarChartData = {
-            label:'',
-            backgroundColor: '#6800B4',
-            borderColor:  'rgba(255,255,255,1)',
-            borderWidth:2,
-            data:[]
-        };
+        //setTitleSuffix(suffixeClasse);  
+        /*---- Stats ETAB ----*/        
+        drawEffectifGenEtab(currentAppContext.currentEtab);  
+        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
 
-        currentBarChartState =  {
-            labels:[],
-            datasets:[],
-        }         
-         
-        currentBarChartData.label = chartLegend;
-        currentBarChartData.data = resultDataTab[1].split('_');
-        currentBarChartState.labels =  resultDataTab[0].split('_');;
-        currentBarChartState.datasets.push({...currentBarChartData});
+        /*---- Stats CYCLE ----*/
+        drawEffectifParCycle(selected_cycle);  
+        drawEffectifParCycleParSexe(selected_cycle);   
 
-        var containerDiv = document.getElementById('nivAcProgressGenDiagramm');       
-        ReactDOM.render(<NivAcadProgressGenDiagram ChartTextTitle= {titleGen} state={currentBarChartState}/>,containerDiv);
-    }
+        /*---- Stats NIVEAU ----*/
+        drawEffectifParNiveau(selected_niveau);  
+        drawEffectifParNiveauParSexe(selected_niveau); 
 
-    const NivAcadProgressGenDiagram =(props) =>{
-        return(
-            <Bar
-                data={props.state}
-                options={{
-                    title:{
-                        display:true,
-                        text: props.ChartTextTitle, 
-                        fontSize:20
-                    },
-                    legend:{
-                        display:true,
-                        position:'right'
-                    }
-                }}
-            />
-        );
-    }
+        /*---- Stats CLASSE ----*/
+        drawEffectifParClasse(selected_classe);  
+        drawEffectifParClasseParSexe(selected_classe); 
+
+    },[]);
 
     function getButtonStyle()
     { // Choix du theme courant
@@ -132,21 +119,49 @@ function EvolutionNiveauAcad(props){
             case 'Theme3': return 'puceN3.png' ;
             default: return 'puceN1.png' ;
         }
-    }   
+    }
 
-    const optClasse=[
-        {value: '0',      label:'Choisir une classe' },
-        {value: '6em1',   label:'6ieme 1'            },
-        {value: '5em2',   label:'5ieme 2'            },
-        {value: '4A2',    label:'4ieme A2'           },
-        {value: '3E',     label:'3ieme Esp'          },
-        {value: '2c1',    label:'2nd C1'             },
-        {value: '1L',     label:'1ere L'             },
-        {value: 'TD',     label:'Tle D'              }
-    ];
-    
-    const listProgressionsGen = "2018_2019_2020_2021_2022*65_59_80_81_56";        
-  
+
+
+    function getEtabCycles(){
+        var tempTable=[]
+        var tabCycles=[];
+         
+        tabCycles =  currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == currentAppContext.currentEtab)
+        tabCycles.map((cycle)=>{
+            tempTable.push({value:cycle.id_cycle, label:cycle.libelle});
+        });
+        selected_cycle = tempTable[0].value;
+        setOptCycle(tempTable);
+        getEtabNiveaux();
+    }
+
+    function getEtabNiveaux(){
+        var tempTable=[]
+        var tabNiveau=[];
+         
+        tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab && nivo.id_cycle==selected_cycle)
+        tabNiveau.map((nivo)=>{
+            tempTable.push({value:nivo.id_niveau, label:nivo.libelle});
+        });
+        selected_niveau = tempTable[0].value;
+        setOptNiveau(tempTable);
+        getEtabClasses();
+        console.log("done well")
+    }
+
+    function getEtabClasses(){
+        var tempTable=[]
+        var tabClasses=[];
+         
+        tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab && cls.id_niveau==selected_niveau)
+        tabClasses.map((cls)=>{
+            tempTable.push({value:cls.id_classe, label:cls.libelle});
+        });
+        selected_classe = tempTable[0].value;
+        setOptClasse(tempTable);
+    }
+
     const listProgressions =[
         "2018_2019_2020_2021_2022*65_59_80_81_56",
         "2018_2019_2020_2021_2022*85_80_82_65_57",
@@ -154,6 +169,7 @@ function EvolutionNiveauAcad(props){
         "2018_2019_2020_2021_2022*65_80_80_48_74",
         "2018_2019_2020_2021_2022*65_59_90_81_79",
     ];
+
 
     const listProgressionsSexe =[
         "2018_2019_2020_2021_2022*65_59_80_81_56*27_45_87_32_28",
@@ -189,7 +205,7 @@ function EvolutionNiveauAcad(props){
         }      
     }
 
-    const NivAcadProgressDiagram =(props) =>{
+    const SimpleBarDiagram =(props) =>{
         return(
             <Bar
                 data={props.state}
@@ -208,7 +224,7 @@ function EvolutionNiveauAcad(props){
         );
     }
 
-    const NivAcadSexeProgressDiagram =(props) =>{
+    const GenderBarDiagram =(props) =>{
         return(
             <Bar
                 data={props.state}
@@ -228,44 +244,43 @@ function EvolutionNiveauAcad(props){
     }
 
     /******************************* Handlers *******************************/
-    function EvolutionDiagram(classeId){
+    function drawEffectifGenEtab(etabId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
-        var title = 'Evolution du niveau Academique '+ ' en '+libelleClasse;
+        var title = 'Effectif '+ ' en '+libelleClasse;
 
-        if(classeId!= undefined){
-            currentProgressionList = getProgressions(classeId);
+        if(etabId!= undefined){        
+            currentProgressionList = getProgressions('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
                 labels: [...tabProgress[0].split('_')],
                 datasets: [
                     {
-                        label: 'Evolution du niveau academique en '+libelleClasse,
-                        backgroundColor: 'rgb(221, 93, 19)',
+                        label: 'Evolution des effectifs en '+libelleClasse,
+                        backgroundColor: '#c82f2f',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
                     }
                 ]
             }
-            containerDiv = document.getElementById('nivAcProgressDiagramm');       
-            ReactDOM.render(<NivAcadProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            containerDiv = document.getElementById('effectifsGenEtab');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('nivAcProgressDiagramm');       
+            containerDiv = document.getElementById('effectifsGenEtab');  
             ReactDOM.render(null,containerDiv);
         }
     }
 
-    function EvolutionDiagramSexe(classeId){
+    function drawEffectifEtabParSexe(etabId){
         var tabProgress=[];
         var currentProgressionList;
         var containerDiv;
-        var title = 'Evolution par sexe du niveau Academique '+ ' en '+libelleClasse;
-
-        if(classeId != undefined){
-            currentProgressionList = getProgressionsSexe(classeId);
+        var title = 'Effectif'+ ' en '+libelleClasse;
+        if(etabId != undefined) {
+            currentProgressionList = getProgressionsSexe('6em1');
             tabProgress = currentProgressionList.split('*');
 
             var selectedState = {
@@ -287,87 +302,394 @@ function EvolutionNiveauAcad(props){
                     }
                 ]
             }
-            containerDiv = document.getElementById('nivAcSexeProgressDiagramm');       
-            ReactDOM.render(<NivAcadSexeProgressDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            containerDiv = document.getElementById('effectifsEtabParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
         } else {
-            containerDiv = document.getElementById('nivAcSexeProgressDiagramm');       
+            containerDiv = document.getElementById('effectifsEtabParSexe');       
             ReactDOM.render(null,containerDiv);
         }        
     }
 
-    function dropDownHandler(e){
-        if(e.target.value != optClasse[0].value){
-            curentClasse = e.target.value;
-            var cur_index = optClasse.findIndex((index)=>index.value == curentClasse);
-            libelleClasse = optClasse[cur_index].label;
+
+    function drawEffectifParCycle(cycleId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(cycleId!= undefined){        
+            currentProgressionList = getProgressions('6em1');
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Evolution des effectifs en '+libelleClasse,
+                        backgroundColor: '#c82f2f',
+                        borderColor: 'rgb(255, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsEtabParCycle');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParCycle');  
+            ReactDOM.render(null,containerDiv);
+        }
+    }
+
+    function drawEffectifParCycleParSexe(cycleId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif'+ ' en '+libelleClasse;
+        if(cycleId != undefined) {
+            currentProgressionList = getProgressionsSexe('6em1');
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Garcons '+libelleClasse,
+                        backgroundColor: 'rgb(14, 94, 199)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    },
+                    {
+                        label: 'Filles '+libelleClasse,
+                        backgroundColor: 'rgb(250, 19, 19)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[2].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsParCycleParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsParCycleParSexe');       
+            ReactDOM.render(null,containerDiv);
+        }        
+    }
+
+
+    function drawEffectifParNiveau(niveauId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(niveauId!= undefined){        
+            currentProgressionList = getProgressions('6em1');
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Evolution des effectifs en '+libelleClasse,
+                        backgroundColor: '#c82f2f',
+                        borderColor: 'rgb(255, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsEtabParNiveau');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParNiveau');  
+            ReactDOM.render(null,containerDiv);
+        }
+    }
+
+    function drawEffectifParNiveauParSexe(niveauId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif'+ ' en '+libelleClasse;
+        if(niveauId != undefined) {
+            currentProgressionList = getProgressionsSexe('6em1');
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Garcons '+libelleClasse,
+                        backgroundColor: 'rgb(14, 94, 199)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    },
+                    {
+                        label: 'Filles '+libelleClasse,
+                        backgroundColor: 'rgb(250, 19, 19)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[2].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsParNiveauParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsParNiveauParSexe');       
+            ReactDOM.render(null,containerDiv);
+        }        
+    }
+
+    function drawEffectifParClasse(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(classeId!= undefined){        
+            currentProgressionList = getProgressions('6em1');
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: 'Evolution des effectifs en '+libelleClasse,
+                        backgroundColor: '#c82f2f',
+                        borderColor: 'rgb(255, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsEtabParClasse');       
+            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParClasse');  
+            ReactDOM.render(null,containerDiv);
+        }
+    }
+
+    function drawEffectifParClasseParSexe(classeId){
+        var tabProgress=[];
+        var currentProgressionList;
+        var containerDiv;
+        var title = 'Effectif'+ ' en '+libelleClasse;
+        if(classeId != undefined) {
+            currentProgressionList = getProgressionsSexe('6em1');
+            tabProgress = currentProgressionList.split('*');
+
+            var selectedState = {
+                labels: [...tabProgress[0].split('_')],
+                datasets: [
+                    {
+                        label: t('garcons'),
+                        backgroundColor: 'rgb(14, 94, 199)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[1].split('_')]
+                    },
+                    {
+                        label: t('filles'),
+                        backgroundColor: 'rgb(250, 19, 19)',
+                        borderColor: 'rgb(250, 255, 255)',
+                        borderWidth: 2,
+                        data: [...tabProgress[2].split('_')]
+                    }
+                ]
+            }
+            containerDiv = document.getElementById('effectifsParClasseParSexe');       
+            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+        } else {
+            containerDiv = document.getElementById('effectifsParClasseParSexe');       
+            ReactDOM.render(null,containerDiv);
+        }        
+    }
+
+
+    function dropDownCycleHandler(e){
+        if(e.target.value > 0){
+            selected_cycle = e.target.value;
+            var cur_index  = optCycle.findIndex((index)=>index.value == selected_cycle);
+            libelleCycle   = optCycle[cur_index].label;
+            getEtabNiveaux();
+
+            console.log(libelleClasse);
+            suffixeClasse = ' en '+libelleCycle;     
+        } else {
+            selected_cycle  = undefined;
+            libelleCycle ='';
+            suffixeClasse = '';
+        }  
+
+        /*---- Stats ETAB ----*/        
+        drawEffectifGenEtab(currentAppContext.currentEtab);  
+        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
+
+        /*---- Stats CYCLE ----*/
+        drawEffectifParCycle(selected_cycle);  
+        drawEffectifParCycleParSexe(selected_cycle);   
+
+        /*---- Stats NIVEAU ----*/
+        drawEffectifParNiveau(selected_niveau);  
+        drawEffectifParNiveauParSexe(selected_niveau); 
+
+        /*---- Stats CLASSE ----*/
+        drawEffectifParClasse(selected_classe);  
+        drawEffectifParClasseParSexe(selected_classe); 
+        
+    }
+
+
+    function dropDownNiveauHandler(e){
+        if(e.target.value > 0){
+            selected_niveau  = e.target.value;
+            var cur_index = optNiveau.findIndex((index)=>index.value == selected_niveau);
+            libelleNiveau = optNiveau[cur_index].label;
+            getEtabClasses();
+
+            console.log(libelleClasse);
+            suffixeClasse = ' en '+libelleNiveau;     
+        } else {
+            selected_niveau  = undefined;
+            libelleNiveau ='';
+            suffixeClasse = '';
+        }  
+
+        
+         /*---- Stats NIVEAU ----*/
+         drawEffectifParNiveau(selected_niveau);  
+         drawEffectifParNiveauParSexe(selected_niveau); 
+ 
+         /*---- Stats CLASSE ----*/
+         drawEffectifParClasse(selected_classe);  
+         drawEffectifParClasseParSexe(selected_classe); 
+        
+    }
+
+
+    function droDownClassHandler(e){
+        if(e.target.value > 0){
+            selected_classe = e.target.value;
+            var cur_index   = optClasse.findIndex((index)=>index.value == selected_classe);
+            libelleClasse   = optClasse[cur_index].label;
 
             console.log(libelleClasse);
             suffixeClasse = ' en '+libelleClasse;     
         } else {
-            curentClasse = undefined;
+            selected_classe  = undefined;
             libelleClasse ='';
             suffixeClasse = '';
         }  
         
-        setTitleSuffix(suffixeClasse);          
-        EvolutionDiagram(curentClasse);  
-        EvolutionDiagramSexe(curentClasse);  
+        //setTitleSuffix(suffixeClasse);          
+        /*---- Stats ETAB ----*/        
+        drawEffectifGenEtab(currentAppContext.currentEtab);  
+        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
+
+        /*---- Stats CYCLE ----*/
+        drawEffectifParCycle(selected_cycle);  
+        drawEffectifParCycleParSexe(selected_cycle);   
+
+        /*---- Stats NIVEAU ----*/
+        drawEffectifParNiveau(selected_niveau);  
+        drawEffectifParNiveauParSexe(selected_niveau); 
+
+        /*---- Stats CLASSE ----*/
+        drawEffectifParClasse(selected_classe);  
+        drawEffectifParClasseParSexe(selected_classe); 
     }
 
     
 
-    function cancelHandler() {
-        var sideNav = document.getElementById('side-menu');
-        var backDrop = document.querySelectorAll('.sidenav-overlay');
-       
-
-        backDrop.forEach(element => {
-            element.style.display='none';
-            element.style.opacity='0';
-          });
-          
-        sideNav.style.transform='translateX(105%)';
-    }
-     /******************************* JSX Code *******************************/
-        
+/******************************* JSX Code *******************************/
     return (        
         <div className={classes.formStyle}>
-            <div className={classes.inputRow}> 
-                <div className={classes.formTitle +' '+classes.margBottom3}>
-                    TABLEAU DE BORD DE PRESENTATION DE L'EVOLUTION DU NIVEAU ACADEMIQUE
-                </div>
-            </div>
-            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle='Evolution Generale du niveau academique dur les 5 dernieres annees'  itemSelected={null}> </FormPuce>
+      
+            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_niv_acad_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
-                <div id='nivAcProgressGenDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround}/>
+                <div id='effectifsGenEtab' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsEtabParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>
-            
 
             <div className={classes.inputRow}>
                 <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                    CLASSE  :                       
+                   {t("cycle_M")}   :                       
                 </div>
                 <div>
-                    <select onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                    <select onChange={dropDownCycleHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                        {(optCycle||[]).map((option)=> {
+                            return(
+                                <option  value={option.value}>{option.label}</option>
+                            );
+                        })}
+                    </select>
+                </div>               
+                
+            </div>          
+            
+                
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_niv_acad_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
+                <div id='effectifsEtabParCycle' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+            </div>
+
+            <div className={classes.inputRow}>
+                <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
+                {t("level_M")}  :                       
+                </div>
+                <div>
+                    <select onChange={dropDownNiveauHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                        {(optNiveau||[]).map((option)=> {
+                            return(
+                                <option  value={option.value}>{option.label}</option>
+                            );
+                        })}
+                    </select>
+                </div>               
+                
+            </div>  
+            
+             
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_niv_acad_classe')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
+                <div id='effectifsEtabParNiveau' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsParNiveauParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+            </div>
+
+
+            <div className={classes.inputRow}>
+                <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
+                {t("class_M")}  :                       
+                </div>
+                <div>
+                    <select onChange={droDownClassHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                         {(optClasse||[]).map((option)=> {
                             return(
                                 <option  value={option.value}>{option.label}</option>
                             );
                         })}
                     </select>
-                </div>   
+                </div>               
                 
-            </div>
-                   
-            <FormPuce menuItemId ='2' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle1 + titleSuffix}  itemSelected={null}> </FormPuce>
-            <div id='nivAcProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround}/>
+            </div>  
 
-            <FormPuce menuItemId ='3' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={sectionTitle2 + titleSuffix}  itemSelected={null}> </FormPuce>
-            <div id='nivAcSexeProgressDiagramm' className={classes.inputRow33 +' '+ classes.spaceAround}/>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_niv_acad_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
+                <div id='effectifsEtabParClasse'    className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
+                <div id='effectifsParClasseParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+            </div>
+            
+                    
 
                
-
-
+                   
+            
             
             {/*<div className={classes.buttonRow+' '+classes.margLeft5 }>
                 <CustomButton
@@ -376,14 +698,19 @@ function EvolutionNiveauAcad(props){
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={cancelHandler}
 
-                />                                
+                />
+                                
                 <CustomButton
                     btnText='Valider' 
                     buttonStyle={getButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     disable={(isValid == false)}
-                />                
+                />
+                
             </div>*/}
+
+            
+
         </div>
        
      );

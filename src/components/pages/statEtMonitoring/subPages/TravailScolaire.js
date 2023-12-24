@@ -43,13 +43,15 @@ var libelleCycle  = '';
 var libelleNiveau = '';
 var libelleClasse = '';
 
+
+
 var suffixeClasse = '';
 var selected_cycle;
 var selected_niveau;
 var selected_classe;
 
 
-function CouvertureParProg(props){
+function TravailScolaire(props){
     
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -80,7 +82,6 @@ function CouvertureParProg(props){
         drawEffectifParCycleParSexe(selected_cycle);   
 
         /*---- Stats NIVEAU ----*/
-
         drawEffectifParNiveau(selected_niveau);  
         drawEffectifParNiveauParSexe(selected_niveau); 
 
@@ -258,7 +259,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: 'rgb(221,93,19)',
+                        backgroundColor: '#0fa09a',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -287,7 +288,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: 'Garcons '+libelleClasse,
-                        backgroundColor: 'rgb(14, 94, 199)',
+                        backgroundColor: '#32a306',
                         borderColor: 'rgb(250, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -325,7 +326,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor:'rgb(221,93,19)',
+                        backgroundColor: '#0fa09a',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -354,7 +355,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: 'Garcons '+libelleClasse,
-                        backgroundColor: 'rgb(14, 94, 199)',
+                        backgroundColor: '#32a306',
                         borderColor: 'rgb(250, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -392,7 +393,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: 'rgb(221,93,19)',
+                        backgroundColor: '#0fa09a',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -421,7 +422,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: 'Garcons '+libelleClasse,
-                        backgroundColor: 'rgb(14, 94, 199)',
+                        backgroundColor: '#32a306',
                         borderColor: 'rgb(250, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -458,7 +459,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: 'rgb(221,93,19)',
+                        backgroundColor: '#0fa09a',
                         borderColor: 'rgb(255, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -487,7 +488,7 @@ function CouvertureParProg(props){
                 datasets: [
                     {
                         label: t('garcons'),
-                        backgroundColor: 'rgb(14, 94, 199)',
+                        backgroundColor: '#32a306',
                         borderColor: 'rgb(250, 255, 255)',
                         borderWidth: 2,
                         data: [...tabProgress[1].split('_')]
@@ -609,7 +610,7 @@ function CouvertureParProg(props){
     return (        
         <div className={classes.formStyle}>
       
-            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
+            <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('school_work_evolution_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsGenEtab' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsEtabParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -632,7 +633,7 @@ function CouvertureParProg(props){
             </div>          
             
                 
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('school_work_evolution_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParCycle' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -655,7 +656,7 @@ function CouvertureParProg(props){
             </div>  
             
              
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_niveau')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('school_work_evolution_niveau')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParNiveau' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParNiveauParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -678,7 +679,7 @@ function CouvertureParProg(props){
                 
             </div>  
 
-            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_classe')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
+            <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('school_work_evolution_classe')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParClasse'    className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParClasseParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
@@ -715,4 +716,4 @@ function CouvertureParProg(props){
      );
  }
  
- export default CouvertureParProg;
+ export default TravailScolaire;
