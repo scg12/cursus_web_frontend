@@ -1,5 +1,17 @@
-{   "garcons" : "Garcons",
-    "fille"   : "Filles",
+{   
+    "exam_results_M"     :"LISTE DES ADMIS AUX EXAMENS",
+    "save_exam_results_M":"ENREGISTREMENT DES RESULTATS D'EXAMENS ",
+    "class_associated"   : "Classes Associees",
+    "nom_exam"           : "Nom Examen",
+    "select_exam_M"      : "CHOISIR L'EXAMEN",
+    "exams_list_M"       : "LISTE DES EXAMENS OFFICIELS",
+    "enreg_exams_M"      : "ENREGISTREMENT D'EXAMENS OFFICIELS",
+    "modif_exams_M"      : "MODIFICATION D'EXAMENS OFFICIELS",
+    "consult_exams_M"    : "CONSULTATION D'EXAMENS OFFICIELS",
+
+    "session_M"        : "SESSION",
+    "garcons"     : "Garcons",
+    "fille"       : "Filles",
     "evolution_effectif_gen"    : "Evolution générale des effectifs de l'établissement",
     "evolution_effectif_cycle"  : "Evolution des effectifs par cycle",
     "evolution_effectif_niveau" : "Evolution des effectifs par niveau",
@@ -649,6 +661,7 @@
     "consult_bulletin":"Consultation Bulletin de Notes", 
     
     "new_exam": "Nouvel Examen Officiel",
+    "save_exam_results":"Enregistrement des resultats des examens",
     "saisi_resultats": "Enregistrement des Résultats",
     "admis_exams": "Liste Des Admis Aux Examens",
 

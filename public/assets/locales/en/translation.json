@@ -1,7 +1,15 @@
-{   
+{   "exam_results_M"     :"LIST OF STUDENT THAT SUCCEDED TO EXAMS",
+    "save_exam_results_M":"EXAMS RESULTS RECORDING",
+    "class_associated" : "Classes Associees",
+    "nom_exam"         : "Exam Name",
+    "select_exam_M"       : "SELECT EXAM",
+    "exams_list_M"     : "OFFICIAL EXAMS LIST",
+    "enreg_exams_M"    : "OFFICIAL EXAMS REGISTRATION ",
+    "modif_exams_M"    : "OFFICIAL EXAMS MODIFICATION ",
+    "consult_exams_M"  : "OFFICIAL EXAMS CONSULTATION ",
+    "session_M"     : "SESSION",
     "garcons" : "Garcons",
     "fille"   : "Filles",
-
 
     "evolution_effectif_gen"    : "Students total count evlution",
     "evolution_effectif_cycle"  : "Student count evolution by cycle",
@@ -654,6 +662,7 @@
     "consult_bulletin": "Consult Students' Note Report", 
         
     "new_exam": "New Official Exam",
+    "save_exam_results":"Save exam results",
     "saisi_resultats": "Registrating Exam Results",
     "admis_exams": "List of Admitted Students",
 

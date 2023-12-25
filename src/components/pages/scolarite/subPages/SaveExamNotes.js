@@ -52,8 +52,6 @@ function SaveExamNotes(props) {
             CURRENT_CLASSE_ID = undefined;
         }    
         getEtabListClasses();    
-        getCoursClasse(currentAppContext.currentEtab, 0);
-        getDateCours(0);
     },[]);
 
 
@@ -87,99 +85,11 @@ function SaveExamNotes(props) {
         return listEleves;     
     }
 
-    function getCoursClasse(sousEtabId, classeId){
-        var tempTable=[{value: 0,      label: (i18n.language=='fr') ? '  ----- Choisir un cours ----- ' : ' ------ Select course ------ '  }]
-        var tabCours;    
-       
-        if(classeId!=0){
-            tabCours = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
-            tabCours.map((cours)=>{
-                tempTable.push({value:cours.id_cours, label:cours.libelle_cours});
-            })
-
-        }       
-        
-        console.log('cours',tabCours,tempTable);
-        setOpCours(tempTable);
-        
-        if( document.getElementById('optCours').options[0]!= undefined)
-        document.getElementById('optCours').options[0].selected=true;     
-    }
-
-
-    function getDateCours(coursId){
-        var tempTable=[{value: 0,      label: (i18n.language=='fr') ? '  --- Choisir une date --- ' : ' --- Select Date --- '  }]
-        var tabDateCours;  
-
-        tabDateCours = [
-            {label:'11/04/2023', value:1},
-            {label:'12/03/2023', value:2},
-            {label:'10/02/2023', value:3},
-            {label:'05/02/2023', value:4},
-        ];
-       
-        if(coursId!=0){
-            //tabCours = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
-            tabDateCours.map((dateCours)=>{
-                tempTable.push(dateCours);
-            })
-
-        } 
-        
-        setGridRows([]);
-        setPresent(0);
-        setAbsent(0); 
-        setOpDate(tempTable);
-        
-        if( document.getElementById('optDate').options[0]!= undefined)
-        document.getElementById('optDate').options[0].selected=true;
-
-    }
-
     function classeChangeHandler(e){       
-        if(e.target.value != optClasse[0].value){
-            CURRENT_CLASSE_ID = e.target.value;
-            getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
-        }else{
-            CURRENT_CLASSE_ID = undefined;
-            getCoursClasse(currentAppContext.currentEtab, 0);
-            getDateCours(0);
-        }
+        
     }
 
    
-    function coursChangeHandler(e){
-        if(e.target.value != optCours[0].value){
-            CURRRENT_COURS_ID = e.target.value;
-            getDateCours(CURRRENT_COURS_ID);            
-            
-        } else {
-            CURRRENT_COURS_ID = undefined;
-            //document.getElementById('optClasse').options[0].selected=true;
-            getDateCours(0);
-        }
-    }
-
-    function dateChangeHandler(e){
-        if(e.target.value != optCours[0].value){
-            SELECTED_DATE = e.target.label;
-            var grdRows = getClassStudentList(CURRENT_CLASSE_ID);
-            var presents =  getPresentCount(grdRows);
-            var absents = getAbsentCount(grdRows);
-            
-            setGridRows(grdRows);
-            setPresent(presents);
-            setAbsent(absents);  
-            
-        } else {
-            //document.getElementById('optClasse').options[0].selected=true;
-            //getCoursClasse(currentAppContext.currentEtab, 0);
-            SELECTED_DATE = undefined;
-            setGridRows([]);
-            setPresent(0);
-            setAbsent(0); 
-        }
-    }
 
 
     const formatList=(list) =>{
@@ -447,7 +357,7 @@ function SaveExamNotes(props) {
              {(modalOpen==3) && <AddStudent formMode='consult' cancelHandler={quitForm} />}
             <div className={classes.inputRow}>               
                 <div className={classes.formTitle}>
-                    {t('look_students_presence_M')}  
+                    {t('save_exam_results_M')}  
                 </div>                
             </div>
             <div className={classes.formGridContent}>
@@ -455,11 +365,11 @@ function SaveExamNotes(props) {
                 <div className={classes.gridTitleRow}> 
                     <div className={classes.gridTitle}>                  
                         <div className={classes.gridTitleText}>
-                            {t('class_M')} :
+                            {t('select_exam_M')} :
                         </div>
                       
                         <div className={classes.selectZone}>
-                            <select id='optClasse' onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
+                            <select id='optExam' onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
                                 {(optClasse||[]).map((option)=> {
                                     return(
                                         <option value={option.value}>{option.label}</option>
@@ -468,69 +378,19 @@ function SaveExamNotes(props) {
                             </select>               
                         </div>
                     </div>
-
-                    <div className={classes.gridTitle} style={{marginLeft:"-5.3vw"}}>                  
-                        <div className={classes.gridTitleText}>
-                            {t('course_M')} :
-                        </div>
-                      
-                        <div className={classes.selectZone}>
-                            <select id='optCours' onChange={coursChangeHandler} className={classes.comboBoxStyle} style={{width:'13.3vw', marginBottom:1, marginLeft:'1vw'}}>
-                                {(optCours||[]).map((option)=> {
-                                    return(
-                                        <option value={option.value}>{option.label}</option>
-                                    );
-                                })}
-                            </select>               
-                        </div>
-                    </div>
-
-                    <div className={classes.gridTitle} style={{marginLeft:"-3.3vw"}}>                  
-                        <div className={classes.gridTitleText}>
-                            {t('date_M')} :
-                        </div>
-                      
-                        <div className={classes.selectZone}>
-                            <select id='optDate' onChange={dateChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1, marginLeft:'1vw'}}>
-                                {(optDate||[]).map((option)=> {
-                                    return(
-                                        <option value={option.value}>{option.label}</option>
-                                    );
-                                })}
-                            </select>               
-                        </div>
-                    </div>
-
-
                    
                                 
-                    <div className={classes.gridAction}> 
-                        {(props.formMode=='appel')?
-                            <CustomButton
-                                btnText={t('save')}
-                                hasIconImg= {true}
-                                imgSrc='images/saveToDisk_trans.png'
-                                imgStyle = {classes.grdBtnImgStyle}  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={savePresenceHandler}
-                                disable={(modalOpen==1||modalOpen==2)}   
-                            />
-                            :
-                            null
-                        }
-
+                    <div className={classes.gridAction}>                       
                         <CustomButton
-                            btnText={t('imprimer')}
+                            btnText={t('save')}
                             hasIconImg= {true}
-                            imgSrc='images/printing1.png'
+                            imgSrc='images/saveToDisk_trans.png'
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
+                            btnClickHandler={savePresenceHandler}
                             disable={(modalOpen==1||modalOpen==2)}   
                         />
-
                     </div>
                         
                 </div>
@@ -581,17 +441,7 @@ function SaveExamNotes(props) {
                 }
             
             </div>
-            <div className={classes.infoPresence}>
-                <div className={classes.presentZone}>
-                    <div> {t('present')}(s) :</div>
-                    <div> {present} </div>
-                </div>
-
-                <div className={classes.absentZone}>
-                    <div> {t('absent')}(s) :</div>
-                    <div> {absent} </div>
-                </div>
-            </div>
+           
         </div>
         
     );

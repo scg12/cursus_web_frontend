@@ -726,6 +726,29 @@ font-size: 1.07vw;
 font-weight: 474;    
 }
 
+.formCanvas {
+    z-index: 1200;
+    align-self: center;
+    padding-top: 3vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 50vw;
+    height: 47vh;
+    
+    background-color: rgb(255, 255, 255);
+    position: fixed;
+    /*padding-left: 1vw;
+    padding-right: 1vw; */ 
+    border-radius: 7px; 
+    
+    border-color: rgb(218, 214, 214);
+    border-width: 0.5px;
+    border-style: solid;
+    font-size: 1.07vw;
+    font-weight: 474;    
+    }
+
 .formContainerP {
 z-index: 1200;
 align-self: center;
@@ -971,7 +994,7 @@ margin-right: 5px;
     margin-right: 1px;
 }
 
-.grdBtnImgStyleP{
+.grdBtnImgStylePP{
    /* position: relative;
     z-index: 100;*/
     width: 1.3vw;
