@@ -18,7 +18,7 @@ import AdmissionClasseSup from "./subPages/AdmissionClasseSup";
 import EmploiDeTemps from "./subPages/EmploiDeTemps";
 import CahierDeTexte from "./subPages/CahierDeTexte";
 import ConseilClasse from "./subPages/ConseilClasse";
-import ProgramClasse from "./subPages/ProgramClasse";
+import ListManuelsScolaires from "./subPages/ListManuelsScolaires";
 import Appel from "./subPages/Appel";
 import ConseilDiscipline from "./subPages/ConseilDiscipline";
 import Studentprofile from "./subPages/Studentprofile";
@@ -330,7 +330,7 @@ function ScolaritePage(){
           {curentMenuItemPId== 106  && <EmploiDeTemps formMode='ajout'/>       }
           {curentMenuItemPId== 107  && <ConsultEmploiTemps/>                   }
           {curentMenuItemPId== 109  && <SuiviFicheProgress/>                   }
-          {curentMenuItemPId== 110  && <ProgramClasse/>                        } 
+          {curentMenuItemPId== 110  && <ListManuelsScolaires/>                        } 
           {curentMenuItemPId== 111  && <CahierDeTexte currentClasse={null} currentMatiere={null}/> }
 
           {/*------SCOLARITE-3 : Suivi scolaire - examen de classe et Notes-----*/}

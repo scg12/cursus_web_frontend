@@ -123,46 +123,6 @@ function SaveExamNotes(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-
-        {
-            field: 'presence',
-            headerName: t('present')+'?',
-            width: 50,
-            editable: false,
-            headerClassName:classes.GridColumnStyle,
-           
-            renderCell: (params)=>{
-                return(
-                    (params.value == 1)?
-                    <div className={classes.inputRow}>
-                        <img src="images/check_trans.png"  
-                            width={17} 
-                            height={13} 
-                            className={classes.cellPointer} 
-                           /* onClick={(event)=> {
-                                event.ignore = true;
-                            }}*/
-                            alt=''
-                        />
-                    </div>
-                    :
-                    <div className={classes.inputRow} >
-                        <img src="images/delete.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            /*onClick={(event)=> {
-                                event.ignore = true;
-                            }}*/
-                            alt=''
-                        />
-                    </div>
-
-                    
-                )
-            }         
-        },
-       
         {
             field: 'matricule',
             headerName: t('matricule_short_M'),
@@ -179,65 +139,27 @@ function SaveExamNotes(props) {
         },
         {
             field: 'date_naissance',
-            headerName: t('form_dateNaiss_M'),
+            headerName: t('admis_M') +'?',
             width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
         {
             field: 'lieu_naissance',
-            headerName: t('form_lieuNaiss_M'),
+            headerName: t('mention_M'),
             width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
         {
             field: 'date_entree',
-            headerName: t('date_entree_M'),
+            headerName: t('moyenne_M'),
             width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle,
                 
         },
-        {
-            field: 'nom_pere',
-            headerName: t('nom_parent_M'),
-            width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-
-        {
-            field: 'redouble',
-            headerName: 'SITUATION',
-            width: 110,
-            editable: false,
-            headerClassName:classes.GridColumnStyle,
-                
-        },
-
-        {
-            field: 'id',
-            headerName: '',
-            width: 15,
-            editable: false,
-            headerClassName:classes.GridColumnStyle,
-            hide:(props.formMode=='ajout')? false : true,
-            renderCell: (params)=>{
-                return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_delete.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            //onClick={deleteRow}
-                            alt=''
-                        />
-                    </div>
-                );
-                
-            }
-        },
+       
     ];
 
 /*************************** Theme Functions ***************************/
