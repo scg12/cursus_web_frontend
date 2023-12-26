@@ -21,10 +21,11 @@ import StudentList from '../reports/StudentList';
 import StudentListTemplate from '../reports/StudentListTemplate';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
+import AddManuel from '../modals/AddManuel';
 
 
-let CURRENT_CLASSE_ID;
-let CURRENT_CLASSE_LABEL;
+let CURRENT_NIVEAU_ID;
+let CURRENT_NIVEAU_LABEL;
 
 var listElt ={};
 var pageSet = [];
@@ -35,68 +36,43 @@ const MSG_WARNING =2;
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var printedETFileName ='';
+var selected_niveau;
 
 
 function ListManuelsScolaires(props) {
     const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
+    const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
-    const [gridRows, setGridRows] = useState([]);
+    const [isValid, setIsValid]     = useState(false);
+    const [gridRows, setGridRows]   = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optClasse, setOpClasse] = useState([]);
+    const [optNiveau, setOptNiveau]  = useState([]);
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
         
         if(gridRows.length==0){
-            CURRENT_CLASSE_ID = undefined;
+            CURRENT_NIVEAU_ID = undefined;
         }
 
-        getEtabListClasses();
+        getEtabNiveaux();
         
     },[]);
 
-    const getEtabListClasses=()=>{
-       var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
-       let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
-       console.log(classes)
-       let classes_user;
-       if(currentAppContext.infoUser.is_prof_only) 
-            classes_user = currentAppContext.infoUser.prof_classes;
-       else
-            classes_user = currentAppContext.infoUser.admin_classes;
-       console.log(currentAppContext.infoUser.is_prof_only,classes_user)
-
-       let n = classes_user.length;
-       let m = classes.length;
-       let i = 0;
-       let j = 0;
-       while(i<n){
-        j = 0;
-        while(j<m){
-            if(classes_user[i].id==classes[j].id_classe){
-                tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
-                break;
-            }
-            j++;
-        }
-        i++;
-       }
-           
-        setOpClasse(tempTable);
-        // axiosInstance.post(`list-classes/`, {
-        //     id_sousetab: currentAppContext.currentEtab,
-        // }).then((res)=>{
-        //         res.data.map((classe)=>{
-        //         tempTable.push({value:classe.id, label:classe.libelle})
-        //         setOpClasse(tempTable);
-        //         console.log(res.data)
-        //    })         
-        // }) 
-       
+    function getEtabNiveaux(){
+        var tempTable=[]
+        var tabNiveau=[];
+         
+        tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab)
+        tabNiveau.map((classe)=>{
+        tempTable.push({value:classe.id_niveau, label:classe.libelle});
+        });
+        CURRENT_NIVEAU_ID = tempTable[0].value;
+        setOptNiveau(tempTable);
     }
+
+    
 
     const  getClassStudentList=(classId)=>{
         var listEleves = []
@@ -152,17 +128,17 @@ function ListManuelsScolaires(props) {
     function dropDownHandler(e){
         //console.log(e.target.value)
         var grdRows;
-        if(e.target.value != optClasse[0].value){
-            setIsValid(true);
-            CURRENT_CLASSE_ID = e.target.value; 
-            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
-            getClassStudentList(CURRENT_CLASSE_ID);   
-            console.log(CURRENT_CLASSE_LABEL)          
+        if(e.target.value > 0){
+            // setIsValid(true);
+            CURRENT_NIVEAU_ID = e.target.value; 
+            CURRENT_NIVEAU_LABEL = optNiveau[optNiveau.findIndex((nivo)=>(nivo.value == CURRENT_NIVEAU_ID))].label;
+            //getLevelManuelList(CURRENT_NIVEAU_ID);   
+            console.log(CURRENT_NIVEAU_LABEL)          
         }else{
-            CURRENT_CLASSE_ID = undefined;
-            CURRENT_CLASSE_LABEL='';
+            CURRENT_NIVEAU_ID = undefined;
+            CURRENT_NIVEAU_LABEL='';
             setGridRows([]);
-            setIsValid(false);
+            // setIsValid(false);
         }
     }
  
@@ -194,9 +170,18 @@ const columnsFr = [
     },
    
     {
-        field: 'prenom',
+        field: 'prenom4',
         headerName: 'PRIX',
         width: 80,
+        editable: false,
+        // hide:true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'prenom',
+        headerName: 'CLASSES CIBLES',
+        width: 150,
         editable: false,
         // hide:true,
         headerClassName:classes.GridColumnStyle
@@ -233,6 +218,15 @@ const columnsEn = [
         field: 'prenom',
         headerName: 'PRICE',
         width: 80,
+        editable: false,
+        // hide:true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'prenom',
+        headerName: 'ASSOCIATED CLASSES',
+        width: 150,
         editable: false,
         // hide:true,
         headerClassName:classes.GridColumnStyle
@@ -345,7 +339,7 @@ const columnsEn = [
         console.log('Ajout',eleve);
            
         axiosInstance.post(`create-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
+            id_classe : CURRENT_NIVEAU_ID,
             id_sousetab:currentAppContext.currentEtab,
             matricule : eleve.matricule, 
             nom : eleve.nom,
@@ -386,7 +380,7 @@ const columnsEn = [
         console.log('Modif',eleve);
      
         axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
+            id_classe : CURRENT_NIVEAU_ID,
             id : eleve.id, 
             matricule : eleve.matricule, 
             nom : eleve.nom,
@@ -446,7 +440,7 @@ const columnsEn = [
     }
    
     function AddNewStudentHandler(e){
-        if(CURRENT_CLASSE_ID != undefined){
+        if(CURRENT_NIVEAU_ID != undefined){
             setModalOpen(1); 
             initFormInputs();
         } else{
@@ -471,7 +465,7 @@ const columnsEn = [
                     msgTitle:"", 
                     message:""
                 }) 
-                getClassStudentList(CURRENT_CLASSE_ID); 
+                getClassStudentList(CURRENT_NIVEAU_ID); 
                 return 1;
             }
 
@@ -503,22 +497,22 @@ const columnsEn = [
 
     const printStudentList=()=>{
         
-        if(CURRENT_CLASSE_ID != undefined){
+        if(CURRENT_NIVEAU_ID != undefined){
             var PRINTING_DATA ={
                 dateText:'Yaounde, le 14/03/2023',
                 leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
                 centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
                 rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
                 pageImages:["images/collegeVogt.png"],
-                pageTitle: "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL,
+                pageTitle: "Liste des eleves de la classe de " + CURRENT_NIVEAU_LABEL,
                 tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
                 tableData :[...gridRows],
                 numberEltPerPage:ROWS_PER_PAGE  
             };
-            printedETFileName = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
+            printedETFileName = 'Liste_eleves('+CURRENT_NIVEAU_LABEL+').pdf';
             setModalOpen(4);
             ElevePageSet=[];
-            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
+            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_NIVEAU_LABEL, ROWS_PER_PAGE)];          
             ElevePageSet = createPrintingPages(PRINTING_DATA);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
@@ -578,7 +572,15 @@ const columnsEn = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen >0 && modalOpen<4) && <AddStudent currentClasseLabel={optClasse[optClasse.findIndex((classe)=> classe.value == CURRENT_CLASSE_ID)].label} currentClasseId={CURRENT_CLASSE_ID} formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addNewStudent : modifyStudent} cancelHandler={quitForm}/>}
+            {(modalOpen >0 && modalOpen<4) && 
+                <AddManuel 
+                    formMode         = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'} 
+                    currentLevel     = {CURRENT_NIVEAU_ID}
+                    currentLeveLabel = {CURRENT_NIVEAU_LABEL} 
+                    actionHandler    = {(modalOpen==1) ? addNewStudent : modifyStudent} 
+                    cancelHandler    = {quitForm}
+                />
+            }
             {(modalOpen==4) &&              
                 <PDFTemplate previewCloseHandler={closePreview}>
                     {isMobile?
@@ -626,7 +628,7 @@ const columnsEn = [
                       
                         <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
                             <select id='selectClass1' onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
-                                {(optClasse||[]).map((option)=> {
+                                {(optNiveau||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>
                                     );
@@ -636,7 +638,18 @@ const columnsEn = [
                     </div>
                     
                                 
-                    <div className={classes.gridAction}>                        
+                    <div className={classes.gridAction}>
+                        <CustomButton
+                            btnText={t('new_manuel')}
+                            hasIconImg= {true}
+                            imgSrc='images/addBook.png'
+                            imgStyle = {classes.grdBtnImgStyleP}  
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.gridBtnTextStyle}
+                            btnClickHandler={AddNewStudentHandler}
+                            // disable={(isValid==false)}  
+                            style={{width:"10vw"}} 
+                        />                        
                         <CustomButton
                             btnText={t('imprimer')}
                             hasIconImg= {true}
@@ -645,7 +658,7 @@ const columnsEn = [
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={printStudentList}
-                            disable={(isValid==false)}   
+                            // disable={(isValid==false)}   
                         />                      
                     </div>
                         
