@@ -14,41 +14,36 @@ import { useTranslation } from "react-i18next";
 var CURRENT_ELEVE = {};
 var CURRENT_ANNEE_SCOLAIRE;
 var TABCLASSE     = [];
-var selected_niveau;
-
 
 
 function AddManuel(props) {
-    const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
-    const currentAppContext = useContext(AppContext)
-    const [optNiveau, setOptNiveau]    = useState([]);
-    const [optClasse, setOptClasse]    = useState([]);
-    const [examClasses, setExamClasses] = useState([])
-    const selectedTheme = currentUiContext.theme;
-
-
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
-   
-  
-    const [etape2InActiv, setEtape2InActiv] = useState('');
-   
+    const { t, i18n }    = useTranslation();
     
+    const currentUiContext   = useContext(UiContext);
+    const currentAppContext  = useContext(AppContext);
+    const selectedTheme      = currentUiContext.theme;
+    // const [isValid, setIsValid] = useState(false);
+    const [optTypeManuel, setOptTypeManuel] = useState([]);
+    const [optClasse, setOptClasse]         = useState([]);
+    
+    var typeManuel =[
+        {value:1, label:"Livre"},
+        {value:2, label:"fasicule"}, 
+        {value:3, label:"Dictionnaire"},        
+    ]
 
-    useEffect(()=> {
-        
+
+    useEffect(()=> {        
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
-        getEtabClasses();
+        setOptTypeManuel(typeManuel);
+        getEtabClasses();       
 
         if(props.formMode != 'creation'){ 
             
         }else{
             
-        }
-
-        
+        }        
     },[]);
-
 
 
     function getGridButtonStyle()
@@ -60,7 +55,6 @@ function AddManuel(props) {
             default: return classes.Theme1_gridBtnstyle + ' '+ classes.margRight5P;
         }
     }
-
 
     function getButtonStyle()
     { // Choix du theme courant
@@ -91,26 +85,18 @@ function AddManuel(props) {
             default: return classes.Theme1_formHeader + ' ' +classes.formHeader;
         }
     }
-
-
    
-    /************************************ Handlers ************************************/    
-    
-
+    /************************************ Handlers ************************************/   
+  
     function putToEmptyStringIfUndefined(chaine){
         if (chaine==undefined) return '';
         else return chaine;
     }
    
 
-  
-
     function getFormData(){
       
     }
-
-   
-
     
     function formDataCheck1(eleve){       
         var errorMsg='';
@@ -142,10 +128,8 @@ function AddManuel(props) {
     }
     
 
-  
-   
     function getEtabClasses(){
-        var tempTable=[]
+        var tempTable=[];
         var tabClasses=[];
         TABCLASSE = [];
          
@@ -156,14 +140,13 @@ function AddManuel(props) {
         });
 
         setOptClasse(tempTable);
-        setExamClasses(TABCLASSE)
     }
+
 
     function manageChbxChange(e, index){
         if(e.target.checked) TABCLASSE[index] = 1;        
         else TABCLASSE[index] = 0;
-        setExamClasses(TABCLASSE);
-
+     //   setExamClasses(TABCLASSE);
         console.log("checked",TABCLASSE.join('_'));
     }
 
@@ -224,8 +207,8 @@ function AddManuel(props) {
                             </div>
                                     
                             <div style={{marginBottom:'1.3vh', marginLeft:'6vw'}}> 
-                                <select id='select_level' defaultValue={1} onChange={typeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'4vh',width:'8vw'}}>
-                                    {(optNiveau||[]).map((option)=> {
+                                <select id='select_type_manuel' defaultValue={1} onChange={typeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'4vh',width:'8vw'}}>
+                                    {(optTypeManuel||[]).map((option)=> {
                                         return(
                                             <option  value={option.value}>{option.label}</option>
                                         );
@@ -251,7 +234,7 @@ function AddManuel(props) {
                                 {t("prix_en_vigueur")}: 
                             </div>                    
                             <div style={{marginBottom:'1.3vh', marginLeft:'-5vw'}}>  
-                                <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'3vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
+                                <input id="classe" type="number" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'7vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} />
                                 <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                             </div>
                         </div>
@@ -291,6 +274,7 @@ function AddManuel(props) {
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
+                    // disable={(isValid==false)}
                 />
                 
                 <CustomButton
@@ -301,19 +285,9 @@ function AddManuel(props) {
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.actionHandler}
+                    // disable={(isValid==false)}
                 />
-
-                {/* <CustomButton
-                    btnText={t("infoParnt")}
-                    hasIconImg= {true}
-                    imgSrc='images/etape3.png'
-                    imgStyle = {classes.frmBtnImgStyle1} 
-                    buttonStyle={classes.buttonEtape3}
-                    btnTextStyle = {classes.btnEtapeTextStyle}
-                    btnClickHandler={(etape3InActiv) ? null:()=>{showStep3();}}
-                    disable={etape3InActiv} 
-                /> */}
-                
+      
             </div>
 
         </div>

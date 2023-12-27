@@ -50,21 +50,20 @@ function ListManuelsScolaires(props) {
     const [optNiveau, setOptNiveau]  = useState([]);
     const selectedTheme = currentUiContext.theme;
 
-    useEffect(()=> {
-        
+    useEffect(()=> {        
         if(gridRows.length==0){
             CURRENT_NIVEAU_ID = undefined;
         }
-
-        getEtabNiveaux();
-        
+        getEtabNiveaux();        
     },[]);
 
     function getEtabNiveaux(){
         var tempTable=[]
         var tabNiveau=[];
-         
+        var tempTable=[{value: -1,      label: (i18n.language=='fr') ? '  Choisir un niveau  ' : '  Select level  '  }];
+        
         tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab)
+        
         tabNiveau.map((classe)=>{
         tempTable.push({value:classe.id_niveau, label:classe.libelle});
         });
@@ -74,18 +73,19 @@ function ListManuelsScolaires(props) {
 
     
 
-    const  getClassStudentList=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
-        }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data)]
-            console.log(listEleves);
-            setGridRows(listEleves);
-            console.log(gridRows);
-        })  
-        return listEleves;     
+    const  getListManuel=(niveauId)=>{
+        var listNiveaux = [];
+        setGridRows(listNiveaux);
+        // axiosInstance.post(`list-manuels/`, {
+        //     id_niveau: niveauId,
+        // }).then((res)=>{
+        //     console.log(res.data);
+        //     listNiveaux = [...formatList(res.data)]
+        //     console.log(listNiveaux);
+        //     setGridRows(listNiveaux);
+        //     console.log(gridRows);
+        // })  
+     
     }
 
     const formatList=(list) =>{
@@ -129,7 +129,7 @@ function ListManuelsScolaires(props) {
         //console.log(e.target.value)
         var grdRows;
         if(e.target.value > 0){
-            // setIsValid(true);
+            setIsValid(true);
             CURRENT_NIVEAU_ID = e.target.value; 
             CURRENT_NIVEAU_LABEL = optNiveau[optNiveau.findIndex((nivo)=>(nivo.value == CURRENT_NIVEAU_ID))].label;
             //getLevelManuelList(CURRENT_NIVEAU_ID);   
@@ -138,7 +138,7 @@ function ListManuelsScolaires(props) {
             CURRENT_NIVEAU_ID = undefined;
             CURRENT_NIVEAU_LABEL='';
             setGridRows([]);
-            // setIsValid(false);
+            setIsValid(false);
         }
     }
  
@@ -148,7 +148,7 @@ const columnsFr = [
     {
         field: 'matricule',
         headerName: 'DOCUMENT',
-        width: 250,
+        width: 150,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
@@ -163,7 +163,7 @@ const columnsFr = [
     {
         field: 'nom',
         headerName: 'AUTEUR',
-        width: 200,
+        width: 150,
         editable: false,
         // hide:true,
         headerClassName:classes.GridColumnStyle
@@ -186,6 +186,42 @@ const columnsFr = [
         // hide:true,
         headerClassName:classes.GridColumnStyle
     },
+
+    {
+        field: 'Action',
+        headerName: 'ACTION',
+        width: 80,
+        editable: false,
+        headerClassName:classes.GridColumnStyle,
+        renderCell: (params)=>{
+            
+            return(
+                (params.row.status==0)?
+                <div className={classes.inputRow}>
+                    <img src="icons/baseline_edit.png"  
+                        width={17} 
+                        height={17} 
+                        className={classes.cellPointer} 
+                        onClick={(event)=> {
+                            event.ignore = true;
+                        }}
+                        alt=''
+                    />
+                    <img src="icons/baseline_delete.png"  
+                        width={17} 
+                        height={17} 
+                        className={classes.cellPointer} 
+                        onClick={(event)=> {
+                            event.ignore = true;
+                        }}
+                        alt=''
+                    />
+                </div>
+                :null
+            )}           
+            
+        },
+
   
 ];
 
@@ -193,7 +229,7 @@ const columnsEn = [
     {
         field: 'matricule',
         headerName: 'DOCUMENT',
-        width: 250,
+        width: 150,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
@@ -208,7 +244,7 @@ const columnsEn = [
     {
         field: 'nom',
         headerName: 'AUTHOR',
-        width: 200,
+        width: 150,
         editable: false,
         // hide:true,
         headerClassName:classes.GridColumnStyle
@@ -224,13 +260,49 @@ const columnsEn = [
     },
 
     {
-        field: 'prenom',
+        field: 'prenomP',
         headerName: 'ASSOCIATED CLASSES',
         width: 150,
         editable: false,
         // hide:true,
         headerClassName:classes.GridColumnStyle
     },
+
+    {
+        field: 'Action',
+        headerName: 'ACTION',
+        width: 80,
+        editable: false,
+        headerClassName:classes.GridColumnStyle,
+        renderCell: (params)=>{
+            
+            return(
+                (params.row.status==0)?
+                <div className={classes.inputRow}>
+                    <img src="icons/baseline_edit.png"  
+                        width={17} 
+                        height={17} 
+                        className={classes.cellPointer} 
+                        onClick={(event)=> {
+                            event.ignore = true;
+                        }}
+                        alt=''
+                    />
+                    <img src="icons/baseline_delete.png"  
+                        width={17} 
+                        height={17} 
+                        className={classes.cellPointer} 
+                        onClick={(event)=> {
+                            event.ignore = true;
+                        }}
+                        alt=''
+                    />
+                </div>
+                :null
+            )}           
+            
+        },
+
         
 ];
      
@@ -335,7 +407,7 @@ const columnsEn = [
 
     }
 
-    function addNewStudent(eleve) {       
+    function addNewManuel(eleve) {       
         console.log('Ajout',eleve);
            
         axiosInstance.post(`create-eleve/`, {
@@ -376,7 +448,7 @@ const columnsEn = [
         })      
     }
     
-    function modifyStudent(eleve) {
+    function modifyManuel(eleve) {
         console.log('Modif',eleve);
      
         axiosInstance.post(`update-eleve/`, {
@@ -439,7 +511,7 @@ const columnsEn = [
         setModalOpen(0)
     }
    
-    function AddNewStudentHandler(e){
+    function addNewManuelHandler(e){
         if(CURRENT_NIVEAU_ID != undefined){
             setModalOpen(1); 
             initFormInputs();
@@ -465,7 +537,7 @@ const columnsEn = [
                     msgTitle:"", 
                     message:""
                 }) 
-                getClassStudentList(CURRENT_NIVEAU_ID); 
+                getListManuel(CURRENT_NIVEAU_ID); 
                 return 1;
             }
 
@@ -577,7 +649,7 @@ const columnsEn = [
                     formMode         = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'} 
                     currentLevel     = {CURRENT_NIVEAU_ID}
                     currentLeveLabel = {CURRENT_NIVEAU_LABEL} 
-                    actionHandler    = {(modalOpen==1) ? addNewStudent : modifyStudent} 
+                    actionHandler    = {(modalOpen==1) ? addNewManuel : modifyManuel} 
                     cancelHandler    = {quitForm}
                 />
             }
@@ -646,9 +718,9 @@ const columnsEn = [
                             imgStyle = {classes.grdBtnImgStyleP}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={AddNewStudentHandler}
-                            // disable={(isValid==false)}  
+                            btnClickHandler={addNewManuelHandler}                             
                             style={{width:"10vw"}} 
+                            disable={(isValid==false)}
                         />                        
                         <CustomButton
                             btnText={t('imprimer')}
@@ -658,7 +730,7 @@ const columnsEn = [
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={printStudentList}
-                            // disable={(isValid==false)}   
+                            disable={(isValid==false)}   
                         />                      
                     </div>
                         

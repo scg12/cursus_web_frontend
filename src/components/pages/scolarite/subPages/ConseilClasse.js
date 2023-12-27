@@ -46,9 +46,9 @@ var OTHER_MEMBERS_ADD    =[];
 var INFO_ELEVES          =[];
 var LIST_NEXT_CLASSES    ='';
 
-var LIST_CONSEILS_INFOS    = [];
-var LIST_ELEVES            = [];
-var CURRENT_ANNEE_SCOLAIRE = '';
+var LIST_CONSEILS_INFOS    =[];
+var LIST_ELEVES            =[];
+var CURRENT_ANNEE_SCOLAIRE ='';
 
 var CCA_CREATED = false;
 
