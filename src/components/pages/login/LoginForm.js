@@ -622,7 +622,7 @@ function LoginForm(props){
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>
                         {/* <img src="images/cursusLogo_Mob1.png" style={{position:"absolute",marginTop:"0.3vh", marginRight:"18.7vw", width:"7vw", height:"5vh"}}/> */}
                         <div className={classes.aboutAppTextStyle} style={{width:"29vw"}}>
-                           <b style={{fontSize:"1.3vw", fontFamily:"math"}}>Cursus.net </b>{t("is_aproduct_of")} <b style={{fontFamily:"system-ui"}}>BOGEDEV</b> Corporation {t("rightsReserve")}
+                           <b style={{fontSize:"1.3vw", fontFamily:"math", color:"#20202d"}}>Cursus.net </b>{t("is_aproduct_of")} <b style={{fontFamily:"system-ui", color:"white"}}>BOGEDEV</b> Corporation  {t("rightsReserve")}
                         </div>
 
                         {/* <div style={{width:"30vw", fontSize:"smaller"}}> 

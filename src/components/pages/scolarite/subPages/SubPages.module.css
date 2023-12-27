@@ -418,37 +418,44 @@ width: 100%;
 }
 
 .formHeaderImg{
-border-style: none;
-width:3.9vw;
-height: 3.7vw;
-border-radius: 7px;
-background-color: white;
+    border-style: none;
+    width:3.9vw;
+    height: 3.7vw;
+    border-radius: 7px;
+    background-color: white;
+}
+
+.formHeaderImgP{
+    border-style: none;
+    width:3.5vw;
+    height: 3.7vw;
+    border-radius: 7px;
+    background-color: white;
 }
 
 
 .formHeaderImg2{
-border-style: none;
-width:3.3vw;
-height: 3.7vw;
-border-radius: 3px;
-background-color: white;
+    border-style: none;
+    width:3.3vw;
+    height: 3.7vw;
+    border-radius: 3px;
+    background-color: white;
 }
 
 
 
 .formImageContainer{
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-self: center;
-margin-left: 0.7vw;
-
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    margin-left: 0.7vw;
 }
 
 .btnEtapeTextStyle{
-font-size: 1.04vw;
-font-weight: 500;
-color:white
+    font-size: 1.04vw;
+    font-weight: 500;
+    color:white
 }
 
 .buttonEtape1{
@@ -1016,6 +1023,7 @@ height: 1.5vw;
 margin-right: 1px;
 margin-left: 0.3vw;
 }
+
 
 
 .searchImgStyle{
