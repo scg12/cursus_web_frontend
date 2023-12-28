@@ -231,6 +231,17 @@ function ScolaritePage(){
   function showDossierAcadView(){
     setModalOpen(5);
   }
+
+  function closeExamSession(){
+    //chosenMsgBox = MSG_SUCCESS_CREATE;
+    currentUiContext.showMsgBox({
+        visible:true, 
+        msgType : "question", 
+        msgTitle: t("close_exam_M"), 
+        message : t("close_exam_confirm_M") +' '+t("close_exam_no_modif")+' '+t("close_exam_ensure")
+    })
+  }
+
   
   return (
 
@@ -302,12 +313,13 @@ function ScolaritePage(){
           :
           null
         }
-
+        
         {(currentAppContext.enableProfiles["SCOLARITE_E"]=='1') ?
           <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("exams_officiels")} theme={selectedTheme}>
-            {(currentAppContext.enableProfiles["SCOLARITE_E1"]=='1') ? <MenuItemP menuItemId ='124' imgSource='images/NewEvaluation.png'  libelle={t("new_exam")}             itemSelected={showSideMenu} style={isMobile?{marginLeft:'0.7vw', marginBottom:'-1vh'}:null}>                             </MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_E2"]=='1') ? <MenuItemP menuItemId ='125' imgSource='images/saisiExam.png'      libelle={t("saisi_resultats")}      itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle4P : classes.customimgStyle4}></MenuItemP> : null}
-            {(currentAppContext.enableProfiles["SCOLARITE_E3"]=='1') ? <MenuItemP menuItemId ='126' imgSource='images/ListAdmis.png'      libelle={t("admis_exams")}          itemSelected={showSideMenu} style={isMobile?{marginLeft:'0.7vw'}:null}>                                                  </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_E1"]=='1') ? <MenuItemP menuItemId ='124' imgSource='images/NewEvaluation.png'                 libelle={t("new_exam")}             itemSelected={showSideMenu} style={isMobile?{marginLeft:'0.7vw', marginBottom:'-1vh'}:null}>                             </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_E2"]=='1') ? <MenuItemP menuItemId ='125' imgSource='images/saisiExam.png'                     libelle={t("saisi_resultats")}      itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle4P : classes.customimgStyle4}></MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_E3"]=='1') ? <MenuItemP menuItemId ='126' imgSource='images/ListAdmis.png'                     libelle={t("admis_exams")}          itemSelected={showSideMenu} style={isMobile?{marginLeft:'0.7vw'}:null}>                                                  </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_E1"]=='1') ? <MenuItemP isModal={true} menuItemId ='127' imgSource='images/NewEvaluation.png'  libelle={t("close_exam_session")}   itemSelected={closeExamSession} style={isMobile?{marginLeft:'0.7vw', marginBottom:'-1vh'}:null}>                             </MenuItemP> : null}
           </MenuItemListP>
           :
           null
