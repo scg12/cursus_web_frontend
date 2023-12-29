@@ -213,7 +213,7 @@ function Cover(props){
                             </select>
                             :
                             <div>
-                                <input id='classeId' type='hidden' value={props.currentClasse.id}/>
+                                <input id='classeId' type='hidden' value={props.currentClasse.value}/>
                                 <input id='classeLabel' type='text' value={props.currentClasse.label} style={{ width: '5.3vw', marginLeft:"-1vh", marginTop:"1vh", height: "1.3rem", borderLeft:"none", borderRight:"none", borderTop:"none", borderBottom: "1px solid gray", fontSize: "0.93vw" }}/>                          
                             </div>                        
                         }
@@ -237,7 +237,7 @@ function Cover(props){
                             :
                             <div>
                                 <input id='matiereLabel' type='text' value={props.currentMatiere.label} style={{ width: '10.3vw', marginTop:"2vh", marginLeft:"-1vh", height: "1.3rem", borderLeft:"none", borderRight:"none", borderTop:"none", borderBottom: "1px solid gray", fontSize: "0.93vw" }}/>
-                                <input id='matiereId' type='hidden' value={props.currentClasse.id}/>
+                                <input id='matiereId' type='hidden' value={props.currentClasse.value}/>
                             </div>                        
                         }
                     </div>                 
