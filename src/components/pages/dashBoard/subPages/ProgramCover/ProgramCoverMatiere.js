@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import axiosInstance from '../../../../../axios';
 import MsgBox from "../../../../msgBox/MsgBox";
 import M from 'materialize-css';
+import { createCTStructure } from "../../../../book/CT_Module";
 
 
 var chosenMsgBox;
@@ -29,7 +30,7 @@ const ROWS_PER_PAGE= 40;
 var groupWidth;
 
 
-function ProgramCoverNiveau(props){
+function ProgramCoverMatiere(props){
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -42,6 +43,7 @@ function ProgramCoverNiveau(props){
 
 
   function getMatieres(classe){
+    console.log("matt: ",classe)
     switch(classe){
       case 0  :  return listMatieres[0] ;
       case 1  :  return listMatieres[1] ;
@@ -67,7 +69,7 @@ function ProgramCoverNiveau(props){
   function getStringAtPosition(examSting,pos){
       
     var tabResult = examSting.split('*');
-    console.log('parpapa', tabResult)
+    // console.log('parpapa', tabResult)
     if (tabResult.length==1) return 1;
     if((pos >= 0)&&(pos<=tabResult.length-1)) return tabResult[pos];
     else return undefined;    
@@ -75,7 +77,7 @@ function ProgramCoverNiveau(props){
 
   function createProgressionMatieres(matiere){
     var tabMatieres=[];
-    var listMat;
+    var listMat="";
     var matTab=[];
     var groupCount;
     var parentDiv,j;
@@ -92,7 +94,9 @@ function ProgramCoverNiveau(props){
     }    
     if(matiere != undefined) {
         //Recuperation De la liste des matieres avc leur infos.        
-        listMat = getMatieres(matiere);
+        listMat = getMatieres(parseInt(matiere));
+        // listMat = "3+Allemand*1*78_Francais*1*84_Anglais*1*62_Histoire*2*73_ECM*2*75_SVT*2*82_PCT*2*93_Maths*2*72_Sport*3*100_TM*3*100_ESF*3*100";
+        console.log("matiere : ", matiere," listMat: ",listMat,matiere==1)
   
         //Extraction du nombre de groupes et calcul de la largeur d'un groupe. 
         matTab = listMat.split('+');
@@ -145,11 +149,42 @@ function ProgramCoverNiveau(props){
     "1+Geographie*1*95_Mr MALAMBO Hubert",  
   ];
 
+  const createFicheProgression=(coursId)=>{  
+    let cts = [];
+    let mods = [];
+    let chaps = [];
+    // axiosInstance.post(`get-fiche-progression/`, {
+    axiosInstance.post(`get-cahier-texte/`, {
+        id_cours: coursId,
+    }).then((res)=>{
+        // console.log('fiche progress:', res.data);
+        res.data.cts.map(item=>cts.push(item));
+        res.data.mods.map(item=>mods.push(item));
+        res.data.chaps.map(item=>chaps.push(item));
+
+        console.log("cts: ",cts);
+        console.log(mods);
+        console.log(chaps);
+        createCTStructure(coursId,cts);   
+        /*currentAppContext.setEtatLesson(TAB_ETATLESSONS)
+        console.log('etats', currentAppContext.etatLesson)*/                     
+    }) 
+}
 
   function accessCTHandler(e){
     const menus = document.querySelectorAll('.side-menu');
     M.Sidenav.init(menus, {edge: 'right'});
+    var id_cours = document.getElementById("matiereId").value;
+    console.log("id_cours: ",id_cours)
+    createFicheProgression(id_cours);
 
+    // var select1 = document.getElementById('selectId1');
+
+    // var opt = document.createElement('option');
+    // opt.value = "1";
+    // opt.innerHTML = "6emeA"
+    // select1.appendChild(opt);
+    // select1.value = "1";
     /*var select1 = document.getElementById('selectId1');
     var select2 = document.getElementById('selectId2');
 
@@ -201,5 +236,5 @@ function ProgramCoverNiveau(props){
         </div>
     )
 }
-export default ProgramCoverNiveau;
+export default ProgramCoverMatiere;
 

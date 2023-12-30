@@ -213,7 +213,7 @@ function DashBoardPage() {
   function getEtabMatieresClasse(sousEtabId, classeId){
     var tempTable=[{value: 0,      label: (i18n.language=='fr') ? ' Toutes ' : ' All '  }]
     var tabMatieres
-    console.log("******* classeId: ",classeId);
+    console.log("******* classeId: ",classeId,classeId==0);
     if(classeId==0 ){
       tabMatieres = currentAppContext.infoMatieres.filter((matiere)=>matiere.id_setab==sousEtabId)
       tabMatieres.map((matiere)=>{
@@ -264,6 +264,8 @@ function getData(niveauId){
   // console.log("SALUT: ",niveauId);
   axiosInstance.post(`program-cover-niveau/`, {
       id_niveau : niveauId,
+      id_matiere : progCoverSelectedMatiere.id,
+      id_classe : prgramCoverSelectedClass.id,
       id_sousetab:currentAppContext.currentEtab,        
       
   }).then((res)=>{
@@ -443,7 +445,12 @@ const progCompletionLevelHandler=(e)=>{
   console.log(level)
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
+  console.log("tabClasses: ",tabClasses)
   setOptClassePC(tabClasses);
+  var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,tabClasses[0].id)
+  console.log("tabMatieres: ",tabMatieres)
+  // setOptMatieresPC(tabMatieres);
+
   currentUiContext.setPrgramCoverSelectedLevel(level);
 }
 
@@ -468,8 +475,11 @@ const progCompletionMatiereHandler=(e)=>{
   var cur_index = optMatieresPC.findIndex((index)=>index.value == curentMatiere);
   var libelleMatiere = optMatieresPC[cur_index].label; 
 
+  var matiere ={};
+  matiere.id = curentMatiere;
+  matiere.label = libelleMatiere;
   
-  //setPrgramCoverSelectedMatiere(matiere); 
+  setPrgramCoverSelectedMatiere(matiere); 
   console.log(optMatieresPC);
 }
 
@@ -1068,7 +1078,8 @@ const resultatsMatiereHandler=(e)=>{
 
       <div id="side-menu" class="sidenav side-menu">
         <FormLayout formCode={'10'}>
-          { <CahierDeTexte currentClasse={prgramCoverSelectedClass} currentMatiere={progCoverSelectedMatiere}/>  }
+          { <CahierDeTexte currentClasse={{value:prgramCoverSelectedClass.id,label:prgramCoverSelectedClass.label}} currentMatiere={{value:progCoverSelectedMatiere.id,label:progCoverSelectedMatiere.label}}/>  }
+          {/* { <CahierDeTexte currentClasse={prgramCoverSelectedClass} currentMatiere={progCoverSelectedMatiere}/>  } */}
         </FormLayout>     
       </div>
     </div>
