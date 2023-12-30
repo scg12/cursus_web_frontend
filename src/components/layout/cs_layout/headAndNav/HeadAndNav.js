@@ -58,9 +58,10 @@ function HeadAndNav(props) {
         chosenMsgBox = MSG_QUESTION
         currentUiContext.showMsgBox({
             visible:true, 
-            msgType:"question", 
+            msgType :"question", 
             msgTitle:t("logout"), 
-            message:t("quit_question")
+            msgCode :"CLOSE_APP",
+            message :t("quit_question")
         })
 
         /*if(window.confirm("Voulez-vous vraiment vous deconnecter?")){
@@ -175,7 +176,17 @@ function HeadAndNav(props) {
             date_essaie_cursus:"2024-10-02",
             date_limite_cursus:"2025-07-31"
         }).then((res)=>{
-           alert("MIGRATION TERMINEE AVEC SUCCESS !")              
+           alert("MIGRATION TERMINEE AVEC SUCCESS !"); 
+           return 1;             
+        })      
+    }
+
+    function closeExmSession(){
+        axiosInstance.post(`cloture_session/`, {
+            
+        }).then((res)=>{
+           alert("EXAMENS TERMINEE AVEC SUCCESS !");
+           return 1;              
         })      
     }
 
@@ -233,15 +244,36 @@ function HeadAndNav(props) {
             
            
             default: {
+
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
-                })  
-                if(currentUiContext.yearToClose==0){
+                });
+
+                if(currentUiContext.msgBox.msgCode == "CLOSE_YEAR"){
                     closeSchoolYear();
                 }
+
+                if(currentUiContext.msgBox.msgCode == "CLOSE_EXAMS"){
+                    alert("ok ok");
+                   // closeExmSession();
+                }
+
+               
+
+                // if(currentUiContext.yearToClose==0){
+                //    // closeSchoolYear();
+                // }
+
+
+               
+
+                // if(currentUiContext.yearToClose==1){
+                //     alert("fdfdfdf");
+                //     //closeExmSession();
+                // }
                 
                 return 1;
             }

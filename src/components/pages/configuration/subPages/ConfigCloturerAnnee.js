@@ -26,7 +26,8 @@ const MSG_CONFIRM_CLOSE  = 3;
 function ConfigCloturerAnnee(props) {
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-    const [areAllMeetingDone,setAreAllMeetingDone] = useState(true);
+    const [areAllMeetingDone,setAreAllMeetingDone]     = useState(false);
+    const [isExamSessionClosed,setIsExamSessionClosed] = useState(false);
     const [tabPendingClass, setTabPendingClass] = useState([]);
     const { t, i18n } = useTranslation();
     const [isValid, setIsValid] = useState(false);
@@ -62,8 +63,11 @@ function ConfigCloturerAnnee(props) {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
             tabPendingMeeting = res.data.classes;
+            var conseils_programmes = res.data.programmes
+            console.log("programmes, classes sans CC",tabPendingMeeting,res.data.programmes);
+            //tabPendingMeeting = ['6ieme','Tlec'];           
             setTabPendingClass(tabPendingMeeting);
-            setAreAllMeetingDone(tabPendingMeeting.length <= 0) ;               
+            setAreAllMeetingDone(conseils_programmes==1 && tabPendingMeeting.length == 0) ;               
         })
     }    
 
@@ -74,6 +78,7 @@ function ConfigCloturerAnnee(props) {
         currentUiContext.showMsgBox({
             visible:true, 
             msgType:"question", 
+            msgCode :"CLOSE_YEAR",
             msgTitle:t("confirm_year_closure_M"), 
             message:t("confirm_year_closure")
         });
@@ -85,7 +90,7 @@ function ConfigCloturerAnnee(props) {
         <div className={classes.formStyle}>          
             <div id='errMsgPlaceHolder'></div>
             <div className={classes.inputRow}> 
-                <div className={classes.inputRowLabel} style={{width:"auto",justifyContent:"center"}}>
+                <div className={classes.inputRowLabel} style={{width:"auto",justifyContent:"center", fontWeight:"bold"}}>
                     {t("year_closure_M")} 
                 </div>                  
             </div>
@@ -96,36 +101,40 @@ function ConfigCloturerAnnee(props) {
             <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel} style={{width:"23vw"}}>
                     {t("annee_scolaire")} 
-                </div>                    
-                <div style={{fontWeight:"bold", color:"#131f4c"}}> 
-                    :{CURRENT_ANNEE_SCOLAIRE}
+                </div> 
+                <div style={{fontWeight:"bold", color:"#131f4c"}}> : </div>                   
+                <div style={{fontWeight:"bold", color:"#131f4c", marginLeft:"0.37vw"}}> 
+                    {CURRENT_ANNEE_SCOLAIRE}
                 </div>
             </div>
 
             <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel} style={{width:"23vw"}}>
                     {t("effectifs_total")} 
-                </div>                    
-                <div style={{fontWeight:"bold", color:"#131f4c"}}> 
-                    :{12355}
+                </div>  
+                <div style={{fontWeight:"bold", color:"#131f4c"}}> : </div>                  
+                <div style={{fontWeight:"bold", color:"#131f4c", marginLeft:"0.37vw"}}> 
+                    {12355}
                 </div>
             </div>
 
             <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel} style={{width:"23vw"}}>
                     {t("taux_de_reussite_general")} 
-                </div>                    
-                <div style={{fontWeight:"bold", color:"#131f4c"}}> 
-                    :{"30%"}
+                </div> 
+                <div style={{fontWeight:"bold", color:"#131f4c"}}> : </div>                   
+                <div style={{fontWeight:"bold", color:"#131f4c", marginLeft:"0.37vw"}}> 
+                    {"30%"}
                 </div>
             </div>
 
             <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel} style={{width:"23vw"}}>
                     {t("taux_de_reussite_general_exams")} 
-                </div>                    
-                <div style={{fontWeight:"bold", color:"#131f4c"}}> 
-                    :{"45%"}
+                </div> 
+                <div style={{fontWeight:"bold", color:"#131f4c"}}> : </div>                   
+                <div style={{fontWeight:"bold", color:"#131f4c",  marginLeft:"0.37vw"}}> 
+                    {"45%"}
                 </div>
             </div>
 
@@ -136,23 +145,69 @@ function ConfigCloturerAnnee(props) {
                     {t("all_classMeeting_done")} ?
                 </div>                    
                 <div style={{fontWeight:"bold", color:"#1a68b6"}}> 
-                    :{areAllMeetingDone ? t("yes"):t("no")}
+                <div style={{}}> : </div>
+                    { areAllMeetingDone ?
+                        <div style={{marginTop:"-3.3vh", marginLeft:"0.7vw"}}> 
+                            <img src="images/check_trans.png"   style={{width:"1.3vw", height:"1vw"}}/>
+                        </div> 
+                    
+                        :
+                        <div style={{marginTop:"-3.13vh", marginLeft:"0.7vw"}}>
+                            <img src="images/delete.png"        style={{width:"1.5vw", height:"1.3vw"}}/>
+                        </div>                        
+                    }
                 </div>
             </div>
 
-            {!areAllMeetingDone &&
+            {!areAllMeetingDone  &&
                 <div className={classes.inputRowLeft}> 
-                    <div className={classes.inputRowLabel} style={{width:"23vw"}}>
-                        {t("classes_with_annual_meeting_not_done")} 
+                    <div className={classes.inputRowLabel} style={{width:"23vw", marginLeft:"1.7vw", fontSize:"0.89vw", marginTop:'-1vh'}}>
+                        -  {t("classes_with_annual_meeting_not_done")} 
                     </div> 
-                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center", fontWeight:"bold", color:"#131f4c"}}> 
-                        {tabPendingClass.map((cls)=>{   
-                                                  
-                            return <div>:{cls}</div>                               
-                        })}
-                    </div>
+                    <div style={{marginTop:"-1vh",marginLeft:"-1.7vw", fontSize:"0.89vw", marginRight:"0.3vw", fontWeight:"bold", color:"#131f4c"}}> : </div>
+                    {(tabPendingClass.length > 0) ?
+                        <div style={{display:"flex", flexDirection:"column", justifyContent:"center", fontWeight:"bold", color:"#131f4c", marginTop:'-1vh'}}> 
+                            {tabPendingClass.map((cls)=>{ 
+                                return <div style={{fontSize:"0.89vw"}}>{cls}</div>                               
+                            })}
+                        </div>
+                        :
+                        <div style={{display:"flex", flexDirection:"column", justifyContent:"center", fontWeight:"bold", color:"#131f4c", fontSize:"0.89vw", marginTop:'-1vh'}}> 
+                            {t("all_classes")}                       
+                        </div>
+                    }
                 </div>
             }
+
+            <div className={classes.inputRowLeft}> 
+                <div className={classes.inputRowLabel} style={{width:"23vw"}}>
+                    {t("exam_session_closed")} ?
+                </div>                    
+                <div style={{fontWeight:"bold", color:"#1a68b6"}}> 
+                    <div style={{}}> : </div>
+                        { isExamSessionClosed ?
+                            <div style={{marginTop:"-3.3vh", marginLeft:"0.7vw"}}> 
+                                <img src="images/check_trans.png"   style={{width:"1.3vw", height:"1vw"}}/>
+                            </div> 
+                    
+                            :
+                            <div style={{marginTop:"-3.13vh", marginLeft:"0.7vw"}}>
+                                <img src="images/delete.png"        style={{width:"1.5vw", height:"1.3vw"}}/>
+                            </div>                            
+                        }
+                    
+                    {/* :{isExamSessionClosed ?  
+                        <img src="images/check_trans.png"   style={{width:"1.3vw", height:"1vw"}}/>
+                            :
+                        <img src="images/delete.png"   style={{width:"1.5vw", height:"1.7vw"}}/>
+                    } */}
+                </div>
+               
+                            
+                           
+            </div>
+
+            
 
 
             
@@ -164,9 +219,8 @@ function ConfigCloturerAnnee(props) {
                     btnText={t('close_year')} 
                     buttonStyle={getButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler = {closeSchoolYearHandler}
-                    // disable = {(areAllMeetingDone==true && currentUiContext.yearToClose==-1)}
-                    disable = {areAllMeetingDone}
+                    btnClickHandler = {closeSchoolYearHandler}                    
+                    disable = {!areAllMeetingDone || !isExamSessionClosed || !currentUiContext.yearToClose<0}
 
                 />                
             </div>
