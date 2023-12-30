@@ -33,10 +33,14 @@ var pageSet = [];
 var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
+const MSG_CONFIRM =3;
+
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var printedETFileName ='';
 var selected_niveau;
+var ROW_TO_DELETE_ID;
+
 
 
 function ListManuelsScolaires(props) {
@@ -75,16 +79,17 @@ function ListManuelsScolaires(props) {
 
     const  getListManuel=(niveauId)=>{
         var listNiveaux = [];
-        setGridRows(listNiveaux);
-        // axiosInstance.post(`list-manuels/`, {
-        //     id_niveau: niveauId,
-        // }).then((res)=>{
-        //     console.log(res.data);
-        //     listNiveaux = [...formatList(res.data)]
-        //     console.log(listNiveaux);
-        //     setGridRows(listNiveaux);
-        //     console.log(gridRows);
-        // })  
+        
+        axiosInstance.post(`list-manuel-scolaires/`, {
+            // id_classe = request.data['id_classe']
+            id_niveau: niveauId,
+        }).then((res)=>{
+            console.log(res.data);
+            listNiveaux = [...formatList(res.data)]
+            console.log(listNiveaux);
+            setGridRows(listNiveaux);
+            console.log(gridRows);
+        })  
      
     }
 
@@ -407,33 +412,14 @@ const columnsEn = [
 
     }
 
-    function addNewManuel(eleve) {       
-        console.log('Ajout',eleve);
+    function addNewManuel(manuel) {       
+        console.log('Ajout',manuel);
            
-        axiosInstance.post(`create-eleve/`, {
-            id_classe : CURRENT_NIVEAU_ID,
-            id_sousetab:currentAppContext.currentEtab,
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance,            
+        axiosInstance.post(`create-manuel-scolaire/`, {
+            id_classes  : manuel.id_classes,
+            id_sousetab : manuel.d_sousetab,
+            id_niveau   : manuel.id_niveau,
+            data        : manuel.data
         }).then((res)=>{
             console.log(res.data);
 
@@ -448,34 +434,13 @@ const columnsEn = [
         })      
     }
     
-    function modifyManuel(eleve) {
-        console.log('Modif',eleve);
+    function modifyManuel(manuel) {
+        console.log('Modif',manuel);
      
-        axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_NIVEAU_ID,
-            id : eleve.id, 
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance, 
-
+        axiosInstance.post(`update-manuel-scolaire/`, {
+            id_manuel  : manuel.id_manuel,
+            id_classes : manuel.id_classes,
+            data       : manuel.data
         }).then((res)=>{
             console.log(res.data);
             //setModalOpen(0);
@@ -491,7 +456,16 @@ const columnsEn = [
     }
 
     function deleteRow(rowId) {
-       // alert(rowId);
+        ROW_TO_DELETE_ID = rowId;
+
+        chosenMsgBox = MSG_CONFIRM;
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType:"info", 
+            msgTitle:t("success_modif_M"), 
+            message:t("success_modif")
+        })
+       
         //Message de confirmation
         /*if(window.confirm('Voulez-vous vraiment supprimer la section selectionnée?')){
             //requete  axios de suppression de l'eatab qui a cet id
@@ -505,6 +479,25 @@ const columnsEn = [
             })              
         }*/
     } 
+
+    function deleteManuel(rowId){
+        return new Promise(function(resolve, reject){
+            axiosInstance
+            .post(`delete-manuel-scolaire/`, {
+                id:rowId,
+                // id_classe_courante = request.data['id_classe_courante']
+                // # portee peut etre "classe" ou "niveau"
+                // portee = request.data['portee']
+            }).then((res)=>{
+                console.log(res.data.status)
+                resolve(1);
+            },(res)=>{
+                console.log(res.data.status)
+                reject(0);
+            })     
+
+        })       
+    }
 
     function quitForm() {
         //ClearForm();
@@ -551,6 +544,16 @@ const columnsEn = [
                 return 1;
             }
             
+            case MSG_CONFIRM: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                });  
+                deleteManuel(ROW_TO_DELETE_ID).then(()=>{return 1});                
+            }
+            
            
             default: {
                 currentUiContext.showMsgBox({
@@ -564,6 +567,29 @@ const columnsEn = [
     }
 
     const rejectHandler=()=>{
+        switch(chosenMsgBox){
+            case MSG_CONFIRM: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                });  
+                return 1;
+
+            
+            }
+
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+            }
+                       
+        }
         
     }
 

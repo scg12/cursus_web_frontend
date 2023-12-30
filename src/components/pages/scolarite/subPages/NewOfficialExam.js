@@ -27,12 +27,14 @@ import { useTranslation } from "react-i18next";
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
 var CURRENT_ANNEE_SCOLAIRE;
+var ROW_TO_DELETE_ID;
 
 var listElt ={};
  
 var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
+const MSG_CONFIRM =3;
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var printedETFileName ='';
@@ -43,75 +45,32 @@ function NewOfficialExam(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
+  
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
     const selectedTheme = currentUiContext.theme;
 
-    useEffect(()=> {
-  
+    useEffect(()=> {  
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
         if(gridRows.length==0){
             CURRENT_CLASSE_ID = undefined;
         }
-
-        getEtabListClasses();
-        
+        getListExams();        
     },[]);
 
-    const getEtabListClasses=()=>{
-       var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
-       let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
-       console.log(classes)
-       let classes_user;
-       if(currentAppContext.infoUser.is_prof_only) 
-            classes_user = currentAppContext.infoUser.prof_classes;
-       else
-            classes_user = currentAppContext.infoUser.admin_classes;
-       console.log(currentAppContext.infoUser.is_prof_only,classes_user)
-
-       let n = classes_user.length;
-       let m = classes.length;
-       let i = 0;
-       let j = 0;
-       while(i<n){
-        j = 0;
-        while(j<m){
-            if(classes_user[i].id==classes[j].id_classe){
-                tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
-                break;
-            }
-            j++;
-        }
-        i++;
-       }
-           
-        setOpClasse(tempTable);
-        // axiosInstance.post(`list-classes/`, {
-        //     id_sousetab: currentAppContext.currentEtab,
-        // }).then((res)=>{
-        //         res.data.map((classe)=>{
-        //         tempTable.push({value:classe.id, label:classe.libelle})
-        //         setOpClasse(tempTable);
-        //         console.log(res.data)
-        //    })         
-        // }) 
-       
-    }
-
-    const  getClassStudentList=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
+   
+    const  getListExams=()=>{
+        var listExams = []
+        axiosInstance.post(`list-examen-officiel/`, {
+            id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
             console.log(res.data);
-            listEleves = [...formatList(res.data)]
-            console.log(listEleves);
-            setGridRows(listEleves);
+            listExams = [...formatList(res.data)]
+            console.log(listExams);
+            setGridRows(listExams);
             console.log(gridRows);
         })  
-        return listEleves;     
     }
 
     const formatList=(list) =>{
@@ -120,82 +79,73 @@ function NewOfficialExam(props) {
         list.map((elt)=>{
             listElt={};
             listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
-            listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
-
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
-
+            listElt.libelle       = elt.libelle;
+            listElt.idNiveau      = elt.niveau.id;
+            listElt.libelleNiveau = elt.niveau.libelle;
+            elt.idclasses         = '';
+            elt.libelleclasses    = '';
+            listElt.classes.map((elt, index)=>{
+                if(index == 0){
+                    elt.idclasses      = elt.id;
+                    elt.libelleclasses = elt.libelle;
+                } else {
+                    elt.idclasses      = elt.idclasses +'_'+ elt.id;
+                    elt.libelleclasses = elt.libelleclasses +'_'+ elt.libelle;
+                }
+            }); 
             
-            formattedList.push(listElt);
-            rang ++;
-        })
+            formattedList.push(listElt);           
+        });
         return formattedList;
     }
 
-
-    function dropDownHandler(e){
-        //console.log(e.target.value)
-        var grdRows;
-        if(e.target.value != optClasse[0].value){
-            setIsValid(true);
-            CURRENT_CLASSE_ID = e.target.value; 
-            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
-            getClassStudentList(CURRENT_CLASSE_ID);   
-            console.log(CURRENT_CLASSE_LABEL)          
-        }else{
-            CURRENT_CLASSE_ID = undefined;
-            CURRENT_CLASSE_LABEL='';
-            setGridRows([]);
-            setIsValid(false);
-        }
-    }
- 
 /*************************** DataGrid Declaration ***************************/    
 const columnsFr = [
        
     {
-        field: 'matricule',
-        headerName: 'NOM EXAMEN',
-        width: 200,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: 'displayedName',
-        headerName: 'NIVEAU',
-        width: 80,
-        editable: false,
+        field          : 'libelle',
+        headerName     : 'NOM EXAMEN',
+        width          : 200,
+        editable       : false,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'nom',
-        headerName: 'CLASSES',
-        width: 300,
-        editable: false,
+        field          : 'idNiveau',
+        headerName     : 'NIVEAU',
+        width          : 80,
+        editable       : false,
+        hide           : true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field          : 'libelleNiveau',
+        headerName     : 'NIVEAU',
+        width          : 80,
+        editable       : false,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field          : 'libelleclasses',
+        headerName     : 'CLASSES',
+        width          : 300,
+        editable       : false,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field          : 'idclasses',
+        headerName     : 'CLASSES',
+        hide           : true,
+        width          : 300,
+        editable       : false,
         headerClassName:classes.GridColumnStyle
     },
    
     {
-        field: 'id',
+        field          : 'id',
         headerName: '',
         width: 15,
         editable: false,
@@ -307,7 +257,7 @@ const columnsFr = [
     function handleDeleteRow(params){
         if(params.field=='id'){
             //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
+            deleteRowConfirm(params.row.matricule);            
         }
     }
 
@@ -391,37 +341,18 @@ const columnsFr = [
 
     }
 
-    function addNewExam(eleve) {       
-        console.log('Ajout',eleve);
-           
-        axiosInstance.post(`create-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id_sousetab:currentAppContext.currentEtab,
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance,            
-        }).then((res)=>{
-            console.log(res.data);
+    function addNewExam(exam) {       
+        console.log('Ajout',exam);
 
-            //setModalOpen(0);
+        axiosInstance.post(`create-examen-officiel/`, {
+            libelle     : exam.libelle,
+            niveau      : exam.niveau,
+            classes     : exam.classes,
+            id_session  : exam.id_session,
+            id_sousetab : exam.id_sousetab
+
+        }).then((res)=>{
+            console.log(res.data);           
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -432,37 +363,19 @@ const columnsFr = [
         })      
     }
     
-    function modifyExam(eleve) {
-        console.log('Modif',eleve);
+    function modifyExam(exam) {
+        console.log('Modif',exam);
      
-        axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id : eleve.id, 
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance, 
+        axiosInstance.post(`update-examen-officiel/`, {
+            id          : exam.id_exam,
+            libelle     : exam.libelle,
+            niveau      : exam.niveau,
+            classes     : exam.classes,
+            id_session  : exam.id_session,
+            id_sousetab : exam.id_sousetab
 
         }).then((res)=>{
             console.log(res.data);
-            //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -474,21 +387,35 @@ const columnsFr = [
         })
     }
 
-    function deleteRow(rowId) {
-       // alert(rowId);
-        //Message de confirmation
-        /*if(window.confirm('Voulez-vous vraiment supprimer la section selectionnée?')){
-            //requete  axios de suppression de l'eatab qui a cet id
+    function deleteRowConfirm(rowId) {
+        //alert(rowId);
+        ROW_TO_DELETE_ID = rowId;
+        chosenMsgBox = MSG_CONFIRM;
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType  : "question", 
+            msgTitle : t("success_modif_M"), 
+            message  : t("success_modif")
+        })
+    } 
+
+   
+
+    function deleteExam(rowId){
+        return new Promise(function(resolve, reject){
             axiosInstance
-            .post(`delete-etab/`, {
+            .post(`delete-examen-officiel/`, {
                 id:rowId,
             }).then((res)=>{
                 console.log(res.data.status)
-                 //Mise a jour du tableau
-                //setDataState(result)
-            })              
-        }*/
-    } 
+                resolve(1);
+            },(res)=>{
+                console.log(res.data.status)
+                reject(0);
+            })     
+
+        })       
+    }
 
     function quitForm() {
         //ClearForm();
@@ -522,7 +449,7 @@ const columnsFr = [
                     msgTitle:"", 
                     message:""
                 }) 
-                getClassStudentList(CURRENT_CLASSE_ID); 
+                getListExams(CURRENT_CLASSE_ID); 
                 return 1;
             }
 
@@ -534,6 +461,16 @@ const columnsFr = [
                     message:""
                 })  
                 return 1;
+            }
+
+            case MSG_CONFIRM: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                });  
+                deleteExam(ROW_TO_DELETE_ID).then(()=>{return 1});                
             }
             
            
@@ -549,6 +486,29 @@ const columnsFr = [
     }
 
     const rejectHandler=()=>{
+        switch(chosenMsgBox){
+            case MSG_CONFIRM: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                });  
+                return 1;
+
+            
+            }
+
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+            }
+                       
+        }
         
     }
 
@@ -631,7 +591,8 @@ const columnsFr = [
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddExam 
-                    formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    sessionId    = {1}
+                    formMode     = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
                     actionHandler={(modalOpen==1) ?  addNewExam : modifyExam } 
                     cancelHandler={quitForm}
                 />

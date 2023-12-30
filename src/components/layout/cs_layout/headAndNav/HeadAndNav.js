@@ -58,9 +58,10 @@ function HeadAndNav(props) {
         chosenMsgBox = MSG_QUESTION
         currentUiContext.showMsgBox({
             visible:true, 
-            msgType:"question", 
+            msgType :"question", 
             msgTitle:t("logout"), 
-            message:t("quit_question")
+            msgCode :"CLOSE_APP",
+            message :t("quit_question")
         })
 
         /*if(window.confirm("Voulez-vous vraiment vous deconnecter?")){
@@ -166,8 +167,7 @@ function HeadAndNav(props) {
         toggleActiveMenu(firstMenu);
     }
 
-    function closeSchoolYear(){
-        // alert("Mettre le code ici!!!"); 
+    function closeSchoolYear(){         
         axiosInstance.post(`migrations/`, {
             id_sousetab: currentAppContext.currentEtab,
             date_deb: "2024-09-05",
@@ -175,26 +175,42 @@ function HeadAndNav(props) {
             date_essaie_cursus:"2024-10-02",
             date_limite_cursus:"2025-07-31"
         }).then((res)=>{
-           alert("MIGRATION TERMINEE AVEC SUCCESS !")              
+           alert("MIGRATION TERMINEE AVEC SUCCESS !"); 
+           currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            });
+           return 1;             
+        })      
+    }
+
+    function closeExamSession(){
+        axiosInstance.post(`cloture_session/`, {
+            
+        }).then((res)=>{
+           alert("EXAMENS TERMINEE AVEC SUCCESS !");
+           currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+            });
+           return 1;              
         })      
     }
 
 
     const acceptHandler=()=>{
         console.log("code MSG",chosenMsgBox);
-        switch(chosenMsgBox){
-            case MSG_SUCCESS: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
-                return 1;
+        switch(currentUiContext.msgBox.msgCode){
+            case "CLOSE_YEAR": {
+               
             }
 
     
-            case MSG_QUESTION: {
+            case "CLOSE_APP": {
                 console.log("IL VEUT DECONNECTER: ")
                 currentUiContext.updateFirstLoad(true);
                 currentAppContext.logOut();
@@ -221,29 +237,34 @@ function HeadAndNav(props) {
                 return 1;
             }
     
-            case MSG_WARNING: {
-                    currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
+            case "CLOSE_YEAR": {
+                alert("cloture annee!!!");
+                //closeSchoolYear();
+                
                 return 1;
             }
+
+            case "CLOSE_EXAMS": {
+                alert("ok ok");
+                // closeExamSession();
+                
+                return 1;
+            }
+
+            
             
            
             default: {
+
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
-                })  
-                if(currentUiContext.yearToClose==0){
-                    closeSchoolYear();
-                }
-                
+                }) 
                 return 1;
+
+               
             }
         }
        
@@ -303,18 +324,21 @@ function HeadAndNav(props) {
             }
             { (currentUiContext.msgBox.visible == true)&&currentUiContext.isParentMsgBox ?
                  <MsgBox 
-                    msgTitle = {currentUiContext.msgBox.msgTitle} 
-                    msgType  = {currentUiContext.msgBox.msgType} 
-                    message  = {currentUiContext.msgBox.message} 
-                    customImg   = {true}
-                    customStyle = {true}
-                    contentStyle={classes.msgContent}
-                    imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {t("yes")}
-                    buttonRejectText = {t("no")}  
+                    msgTitle            = {currentUiContext.msgBox.msgTitle} 
+                    msgType             = {currentUiContext.msgBox.msgType} 
+                    message             = {currentUiContext.msgBox.message} 
+                    isCustomMessage     = {currentUiContext.msgBox.msgCode == "CLOSE_EXAMS"? true:false}
+                    messageLines        = {currentUiContext.msgBox.msgCode == "CLOSE_EXAMS"? currentUiContext.msgBox.messageLines:[]}
+                    customImg           = {true}
+                    customStyle         = {true}
+                    contentStyle        = {currentUiContext.msgBox.msgCode == "CLOSE_EXAMS"? classes.msgContentP:classes.msgContent}
+                    tabligneStyle       = {currentUiContext.msgBox.msgCode == "CLOSE_EXAMS"? {marginBottom:"-3.7vh", width:"100%"}:null}
+                    imgStyle            = {classes.msgBoxImgStyleP}
+                    buttonAcceptText    = {t("yes")}
+                    buttonRejectText    = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
-                />         
+                />   
                 :
                 null
             }

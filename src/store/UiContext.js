@@ -212,7 +212,7 @@ export function UiContextProvider(props)
     const [formIsloading, setFormIsloading] = useState(false);
 
     //gestion de la cloture de l'annee
-    const [yearToClose, setYearToClose] = useState(false);
+    const [yearToClose, setYearToClose] = useState(-1);
    
       
    
@@ -498,7 +498,7 @@ export function UiContextProvider(props)
         formIsloading : false,
 
         //gestion de la cloture de l'annee
-        yearToClose : false,
+        yearToClose : -1,
 
 
        

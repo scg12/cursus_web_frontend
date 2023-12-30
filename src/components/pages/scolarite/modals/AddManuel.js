@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 
 var CURRENT_ELEVE = {};
 var CURRENT_ANNEE_SCOLAIRE;
+var CURRENT_MANUEL;
 var TABCLASSE     = [];
 
 
@@ -25,6 +26,7 @@ function AddManuel(props) {
     // const [isValid, setIsValid] = useState(false);
     const [optTypeManuel, setOptTypeManuel] = useState([]);
     const [optClasse, setOptClasse]         = useState([]);
+    const [manuelClasses, setManuelClasses] = useState([]);
     
     var typeManuel =[
         {value:1, label:"Livre"},
@@ -39,11 +41,79 @@ function AddManuel(props) {
         getEtabClasses();       
 
         if(props.formMode != 'creation'){ 
-            
-        }else{
-            
-        }        
+            CURRENT_MANUEL = {};
+            CURRENT_MANUEL.id_manuel   = currentUiContext.formInputs[0];
+            CURRENT_MANUEL.description = currentUiContext.formInputs[0]
+        }      
     },[]);
+
+
+    function saveManuel(){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        console.log('avant:',CURRENT_MANUEL);
+        getFormData();
+        console.log('apres:',CURRENT_MANUEL);
+        
+        if(formDataCheck1(CURRENT_MANUEL).length==0){
+           
+            if(errorDiv.textContent.length!=0){
+                errorDiv.className = null;
+                errorDiv.textContent = '';
+            }
+            props.closeHandler(CURRENT_MANUEL);  
+    
+        } else {
+            errorDiv.className = classes.formErrorMsg;
+            errorDiv.textContent = formDataCheck1(CURRENT_MANUEL);
+        }
+    }
+
+    function getFormData(){
+        CURRENT_MANUEL = {};
+        var selected_classes =  manuelClasses.filter((elt)=>elt!=0);
+
+        if(props.formMode == "creation"){
+            CURRENT_MANUEL.id_manuel  = -1;
+        } else {
+            CURRENT_MANUEL.id_manuel  = currentUiContext.formInputs[0];
+        }
+     
+        CURRENT_MANUEL.nomLivre    = document.getElementById('').value;
+        //CURRENT_MANUEL.type        = document.getElementById('').value;
+        CURRENT_MANUEL.description = document.getElementById('').value; 
+        CURRENT_MANUEL.prix        = document.getElementById('').value;
+
+        CURRENT_MANUEL.id_sousetab = currentAppContext.currentEtab;
+        CURRENT_MANUEL.id_classes  = selected_classes.length >0 ? selected_classes.join("_"):'';
+        CURRENT_MANUEL.libelle     = document.getElementById('nom_exam').value;
+        CURRENT_MANUEL.niveau      = props.currentLevel;
+        CURRENT_MANUEL.data        = CURRENT_MANUEL.nomLivre+'²²'+CURRENT_MANUEL.description+'²²'+ CURRENT_MANUEL.prix;           
+    }
+
+    function formDataCheck1(manuel){       
+        var errorMsg='';
+        if(manuel.nomLivre.length == 0){
+            errorMsg= t('enter_manuel_name'); 
+            return errorMsg;
+        }
+
+        if (manuel.prix.length == 0) {
+            errorMsg= t('enter_manuel_price'); 
+            return errorMsg;
+        }
+
+        if(isNaN(manuel.prix)) {
+            errorMsg= t('enter_correct_manuel_price'); 
+            return errorMsg;
+        } 
+
+
+        if(manuel.id_classes.length == 0 ){
+            errorMsg= t('no_manuel_classes_selected');  
+            return errorMsg;
+        }    
+        return errorMsg;  
+    }
 
 
     function getGridButtonStyle()
@@ -56,26 +126,7 @@ function AddManuel(props) {
         }
     }
 
-    function getButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_Btnstyle ;
-        case 'Theme2': return classes.Theme2_Btnstyle ;
-        case 'Theme3': return classes.Theme3_Btnstyle ;
-        default: return classes.Theme1_Btnstyle ;
-      }
-    }
-
-    function getSmallButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_BtnstyleSmall ;
-        case 'Theme2': return classes.Theme2_BtnstyleSmall ;
-        case 'Theme3': return classes.Theme3_BtnstyleSmall ;
-        default: return classes.Theme1_BtnstyleSmall ;
-      }
-    }
-
+   
     function getCurrentHeaderTheme()
     {  // Choix du theme courant
        switch(selectedTheme){
@@ -93,41 +144,6 @@ function AddManuel(props) {
         else return chaine;
     }
    
-
-    function getFormData(){
-      
-    }
-    
-    function formDataCheck1(eleve){       
-        var errorMsg='';
-        if(eleve.nom.length == 0){
-            errorMsg= t('enter_student_name'); 
-            return errorMsg;
-        }
-
-        if (eleve.prenom.length == 0) {
-            errorMsg= t('enter_student_surname'); 
-            return errorMsg;
-        }
-
-        if(eleve.date_naissance.length == 0) {
-            errorMsg= t('enter_correct_bithDate'); 
-            return errorMsg;
-        } 
-
-        if(!((isNaN(eleve.date_naissance) && (!isNaN(Date.parse(eleve.date_naissance)))))){
-            errorMsg= t('enter_correct_bithDate'); 
-            return errorMsg;
-        }
-
-        if(eleve.lieu_naissance.length == 0 ){
-            errorMsg= t('enter_student_bithPlace');  
-            return errorMsg;
-        }    
-        return errorMsg;  
-    }
-    
-
     function getEtabClasses(){
         var tempTable=[];
         var tabClasses=[];
@@ -136,17 +152,18 @@ function AddManuel(props) {
         tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab && cls.id_niveau==props.currentLevel)
         tabClasses.map((cls)=>{
             tempTable.push({value:cls.id_classe, label:cls.libelle});
-            TABCLASSE.push(1); 
+            TABCLASSE.push(cls.id_classe); 
         });
 
         setOptClasse(tempTable);
+        setManuelClasses(TABCLASSE);
     }
 
 
     function manageChbxChange(e, index){
-        if(e.target.checked) TABCLASSE[index] = 1;        
+        if(e.target.checked) TABCLASSE[index] = optClasse[index].value;        
         else TABCLASSE[index] = 0;
-     //   setExamClasses(TABCLASSE);
+        setManuelClasses(TABCLASSE);
         console.log("checked",TABCLASSE.join('_'));
     }
 
@@ -178,13 +195,13 @@ function AddManuel(props) {
                 </div> */}
 
                 <div className={classes.inputRow} style ={{justifyContent:"flex-start"}}>
-                    <div className={classes.groupInfo} style={{paddingTop:"1.7vh"}}>                       
+                    <div className={classes.groupInfo} style={{paddingTop:"2.3vh"}}>                       
                         <div className={classes.inputRowLeft} style={{height:'4.7vh'}}> 
                             <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
                                 {t("level")}: 
                             </div>                    
                             <div style={{marginBottom:'1.3vh', marginLeft:'-5vw'}}>  
-                                <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentLeveLabel} style={{width:'3vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
+                                <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentLeveLabel} style={{width:'3vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#494646'}} disabled={true}/>
                                 <input id="classe" type="hidden"  defaultValue={props.currentLevel}/>
                             </div>
                         </div>
@@ -196,12 +213,12 @@ function AddManuel(props) {
                             </div>
                                 
                             <div> 
-                                <input id="nom" type="text"  defaultValue={currentUiContext.formInputs[0]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'23vw'}}/>
+                                <input id="nom_manuel" type="text"  defaultValue={currentUiContext.formInputs[0]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'23vw'}}/>
                             </div>
                         </div>
 
                         
-                        <div className={classes.inputRowLeft}> 
+                        {/* <div className={classes.inputRowLeft}> 
                             <div style={{width:'7.7vw', fontWeight:570}}>
                                 {t('manual_type')}:  
                             </div>
@@ -215,17 +232,17 @@ function AddManuel(props) {
                                     })}
                                 </select>
                             </div>
-                        </div>
+                        </div> */}
 
 
                         <div className={classes.inputRowLeft}> 
                             <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[11]}/>
                             <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                {t("author")}:
+                                {t("description")}:
                             </div>
                                 
                             <div> 
-                                <input id="nom" type="text"  defaultValue={currentUiContext.formInputs[0]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'23vw'}}/>
+                                <input id="description" type="text"  defaultValue={currentUiContext.formInputs[0]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'23vw'}}/>
                             </div>
                         </div>
 
@@ -234,7 +251,7 @@ function AddManuel(props) {
                                 {t("prix_en_vigueur")}: 
                             </div>                    
                             <div style={{marginBottom:'1.3vh', marginLeft:'-5vw'}}>  
-                                <input id="classe" type="number" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'7vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} />
+                                <input id="prix_en_vigueur" type="number" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'7vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} />
                                 <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                             </div>
                         </div>
@@ -284,7 +301,7 @@ function AddManuel(props) {
                     imgStyle = {classes.frmBtnImgStyle2} 
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={props.actionHandler}
+                    btnClickHandler={saveManuel}
                     // disable={(isValid==false)}
                 />
       
