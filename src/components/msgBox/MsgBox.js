@@ -51,10 +51,19 @@ function MsgBox(props) {
                     <img alt='msgDanger'          className = {(props.customImg) ? props.imgStyle : classes.msgIcoImg} src='images/msgBoxIcon/danger_trans.png'/>
                 : null
                 }
-                
-                <div className={(props.customStyle) ? props.contentStyle : classes.msgContainer}>
-                    {props.message}
-                </div>
+                {props.isCustomMessage?
+                    <div className={(props.customStyle) ? props.contentStyle : classes.msgContainer}>                   
+                        {props.messageLines.map((elt)=>{
+                            return(<div style={props.tabligneStyle}> {elt}</div>)
+                        })}                  
+                    </div>                    
+                    :
+                    <div className={(props.customStyle) ? props.contentStyle : classes.msgContainer}>                   
+                        {props.message}                  
+                    </div>
+                    
+                }
+               
             </div>
                 
             

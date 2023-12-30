@@ -233,14 +233,20 @@ function ScolaritePage(){
   }
 
   function closeExamSession(){
+    var tabMessage = [
+      t("close_exam_confirm"),
+      t("close_exam_no_modif"),
+      // t("close_exam_ensure")
+    ];
+
     currentUiContext.setIsParentMsgBox(true);
     currentUiContext.setYearToClose(1);
     currentUiContext.showMsgBox({
       visible:true, 
-      msgType : "question", 
-      msgCode :"CLOSE_EXAMS",
-      msgTitle: t("close_exam_M"), 
-      message : t("close_exam_confirm") +'\<br\> '+t("close_exam_no_modif")+'\<br\> '+t("close_exam_ensure")
+      msgType     : "question", 
+      msgCode     : "CLOSE_EXAMS",
+      msgTitle    : t("close_exam_M"), 
+      messageLines:  tabMessage
     })
   }
 
