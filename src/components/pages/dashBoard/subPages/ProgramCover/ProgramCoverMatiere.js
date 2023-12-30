@@ -34,9 +34,27 @@ function ProgramCoverMatiere(props){
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
+    const [listMatieresProgress, setListMatieresProgress] = useState(props.listMatieresProgress);
    
+    const getData=()=>{
+
+      axiosInstance.post(`program-cover-matiere/`, {
+        id_niveau : 1,
+        id_matiere : props.selectedMatiere.id,
+        id_classe : 1,
+        id_sousetab:currentAppContext.currentEtab,        
+        
+    }).then((res)=>{
+        // console.log(res.data);
+        setListMatieresProgress(res.data.res)
+    });
+    }
     
+  // useEffect(()=> {
+  //   createProgressionMatieres(props.selectedMatiere.id);
+  // },[props.selectedMatiere.id]);
   useEffect(()=> {
+    getData();
     createProgressionMatieres(props.selectedMatiere.id);
   },[props.selectedMatiere.id]);
 
@@ -94,13 +112,16 @@ function ProgramCoverMatiere(props){
     }    
     if(matiere != undefined) {
         //Recuperation De la liste des matieres avc leur infos.        
-        listMat = getMatieres(parseInt(matiere));
+        // listMat = getMatieres(parseInt(matiere));
         // listMat = "3+Allemand*1*78_Francais*1*84_Anglais*1*62_Histoire*2*73_ECM*2*75_SVT*2*82_PCT*2*93_Maths*2*72_Sport*3*100_TM*3*100_ESF*3*100";
-        console.log("matiere : ", matiere," listMat: ",listMat,matiere==1)
+        // console.log("matiere : ", matiere," listMat: ",listMat)
   
         //Extraction du nombre de groupes et calcul de la largeur d'un groupe. 
+        listMat = props.listMatieresProgress;
+        console.log("listMatieresProgress :",listMatieresProgress)
         matTab = listMat.split('+');
         groupCount = matTab[0];
+        if (listMat != ""){
         if(groupCount==1) {
             groupWidth = 12
         }
@@ -132,6 +153,7 @@ function ProgramCoverMatiere(props){
                     ReactDOM.render(<MatiereProgress matiereInfo={tabMatieres[j]}/>,sousDiv)
                 }                    
             }         
+        }
         }
     } 
   }
@@ -198,8 +220,6 @@ function ProgramCoverMatiere(props){
   
     }*/
   }
-  
-    
 
   const MatiereProgress = (props) =>{
     return(   

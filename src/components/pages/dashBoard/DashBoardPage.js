@@ -101,6 +101,7 @@ function DashBoardPage() {
     const [BarchartClasseDataFrais, setBarChartClasseDataFrais] = useState([]);
     const [barchartDataLabels, setBarchartDataLabels] = useState([]);
     const [barchartDataValues, setBarchartDataValues] = useState([]);
+    const [listMatieresProgress, setListMatieresProgress] = useState("");
     const [niveau_effectif_selected, setNiveau_effectif_selected] = useState('0');
     const [classe_effectif_selected, setClasse_effectif_selected] = useState('0');
 
@@ -478,9 +479,23 @@ const progCompletionMatiereHandler=(e)=>{
   var matiere ={};
   matiere.id = curentMatiere;
   matiere.label = libelleMatiere;
-  
   setPrgramCoverSelectedMatiere(matiere); 
-  console.log(optMatieresPC);
+  
+  axiosInstance.post(`program-cover-matiere/`, {
+    id_niveau : document.querySelector("#selectNiveau1").value,
+    // id_matiere : progCoverSelectedMatiere.id,
+    id_matiere : curentMatiere,
+    id_classe : prgramCoverSelectedClass.id,
+    id_sousetab:currentAppContext.currentEtab,        
+    
+}).then((res)=>{
+    console.log(res.data);
+    setListMatieresProgress(res.data.res) 
+})
+// var select = document.querySelector('#selectMatiere1');
+// select.addEventListener('change', function(){})
+// select.value = curentMatiere;
+// select.dispatchEvent(new Event('change'));
 }
 
 
@@ -730,7 +745,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-              <ProgramCoverMatiere selectedClasse={prgramCoverSelectedClass} selectedMatiere={progCoverSelectedMatiere} />
+              <ProgramCoverMatiere listMatieresProgress={listMatieresProgress} selectedClasse={prgramCoverSelectedClass} selectedMatiere={progCoverSelectedMatiere} />
             </div>          
   
           </div>
