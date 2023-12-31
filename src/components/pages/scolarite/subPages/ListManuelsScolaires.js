@@ -78,14 +78,12 @@ function ListManuelsScolaires(props) {
     
 
     const  getListManuel=(niveauId)=>{
-        var listNiveaux = [];
-        
+        var listNiveaux = [];        
         axiosInstance.post(`list-manuel-scolaires/`, {
-            // id_classe = request.data['id_classe']
             id_niveau: niveauId,
         }).then((res)=>{
             console.log(res.data);
-            listNiveaux = [...formatList(res.data)]
+            listNiveaux = [...formatList(res.data.res)]
             console.log(listNiveaux);
             setGridRows(listNiveaux);
             console.log(gridRows);
@@ -95,49 +93,31 @@ function ListManuelsScolaires(props) {
 
     const formatList=(list) =>{
         var rang = 1;
-        var formattedList =[]
+        var formattedList = [];
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
-            listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
-
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
-
-            
+            listElt.rang            = rang; 
+            listElt.id              = elt.id;
+            listElt.livre           = elt.livre;
+            listElt.nom             = elt.nom;
+            listElt.description     = elt.description;
+            listElt.prix            = elt.prix;
+            listElt.id_classes      = elt.id_classes;
+            listElt.libelle_classes = elt.libelle_classes;          
             formattedList.push(listElt);
             rang ++;
-        })
+        });
+
         return formattedList;
     }
 
 
     function dropDownHandler(e){
-        //console.log(e.target.value)
-        var grdRows;
         if(e.target.value > 0){
             setIsValid(true);
             CURRENT_NIVEAU_ID = e.target.value; 
             CURRENT_NIVEAU_LABEL = optNiveau[optNiveau.findIndex((nivo)=>(nivo.value == CURRENT_NIVEAU_ID))].label;
-            //getLevelManuelList(CURRENT_NIVEAU_ID);   
+            getListManuel(CURRENT_NIVEAU_ID);
             console.log(CURRENT_NIVEAU_LABEL)          
         }else{
             CURRENT_NIVEAU_ID = undefined;
@@ -149,60 +129,77 @@ function ListManuelsScolaires(props) {
  
 /*************************** DataGrid Declaration ***************************/    
 const columnsFr = [
-       
+    
     {
-        field: 'matricule',
-        headerName: 'DOCUMENT',
-        width: 150,
+        field: 'id',
+        headerName: 'ID',
+        width: 50,
         editable: false,
+        hide: true,
         headerClassName:classes.GridColumnStyle
     },
+
     {
-        field: 'displayedName',
-        headerName: 'TYPE',
-        width: 80,
+        field: 'rang',
+        headerName: 'N°',
+        width: 50,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'nom',
-        headerName: 'AUTEUR',
-        width: 150,
+        field: 'livre',
+        headerName: 'NOM DU MANUEL',
+        width: 180,
         editable: false,
-        // hide:true,
         headerClassName:classes.GridColumnStyle
     },
-   
     {
-        field: 'prenom4',
+        field: 'description',
+        headerName: 'DESCRIPTION',
+        width: 200,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'prix',
         headerName: 'PRIX',
-        width: 80,
+        width: 150,
         editable: false,
         // hide:true,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'prenom',
+        field: 'libelle_classes',
         headerName: 'CLASSES CIBLES',
         width: 150,
         editable: false,
-        // hide:true,
+        //hide:true,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'Action',
-        headerName: 'ACTION',
+        field: 'id_classes',
+        headerName: 'CLASSES CIBLES',
+        width: 150,
+        editable: false,
+        hide:true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: '',
+        headerName: ' ACTION',
         width: 80,
         editable: false,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
             
             return(
-                (params.row.status==0)?
-                <div className={classes.inputRow}>
+               
+                <div className={classes.inputRow} style={{marginLeft:"-1vw"}}>
                     <img src="icons/baseline_edit.png"  
                         width={17} 
                         height={17} 
@@ -222,7 +219,7 @@ const columnsFr = [
                         alt=''
                     />
                 </div>
-                :null
+                
             )}           
             
         },
@@ -230,60 +227,79 @@ const columnsFr = [
   
 ];
 
-const columnsEn = [    
-    {
-        field: 'matricule',
-        headerName: 'DOCUMENT',
-        width: 150,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: 'displayedName',
-        headerName: 'TYPE',
-        width: 80,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },
-
-    {
-        field: 'nom',
-        headerName: 'AUTHOR',
-        width: 150,
-        editable: false,
-        // hide:true,
-        headerClassName:classes.GridColumnStyle
-    },
+const columnsEn = [  
     
     {
-        field: 'prenom',
+        field: 'id',
+        headerName: 'ID',
+        width: 50,
+        editable: false,
+        hide: true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'rang',
+        headerName: 'N°',
+        width: 50,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'livre',
+        headerName: 'MANUAL NAME',
+        width: 180,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+    {
+        field: 'description',
+        headerName: 'DESCRIPTION',
+        width: 200,
+        editable: false,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'prix',
         headerName: 'PRICE',
-        width: 80,
+        width: 150,
         editable: false,
         // hide:true,
         headerClassName:classes.GridColumnStyle
     },
 
     {
-        field: 'prenomP',
+        field: 'libelle_classes',
+        headerName: 'ASSOCIATED CLASSES ',
+        width: 150,
+        editable: false,
+        //hide:true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'id_classes',
         headerName: 'ASSOCIATED CLASSES',
         width: 150,
         editable: false,
-        // hide:true,
+        hide:true,
         headerClassName:classes.GridColumnStyle
     },
 
+
     {
-        field: 'Action',
-        headerName: 'ACTION',
+        field: '',
+        headerName: ' ACTION',
         width: 80,
         editable: false,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
             
             return(
-                (params.row.status==0)?
-                <div className={classes.inputRow}>
+              
+                <div className={classes.inputRow} style={{marginLeft:"-1vw"}}>
                     <img src="icons/baseline_edit.png"  
                         width={17} 
                         height={17} 
@@ -303,7 +319,7 @@ const columnsEn = [
                         alt=''
                     />
                 </div>
-                :null
+            
             )}           
             
         },
@@ -355,74 +371,44 @@ const columnsEn = [
     function handleEditRow(row){       
         var inputs=[];
         
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
+        inputs[0] = row.id;
+        inputs[1] = row.livre;
+        inputs[2] = row.description;
+        inputs[3] = row.prix;
+        inputs[4] = row.id_classes;
+        inputs[5] = row.libelle_classes;
+        
         console.log("laligne",row);
         currentUiContext.setFormInputs(inputs)
         setModalOpen(2);
-
     }
 
     function consultRowData(row){
         var inputs=[];
        
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
+        inputs[0] = row.id;
+        inputs[1] = row.livre;
+        inputs[2] = row.description;
+        inputs[3] = row.prix;
+        inputs[4] = row.id_classes;
+        inputs[5] = row.libelle_classes;
      
         currentUiContext.setFormInputs(inputs)
         setModalOpen(3);
-
     }
+
 
     function addNewManuel(manuel) {       
         console.log('Ajout',manuel);
            
         axiosInstance.post(`create-manuel-scolaire/`, {
             id_classes  : manuel.id_classes,
-            id_sousetab : manuel.d_sousetab,
+            id_sousetab : manuel.id_sousetab,
             id_niveau   : manuel.id_niveau,
             data        : manuel.data
+
         }).then((res)=>{
             console.log(res.data);
-
             //setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
@@ -770,7 +756,7 @@ const columnsEn = [
                         
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='livre')? classes.gridMainRowStyle : classes.gridRowStyle }
                         // onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {
