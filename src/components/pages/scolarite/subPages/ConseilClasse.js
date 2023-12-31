@@ -1482,9 +1482,9 @@ const columnsFr = [
                         {(props.formMode=='ajout')?
                             <CustomButton
                                 btnText={t('New_one')}
-                                hasIconImg= {false}
-                                //imgSrc='images/addNewUserOrg.png'
-                                //imgStyle = {classes.grdBtnImgStyle}  
+                                hasIconImg= {true}
+                                imgSrc='images/ConseilClasse.png'
+                                imgStyle = {classes.grdBtnImgStyleP}  
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyleP}
                                 btnClickHandler={AddNewMeetingHandler}

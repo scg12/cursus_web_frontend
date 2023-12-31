@@ -64,8 +64,6 @@ function AddExam(props) {
         } else {
             CURRENT_EXAM.id_exam  = currentUiContext.formInputs[0];
         }
-            
-        CURRENT_EXAM.id_session   = props.id_session; 
         CURRENT_EXAM.id_sousetab  = currentAppContext.currentEtab;
         CURRENT_EXAM.libelle      = document.getElementById('nom_exam').value;
         CURRENT_EXAM.niveau       = selected_niveau;
@@ -78,18 +76,20 @@ function AddExam(props) {
         console.log('avant:',CURRENT_EXAM);
         getFormData();
         console.log('apres:',CURRENT_EXAM);
+
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_EXAM);
         
-        if(formDataCheck1(CURRENT_EXAM).length==0){
+        if(fomCheckErrorStr.length==0){
            
             if(errorDiv.textContent.length!=0){
                 errorDiv.className = null;
                 errorDiv.textContent = '';
             }
-            props.closeHandler(CURRENT_EXAM);  
+            props.actionHandler(CURRENT_EXAM);  
     
         } else {
-            errorDiv.className = classes.formErrorMsg;
-            errorDiv.textContent = formDataCheck1(CURRENT_EXAM);
+            errorDiv.textContent = fomCheckErrorStr;
+            errorDiv.className   = classes.formErrorMsg;           
         }
     }
 
@@ -166,15 +166,28 @@ function AddExam(props) {
     }
 
     function getEtabClasses(){
-        var tempTable=[]
-        var tabClasses=[];
+        var listClasseCible = [];
+        var tempTable       = []
+        var tabClasses      = [];
         TABCLASSE = [];
          
         tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab && cls.id_niveau==selected_niveau)
         tabClasses.map((cls)=>{
             tempTable.push({value:cls.id_classe, label:cls.libelle});
             TABCLASSE.push(cls.id_classe); 
+            listClasseCible.push(0);
         });
+
+        if(props.formMode != 'creation'){ 
+            var selectedClasse =  currentUiContext.formInputs[4].split('_');
+            selectedClasse.map((elt)=>{
+                for(var i=0; i<TABCLASSE.length; i++){
+                    if(TABCLASSE[i]== elt) listClasseCible[i] = elt;
+                }               
+            });
+
+            TABCLASSE = [...listClasseCible];            
+        }
 
         setOptClasse(tempTable);
         setExamClasses(TABCLASSE)
@@ -221,15 +234,14 @@ function AddExam(props) {
 
                 <div className={classes.inputRow} style ={{justifyContent:"flex-start"}}>
                     <div className={classes.groupInfo} >
-                        
+                    <input id="id" type="hidden"  className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[0]} />
                         <div className={classes.inputRowLeft}> 
-                            <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[11]}/>
                             <div className={classes.inputRowLabel} style={{fontWeight:570}}>
                                 {t("nom_exam")}:
                             </div>
                                 
                             <div> 
-                                <input id="nom_exam" type="text"  defaultValue={currentUiContext.formInputs[0]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'23vw'}}/>
+                                <input id="nom_exam" type="text"  defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'23vw'}}/>
                             </div>
                         </div>
 
@@ -245,7 +257,7 @@ function AddExam(props) {
                             {(props.formMode =='consult') ?
                                 <div> 
                                     <input id="levelLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
-                                    <input id="levelId" type="hidden"  className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[2]} style={{width:'6vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                    <input id="levelId" type="hidden" />
                                 </div>  
                                 :
                                 <div style={{marginBottom:'1.3vh', marginLeft:'6vw'}}> 
@@ -270,7 +282,7 @@ function AddExam(props) {
                                 {optClasse.map((elt, index)=>{                                   
                                     return (
                                         <div style={{display:'flex', flexDirection:"row", justifyContent:"center", marginLeft:index==0 ? "-1vw":"1.3vw"}}> 
-                                            <input id={"id_"+index} type="checkbox"  defaultChecked={true}  onClick={(e)=>manageChbxChange(e,index)} />
+                                            <input id={"id_"+index} type="checkbox"  defaultChecked={examClasses[index]!=0}  onClick={(e)=>manageChbxChange(e,index)} />
                                             <label>{elt.label}</label>
                                         </div>
                                     )                                       
@@ -297,28 +309,34 @@ function AddExam(props) {
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
                 />
-                
-                <CustomButton
-                    btnText={t("save")}
-                    // hasIconImg= {true}
-                    // imgSrc='images/etape2.png'
-                    imgStyle = {classes.frmBtnImgStyle2} 
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={saveExam}
-                />
 
-                {/* <CustomButton
-                    btnText={t("infoParnt")}
-                    hasIconImg= {true}
-                    imgSrc='images/etape3.png'
-                    imgStyle = {classes.frmBtnImgStyle1} 
-                    buttonStyle={classes.buttonEtape3}
-                    btnTextStyle = {classes.btnEtapeTextStyle}
-                    btnClickHandler={(etape3InActiv) ? null:()=>{showStep3();}}
-                    disable={etape3InActiv} 
-                /> */}
+        
+
+                {(props.formMode == 'creation') &&
+                    <CustomButton
+                        btnText={t("save")}
+                        // hasIconImg= {true}
+                        // imgSrc='images/etape2.png'
+                        imgStyle = {classes.frmBtnImgStyle2} 
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={saveExam}
+                    />                
+                }
                 
+                
+                {(props.formMode == 'modif') &&
+                    <CustomButton
+                        btnText={t("modify")}
+                        // hasIconImg= {true}
+                        // imgSrc='images/etape2.png'
+                        imgStyle = {classes.frmBtnImgStyle2} 
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={saveExam}
+                    />
+                }
+     
             </div>
 
         </div>

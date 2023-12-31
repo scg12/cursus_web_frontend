@@ -78,8 +78,10 @@ function NewOfficialExam(props) {
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.libelle       = elt.libelle;
+            listElt.rang          = rang;
+            listElt.id            = elt.id;
+            listElt.libelleExam   = elt.libelle;
+            listElt.classes       = elt.classes;
             listElt.idNiveau      = elt.niveau.id;
             listElt.libelleNiveau = elt.niveau.libelle;
             elt.idclasses         = '';
@@ -87,25 +89,42 @@ function NewOfficialExam(props) {
             listElt.classes.map((elt, index)=>{
                 if(index == 0){
                     elt.idclasses      = elt.id;
-                    elt.libelleclasses = elt.libelle;
+                    elt.libelleClasses = elt.libelle;
                 } else {
                     elt.idclasses      = elt.idclasses +'_'+ elt.id;
-                    elt.libelleclasses = elt.libelleclasses +'_'+ elt.libelle;
+                    elt.libelleClasses = elt.libelleclasses +'_'+ elt.libelle;
                 }
             }); 
             
-            formattedList.push(listElt);           
+            formattedList.push(listElt); 
+            rang ++;          
         });
         return formattedList;
     }
 
 /*************************** DataGrid Declaration ***************************/    
 const columnsFr = [
+    {
+        field          : 'id',
+        headerName     : 'ID',
+        width          : 200,
+        editable       : false,
+        hide           : true,
+        headerClassName:classes.GridColumnStyle
+    },
+    
+    {
+        field          : 'rang',
+        headerName     : 'N°',
+        width          : 50,
+        editable       : false,
+        headerClassName:classes.GridColumnStyle
+    },
        
     {
-        field          : 'libelle',
+        field          : 'libelleExam',
         headerName     : 'NOM EXAMEN',
-        width          : 200,
+        width          : 150,
         editable       : false,
         headerClassName:classes.GridColumnStyle
     },
@@ -128,9 +147,9 @@ const columnsFr = [
     },
 
     {
-        field          : 'libelleclasses',
+        field          : 'libelleClasses',
         headerName     : 'CLASSES',
-        width          : 300,
+        width          : 150,
         editable       : false,
         headerClassName:classes.GridColumnStyle
     },
@@ -139,14 +158,14 @@ const columnsFr = [
         field          : 'idclasses',
         headerName     : 'CLASSES',
         hide           : true,
-        width          : 300,
+        width          : 150,
         editable       : false,
         headerClassName:classes.GridColumnStyle
     },
    
     {
-        field          : 'id',
-        headerName: '',
+        field          : '',
+        headerName: 'ACTION',
         width: 15,
         editable: false,
         headerClassName:classes.GridColumnStyle,
@@ -180,36 +199,71 @@ const columnsFr = [
     ];
 
     const columnsEn = [
-       
         {
-            field: 'matricule',
-            headerName: 'EXAM ',
-            width: 200,
-            editable: false,
+            field          : 'id',
+            headerName     : 'ID',
+            width          : 200,
+            editable       : false,
+            hide           : true,
             headerClassName:classes.GridColumnStyle
         },
+
         {
-            field: 'displayedName',
-            headerName: 'LEVEL',
-            width: 80,
-            editable: false,
+            field          : 'rang',
+            headerName     : 'N°',
+            width          : 50,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+       
+        {
+            field          : 'libelleExam',
+            headerName     : 'EXAM NAME',
+            width          : 150,
+            editable       : false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'nom',
-            headerName: 'CLASSES',
-            width: 300,
-            editable: false,
+            field          : 'idNiveau',
+            headerName     : 'LEVEL',
+            width          : 80,
+            editable       : false,
+            hide           : true,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field          : 'libelleNiveau',
+            headerName     : 'LEVEL',
+            width          : 80,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field          : 'libelleClasses',
+            headerName     : 'CLASSES',
+            width          : 150,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field          : 'idclasses',
+            headerName     : 'CLASSES',
+            hide           : true,
+            width          : 150,
+            editable       : false,
+            hide           : true,
             headerClassName:classes.GridColumnStyle
         },
        
         {
-            field: 'id',
-            headerName: '',
+            field: '',
+            headerName: 'ACTION',
             width: 15,
             editable: false,
-            hide:(props.formMode=='ajout')? false : true,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
@@ -234,7 +288,8 @@ const columnsFr = [
                             alt=''
                         />
                     </div>
-                )}           
+                ) 
+            }          
                 
         },        
          
@@ -284,27 +339,13 @@ const columnsFr = [
     function handleEditRow(row){       
         var inputs=[];
         
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
+        inputs[0]= row.id;
+        inputs[1]= row.libelleExam;
+        inputs[2]= row.idNiveau;
+        inputs[3]= row.libelleNiveau;
+        inputs[4]= row.idclasses;
+        inputs[5]= row.libelleClasses;
+ 
         console.log("laligne",row);
         currentUiContext.setFormInputs(inputs)
         setModalOpen(2);
@@ -313,32 +354,16 @@ const columnsFr = [
 
     function consultRowData(row){
         var inputs=[];
-       
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
+   
+        inputs[0]= row.id;
+        inputs[1]= row.libelleExam;
+        inputs[2]= row.idNiveau;
+        inputs[3]= row.libelleNiveau;
+        inputs[4]= row.idclasses;
+        inputs[5]= row.libelleClasses;
      
         currentUiContext.setFormInputs(inputs)
         setModalOpen(3);
-
     }
 
     function addNewExam(exam) {       
@@ -348,9 +373,7 @@ const columnsFr = [
             libelle     : exam.libelle,
             niveau      : exam.niveau,
             classes     : exam.classes,
-            id_session  : exam.id_session,
-            id_sousetab : exam.id_sousetab
-
+            id_sousetab : exam.id_sousetab            
         }).then((res)=>{
             console.log(res.data);           
             chosenMsgBox = MSG_SUCCESS;
@@ -364,16 +387,12 @@ const columnsFr = [
     }
     
     function modifyExam(exam) {
-        console.log('Modif',exam);
-     
+        console.log('Modif',exam);     
         axiosInstance.post(`update-examen-officiel/`, {
-            id          : exam.id_exam,
-            libelle     : exam.libelle,
-            niveau      : exam.niveau,
-            classes     : exam.classes,
-            id_session  : exam.id_session,
-            id_sousetab : exam.id_sousetab
-
+            id       : exam.id_exam,
+            libelle  : exam.libelle,
+            niveau   : exam.niveau,
+            classes  : exam.classes,
         }).then((res)=>{
             console.log(res.data);
             chosenMsgBox = MSG_SUCCESS;
@@ -383,7 +402,6 @@ const columnsFr = [
                 msgTitle:t("success_modif_M"), 
                 message:t("success_modif")
             })
-            
         })
     }
 
@@ -680,16 +698,7 @@ const columnsFr = [
                             disable={(isValid==false)}   
                         />
 
-                        <CustomButton
-                            btnText={t('importer')}
-                            hasIconImg= {true}
-                            imgSrc='images/import.png'
-                            imgStyle = {classes.grdBtnImgStyle} 
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(isValid==false)}    
-                        /> */}
+                        */}
                     </div>
                         
                 </div>
@@ -702,7 +711,7 @@ const columnsFr = [
                         
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='libelleExam')? classes.gridMainRowStyle : classes.gridRowStyle }
                         // onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {

@@ -619,10 +619,10 @@ function LoginForm(props){
                 
 
                 <div className={classes.aboutApp} style={{width:"29vw"}}> 
-                    <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>
+                    <div style={{display:"flex", flexDirection:"row", justifyContent:"center", marginLeft:"-1vw"}}>
                         {/* <img src="images/cursusLogo_Mob1.png" style={{position:"absolute",marginTop:"0.3vh", marginRight:"18.7vw", width:"7vw", height:"5vh"}}/> */}
-                        <div className={classes.aboutAppTextStyle} style={{width:"29vw", color:"#20202d"}}>
-                           <b style={{fontSize:"1.3vw", fontFamily:"math", marginRight:"0.17vw", fontWeight:"bolder"}}>Cursus.net </b> {t("is_aproduct_of")}  <b style={{fontFamily:"system-ui", fontWeight:"bolder"}}>BOGEDEV Corporation. </b> {t("rightsReserve")}
+                        <div className={classes.aboutAppTextStyle} style={{width:"29vw", color:"#2a2a32" /*"#20202d"*/}}>
+                           <b style={{fontSize:"1.3vw", fontFamily:"math", marginRight:"0.17vw", fontWeight:"bolder"}}>Cursus.net </b> <b>{t("is_aproduct_of")}</b>  <b style={{fontFamily:"system-ui", fontWeight:"bolder"}}>BOGEDEV Corporation. </b> <b>{t("rightsReserve")}</b>
                         </div>
 
                         {/* <div style={{width:"30vw", fontSize:"smaller"}}> 

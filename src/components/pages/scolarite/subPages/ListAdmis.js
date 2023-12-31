@@ -13,22 +13,11 @@ import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions
 import { useTranslation } from "react-i18next";
 
 
-let CURRENT_CLASSE_ID;
-let CURRRENT_COURS_ID;
-let SELECTED_DATE;
+let CURRENT_EXAM_ID;
+let CURRENT_EXAM_LABEL;
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"", 
-    nom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    redouble: '',  
-    id:1,
-}
+
+var listElt ={};
 
 function ListAdmis(props) {
 
@@ -42,38 +31,61 @@ function ListAdmis(props) {
     const [present, setPresent]= useState(0);
     const [absent, setAbsent]= useState(0);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
-    const [optClasse, setOpClasse] = useState([]);
+    const [optExam, setOpExams] = useState([]);
     const [optCours, setOpCours] = useState([]);
     const [optDate, setOpDate] = useState([]);
     
 
     useEffect(()=> {
         if(gridRows.length ==0){
-            CURRENT_CLASSE_ID = undefined;
+            CURRENT_EXAM_ID = undefined;
         }    
-        getEtabListClasses();    
+        getEtabListExams();    
     },[]);
 
 
 
-    const getEtabListClasses=()=>{
-        var tempTable=[{value: '0',      label:'Choisir une classe'    }];
+    const getEtabListExams=()=>{
+        var tempTable=[{value: -1,      label: (i18n.language=='fr') ? '  Choisir un Examen  ' : '  Select an Exam '  }];
 
-        axiosInstance.post(`list-classes/`, {
+        axiosInstance.post(`list-examen-officiel/`, {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-            })         
+                console.log(res.data.res);
+                res.data.res.map((exam)=>{
+                tempTable.push({value:exam.id, label:exam.libelle})                
+            })      
+            setOpExams(tempTable);   
         }) 
     }
 
-      const  getClassStudentList=(classId)=>{
+    const formatList=(list) =>{
+        var rang = 1;
+        var formattedList =[]
+        list.map((elt)=>{
+            listElt={};
+            listElt.rang           = rang; 
+            listElt.id             = elt.id;
+            listElt.matricule      = elt.matricule;
+            listElt.nom            = elt.nom;
+            listElt.prenom         = elt.prenom;
+            listElt.displayedName  = elt.nom +' '+elt.prenom;
+            listElt.resultat       = elt.resultat=="Echoué" ? t("failed"):t("admis");
+            listElt.mention        = elt.mention;
+            listElt.moyenne        = elt.moyenne;
+            listElt.libelle_classe = elt.libelle_classe;
+            listElt.id_classe      = elt.id_classe;
+           
+            formattedList.push(listElt);
+            rang ++;
+        })
+        return formattedList;
+    }
+
+      const  getExamStudentResultList=(examId)=>{
         var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
+        axiosInstance.post(`list-resultat-examen-officiel/`, {
+            id_exam : examId,
         }).then((res)=>{
             console.log(res.data);
             listEleves = [...formatList(res.data)]
@@ -86,81 +98,132 @@ function ListAdmis(props) {
     }
 
     function classeChangeHandler(e){       
-        
+        if(e.target.value > 0){
+            setIsValid(true);
+            CURRENT_EXAM_ID = e.target.value; 
+            CURRENT_EXAM_LABEL = optExam[optExam.findIndex((nivo)=>(nivo.value == CURRENT_EXAM_ID))].label;
+            getExamStudentResultList(CURRENT_EXAM_ID);
+            console.log(CURRENT_EXAM_LABEL)          
+        }else{
+            CURRENT_EXAM_ID    = undefined;
+            CURRENT_EXAM_LABEL = '';
+            setGridRows([]);
+            setIsValid(false);
+        }
     }
-
-   
-
-
-    const formatList=(list) =>{
-        var rang = 1;
-        var formattedList =[]
-        list.map((elt)=>{
-            listElt={};
-            listElt.id = elt.id;
-            listElt.nom  = elt.nom +' '+elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = convertDateToUsualDate(elt.date_entree);
-            listElt.nom_pere = elt.nom_pere;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant"; 
-            formattedList.push(listElt);
-            rang ++;
-
-        })
-        return formattedList;
-    }
-    
+ 
 /*************************** DataGrid Declaration ***************************/    
-    const columns = [
+    const columnsFr = [
         {
-            field: 'rang',
-            headerName: 'N°',
-            width: 33,
-            editable: false,
+            field          : 'id',
+            headerName     : 'ID',
+            width          : 33,
+            editable       : false,
+            hide           : true,
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'matricule',
-            headerName: t('matricule_short_M'),
-            width: 100,
-            editable: false,
+            field           : 'rang',
+            headerName      : 'N°',
+            width           : 33,
+            editable        : false,
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'nom',
-            headerName: t('displayedName_M'),
-            width: 200,
-            editable: false,
+            field          : 'matricule',
+            headerName     : "MATRICULE",
+            width          : 100,
+            editable       : false,
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'date_naissance',
-            headerName: t('resultat_M'),
-            width: 110,
-            editable: false,
+            field          : 'displayedName',
+            headerName     : "NOM(S) ET PRENOM(S)",
+            width          : 200,
+            editable       : false,
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'lieu_naissance',
-            headerName: t('mention_M'),
-            width: 120,
-            editable: false,
+            field          : "resultat",
+            headerName     : "RESULTAT",
+            width          : 90,
+            editable       : false,
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'date_entree',
-            headerName: t('moyenne_M'),
-            width: 110,
-            editable: false,
+            field          : 'mention',
+            headerName     : "MENTION",
+            width          : 120,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field          : "moyenne",
+            headerName     : "MOYENNE",
+            width          : 80,
+            editable       : false,
             headerClassName:classes.GridColumnStyle,
                 
         }
        
     ];
+
+
+    const columnsEn = [
+        {
+            field          : 'id',
+            headerName     : 'ID',
+            width          : 33,
+            editable       : false,
+            hide           : true,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field           : 'rang',
+            headerName      : 'N°',
+            width           : 33,
+            editable        : false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field          : 'matricule',
+            headerName     : "REG. ID",
+            width          : 100,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field          : 'displayedName',
+            headerName     : "NAME(S) AND SURNAME(S)",
+            width          : 200,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field          : "resultat",
+            headerName     : "RESULT",
+            width          : 90,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field          : 'mention',
+            headerName     : "APPRECIATION",
+            width          : 120,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field          : "moyenne",
+            headerName     : "SCORE",
+            width          : 80,
+            editable       : false,
+            headerClassName:classes.GridColumnStyle,
+                
+        }
+       
+    ];
+
 
 /*************************** Theme Functions ***************************/
     function getGridButtonStyle()
@@ -292,7 +355,7 @@ function ListAdmis(props) {
                       
                         <div className={classes.selectZone}>
                             <select id='optExam' onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
-                                {(optClasse||[]).map((option)=> {
+                                {(optExam||[]).map((option)=> {
                                     return(
                                         <option value={option.value}>{option.label}</option>
                                     );
@@ -323,7 +386,7 @@ function ListAdmis(props) {
                     <div className={classes.gridDisplay} >
                         <StripedDataGrid
                             rows={gridRows}
-                            columns={columns}
+                            columns={(i18n.language =='fr') ? columnsFr : columnsEn}
                             getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
                             
                             onCellClick={(params,event)=>{
