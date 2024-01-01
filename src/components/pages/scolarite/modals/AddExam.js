@@ -10,11 +10,12 @@ import UiContext from "../../../../store/UiContext";
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
-
-var CURRENT_EXAM = {};
 var CURRENT_ANNEE_SCOLAIRE;
-var TABCLASSE     = [];
 var selected_niveau;
+var CURRENT_EXAM  = {};
+var TABCLASSE     = [];
+var listNiveaux   = [];
+
 
 
 
@@ -34,24 +35,7 @@ function AddExam(props) {
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
         getEtabNiveaux();
         getEtabClasses();
-
-        if(props.formMode != 'creation'){ 
-            CURRENT_EXAM = {};
         
-            CURRENT_EXAM.id_exam  = putToEmptyStringIfUndefined(currentUiContext.formInputs[0]);
-            CURRENT_EXAM.libelle  = putToEmptyStringIfUndefined(currentUiContext.formInputs[1]);
-            CURRENT_EXAM.niveau   = putToEmptyStringIfUndefined(currentUiContext.formInputs[2]);
-            
-            //initialisation du select objet du conseil
-            var tempTab = [...optNiveau];             
-            var index1  = tempTab.findIndex((elt)=>elt.value ==  CURRENT_EXAM.niveau);
-            var niveau  = tempTab.find((elt)=>elt.value ==  CURRENT_EXAM.niveau);
-            console.log("+++++ tempTab: ",tempTab);
-            tempTab.splice(index1,1);
-            tempTab.unshift(niveau);
-            setOptNiveau(tempTab);            
-        }
-
     },[]);
 
 
@@ -111,15 +95,31 @@ function AddExam(props) {
 
 
     function getEtabNiveaux(){
-        var tempTable=[]
-        var tabNiveau=[];
-         
+        var tabNiveau=[];    
         tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab)
         tabNiveau.map((classe)=>{
-        tempTable.push({value:classe.id_niveau, label:classe.libelle});
+            listNiveaux.push({value:classe.id_niveau, label:classe.libelle});
         });
-        selected_niveau = tempTable[0].value;
-        setOptNiveau(tempTable);
+        
+        console.log("niveaux",listNiveaux);
+
+        if(props.formMode != 'creation'){  
+            var idNiveau = currentUiContext.formInputs[2];
+            var tempTab  = [...listNiveaux];             
+            var index1   = tempTab.findIndex((elt)=>elt.value == idNiveau );
+            var niveau   = tempTab.find((elt)=>elt.value ==  idNiveau);
+          
+            tempTab.splice(index1,1);
+            tempTab.unshift(niveau);
+            listNiveaux = [];
+
+            listNiveaux = [...tempTab];
+
+            console.log("niveaux2",listNiveaux,tempTab);
+        }
+
+        selected_niveau = listNiveaux[0].value; 
+        setOptNiveau(listNiveaux); 
     }
     
 
@@ -179,6 +179,7 @@ function AddExam(props) {
         });
 
         if(props.formMode != 'creation'){ 
+            console.log("selected classe",currentUiContext.formInputs[4])
             var selectedClasse =  currentUiContext.formInputs[4].split('_');
             selectedClasse.map((elt)=>{
                 for(var i=0; i<TABCLASSE.length; i++){
@@ -256,7 +257,7 @@ function AddExam(props) {
 
                             {(props.formMode =='consult') ?
                                 <div> 
-                                    <input id="levelLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}}/>
+                                    <input id="levelLabel" type="text" className={classes.inputRowControl}  defaultValue={currentUiContext.formInputs[3]} style={{width:'15vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-2vw'}} disabled={true}/>
                                     <input id="levelId" type="hidden" />
                                 </div>  
                                 :

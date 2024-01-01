@@ -64,7 +64,7 @@ function NewOfficialExam(props) {
         axiosInstance.post(`list-examen-officiel/`, {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
-            console.log(res.data);
+            console.log("list Exams",res.data);
             listExams = [...formatList(res.data.res)]
             console.log(listExams);
             setGridRows(listExams);
@@ -77,14 +77,14 @@ function NewOfficialExam(props) {
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.rang          = rang;
-            listElt.id            = elt.id;
-            listElt.libelleExam   = elt.libelleExam;
-            listElt.classes       = elt.classes;
-            listElt.idNiveau      = elt.id_niveau;
-            listElt.libelleNiveau = elt.libelle_niveau;
-            listElt.idclasses         = elt.id_classes;
-            listElt.libelleclasses    = elt.libelle_classes;
+            listElt.rang              = rang;
+            listElt.id                = elt.id;
+            listElt.libelleExam       = elt.libelleExam;
+            listElt.classes           = elt.classes;
+            listElt.idNiveau          = elt.id_niveau;
+            listElt.libelleNiveau     = elt.libelle_niveau;
+            listElt.idClasses         = elt.id_classes;
+            listElt.libelleClasses    = elt.libelle_classes.split('_').join(',');
             // elt.idclasses         = '';
             // elt.libelleclasses    = '';
             // listElt.classes.map((elt, index)=>{
@@ -157,7 +157,7 @@ const columnsFr = [
     },
 
     {
-        field          : 'idclasses',
+        field          : 'idClasses',
         headerName     : 'CLASSES',
         hide           : true,
         width          : 150,
@@ -252,7 +252,7 @@ const columnsFr = [
         },
     
         {
-            field          : 'idclasses',
+            field          : 'idClasses',
             headerName     : 'CLASSES',
             hide           : true,
             width          : 150,
@@ -345,7 +345,7 @@ const columnsFr = [
         inputs[1]= row.libelleExam;
         inputs[2]= row.idNiveau;
         inputs[3]= row.libelleNiveau;
-        inputs[4]= row.idclasses;
+        inputs[4]= row.idClasses;
         inputs[5]= row.libelleClasses;
  
         console.log("laligne",row);
@@ -361,7 +361,7 @@ const columnsFr = [
         inputs[1]= row.libelleExam;
         inputs[2]= row.idNiveau;
         inputs[3]= row.libelleNiveau;
-        inputs[4]= row.idclasses;
+        inputs[4]= row.idClasses;
         inputs[5]= row.libelleClasses;
      
         currentUiContext.setFormInputs(inputs)
