@@ -328,6 +328,7 @@
     "school_certificate_M":"CERTIFICAT DE SCOLARITE",
     "school_certificate":"Certificat de scolarité",
     "generate_school_certificate_M" : "GENERATION DE CERTIFICAT DE SCOLARITE",
+    "print_school_certificate_M"    : "IMPRESSION DE CERTIFICAT DE SCOLARITE ",
     "quit_question":"Voulez-vous vraiment quitter l'application?",
     "logout":"DECONNEXION",
     "look_academic_history":"Voir le dossier scolaire",

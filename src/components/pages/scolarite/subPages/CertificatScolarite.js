@@ -837,7 +837,7 @@ const columnsFr = [
             <div className={classes.inputRow} >
              
                 <div className={classes.formTitle}>
-                    {t('generate_school_certificate_M')}  
+                    {t('print_school_certificate_M')}  
                 </div>
                    
             </div>
@@ -879,7 +879,7 @@ const columnsFr = [
 
                         <CustomButton
                             id                 = {"btnGen"}
-                            btnText            = {t('generer')}
+                            btnText            = {t('imprimer')}
                             hasIconImg         = {true}
                             imgSrc             ='images/printing1.png'
                             imgStyle           = {classes.grdBtnImgStyle}  
