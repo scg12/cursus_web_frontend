@@ -15,6 +15,7 @@ var selected_niveau;
 var CURRENT_EXAM  = {};
 var TABCLASSE     = [];
 var listNiveaux   = [];
+var selectedClasse;
 
 
 
@@ -34,6 +35,7 @@ function AddExam(props) {
         
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
         getEtabNiveaux();
+        if(props.formMode != 'creation') selectedClasse =  currentUiContext.formInputs[4].split('_');
         getEtabClasses();
         
     },[]);
@@ -95,7 +97,8 @@ function AddExam(props) {
 
 
     function getEtabNiveaux(){
-        var tabNiveau=[];    
+        var tabNiveau = [];   
+        listNiveaux   = []
         tabNiveau =  currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == currentAppContext.currentEtab)
         tabNiveau.map((classe)=>{
             listNiveaux.push({value:classe.id_niveau, label:classe.libelle});
@@ -157,7 +160,12 @@ function AddExam(props) {
     function niveauChangeHandler(e){
         if(e.target.value > 0){
             selected_niveau  = e.target.value;
-            var cur_index = optNiveau.findIndex((index)=>index.value == selected_niveau);
+            if(props.formMode != 'creation'){ 
+                var tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab && cls.id_niveau==selected_niveau);
+                tabClasses.map((cls)=>{
+                    selectedClasse.push(cls.id_classe); 
+                });                
+            }
             getEtabClasses();            
  
         } else {
@@ -179,8 +187,6 @@ function AddExam(props) {
         });
 
         if(props.formMode != 'creation'){ 
-            console.log("selected classe",currentUiContext.formInputs[4])
-            var selectedClasse =  currentUiContext.formInputs[4].split('_');
             selectedClasse.map((elt)=>{
                 for(var i=0; i<TABCLASSE.length; i++){
                     if(TABCLASSE[i]== elt) listClasseCible[i] = elt;
