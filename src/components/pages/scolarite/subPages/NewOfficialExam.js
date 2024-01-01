@@ -65,7 +65,7 @@ function NewOfficialExam(props) {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
             console.log(res.data);
-            listExams = [...formatList(res.data)]
+            listExams = [...formatList(res.data.res)]
             console.log(listExams);
             setGridRows(listExams);
             console.log(gridRows);
@@ -79,21 +79,24 @@ function NewOfficialExam(props) {
             listElt={};
             listElt.rang          = rang;
             listElt.id            = elt.id;
-            listElt.libelleExam   = elt.libelle;
+            listElt.libelleExam   = elt.libelleExam;
             listElt.classes       = elt.classes;
-            listElt.idNiveau      = elt.niveau.id;
-            listElt.libelleNiveau = elt.niveau.libelle;
-            elt.idclasses         = '';
-            elt.libelleclasses    = '';
-            listElt.classes.map((elt, index)=>{
-                if(index == 0){
-                    elt.idclasses      = elt.id;
-                    elt.libelleClasses = elt.libelle;
-                } else {
-                    elt.idclasses      = elt.idclasses +'_'+ elt.id;
-                    elt.libelleClasses = elt.libelleclasses +'_'+ elt.libelle;
-                }
-            }); 
+            listElt.idNiveau      = elt.id_niveau;
+            listElt.libelleNiveau = elt.libelle_niveau;
+            listElt.idclasses         = elt.id_classes;
+            listElt.libelleclasses    = elt.libelle_classes;
+            // elt.idclasses         = '';
+            // elt.libelleclasses    = '';
+            // listElt.classes.map((elt, index)=>{
+            //     if(index == 0){
+            //         elt.idclasses      = elt.id_classe;
+            //         elt.libelleClasses = elt.libelle_classe;
+            //     } else 
+            //     {
+            //         elt.idclasses      = elt.id_classes +'_'+ elt.id;
+            //         elt.libelleClasses = elt.libelle_classes +'_'+ elt.libelle;
+            //     }
+            // }); 
             
             formattedList.push(listElt); 
             rang ++;          

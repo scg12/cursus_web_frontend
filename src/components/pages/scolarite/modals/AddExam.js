@@ -46,7 +46,7 @@ function AddExam(props) {
             var tempTab = [...optNiveau];             
             var index1  = tempTab.findIndex((elt)=>elt.value ==  CURRENT_EXAM.niveau);
             var niveau  = tempTab.find((elt)=>elt.value ==  CURRENT_EXAM.niveau);
-            
+            console.log("+++++ tempTab: ",tempTab);
             tempTab.splice(index1,1);
             tempTab.unshift(niveau);
             setOptNiveau(tempTab);            
