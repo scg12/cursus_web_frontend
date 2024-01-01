@@ -1467,7 +1467,7 @@ function setEditMeetingGlobalData(meeting){
                             <CustomButton
                                 btnText={t('New_one')}
                                 hasIconImg= {true}
-                                imgSrc='images/ConseilDiscipline.png'
+                                imgSrc='images/addCD.png'
                                 imgStyle = {classes.grdBtnImgStyleP}    
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyleP}

@@ -188,7 +188,7 @@ function AddManuel(props) {
         <div className={'card '+ classes.formCanvas} style={{width:"37vw", height:"50vh"}}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
-                    <img alt='add student' className={classes.formHeaderImgP} src='images/addBook.png'/>
+                    <img alt='add student' className={classes.formHeaderImgP} src='images/addBookP.png'/>
                 </div>
                 <div className={classes.formMainTitle} >
                     {t("new_manuel_M")}

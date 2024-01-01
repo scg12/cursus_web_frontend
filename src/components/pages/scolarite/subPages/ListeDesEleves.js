@@ -974,8 +974,9 @@ const columnsFr = [
                             <CustomButton
                                 btnText={t('New_student')}
                                 hasIconImg= {true}
-                                imgSrc='images/addNewUserOrg.png'
-                                imgStyle = {classes.grdBtnImgStyle}  
+                                imgSrc='images/addNewSchoolStud.png'
+                                //imgSrc='images/addNewUserOrg.png'
+                                imgStyle = {classes.grdBtnImgStyleP}  
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.gridBtnTextStyle}
                                 btnClickHandler={AddNewStudentHandler}
