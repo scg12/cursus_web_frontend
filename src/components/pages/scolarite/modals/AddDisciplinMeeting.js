@@ -1448,7 +1448,7 @@ function AddDisciplinMeeting(props) {
            
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
-                    <img alt='add student' className={classes.formHeaderImg} src='images/ConseilDiscipline.png'/>
+                    <img alt='add student' className={classes.formHeaderImg} src='images/addCD.png'/>
                 </div>
                 {(props.formMode == 'creation')  ?                
                     <div className={classes.formMainTitle} >

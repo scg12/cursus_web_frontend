@@ -726,7 +726,7 @@ const columnsEn = [
                         <CustomButton
                             btnText={t('new_manuel')}
                             hasIconImg= {true}
-                            imgSrc='images/addBook.png'
+                            imgSrc='images/addBookP.png'
                             imgStyle = {classes.grdBtnImgStyleP}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}

@@ -548,7 +548,7 @@ function AddStudent(props) {
         <div className={'card '+ classes.formContainer}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
-                    <img alt='add student' className={classes.formHeaderImg} src='images/AddStudent.png'/>
+                    <img alt='add student' className={classes.formHeaderImg} src='images/addNewSchoolStud.png'/>
                 </div>
                 {(props.formMode == 'creation')  ?                
                     <div className={classes.formMainTitle} >
