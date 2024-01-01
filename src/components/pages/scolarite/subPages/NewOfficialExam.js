@@ -6,7 +6,6 @@ import UiContext from "../../../../store/UiContext";
 import AppContext from "../../../../store/AppContext";
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
-import AddStudent from "../modals/AddStudent";
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
@@ -611,7 +610,7 @@ const columnsFr = [
                 <AddExam 
                     sessionId    = {1}
                     formMode     = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
-                    actionHandler={(modalOpen==1) ?  addNewExam : modifyExam } 
+                    actionHandler= {(modalOpen==1) ?  addNewExam : modifyExam } 
                     cancelHandler={quitForm}
                 />
             }

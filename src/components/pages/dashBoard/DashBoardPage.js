@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom';
 import { useTranslation } from "react-i18next";
 import MenuItemListP from '../../layout/cs_layout/menuItemList/MenuItemListP';
 import classes from './DashBoardPage.module.css';
@@ -22,11 +23,12 @@ import Effectifs from './subPages/effectifs/Effectifs';
 import Frais from './subPages/frais/Frais';
 import Assiduite from './subPages/assiduite/Assiduite';
 import Resultats from './subPages/resultats/Resultats';
+import MatiereProgress from './subPages/ProgramCover/MatiereProgress';
 
 import axiosInstance from '../../../axios';
 import axios from 'axios';
 
-
+var groupWidth;
 
 function DashBoardPage() {
       
@@ -252,6 +254,7 @@ function init(){
   level.label = 'Tous';
 
   getData('0');
+  getMatiereData('0');
   getEffectifData('0');
   getFraisNiveau('0');
   getResultNiveau('0');
@@ -261,13 +264,28 @@ function init(){
   setOptClassePC(tabClasses);
   currentUiContext.setPrgramCoverSelectedLevel(level);
 }
+
+const getMatiereData=(niveauId)=>{
+  axiosInstance.post(`program-cover-matiere/`, {
+    id_niveau  : niveauId, //1,
+    id_matiere : progCoverSelectedMatiere.id, //props.selectedMatiere.id,
+    id_classe  : prgramCoverSelectedClass.id, //props.selectedClasse.id,
+    id_sousetab: currentAppContext.currentEtab,  
+  }).then((res)=>{
+    // console.log(res.data);
+    createProgressionMatieres(progCoverSelectedMatiere,res.data.res);
+    setListMatieresProgress(res.data.res)
+  });
+}
+
+
 function getData(niveauId){
   // console.log("SALUT: ",niveauId);
   axiosInstance.post(`program-cover-niveau/`, {
-      id_niveau : niveauId,
-      id_matiere : progCoverSelectedMatiere.id,
-      id_classe : prgramCoverSelectedClass.id,
-      id_sousetab:currentAppContext.currentEtab,        
+      id_niveau   : niveauId,
+      id_matiere  : progCoverSelectedMatiere.id,
+      id_classe   : prgramCoverSelectedClass.id,
+      id_sousetab : currentAppContext.currentEtab,        
       
   }).then((res)=>{
       console.log(res.data);
@@ -281,6 +299,7 @@ function getData(niveauId){
   //   setDoughnutData([20,80]);       
 
 }
+
 function getEffectifData(niveauId){
   let selectedClass = document.querySelector('#selectclass2').value;
   // console.log("SALUT Eff: ",niveauId," isInscritLevelChart: ",isInscritLevelChart," classe: ",selectedClass);
@@ -298,6 +317,7 @@ function getEffectifData(niveauId){
 
   })
 }
+
 function getEffectifData2(){
   let selectedClass = document.querySelector('#selectclass2').value;
   // console.log("SALUT Eff2: ",effectifLevel.id," isInscritLevelChart: ",!isInscritLevelChart,selectedClass);
@@ -312,10 +332,9 @@ function getEffectifData2(){
       console.log("getEffectifData2: ",res.data);
       setBarChartData(res.data.effectif_niveau_data);
       setBarChartClasseData(res.data.effectif_classe_data)
-
-
-  })
+    })
 }
+
 function getEffectifClassesData(classeId){
   // let selectedClass = document.querySelector('#selectclass2').value;
   // console.log("SALUT  classe: ",classeId," isInscritClassChart: ",isInscritClassChart);
@@ -331,6 +350,7 @@ function getEffectifClassesData(classeId){
       setBarChartClasseData(res.data.effectif_classe_data)
   })
 }
+
 function getEffectifClassesData2(){
   // let id_cl = '0' ? effectifClass.id === undefined : effectifClass.id;
   let selectedClass = document.querySelector('#selectclass2').value;
@@ -347,6 +367,7 @@ function getEffectifClassesData2(){
       setBarChartClasseData(res.data.effectif_classe_data)
   })
 }
+
 function getFraisNiveau(niveauId){
   let selectedClass = document.querySelector('#selectclass3').value;
   // console.log("SALUT Eff: ",niveauId," isInscritLevelChart: ",isInscritLevelChart," classe: ",selectedClass);
@@ -364,6 +385,7 @@ function getFraisNiveau(niveauId){
 
   })
 }
+
 function getFraisClasse(classeId){
   axiosInstance.post(`frais-data-niveau/`, {
       id_classe : classeId,
@@ -378,6 +400,8 @@ function getFraisClasse(classeId){
       setBarChartClasseDataFrais(res.data.frais_classe_data)
   })
 }
+
+
 function getResultNiveau(niveauId){
   let selectedClass = document.querySelector('#selectClasse5').value;
   let selectedMatiere = document.querySelector('#selectMatiere5').value;
@@ -398,6 +422,7 @@ function getResultNiveau(niveauId){
 
   })
 }
+
 function getResultClasse(classeId){
   let selectedMatiere = document.querySelector('#selectMatiere5').value;
   axiosInstance.post(`res-data-niveau/`, {
@@ -415,6 +440,7 @@ function getResultClasse(classeId){
 
   })
 }
+
 function getResultMatiere(matiereId){
   axiosInstance.post(`res-data-niveau/`, {
       id_matiere : matiereId,
@@ -472,31 +498,106 @@ const progCompletionClassHandler=(e)=>{
 }
 
 const progCompletionMatiereHandler=(e)=>{
-  var curentMatiere = e.target.value;
-  var cur_index = optMatieresPC.findIndex((index)=>index.value == curentMatiere);
+  var curentMatiere  = e.target.value;
+  var cur_index      = optMatieresPC.findIndex((index)=>index.value == curentMatiere);
   var libelleMatiere = optMatieresPC[cur_index].label; 
-
-  var matiere ={};
-  matiere.id = curentMatiere;
-  matiere.label = libelleMatiere;
+  
+  var matiere        = {};
+  matiere.id         = curentMatiere;
+  matiere.label      = libelleMatiere;
   setPrgramCoverSelectedMatiere(matiere); 
   
   axiosInstance.post(`program-cover-matiere/`, {
-    id_niveau : document.querySelector("#selectNiveau1").value,
+    id_niveau   : document.querySelector("#selectNiveau1").value,
     // id_matiere : progCoverSelectedMatiere.id,
-    id_matiere : curentMatiere,
-    id_classe : prgramCoverSelectedClass.id,
-    id_sousetab:currentAppContext.currentEtab,        
+    id_matiere  : curentMatiere,
+    id_classe   : prgramCoverSelectedClass.id,
+    id_sousetab : currentAppContext.currentEtab,        
     
-}).then((res)=>{
-    console.log(res.data);
-    setListMatieresProgress(res.data.res) 
-})
-// var select = document.querySelector('#selectMatiere1');
-// select.addEventListener('change', function(){})
-// select.value = curentMatiere;
-// select.dispatchEvent(new Event('change'));
+  }).then((res)=>{
+      console.log(res.data);
+      setListMatieresProgress(res.data.res) 
+      createProgressionMatieres(matiere,res.data.res)
+  })
+  // var select = document.querySelector('#selectMatiere1');
+  // select.addEventListener('change', function(){})
+  // select.value = curentMatiere;
+  // select.dispatchEvent(new Event('change'));
 }
+
+function createProgressionMatieres(matiere, listMatieresProgress){
+  var tabMatieres=[];
+  var listMat="";
+  var matTab=[];
+  var groupCount;
+  var parentDiv,j;
+  
+
+  //initialisation de la div conteneur.
+  parentDiv = document.getElementById('matieresProgress');
+  groupCount = parentDiv.childNodes.length;
+  
+  if(groupCount>0){           
+      for(var i = 1; i <= groupCount; i++){
+          document.getElementById('sousGroupe'+i).remove();
+      }
+  }    
+  if(matiere != undefined) {
+      //Recuperation De la liste des matieres avc leur infos.        
+      // listMat = getMatieres(parseInt(matiere));
+      // listMat = "3+Allemand*1*78_Francais*1*84_Anglais*1*62_Histoire*2*73_ECM*2*75_SVT*2*82_PCT*2*93_Maths*2*72_Sport*3*100_TM*3*100_ESF*3*100";
+      // console.log("matiere : ", matiere," listMat: ",listMat)
+
+      //Extraction du nombre de groupes et calcul de la largeur d'un groupe. 
+      listMat =listMatieresProgress;
+      console.log("listMatieresProgress :",listMatieresProgress)
+      matTab = listMat.split('+');
+      groupCount = matTab[0];
+      if (listMat != ""){
+      if(groupCount==1) {
+          groupWidth = 12
+      }
+      else{
+        groupWidth = (Math.round(40/groupCount)-7)
+      }
+      //groupWidth = (groupCount!=0)? (groupCount==2)? 40: (Math.round(40/groupCount)-7) :40;
+
+      //Creation du tableau des matieres.
+      tabMatieres = matTab[1].split('_');
+  
+      //Creation des sous Divs conteneurs et
+      //Ajout des matieres avec leur progression.
+      for (var i = 1; i <=groupCount; i++) {
+          var cell = document.createElement('div');
+          cell.id='sousGroupe'+i;
+          cell.className=classes.matiereProgress;
+          cell.style.width = groupWidth;
+          /*cell.style.fontWeight='bold';
+          cell.textContent='Matieres du Groupe '+i; */
+
+          parentDiv.appendChild(cell);
+
+          for (var j = 0; j < tabMatieres.length; j++) {  
+              if(getStringAtPosition(tabMatieres[j],1)==i){
+                  var sousDiv = document.createElement('div');
+                  sousDiv.className= classes.inputRowLeft;
+                  document.getElementById('sousGroupe'+i).appendChild(sousDiv);
+                  ReactDOM.render(<MatiereProgress matiereInfo={tabMatieres[j]}/>,sousDiv)
+              }                    
+          }         
+      }
+    }
+  } 
+}
+
+function getStringAtPosition(examSting,pos){      
+  var tabResult = examSting.split('*');
+  // console.log('parpapa', tabResult)
+  if (tabResult.length==1) return 1;
+  if((pos >= 0)&&(pos<=tabResult.length-1)) return tabResult[pos];
+  else return undefined;    
+}
+
 
 
 //---------------- Effectifs -----------------//

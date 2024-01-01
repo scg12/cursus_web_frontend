@@ -31,30 +31,29 @@ var groupWidth;
 
 
 function ProgramCoverMatiere(props){
-    const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
-    const currentAppContext = useContext(AppContext);
-    const [listMatieresProgress, setListMatieresProgress] = useState(props.listMatieresProgress);
+  const { t, i18n } = useTranslation();
+  const currentUiContext = useContext(UiContext);
+  const currentAppContext = useContext(AppContext);
+  const [listMatieresProgress, setListMatieresProgress] = useState(props.listMatieresProgress);
    
-    const getData=()=>{
-
-      axiosInstance.post(`program-cover-matiere/`, {
-        id_niveau : 1,
-        id_matiere : props.selectedMatiere.id,
-        id_classe : 1,
-        id_sousetab:currentAppContext.currentEtab,        
-        
+  const getData=()=>{
+    axiosInstance.post(`program-cover-matiere/`, {
+      id_niveau  : 0, //1,
+      id_matiere : 0, //props.selectedMatiere.id,
+      id_classe  : 0, //props.selectedClasse.id,
+      id_sousetab:currentAppContext.currentEtab,  
     }).then((res)=>{
-        // console.log(res.data);
-        setListMatieresProgress(res.data.res)
+      // console.log(res.data);
+      setListMatieresProgress(res.data.res)
     });
-    }
+  }
     
   // useEffect(()=> {
   //   createProgressionMatieres(props.selectedMatiere.id);
   // },[props.selectedMatiere.id]);
+  
   useEffect(()=> {
-    getData();
+   // getData();
     createProgressionMatieres(props.selectedMatiere.id);
   },[props.selectedMatiere.id]);
 
@@ -247,9 +246,6 @@ function ProgramCoverMatiere(props){
     );
   }
   
-  
-
-
     return(
         <div id='matieresProgress' style={{fontSize:'0.7vw', display:'flex', flexDirection:'row', justifyContent:'center'}}>
 
