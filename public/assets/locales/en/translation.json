@@ -333,6 +333,7 @@
     "school_certificate_M":"SCHOOL CERTIFICATE",
     "school_certificate":"School certificate",
     "generate_school_certificate_M" : "SCHOOL CERTIFICATE GENERATION ",
+    "print_school_certificate_M" : "SCHOOL CERTIFICATE PRINTING ",
     "quit_question":"Do you confirm your logging out?",
     "logout":"LOGGING OUT",
     "look_academic_history":"Look academic history",
