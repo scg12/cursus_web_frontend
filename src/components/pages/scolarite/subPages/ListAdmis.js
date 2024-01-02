@@ -51,9 +51,9 @@ function ListAdmis(props) {
         axiosInstance.post(`list-examen-officiel/`, {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
-                console.log(res.data.res);
+                console.log("examen",res.data.res);
                 res.data.res.map((exam)=>{
-                tempTable.push({value:exam.id, label:exam.libelle})                
+                tempTable.push({value:exam.id, label:exam.libelleExam})                
             })      
             setOpExams(tempTable);   
         }) 
@@ -88,7 +88,7 @@ function ListAdmis(props) {
             id_exam : examId,
         }).then((res)=>{
             console.log(res.data);
-            listEleves = [...formatList(res.data)]
+            listEleves = [...formatList(res.data.res)]
             console.log(listEleves);
             setGridRows(listEleves);
             setPresent(listEleves.length)
@@ -374,7 +374,7 @@ function ListAdmis(props) {
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={savePresenceHandler}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            disable={isValid==false}   
                         />
                     </div>
                         
