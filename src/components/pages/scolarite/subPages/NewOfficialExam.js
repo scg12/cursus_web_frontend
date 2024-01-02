@@ -34,6 +34,7 @@ var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
 const MSG_CONFIRM =3;
+const MSG_SUCCESS_DELETE =4;
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var printedETFileName ='';
@@ -189,8 +190,8 @@ const columnsFr = [
                         height={17} 
                         className={classes.cellPointer} 
                         onClick={(event)=> {
-                            event.ignore = true;
-                        }}
+                            deleteRowConfirm(params.row.id);
+                         }}
                         alt=''
                     />  
 
@@ -285,7 +286,7 @@ const columnsFr = [
                             height={17} 
                             className={classes.cellPointer} 
                             onClick={(event)=> {
-                                event.ignore = true;
+                               deleteRowConfirm(params.row.id);
                             }}
                             alt=''
                         />
@@ -314,7 +315,7 @@ const columnsFr = [
     function handleDeleteRow(params){
         if(params.field=='id'){
             //console.log(params.row.matricule);
-            deleteRowConfirm(params.row.matricule);            
+            deleteRowConfirm(params.row.id);            
         }
     }
 
@@ -408,14 +409,14 @@ const columnsFr = [
     }
 
     function deleteRowConfirm(rowId) {
-        //alert(rowId);
         ROW_TO_DELETE_ID = rowId;
+
         chosenMsgBox = MSG_CONFIRM;
         currentUiContext.showMsgBox({
             visible:true, 
             msgType  : "question", 
-            msgTitle : t("success_modif_M"), 
-            message  : t("success_modif")
+            msgTitle : t("confirm_M"), 
+            message  : t("confirm_delete")
         })
     } 
 
@@ -469,9 +470,19 @@ const columnsFr = [
                     msgTitle:"", 
                     message:""
                 }) 
-                getListExams(CURRENT_CLASSE_ID); 
+                getListExams(); 
                 return 1;
             }
+
+            // case MSG_SUCCESS_DELETE: {
+            //     currentUiContext.showMsgBox({
+            //         visible:false, 
+            //         msgType:"", 
+            //         msgTitle:"", 
+            //         message:""
+            //     }) 
+            //     return 1;
+            // }
 
             case MSG_WARNING: {
                     currentUiContext.showMsgBox({
@@ -483,14 +494,24 @@ const columnsFr = [
                 return 1;
             }
 
-            case MSG_CONFIRM: {
-                    currentUiContext.showMsgBox({
+            case MSG_CONFIRM: 
+            {
+                currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 });  
-                deleteExam(ROW_TO_DELETE_ID).then(()=>{return 1});                
+                deleteExam(ROW_TO_DELETE_ID).then(()=>{
+                    chosenMsgBox = MSG_SUCCESS;
+                    currentUiContext.showMsgBox({
+                        visible  : true, 
+                        msgType  : "info", 
+                        msgTitle : t("success_modif_M"), 
+                        message  : t("success_modif")
+                    });                    
+                    return 1;
+                });                
             }
             
            
@@ -633,8 +654,8 @@ const columnsFr = [
           
            
             
-            {(currentUiContext.msgBox.visible == true)&&(chosenMsgBox==MSG_SUCCESS||chosenMsgBox==MSG_WARNING)&& <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true)&&(chosenMsgBox==MSG_SUCCESS||chosenMsgBox==MSG_WARNING)&&
+            {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
+            {(currentUiContext.msgBox.visible == true)&&
                 <MsgBox 
                     msgTitle = {currentUiContext.msgBox.msgTitle} 
                     msgType  = {currentUiContext.msgBox.msgType} 
@@ -714,10 +735,9 @@ const columnsFr = [
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
                         getCellClassName={(params) => (params.field==='libelleExam')? classes.gridMainRowStyle : classes.gridRowStyle }
-                        // onCellClick={handleDeleteRow}
+                        //onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {
-                                //console.log(params.row);
                                 handleEditRow(params.row)
                             }
                         }}  

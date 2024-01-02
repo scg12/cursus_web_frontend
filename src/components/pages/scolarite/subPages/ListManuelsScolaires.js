@@ -214,7 +214,7 @@ const columnsFr = [
                         height={17} 
                         className={classes.cellPointer} 
                         onClick={(event)=> {
-                            event.ignore = true;
+                            deleteRowConfirm(params.row.id);
                         }}
                         alt=''
                     />
@@ -314,7 +314,7 @@ const columnsEn = [
                         height={17} 
                         className={classes.cellPointer} 
                         onClick={(event)=> {
-                            event.ignore = true;
+                            deleteRowConfirm(params.row.id);
                         }}
                         alt=''
                     />
@@ -344,7 +344,7 @@ const columnsEn = [
     function handleDeleteRow(params){
         if(params.field=='id'){
             //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
+            deleteRowConfirm(params.row.id);            
         }
     }
 
@@ -441,39 +441,26 @@ const columnsEn = [
         })
     }
 
-    function deleteRow(rowId) {
+    function deleteRowConfirm(rowId) {
         ROW_TO_DELETE_ID = rowId;
 
         chosenMsgBox = MSG_CONFIRM;
         currentUiContext.showMsgBox({
             visible:true, 
-            msgType:"info", 
-            msgTitle:t("success_modif_M"), 
-            message:t("success_modif")
-        })
+            msgType  : "question", 
+            msgTitle : t("confirm_M"), 
+            message  : t("confirm_delete")
+        });
        
-        //Message de confirmation
-        /*if(window.confirm('Voulez-vous vraiment supprimer la section selectionnée?')){
-            //requete  axios de suppression de l'eatab qui a cet id
-            axiosInstance
-            .post(`delete-etab/`, {
-                id:rowId,
-            }).then((res)=>{
-                console.log(res.data.status)
-                 //Mise a jour du tableau
-                //setDataState(result)
-            })              
-        }*/
     } 
 
     function deleteManuel(rowId){
         return new Promise(function(resolve, reject){
             axiosInstance
             .post(`delete-manuel-scolaire/`, {
-                id:rowId,
-                // id_classe_courante = request.data['id_classe_courante']
-                // # portee peut etre "classe" ou "niveau"
-                // portee = request.data['portee']
+                id_manuel          : rowId,
+                id_classe_courante : '',               
+                portee             : "niveau"
             }).then((res)=>{
                 console.log(res.data.status)
                 resolve(1);
@@ -530,14 +517,24 @@ const columnsEn = [
                 return 1;
             }
             
-            case MSG_CONFIRM: {
-                    currentUiContext.showMsgBox({
+            case MSG_CONFIRM: 
+            {
+                currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 });  
-                deleteManuel(ROW_TO_DELETE_ID).then(()=>{return 1});                
+                deleteManuel(ROW_TO_DELETE_ID).then(()=>{
+                    chosenMsgBox = MSG_SUCCESS;
+                    currentUiContext.showMsgBox({
+                        visible  : true, 
+                        msgType  : "info", 
+                        msgTitle : t("success_modif_M"), 
+                        message  : t("success_modif")
+                    });
+                    return 1;
+                });                
             }
             
            
@@ -681,8 +678,8 @@ const columnsEn = [
           
            
             
-            {(currentUiContext.msgBox.visible == true)&&(chosenMsgBox==MSG_SUCCESS||chosenMsgBox==MSG_WARNING)&& <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true)&&(chosenMsgBox==MSG_SUCCESS||chosenMsgBox==MSG_WARNING)&&
+            {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
+            {(currentUiContext.msgBox.visible == true)&&
                 <MsgBox 
                     msgTitle = {currentUiContext.msgBox.msgTitle} 
                     msgType  = {currentUiContext.msgBox.msgType} 

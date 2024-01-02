@@ -566,6 +566,7 @@
     "no":"No",
     "must_select_class":"You must firstly select a class !",
     "confirm_M":"CONFIRMATION",
+    "confirm_delete":"Do you really want to delete the selected item ?",
     "warning_M":"WARNING!",
     "warning":"Warning",
     "success_modif":"Update successful!",

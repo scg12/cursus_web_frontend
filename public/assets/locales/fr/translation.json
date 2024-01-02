@@ -564,6 +564,7 @@
   
     "must_select_class":"Vous devez d'abord sélectionner une classe !",
     "confirm_M":"CONFIRMATION",
+    "confirm_delete":"Voulez-vous vraiment supprimer l'élement selectionné ?",
     "warning_M":"ATTENTION",
     "warning":"Avertissement!!!",
     "success_modif":"Modification effectuee avec succès!",
