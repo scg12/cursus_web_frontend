@@ -28,12 +28,10 @@ function ListAdmis(props) {
     const selectedTheme = currentUiContext.theme;
     const [isValid, setIsValid] = useState(false);
     const [gridRows, setGridRows] = useState([]);
-    const [present, setPresent]= useState(0);
     const [absent, setAbsent]= useState(0);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const [optExam, setOpExams] = useState([]);
-    const [optCours, setOpCours] = useState([]);
-    const [optDate, setOpDate] = useState([]);
+ 
     
 
     useEffect(()=> {
@@ -91,13 +89,12 @@ function ListAdmis(props) {
             listEleves = [...formatList(res.data.res)]
             console.log(listEleves);
             setGridRows(listEleves);
-            setPresent(listEleves.length)
             console.log(gridRows);
         })  
         return listEleves;     
     }
 
-    function classeChangeHandler(e){       
+    function examChangeHandler(e){       
         if(e.target.value > 0){
             setIsValid(true);
             CURRENT_EXAM_ID = e.target.value; 
@@ -270,36 +267,6 @@ function ListAdmis(props) {
     }
 
 
-    function getPresentCount(tab){
-        var countPresent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 1) countPresent++;
-        }
-        return countPresent;
-    }
-
-    function getAbsentCount(tab){
-        var countAbsent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 0) countAbsent++;
-        }
-        return countAbsent;
-    } 
-   
-    function handlePresence(params){
-        console.log(params);
-        if(params.presence == 0) {
-            params.presence = 1;
-            setPresent(present+1);
-            setAbsent(absent-1);
-        }
-        else{
-            params.presence = 0;
-            setPresent(present-1);
-            setAbsent(absent+1);
-        } 
-    }
-
     /********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
     
@@ -354,7 +321,7 @@ function ListAdmis(props) {
                         </div>
                       
                         <div className={classes.selectZone}>
-                            <select id='optExam' onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
+                            <select id='optExam' onChange={examChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
                                 {(optExam||[]).map((option)=> {
                                     return(
                                         <option value={option.value}>{option.label}</option>
@@ -392,7 +359,7 @@ function ListAdmis(props) {
                             onCellClick={(params,event)=>{
                                 if(event.ignore) {
                                     //console.log(params.row);
-                                    handlePresence(params.row)
+                                    ///handlePresence(params.row)
                                 }
                             }}  
                             

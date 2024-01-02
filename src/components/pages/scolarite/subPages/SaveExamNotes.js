@@ -12,23 +12,11 @@ import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
+let CURRENT_EXAM_ID;
+let CURRENT_EXAM_LABEL;
 
-let CURRENT_CLASSE_ID;
-let CURRRENT_COURS_ID;
-let SELECTED_DATE;
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"", 
-    nom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    redouble: '',  
-    id:1,
-}
+var listElt ={}
 
 function SaveExamNotes(props) {
 
@@ -42,77 +30,84 @@ function SaveExamNotes(props) {
     const [present, setPresent]= useState(0);
     const [absent, setAbsent]= useState(0);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
-    const [optClasse, setOpClasse] = useState([]);
-    const [optCours, setOpCours] = useState([]);
-    const [optDate, setOpDate] = useState([]);
+    const [optExam, setOpExams]   = useState([]);
+    
     
 
     useEffect(()=> {
         if(gridRows.length ==0){
-            CURRENT_CLASSE_ID = undefined;
+            CURRENT_EXAM_ID = undefined;
         }    
-        getEtabListClasses();    
+        getEtabListExams();    
     },[]);
 
 
+    const getEtabListExams=()=>{
+        var tempTable=[{value: -1,      label: (i18n.language=='fr') ? '  Choisir un Examen  ' : '  Select an Exam '  }];
 
-    const getEtabListClasses=()=>{
-        var tempTable=[{value: '0',      label:'Choisir une classe'    }];
-
-        axiosInstance.post(`list-classes/`, {
+        axiosInstance.post(`list-examen-officiel/`, {
             id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
-                console.log(res.data);
-                res.data.map((classe)=>{
-                tempTable.push({value:classe.id, label:classe.libelle})
-                setOpClasse(tempTable);
-            })         
+                console.log("examen",res.data.res);
+                res.data.res.map((exam)=>{
+                tempTable.push({value:exam.id, label:exam.libelleExam})                
+            })      
+            setOpExams(tempTable);   
         }) 
     }
-
-      const  getClassStudentList=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
-        }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data)]
-            console.log(listEleves);
-            setGridRows(listEleves);
-            setPresent(listEleves.length)
-            console.log(gridRows);
-        })  
-        return listEleves;     
-    }
-
-    function classeChangeHandler(e){       
-        
-    }
-
-   
-
 
     const formatList=(list) =>{
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.nom  = elt.nom +' '+elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = convertDateToUsualDate(elt.date_entree);
-            listElt.nom_pere = elt.nom_pere;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant"; 
+            listElt.rang           = rang; 
+            listElt.id             = elt.id;
+            listElt.matricule      = elt.matricule;
+            listElt.nom            = elt.nom;
+            listElt.prenom         = elt.prenom;
+            listElt.displayedName  = elt.nom +' '+elt.prenom;
+            listElt.resultat       = elt.resultat=="Echoué" ? t("failed"):t("admis");
+            listElt.mention        = elt.mention;
+            listElt.moyenne        = elt.moyenne;
+            listElt.libelle_classe = elt.libelle_classe;
+            listElt.id_classe      = elt.id_classe;
+           
             formattedList.push(listElt);
             rang ++;
-
         })
         return formattedList;
     }
+
+      const  getExamStudentResultList=(examId)=>{
+        var listEleves = []
+        axiosInstance.post(`list-resultat-examen-officiel/`, {
+            id_exam : examId,
+        }).then((res)=>{
+            console.log(res.data);
+            listEleves = [...formatList(res.data.res)]
+            console.log(listEleves);
+            setGridRows(listEleves);
+          
+        })  
+        return listEleves;     
+    }
+
+    function examChangeHandler(e){       
+        if(e.target.value > 0){
+            setIsValid(true);
+            CURRENT_EXAM_ID = e.target.value; 
+            CURRENT_EXAM_LABEL = optExam[optExam.findIndex((nivo)=>(nivo.value == CURRENT_EXAM_ID))].label;
+            getExamStudentResultList(CURRENT_EXAM_ID);
+            console.log(CURRENT_EXAM_LABEL)          
+        }else{
+            CURRENT_EXAM_ID    = undefined;
+            CURRENT_EXAM_LABEL = '';
+            setGridRows([]);
+            setIsValid(false);
+        }
+    }
+
     
 /*************************** DataGrid Declaration ***************************/    
     const columns = [
@@ -206,37 +201,6 @@ function SaveExamNotes(props) {
 
     }
 
-
-    function getPresentCount(tab){
-        var countPresent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 1) countPresent++;
-        }
-        return countPresent;
-    }
-
-    function getAbsentCount(tab){
-        var countAbsent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 0) countAbsent++;
-        }
-        return countAbsent;
-    } 
-   
-    function handlePresence(params){
-        console.log(params);
-        if(params.presence == 0) {
-            params.presence = 1;
-            setPresent(present+1);
-            setAbsent(absent-1);
-        }
-        else{
-            params.presence = 0;
-            setPresent(present-1);
-            setAbsent(absent+1);
-        } 
-    }
-
     /********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
     
@@ -291,8 +255,8 @@ function SaveExamNotes(props) {
                         </div>
                       
                         <div className={classes.selectZone}>
-                            <select id='optExam' onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
-                                {(optClasse||[]).map((option)=> {
+                            <select id='optExam' onChange={examChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
+                                {(optExam||[]).map((option)=> {
                                     return(
                                         <option value={option.value}>{option.label}</option>
                                     );
@@ -329,7 +293,7 @@ function SaveExamNotes(props) {
                             onCellClick={(params,event)=>{
                                 if(event.ignore) {
                                     //console.log(params.row);
-                                    handlePresence(params.row)
+                                    //handlePresence(params.row)
                                 }
                             }}  
                             
