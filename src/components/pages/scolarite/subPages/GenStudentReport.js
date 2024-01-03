@@ -260,27 +260,27 @@ function GenStudentReport(props) {
         enCompte1 = []; enCompte2 = [];  classer = [];
 
         list.map((elt)=>{
-            notesSeq   = [0,0];
-            classerSeq = [true,true];
-            listElt={};
-            listElt.id   = elt.id_eleve;
-            listElt.nom  = elt.nom;
-            listElt.rang = rang; 
+            notesSeq             = [0,0];
+            classerSeq           = [true,true];
+            listElt              ={};
+            listElt.id           = elt.id_eleve;
+            listElt.nom          = elt.nom;
+            listElt.rang         = rang; 
             listElt.matricule    = elt.matricule;
             listElt.moyennes_seq = elt.moyennes_seq;
             listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
             
-            listElt.moy_seq1  = notesSeq[0];
-            listElt.id_seq1   = listSeqId[0];
+            listElt.moy_seq1     = notesSeq[0];
+            listElt.id_seq1      = listSeqId[0];
 
-            listElt.moy_seq2  = notesSeq[1];
-            listElt.id_seq2   = listSeqId[1];
+            listElt.moy_seq2     = notesSeq[1];
+            listElt.id_seq2      = listSeqId[1];
             
             listElt.classees_seq = elt.classees_seq;
             listElt.classees_seq.map((el,index)=>classerSeq[index]=el);
 
-            listElt.classer_seq1  = classerSeq[0];
-            listElt.classer_seq2  = classerSeq[1];
+            listElt.classer_seq1 = classerSeq[0];
+            listElt.classer_seq2 = classerSeq[1];
 
             enCompte1.push(listSeqId[0]);
             enCompte2.push(listSeqId[1]);

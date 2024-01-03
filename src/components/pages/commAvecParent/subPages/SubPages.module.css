@@ -952,6 +952,19 @@ font-weight: 555;
 
 }
 
+.btnTextStyleP {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    color: rgb(236, 238, 234);
+    font-size: 0.87vw;
+    font-weight: 555;
+    
+}
+    
+
+
+
 .gridBtnTextStyle{
 display:flex;
 flex-direction: row;
@@ -1000,6 +1013,19 @@ margin-right: 5px;
     height: 2vw;
     margin-right: 1px;
 }
+
+.grdBtnImgStylePrim{
+    position: relative;
+    z-index: 100;
+    width: 2.3vw;
+    height: 2.3vw;
+    border-radius: 3px;
+    margin-right: 1px;
+}
+
+
+
+
 
 .grdBtnImgStylePP{
    /* position: relative;
