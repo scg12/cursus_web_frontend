@@ -54,6 +54,7 @@ function ProgramCoverMatiere(props){
   
   useEffect(()=> {
    // getData();
+   console.log("nnn",props.listMatieresProgress)
     createProgressionMatieres(props.selectedMatiere.id);
   },[props.selectedMatiere.id]);
 
@@ -93,6 +94,8 @@ function ProgramCoverMatiere(props){
   }
 
   function createProgressionMatieres(matiere){
+    console.log("iii")
+    console.log("bbb ",props.selectedMatiere)
     var tabMatieres=[];
     var listMat="";
     var matTab=[];
@@ -119,7 +122,8 @@ function ProgramCoverMatiere(props){
         listMat = props.listMatieresProgress;
         console.log("listMatieresProgress :",listMatieresProgress)
         matTab = listMat.split('+');
-        groupCount = matTab[0];
+        groupCount = parseInt(matTab[0]);
+        console.log("rrr ",groupCount)
         if (listMat != ""){
         if(groupCount==1) {
             groupWidth = 12
@@ -145,7 +149,9 @@ function ProgramCoverMatiere(props){
             parentDiv.appendChild(cell);
   
             for (var j = 0; j < tabMatieres.length; j++) {  
-                if(getStringAtPosition(tabMatieres[j],1)==i){
+              console.log(tabMatieres[j],getStringAtPosition(tabMatieres[j],1),i)
+                if(getStringAtPosition(tabMatieres[j],1)==i)
+                {
                     var sousDiv = document.createElement('div');
                     sousDiv.className= classes.inputRowLeft;
                     document.getElementById('sousGroupe'+i).appendChild(sousDiv);
