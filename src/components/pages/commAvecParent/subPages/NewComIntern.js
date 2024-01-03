@@ -9,6 +9,7 @@ import axiosInstance from '../../../../axios';
 
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
+import InternMsg from "../modals/InternMsg";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
@@ -51,7 +52,8 @@ function NewComIntern(props) {
         }
 
         setOpDestinataire(tabDestinataires);
-        
+        CURRENT_DESTINATAIRE_ID    = tabDestinataires[0].value; 
+        CURRENT_DESTINATAIRE_LABEL = tabDestinataires[0].label;        
     },[]);
 
     var tabDestinataires =[
@@ -112,21 +114,11 @@ function NewComIntern(props) {
     }
 
 
-    function dropDownHandler(e){
-        //console.log(e.target.value)
-        var grdRows;
-        if(e.target.value != optDestinataire[0].value){
-            setIsValid(true);
-            CURRENT_DESTINATAIRE_ID = e.target.value; 
-            CURRENT_DESTINATAIRE_LABEL = optDestinataire[optDestinataire.findIndex((classe)=>(classe.value == CURRENT_DESTINATAIRE_ID))].label;
-            getListMessages(CURRENT_DESTINATAIRE_ID);   
-            console.log(CURRENT_DESTINATAIRE_LABEL)          
-        }else{
-            CURRENT_DESTINATAIRE_ID = undefined;
-            CURRENT_DESTINATAIRE_LABEL='';
-            setGridRows([]);
-            setIsValid(false);
-        }
+    function dropDownHandler(e){  
+        CURRENT_DESTINATAIRE_ID = e.target.value; 
+        CURRENT_DESTINATAIRE_LABEL = optDestinataire[optDestinataire.findIndex((classe)=>(classe.value == CURRENT_DESTINATAIRE_ID))].label;
+        getListMessages(CURRENT_DESTINATAIRE_ID);   
+        console.log(CURRENT_DESTINATAIRE_LABEL) 
     }
  
 /*************************** DataGrid Declaration ***************************/    
@@ -312,45 +304,45 @@ function NewComIntern(props) {
 
     }
 
-    function addNewStudent(eleve) {       
-        console.log('Ajout',eleve);
+    function saveMsg(msg) {       
+        console.log('Ajout',msg);
            
-        axiosInstance.post(`create-eleve/`, {
-            id_classe : CURRENT_DESTINATAIRE_ID,
-            id_sousetab:currentAppContext.currentEtab,
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance,            
-        }).then((res)=>{
-            console.log(res.data);
+        // axiosInstance.post(`create-eleve/`, {
+        //     id_classe : CURRENT_DESTINATAIRE_ID,
+        //     id_sousetab:currentAppContext.currentEtab,
+        //     matricule : eleve.matricule, 
+        //     nom : eleve.nom,
+        //     adresse : eleve.adresse,
+        //     prenom : eleve.prenom, 
+        //     sexe : eleve.sexe,
+        //     date_naissance : eleve.date_naissance,
+        //     lieu_naissance : eleve.lieu_naissance,
+        //     date_entree : eleve.date_entree,
+        //     nom_pere : eleve.nom_pere,
+        //     prenom_pere : eleve.prenom_pere, 
+        //     nom_mere : eleve.nom_mere,
+        //     prenom_mere : eleve.prenom_mere, 
+        //     tel_pere : eleve.tel_pere,    
+        //     tel_mere : eleve.tel_mere,    
+        //     email_pere : eleve.email_pere,
+        //     email_mere : eleve.email_mere,
+        //     photo_url : eleve.photo_url, 
+        //     redouble : (eleve.redouble == "O") ? true : false,
+        //     age :  eleve.age,
+        //     est_en_regle : eleve.est_en_regle,
+        //     etab_provenance : eleve.etab_provenance,            
+        // }).then((res)=>{
+        //     console.log(res.data);
 
-            //setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")
-            })
-        })      
+        //     //setModalOpen(0);
+        //     chosenMsgBox = MSG_SUCCESS;
+        //     currentUiContext.showMsgBox({
+        //         visible:true, 
+        //         msgType:"info", 
+        //         msgTitle:t("success_add_M"), 
+        //         message:t("success_add")
+        //     })
+        // })      
     }
     
     function modifyStudent(eleve) {
@@ -416,7 +408,7 @@ function NewComIntern(props) {
         setModalOpen(0)
     }
    
-    function AddNewStudentHandler(e){
+    function saveNewMsgHandler(e){
         if(CURRENT_DESTINATAIRE_ID != undefined){
             setModalOpen(1); 
             initFormInputs();
@@ -547,6 +539,14 @@ function NewComIntern(props) {
   
     return (
         <div className={classes.formStyleP}>
+            {(modalOpen!=0) && <BackDrop/>}
+            {(modalOpen >0 && modalOpen<3) && 
+                <InternMsg 
+                    formMode      = {(modalOpen==1) ? 'creation': 'consult'}  
+                    actionHandler = {saveMsg} 
+                    cancelHandler = {quitForm}
+                />
+            }
             
             {(modalOpen!=0) && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
@@ -601,8 +601,8 @@ function NewComIntern(props) {
                             buttonStyle={getGridButtonStyle()}
                             style={{width:"12.3vw", height:"4.3vh"}}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={AddNewStudentHandler}
-                            disable={(isValid==false)}   
+                            btnClickHandler={saveNewMsgHandler}
+                            // disable={(isValid==false)}   
                         />
                          
 

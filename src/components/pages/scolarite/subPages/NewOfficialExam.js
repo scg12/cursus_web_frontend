@@ -632,7 +632,6 @@ const columnsFr = [
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddExam 
-                    sessionId    = {1}
                     formMode     = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
                     actionHandler= {(modalOpen==1) ?  addNewExam : modifyExam } 
                     cancelHandler={quitForm}

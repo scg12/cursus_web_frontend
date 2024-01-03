@@ -23,7 +23,7 @@ const MSG_SUCCESS_FP =11;
 const MSG_WARNING_FP =12;
 const MSG_ERROR_FP   =13;
 
-function AddFicheProgess(props) {
+function ParentsMsg(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
@@ -43,10 +43,9 @@ function AddFicheProgess(props) {
 
     useEffect(()=> {
         selected_file_name='';
-        getEtabListClasses();
-        getCoursClasse(currentAppContext.currentEtab, 0);
+        // getEtabListClasses();
+        // getCoursClasse(currentAppContext.currentEtab, 0);
         currentUiContext.setIsParentMsgBox(false);
-        //console.log("msgParents:", currentUiContext.isParentMsgBox)
     },[]);
 
 
@@ -423,14 +422,14 @@ function AddFicheProgess(props) {
     /************************************ JSX Code ************************************/
 
     return (
-        <div className={'card '+ classes.formContainerPPP}>
+        <div className={'card '+ classes.formContainerP4}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
-                    <img alt='add student' className={classes.formHeaderImg} src='images/FicheProgession.png'/>
+                    <img alt='add student' className={classes.formHeaderImg} src='images/Sms.png'/>
                 </div>
                            
                 <div className={classes.formMainTitle} >
-                    {t("get_or_put_FP")}
+                    {t("MSG_parent_M")}
                 </div>                
             </div>
 
@@ -450,107 +449,45 @@ function AddFicheProgess(props) {
                     buttonRejectHandler = {rejectHandler}            
                 />                 
             }
-            
-                <div className={classes.etape}>                   
 
-                    <div className={classes.inputRow}>
-                        <div className={classes.groupInfo} >
-                            <div className={classes.inputRowLeft}> 
-                                <div style={{display:'flex', flexDirection:'row',  marginLeft:"-2.3vw", marginTop:"2vh"}}>
-                                    <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={isDownload==false}  value={'presents'} name='ficheProg' onClick={()=>{isDownload? setIsDownload(false):setIsDownload(true)}}/>
-                                    <label style={{color:'black',  fontWeight:"bold", fontSize:"1vw", marginRight:"0.3vw", marginLeft:"0.3vw", marginTop:"0vw"}}>{t('upload_FP')} </label>
-
-                                    <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={isDownload==true}  value={'presents'} name='ficheProg' onClick={()=>{isDownload? setIsDownload(false):setIsDownload(true);}}/>
-                                    <label style={{color:'black', fontWeight:"bold", fontSize:"1vw", marginLeft:'0.13vw', marginRight:"1vw",marginTop:"0vw" }}>{t('get_model_FP')}</label>
-                                </div>                     
-                            </div>
-                            {isDownload ?
-                                <div className={classes.inputRowLeft} style={{marginTop:'7vh'}}> 
-                                    <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[11]}/>
-                                   
-                                    <CustomButton
-                                        btnText={t('download_FPModel_here')}
-                                        hasIconImg= {true}
-                                        imgSrc='images/saveToDisk_trans.png'
-                                        imgStyle = {classes.grdBtnImgStyle}  
-                                        buttonStyle={getNotifButtonStyle()}
-                                        btnTextStyle = {classes.notifBtnTextStyle}
-                                        btnClickHandler={downloadHandler}
-                                        //disable={(isValid==false)}   
-                                    />
-                                </div>
-                                :
-                                <div className={classes.groupInfo} style={{marginBottom:'3.7vh', marginTop:'2.7vh'}}>
-                                    <div className={classes.inputRowLeft} style={{marginBottom:'3vw'}}> 
-                                        <div style={{width:'19vw', fontWeight:570}}>
-                                           {t('class')}:  
-                                        </div>
-                                            
-                                        <div style={{marginBottom:'1.3vh', marginLeft:'-5.7vw'}}> 
-                                            
-                                            <select id='optClasse' defaultValue={1} onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'1.73rem',width:'12vw'}}>
-                                                {(optClasse||[]).map((option)=> {
-                                                    return(
-                                                        <option  value={option.value}>{option.label}</option>
-                                                    );
-                                                })}
-                                            </select>
-                                        </div>
-                                         
-                                        <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'2.3vw'}}>
-                                            {t('course')}:   
-                                        </div>
-                                        
-                                        <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
-                                            
-                                            <select id='optCours' defaultValue={1} onChange={coursChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-5.7vw', height:'1.73rem',width:'15vw'}}>
-                                                {(optCours||[]).map((option)=> {
-                                                    return(
-                                                        <option  value={option.value}>{option.label}</option>
-                                                    );
-                                                })}
-                                            </select>
-                                        </div>
-                                        
-                                    </div>
-
-                                    <div className={classes.inputRowLeft}> 
-                                        {/*<div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                            Fichier: 
-                                            </div> */}                   
-                                        <div style={{alignSelf:"center"}}> 
-                                            <label for="xlsFile"  style={{height:'4.3vh', border:"1px solid none", borderRadius:'5px', paddingLeft:'0.3vw', paddingRight:'0.3vw', paddingTop:"1vh", paddingBottom:"1vh", backgroundColor:  inputDataCorrect ? 'rgb(85 118 194)':'gray', color:'white' }}><img alt='img' src="images/selectFile.png" style={{width:"1.93vw",height:"1.93vw", marginBottom:"-1.47vh"}}/>{t('select_file')}</label>
-                                            <input id="xlsFile"  /*disabled={true}*/ type="file"  accept=".xls, .xlsx" onChange={fileChangeHandler} style={{display:"none"}}/>
-                                        </div>
-
-                                        <div style={{minWidth:'11vw', marginLeft:'0.7vw',alignSelf:"center",}}> 
-                                            <label id="fileName" style={{fontSize:"2.3vh"}}>{selected_file_name}</label>
-                                        </div>
-   
-                                        {/*(fileSelected)&&
-                                            <CustomButton
-                                                btnText= {t('depose_fichier')} 
-                                                buttonStyle={getNotifButtonStyle()}
-                                                btnTextStyle = {classes.gridBtnTextStyleP}
-                                                style={{marginLeft:"2.67vw"}}
-                                                btnClickHandler={saveFicheProgressChanges}
-                                                //disable={(!fileSelected)}
-                                            />
-                                        */}
-                                    </div>
-                                                          
-                                </div>
-                            }
-
-                        </div>
-                       
+            <div style={{display:"flex", flexDirection:"column", justifyContent:"flex-start", position:"absolute", top:"11.7vh", left:"5vw"}}>
+                <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"2vh", marginLeft:"-3vw", height:'4.7vh'}}> 
+                    <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                        {t("destinataire")}:
                     </div>
-
+                        
+                    <div> 
+                        <input id="destinataireLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                    </div>
                 </div>
+
+                <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"2vh", marginLeft:"-3vw", height:'4.7vh'}}> 
+                    <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                        {t("msg")}:
+                    </div>
+                        
+                    <div style={{marginLeft:"-10vw", marginTop:"0.7vh"}}> 
+                        <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/>
+                    </div>
+                </div> 
+
+            </div>
+
+            <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", position:"absolute",  bottom:"6.3vh", left:"1.7vw", height:'4.7vh'}}> 
+                <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                    {t("msg_deadline")}:
+                </div>
+                    
+                <div> 
+                    <input id="msgDeadlineLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3vw', height:'1rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                </div>
+            </div>
             
+           
             <div className={classes.formButtonRowP}>
                 <CustomButton
-                    btnText={t('ok')}
+                    btnText={t('send')}
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={saveOrUploadFP}
@@ -570,5 +507,5 @@ function AddFicheProgess(props) {
        
     );
  }
- export default AddFicheProgess;
+ export default ParentsMsg;
  
