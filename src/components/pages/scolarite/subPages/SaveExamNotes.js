@@ -169,6 +169,24 @@ function SaveExamNotes(props) {
         }
     }
 
+    function mentionChangeHandler(e, index){
+        resultatTAB[index].mention = e.target.value;
+
+        var tabMentions   = [... optMentions];
+        var listMentions  = [... optMentions[index]];
+
+        var mention_index    =  listMentions.findIndex((elt)=>elt.value == e.target.value);
+        var selected_mention =  listMentions.find((elt)=>elt.value == e.target.value);
+        listMentions.splice(mention_index,1);
+        listMentions.unshift(selected_mention);
+        tabMentions[index]   = listMentions;
+        console.log("Mentions", tabMentions);
+        setOptMentions(tabMentions);
+
+    }
+
+
+
     const acceptHandler=()=>{
         
         switch(chosenMsgBox){
@@ -303,7 +321,7 @@ function SaveExamNotes(props) {
             renderCell: (params)=>{
                 return(
                     <div style={{display:"flex",flexDirection:"row", }}>
-                        <select onChange={(e)=>{resultatTAB[params.row.rang-1].mention = e.target.value; console.log("tab",resultatTAB)}} id='a_changer' className={classes.comboBoxStyle} style={{width:'7.3vw'}}>
+                        <select onChange={(e)=>{mentionChangeHandler(e,params.row.rang-1);}}  className={classes.comboBoxStyle} style={{width:'7.3vw'}}>
                             {(optMentions[params.row.rang-1]||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
@@ -387,7 +405,7 @@ function SaveExamNotes(props) {
             renderCell: (params)=>{
                 return(
                     <div style={{display:"flex",flexDirection:"row", }}>
-                        <select onChange={(e)=>{resultatTAB[params.row.rang-1].mention = e.target.value; console.log("tab",resultatTAB)}} id='a_changer' className={classes.comboBoxStyle} style={{width:'7.3vw'}}>
+                        <select onChange={(e)=>{mentionChangeHandler(e,params.row.rang-1);}}  className={classes.comboBoxStyle} style={{width:'7.3vw'}}>
                             {(optMentions[params.row.rang-1]||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
