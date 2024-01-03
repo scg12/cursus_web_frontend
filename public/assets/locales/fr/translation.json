@@ -742,6 +742,7 @@
     "comm_interne_M" : "COMMUNICATION EN INTERNE",
     "nouv_communique": "Nvlle Circulaire Interne",
     "consult_mesg" : "Consultation des Messages",
+    "consult_mesg_M" : "CONSULTATION DES MESSAGES",
     "comm_externe" : "Communication avec l'exterieur",
     "Relation_parent": "Relation avec les Parents",
     "MSG_parent_M"   : "ENVOI DE MESSAGES AUX PARENTS",
