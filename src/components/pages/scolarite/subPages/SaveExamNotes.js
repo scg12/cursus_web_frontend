@@ -115,7 +115,7 @@ function SaveExamNotes(props) {
                 mentionsTab.push(tempMentions);
             }
         });  
-        
+        console.log("mentionsTab: ",mentionsTab)
         setOptMentions(mentionsTab);
       
       
