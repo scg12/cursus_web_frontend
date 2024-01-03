@@ -222,7 +222,8 @@ function ProgramCoverMatiere(props){
 
   const MatiereProgress = (props) =>{
     return(   
-        (getStringAtPosition(props.matiereInfo,0)==1) ?
+        // (getStringAtPosition(props.matiereInfo,0)==1) ?
+        (props.ouvertureCahierTexte==true) ?
         <div style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'flex-start', marginBottom:'-2vh', marginLeft:'1.3vh'}} className='sidenav-trigger' data-target='side-menu'>
             <div  style={{fontWeight:'900', marginRight:'1vw'}}>Enseignant :{props.matiereInfo} </div>
 

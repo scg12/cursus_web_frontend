@@ -104,6 +104,9 @@ function DashBoardPage() {
     const [barchartDataLabels, setBarchartDataLabels] = useState([]);
     const [barchartDataValues, setBarchartDataValues] = useState([]);
     const [listMatieresProgress, setListMatieresProgress] = useState("");
+    const [ouvertureCahierTexte,setOuvertureCahierTexte] =useState(false);
+    const [idGroupeMatieres,setIdGroupeMatieres] = useState([]);
+    const [typeGroupeMatieres,setTypeGroupeMatieres] = useState("");
     const [niveau_effectif_selected, setNiveau_effectif_selected] = useState('0');
     const [classe_effectif_selected, setClasse_effectif_selected] = useState('0');
 
@@ -253,8 +256,8 @@ function init(){
   level.id = '0';
   level.label = 'Tous';
 
-  getData('0');
-  getMatiereData('0');
+  getData('0','0');
+  // getMatiereData('0');
   getEffectifData('0');
   getFraisNiveau('0');
   getResultNiveau('0');
@@ -273,25 +276,68 @@ const getMatiereData=(niveauId)=>{
     id_sousetab: currentAppContext.currentEtab,  
   }).then((res)=>{
     // console.log(res.data);
-    createProgressionMatieres(progCoverSelectedMatiere,res.data.res);
+    // createProgressionMatieres(progCoverSelectedMatiere,res.data.res);
+    createProgressionMatieres(progCoverSelectedMatiere.id,res.data.res);
     setListMatieresProgress(res.data.res)
+    setOuvertureCahierTexte(res.data.ouverture_cahier_de_texte)
+    setIdGroupeMatieres(res.data.id_groupes)
+    setTypeGroupeMatieres(res.data.type_groupe)
+  });
+}
+const getMatiereData2=(classeId,matiereId)=>{
+  axiosInstance.post(`program-cover-matiere/`, {
+    // id_niveau  : document.querySelectorAll('#selectNiveau1').value,
+    // id_niveau  : 0,
+    id_niveau  : currentUiContext.prgramCoverSelectedLevel.id,
+    id_matiere : matiereId,
+    id_classe  : classeId,
+    id_sousetab: currentAppContext.currentEtab  
+  }).then((res)=>{
+    // createProgressionMatieres(progCoverSelectedMatiere,res.data.res);
+    createProgressionMatieres(matiereId,res.data.res);
+    setListMatieresProgress(res.data.res)
+    setOuvertureCahierTexte(res.data.ouverture_cahier_de_texte)
+    setIdGroupeMatieres(res.data.id_groupes)
+    setTypeGroupeMatieres(res.data.type_groupe)
+
+
   });
 }
 
 
-function getData(niveauId){
-  // console.log("SALUT: ",niveauId);
+function getData(niveauId,classeId){
+  console.log("progCoverSelectedMatiere: ",progCoverSelectedMatiere);
+
   axiosInstance.post(`program-cover-niveau/`, {
       id_niveau   : niveauId,
-      id_matiere  : progCoverSelectedMatiere.id,
-      id_classe   : prgramCoverSelectedClass.id,
+      // id_matiere  : progCoverSelectedMatiere.id,
+      id_matiere  : '0',
+      // id_classe   : prgramCoverSelectedClass.id,
+      id_classe   : classeId,
       id_sousetab : currentAppContext.currentEtab,        
       
   }).then((res)=>{
+    // var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, niveauId);
+    // console.log("tabClasses: ",tabClasses)
+    // setOptClassePC(tabClasses);
+    // var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,'0')
+    // console.log("tabMatieres: ",tabMatieres)
+    // setOptMatieresPC(tabMatieres);
+    // setPrgramCoverSelectedClass(tabClasses[0])
+    // setPrgramCoverSelectedMatiere(tabMatieres[0])
+
       console.log(res.data);
       setDoughnutData(res.data.doughnut_data);       
       setBarchartDataLabels(res.data.barchart_data.classes);
-      setBarchartDataValues(res.data.barchart_data.taux); 
+      setBarchartDataValues(res.data.barchart_data.taux);
+      createProgressionMatieres(progCoverSelectedMatiere.id,res.data.matiere_data[0]);
+      setListMatieresProgress(res.data.matiere_data[0]) 
+      setOuvertureCahierTexte(res.data.matiere_data[1])
+      setIdGroupeMatieres(res.data.matiere_data[2])
+      setTypeGroupeMatieres(res.data.matiere_data[3])
+
+      
+
   })
   // if(niveauId<=3)
   //   setDoughnutData([55,45]);  
@@ -467,16 +513,30 @@ const progCompletionLevelHandler=(e)=>{
   var level ={};
   level.id = curentLevel;
   level.label = libelleLevel;
+  // currentUiContext.setPrgramCoverSelectedLevel(level);
 
-  getData(curentLevel)
-  console.log(level)
-  //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
   console.log("tabClasses: ",tabClasses)
   setOptClassePC(tabClasses);
-  var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,tabClasses[0].id)
+  var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,'0')
   console.log("tabMatieres: ",tabMatieres)
-  // setOptMatieresPC(tabMatieres);
+  // setPrgramCoverSelectedClass(tabClasses[0])
+  // setPrgramCoverSelectedMatiere(tabMatieres[0]); 
+  setOptMatieresPC(tabMatieres);
+  console.log(level)
+  //-------- Charger les classes a partir du niveau --------- 
+  // var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,tabClasses[0].id)
+ 
+  var select = document.querySelector('#selectClasse1');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+
+  // var select = document.querySelector('#selectMatiere1');
+  // select.addEventListener('change', function(){})
+  // select.value = '0';
+  // select.dispatchEvent(new Event('change'));
+  getData(curentLevel,'0');
 
   currentUiContext.setPrgramCoverSelectedLevel(level);
 }
@@ -489,11 +549,20 @@ const progCompletionClassHandler=(e)=>{
   var classe ={};
   classe.id = curentClass;
   classe.label = libelleClasse;
+  
 
   //-------- Charger les matierers a partir de la classe
   var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,classe.id)
   setOptMatieresPC(tabMatieres);
   setPrgramCoverSelectedClass(classe);
+  var select = document.querySelector('#selectMatiere1');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+  // getEffectifData(curentLevel);
+  console.log(document.querySelectorAll('#selectNiveau1').value);
+
+  getMatiereData2(classe.id,'0');
   
 }
 
@@ -516,8 +585,12 @@ const progCompletionMatiereHandler=(e)=>{
     
   }).then((res)=>{
       console.log(res.data);
-      setListMatieresProgress(res.data.res) 
+      setListMatieresProgress(res.data.res)
+      setOuvertureCahierTexte(res.data.ouverture_cahier_de_texte)
       createProgressionMatieres(matiere,res.data.res)
+      setIdGroupeMatieres(res.data.id_groupes)
+      setTypeGroupeMatieres(res.data.type_groupe)
+
   })
   // var select = document.querySelector('#selectMatiere1');
   // select.addEventListener('change', function(){})
@@ -541,7 +614,8 @@ function createProgressionMatieres(matiere, listMatieresProgress){
       for(var i = 1; i <= groupCount; i++){
           document.getElementById('sousGroupe'+i).remove();
       }
-  }    
+  }   
+  console.log("matiere: ",matiere) 
   if(matiere != undefined) {
       //Recuperation De la liste des matieres avc leur infos.        
       // listMat = getMatieres(parseInt(matiere));
@@ -551,6 +625,8 @@ function createProgressionMatieres(matiere, listMatieresProgress){
       //Extraction du nombre de groupes et calcul de la largeur d'un groupe. 
       listMat =listMatieresProgress;
       console.log("listMatieresProgress :",listMatieresProgress)
+      console.log("idGroupeMatieres :",idGroupeMatieres)
+      console.log("typeGroupeMatieres :",typeGroupeMatieres)
       matTab = listMat.split('+');
       groupCount = matTab[0];
       if (listMat != ""){
@@ -567,24 +643,43 @@ function createProgressionMatieres(matiere, listMatieresProgress){
   
       //Creation des sous Divs conteneurs et
       //Ajout des matieres avec leur progression.
+      var position = 0;
       for (var i = 1; i <=groupCount; i++) {
           var cell = document.createElement('div');
+          // if (typeGroupeMatieres== "id")
+          //   cell.id='sousGroupe'+idGroupeMatieres[i-1];
+          // else 
           cell.id='sousGroupe'+i;
+
           cell.className=classes.matiereProgress;
           cell.style.width = groupWidth;
           /*cell.style.fontWeight='bold';
           cell.textContent='Matieres du Groupe '+i; */
 
           parentDiv.appendChild(cell);
+          // if (typeGroupeMatieres== "id")
+          //   for (var j = 0; j < tabMatieres.length; j++) {  
+          //       position = idGroupeMatieres.findIndex(getStringAtPosition(tabMatieres[j],1))+1;
+          //       // if(getStringAtPosition(tabMatieres[j],1)==i)
+          //       {
+          //           var sousDiv = document.createElement('div');
+          //           sousDiv.className= classes.inputRowLeft;
+          //           if (typeGroupeMatieres== "numero")
+          //             document.getElementById('sousGroupe'+position).appendChild(sousDiv);
+          //           ReactDOM.render(<MatiereProgress matiereInfo={tabMatieres[j]}/>,sousDiv)
+          //       }                    
+          //   }
+          // else
+            for (var j = 0; j < tabMatieres.length; j++) {  
 
-          for (var j = 0; j < tabMatieres.length; j++) {  
-              if(getStringAtPosition(tabMatieres[j],1)==i){
+              if(getStringAtPosition(tabMatieres[j],1)==i)
+              {
                   var sousDiv = document.createElement('div');
                   sousDiv.className= classes.inputRowLeft;
-                  document.getElementById('sousGroupe'+i).appendChild(sousDiv);
+                    document.getElementById('sousGroupe'+i).appendChild(sousDiv);
                   ReactDOM.render(<MatiereProgress matiereInfo={tabMatieres[j]}/>,sousDiv)
               }                    
-          }         
+          }       
       }
     }
   } 
@@ -846,7 +941,12 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
-              <ProgramCoverMatiere listMatieresProgress={listMatieresProgress} selectedClasse={prgramCoverSelectedClass} selectedMatiere={progCoverSelectedMatiere} />
+              <ProgramCoverMatiere listMatieresProgress={listMatieresProgress}
+               selectedClasse={prgramCoverSelectedClass}
+                selectedMatiere={progCoverSelectedMatiere}
+                ouvertureCahierTexte={ouvertureCahierTexte}
+                idGroupeMatieres={idGroupeMatieres}
+                typeGroupeMatieres={typeGroupeMatieres} />
             </div>          
   
           </div>
