@@ -135,7 +135,7 @@ function FormLayout(props){
             case '311':  return  t('paiement_profs');
            
             //----COMMUNICATION ----
-            case '400':  return  'Nouveau Communiqué Interne';
+            case '400':  return  t('comm_interne');
             case '401':  return  'Consultation Des Messages';
 
             case '402':  return  "Relation Avec Les Parents D'Elèves";

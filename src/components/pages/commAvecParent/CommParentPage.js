@@ -14,8 +14,9 @@ import ConsultMsg from './subPages/ConsultMsg';
 import RelationAvcParents from './subPages/RelationAvcParents';
 import StagesAcad from './subPages/StagesAcad';
 import OrientationEleves from "./subPages/OrientationEleves";
-import SynchroData from "./subPages/SynchroData";
 import EnvoiMsg from './subPages/EnvoiMsg';
+import BackDrop from "../../backDrop/BackDrop";
+import SynchroData from "./modals/SynchroData";
 
 import { useState,useContext } from "react";
 import UiContext from '../../../store/UiContext'
@@ -35,6 +36,7 @@ function CommParentPage() {
   const { t, i18n } = useTranslation();
   const currentUiContext = useContext(UiContext);
   const currentAppContext = useContext(AppContext);
+  const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
   
   //Cette constante sera lu lors de la configuration de l'utilisateur.
   const selectedTheme = currentUiContext.theme;
@@ -47,6 +49,15 @@ function CommParentPage() {
     M.Sidenav.init(menus, {edge: 'right'});
   }
   
+  
+  function quitForm(){
+    setModalOpen(0);
+    currentUiContext.setIsParentMsgBox(true);
+  }
+
+  function showSynchroModal(){
+    setModalOpen(1);
+  }
   
   function getCurrentContaintTheme()
   { // Choix du theme courant
@@ -71,6 +82,10 @@ function CommParentPage() {
   }
   return ( 
       <div className= {classes.viewContent}>
+        {(modalOpen!=0)   && <BackDrop style={{height:'120vh'}}/>}
+        {(modalOpen == 1) && <SynchroData cancelHandler={quitForm} />}
+      
+
         <div className= {(isMobile) ? M_classes.pageTitle : classes.pageTitle}>
           {(isMobile) ? null : <img src="images/Communications.png"  className={classes.imageMargin1} alt="my image"/>}
           <div className={(isMobile)? M_classes.titleHmself : classes.titleHmself}>
@@ -81,7 +96,7 @@ function CommParentPage() {
         <div className= {getCurrentContaintTheme()}>
           {(currentAppContext.enableProfiles["COMM_PARENT_A"]=='1') ? 
             <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("comm_interne")} theme={selectedTheme}>
-              {(currentAppContext.enableProfiles["COMM_PARENT_A1"]=='1') ? <MenuItemP menuItemId ='400'  imgSource='images/NewComInterne.png'      libelle={t("nouv_communique")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.customimgStyle1} ></MenuItemP> : null}
+              {(currentAppContext.enableProfiles["COMM_PARENT_A1"]=='1') ? <MenuItemP menuItemId ='400'  imgSource='images/NewComInterne.png'      libelle={t("comm_interne")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.customimgStyle1} ></MenuItemP> : null}
               {(currentAppContext.enableProfiles["COMM_PARENT_A2"]=='1') ? <MenuItemP menuItemId ='401'  imgSource='images/ConsulterMsg.png'       libelle={t("consult_mesg")} itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1 : classes.customimgStyle1P}></MenuItemP> : null}
             </MenuItemListP>
             :
@@ -91,7 +106,7 @@ function CommParentPage() {
           {(currentAppContext.enableProfiles["COMM_PARENT_B"]=='1') ? 
             <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("comm_externe")}  theme={selectedTheme}>
               {(currentAppContext.enableProfiles["COMM_PARENT_B1"]=='1') ? <MenuItemP menuItemId ='402'  imgSource='images/RelationAvcParent.png'          libelle={t("Relation_parent")} itemSelected={showSideMenu}></MenuItemP> : null}
-              {(currentAppContext.enableProfiles["COMM_PARENT_B1"]=='1') ? <MenuItemP menuItemId ='405'  imgSource='images/synchro.png'                    libelle={t("synchro_data")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle7}> </MenuItemP> : null}
+              {(currentAppContext.enableProfiles["COMM_PARENT_B1"]=='1') ? <MenuItemP menuItemId ='405'  imgSource='images/synchro.png'                    libelle={t("synchro_data")} isModal={true} itemSelected={showSynchroModal} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle7}> </MenuItemP> : null}
               {(currentAppContext.enableProfiles["COMM_PARENT_B3"]=='1') ? <MenuItemP menuItemId ='403'  imgSource='images/Orientation.png'                libelle={t("suivi_orientation")} itemSelected={showSideMenu}></MenuItemP> :null}
               {(currentAppContext.enableProfiles["COMM_PARENT_B4"]=='1') ? <MenuItemP menuItemId ='404'  imgSource='images/SmsP.png'                       libelle={t("envoi_msg")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle4}></MenuItemP> : null }
             </MenuItemListP>
