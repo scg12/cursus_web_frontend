@@ -323,8 +323,8 @@ function SynchroData(props) {
                         btnTextStyle = {classes.btnTextStyleP}
                         style={{width:"14.7vw", height:"3vw", borderRadius:"0.7vw"}}
                         hasIconImg= {true}
-                        imgSrc='images/printing1.png'
-                        imgStyle = {classes.grdBtnImgStyle}
+                        imgSrc='images/connecttoWeb.png'
+                        imgStyle = {classes.grdBtnImgStylePrim}
                         btnClickHandler={activateOrDesactivateEvalPeriod}
                         // disable={(isValid) ? !isValid :!fileSelected}
                     />
@@ -333,10 +333,10 @@ function SynchroData(props) {
                         btnText={t('start_msg_transfer')}
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyleP}
-                        style={{width:"14.7vw", height:"3vw", borderRadius:"0.7vw"}}
+                        style={{width:"14.7vw", height:"3vw", borderRadius:"0.7vw", paddingLeft:"1vw"}}
                         hasIconImg= {true}
-                        imgSrc='images/printing1.png'
-                        imgStyle = {classes.grdBtnImgStyle}
+                        imgSrc='images/SmsP.png'
+                        imgStyle = {classes.grdBtnImgStylePrim}
                         btnClickHandler={props.cancelHandler}
                     />                    
                     

@@ -1014,6 +1014,19 @@ margin-right: 5px;
     margin-right: 1px;
 }
 
+.grdBtnImgStylePrim{
+    position: relative;
+    z-index: 100;
+    width: 2.3vw;
+    height: 2.3vw;
+    border-radius: 3px;
+    margin-right: 1px;
+}
+
+
+
+
+
 .grdBtnImgStylePP{
    /* position: relative;
     z-index: 100;*/
