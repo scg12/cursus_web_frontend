@@ -468,20 +468,19 @@ function ParentsMsg(props) {
                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                         {t("msg")}:
                     </div>
-                        
-                    <div style={{marginLeft:"-10vw", marginTop:"0.7vh"}}> 
+                </div> 
+                <div style={{marginLeft:"-3vw", marginTop:"0.7vh"}}> 
                         {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
                         <CKEditor
                             editor  = {ClassicEditor}
                             data    = "<p>Hello </p>"
-                            style   = {{with:"40vw", minHeight:"33vh"}}
+                            style   = {{with:"50vw", minHeight:"33vh"}}
                             onReady = {editor => {
                                 console.log("Editor is ready to use")
                             }}
                         
                         />
                     </div>
-                </div> 
 
             </div>
 

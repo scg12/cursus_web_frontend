@@ -467,21 +467,22 @@ function InternMsg(props) {
                 <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"2vh", marginLeft:"-3vw", height:'4.7vh'}}> 
                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                         {t("msg")}:
-                    </div>
-                        
-                    <div style={{marginLeft:"-10vw", marginTop:"0.7vh"}}> 
-                        {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
-                        <CKEditor
-                            editor  = {ClassicEditor}
-                            data    = "<p>Hello </p>"
-                            style   = {{with:"40vw", minHeight:"33vh"}}
-                            onReady = {editor => {
-                                console.log("Editor is ready to use")
-                            }}
-                        
-                        />
-                    </div>
+                    </div>                        
+                    
                 </div> 
+
+                <div style={{marginLeft:"-3vw", marginTop:"0.7vh"}}> 
+                    {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
+                    <CKEditor
+                        editor  = {ClassicEditor}
+                        data    = "<p>Hello </p>"
+                        style   = {{with:"40vw", minHeight:"33vh"}}
+                        onReady = {editor => {
+                            console.log("Editor is ready to use")
+                        }}
+                    
+                    />
+                </div>
 
             </div>
 

@@ -1,28 +1,28 @@
 /*-----------------------------------LE CKEDITOR ------------------------------------*/
 div.ck.ck-editor{
-  width:40vw;
+  width:47vw;
   height:30vh;
 }
 
 div.ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-blurred{
   height:30vh;
-  width:40vw;
+  width:47vw;
 }
 
 div.ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-blurred:hover{
   height:30vh;
-  width:40vw;
+  width:47vw;
 }
 
 
 div.ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-blurred:focus{
   height:30vh;
-  width:40vw;
+  width:47vw;
 }
 
 div.ck.ck-editor__main>.ck-editor__editable.ck-focused{
   height:30vh;
-  width:40vw;
+  width:47vw;
 }
 
 
