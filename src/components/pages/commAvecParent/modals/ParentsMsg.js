@@ -10,6 +10,8 @@ import UiContext from "../../../../store/UiContext";
 import { useTranslation } from "react-i18next";
 import BackDrop from '../../../backDrop/BackDrop';
 import MsgBox from '../../../msgBox/MsgBox';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 var cur_fileToUpload = undefined;
 var cur_classeId = undefined;
@@ -468,7 +470,16 @@ function ParentsMsg(props) {
                     </div>
                         
                     <div style={{marginLeft:"-10vw", marginTop:"0.7vh"}}> 
-                        <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/>
+                        {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
+                        <CKEditor
+                            editor  = {ClassicEditor}
+                            data    = "<p>Hello </p>"
+                            style   = {{with:"40vw", minHeight:"33vh"}}
+                            onReady = {editor => {
+                                console.log("Editor is ready to use")
+                            }}
+                        
+                        />
                     </div>
                 </div> 
 

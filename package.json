@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^40.2.0",
+    "@ckeditor/ckeditor5-react": "^6.2.0",
     "@craco/craco": "^7.0.0-alpha.0",
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.11.10",

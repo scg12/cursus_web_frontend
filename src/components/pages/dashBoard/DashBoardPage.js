@@ -302,7 +302,6 @@ const getMatiereData2=(classeId,matiereId)=>{
     setIdGroupeMatieres(res.data.id_groupes)
     // setTypeGroupeMatieres(res.data.type_groupe)
 
-
   });
 }
 
