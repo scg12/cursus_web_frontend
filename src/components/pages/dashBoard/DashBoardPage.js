@@ -79,9 +79,9 @@ function DashBoardPage() {
   const [effectifLevelFrais, setEffectifLevelFrais]       = useState({'id':'0','label':"Tous"});
   const [effectifClassFrais, setEffectifClassFrais]       = useState({'id':'0','label':"Toutes"});
 
-  const [assiduiteLevel, setAssiduiteLevel]     = useState(1);
-  const [assiduiteClass, setAssiduiteClass]     = useState(1);
-  const [assiduiteMatiere, setAssiduiteMatiere] = useState(1);
+  const [assiduiteLevel, setAssiduiteLevel]     = useState({label:'Tous', id:0});
+  const [assiduiteClass, setAssiduiteClass]     = useState({label:'Toutes', id:0});
+  const [assiduiteMatiere, setAssiduiteMatiere] = useState({label:'Toutes', id:0});
 
   const [resultatLevel, setResultatLevel]       = useState({'id':'0','label':"Tous"});
   const [resultatClass, setResultatClass]       = useState({'id':'0','label':"Tous"});
@@ -107,6 +107,11 @@ function DashBoardPage() {
     const [listMatieresProgress, setListMatieresProgress] = useState("");
     const [ouvertureCahierTexte,setOuvertureCahierTexte] =useState(false);
     const [idGroupeMatieres,setIdGroupeMatieres] = useState([]);
+    const [DoughnutDataAssiduiteNiveau, setDoughnutDataAssiduiteNiveau] = useState([])
+    const [DoughnutDataAssiduiteClasse, setDoughnutDataAssiduiteClasse] = useState([])
+    const [DoughnutDataAssiduiteMatiere, setDoughnutDataAssiduiteMatiere] = useState([])
+    const [sanctionLabels,setSanctionLabels] = useState([])
+    const [absenceLabels,setAbsenceLabels] = useState([])
     // const [typeGroupeMatieres,setTypeGroupeMatieres] = useState("");
     const [niveau_effectif_selected, setNiveau_effectif_selected] = useState('0');
     const [classe_effectif_selected, setClasse_effectif_selected] = useState('0');
@@ -262,6 +267,7 @@ function init(){
   getEffectifData('0');
   getFraisNiveau('0');
   getResultNiveau('0');
+  getAssiduiteNiveau('0');
   console.log(level)
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
@@ -503,6 +509,28 @@ function getResultMatiere(matiereId){
   })
 }
 
+function getAssiduiteNiveau(niveauId){
+  let selectedClass = document.querySelector('#selectClasse4').value;
+  let selectedMatiere = document.querySelector('#selectMatiere4').value;
+  // console.log("SALUT Eff: ",niveauId," isInscritLevelChart: ",isInscritLevelChart," classe: ",selectedClass);
+  axiosInstance.post(`assiduite/`, {
+      id_niveau : niveauId,
+      id_classe : selectedClass,
+      id_matiere : selectedMatiere,
+      option : "niveau",
+      id_sousetab:currentAppContext.currentEtab,        
+      
+  }).then((res)=>{
+      console.log("ggg getAssiduiteNiveau: ",res.data);
+      setDoughnutDataAssiduiteNiveau(res.data.data_niveau);
+      setDoughnutDataAssiduiteClasse(res.data.data_classe);
+      setDoughnutDataAssiduiteMatiere(res.data.data_matiere);
+      setSanctionLabels(res.data.sanctions_labels);
+      setAbsenceLabels(res.data.absences_labels);
+
+  })
+}
+
 /****************************************** Les Handlers ****************************************/
 //---------------- Programme Completion -----------------//
 const progCompletionLevelHandler=(e)=>{  
@@ -552,7 +580,6 @@ const progCompletionLevelHandler=(e)=>{
 }
 
 const progCompletionClassHandler=(e)=>{  
-  console.log("Déclenché...")
   var curentClass = e.target.value;  
   var cur_index = optClassePC.findIndex((index)=>index.value == curentClass);
   var libelleClasse = optClassePC[cur_index].label;
@@ -560,7 +587,6 @@ const progCompletionClassHandler=(e)=>{
   var classe ={};
   classe.id = curentClass;
   classe.label = libelleClasse;
-  
 
   //-------- Charger les matierers a partir de la classe
   var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,classe.id)
@@ -792,17 +818,113 @@ const assiduiteNiveauHandler=(e)=>{
   //-------- Charger les classes a partir du niveau --------- 
   var tabClasses = getEtabClassesNiveau(currentAppContext.currentEtab, level.id);
   setOptClasseASS(tabClasses);
+  var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,'0');
+  var classe = {}
+  classe.id = tabClasses[0].value;
+  classe.label = tabClasses[0].label;
+  setAssiduiteClass(classe);
+  setOptMatieresASS(tabMatieres);
+  var matiere = {}
+  matiere.id = tabMatieres[0].value;
+  matiere.label = tabMatieres[0].label;
+  setAssiduiteMatiere(matiere);
+
+  var select = document.querySelector('#selectClasse4');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+
+  var select = document.querySelector('#selectMatiere4');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+  // getAssiduiteNiveau(curentLevel,'0');
+
+  axiosInstance.post(`assiduite/`, {
+    id_niveau : curentLevel,
+    id_classe : classe.id,
+    id_matiere : matiere.id,
+    option : "niveau",
+    id_sousetab:currentAppContext.currentEtab,        
+    
+}).then((res)=>{
+    console.log("ggg getAssiduiteNiveau: ",res.data);
+    setDoughnutDataAssiduiteNiveau(res.data.data_niveau);
+    setDoughnutDataAssiduiteClasse(res.data.data_classe);
+    setDoughnutDataAssiduiteMatiere(res.data.data_matiere);
+    setSanctionLabels(res.data.sanctions_labels);
+    setAbsenceLabels(res.data.absences_labels);
+
+})
+
   setAssiduiteLevel(level);
  
   
 }
 
 const assiduiteClasseHandler=(e)=>{
-  
+  var curentClass = e.target.value;  
+  var cur_index = optClasseASS.findIndex((index)=>index.value == curentClass);
+  var libelleClasse = optClasseASS[cur_index].label;
+
+  var classe ={};
+  classe.id = curentClass;
+  classe.label = libelleClasse;
+
+  var tabMatieres = getEtabMatieresClasse(currentAppContext.currentEtab,classe.id)
+  setOptMatieresASS(tabMatieres);
+  setAssiduiteClass(classe);
+  var select = document.querySelector('#selectMatiere4');
+  select.addEventListener('change', function(){})
+  select.value = '0';
+  select.dispatchEvent(new Event('change'));
+
+  axiosInstance.post(`assiduite/`, {
+    id_niveau : assiduiteLevel.id,
+    id_classe : curentClass,
+    id_matiere : "0",
+    option : "classe",
+    id_sousetab:currentAppContext.currentEtab,        
+    
+}).then((res)=>{
+    console.log("getAssiduiteNiveau: ",res.data);
+    // setDoughnutDataAssiduiteNiveau(res.data.data_niveau);
+    setDoughnutDataAssiduiteClasse(res.data.data_classe);
+    setDoughnutDataAssiduiteMatiere(res.data.data_matiere);
+    setSanctionLabels(res.data.sanctions_labels);
+    setAbsenceLabels(res.data.absences_labels);
+
+})
+
 }
 
 const assiduiteMatiereHandler=(e)=>{
+  var curentMatiere  = e.target.value;
+  var cur_index      = optMatieresASS.findIndex((index)=>index.value == curentMatiere);
+  var libelleMatiere = optMatieresASS[cur_index].label; 
   
+  var matiere        = {};
+  matiere.id         = curentMatiere;
+  matiere.label      = libelleMatiere;
+  setAssiduiteMatiere(matiere); 
+
+  axiosInstance.post(`assiduite/`, {
+    id_niveau : assiduiteLevel.id,
+    id_classe : assiduiteClass.id,
+    id_matiere : curentMatiere,
+    option : "matiere",
+    id_sousetab:currentAppContext.currentEtab,        
+    
+}).then((res)=>{
+    console.log("getAssiduiteNiveau: ",res.data);
+    // setDoughnutDataAssiduiteNiveau(res.data.data_niveau);
+    // setDoughnutDataAssiduiteClasse(res.data.data_classe);
+    setDoughnutDataAssiduiteMatiere(res.data.data_matiere);
+    // setSanctionLabels(res.data.sanctions_labels);
+    setAbsenceLabels(res.data.absences_labels);
+
+})
+
 }
 
 //---------------- Resultats -----------------//
@@ -1116,7 +1238,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Assiduite id='Assiduite_niveau' selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeAssiduite={assiduiteLevel}/>
+              <Assiduite id='Assiduite_niveau' Labels={sanctionLabels} DoughnutData={DoughnutDataAssiduiteNiveau} selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeAssiduite={assiduiteLevel}/>
             </div>
 
           </div>
@@ -1152,7 +1274,7 @@ const resultatsMatiereHandler=(e)=>{
 
             </div>
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Assiduite id='Assiduite_classe' selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeAssiduite={assiduiteClass}/>
+              <Assiduite id='Assiduite_classe' Labels={sanctionLabels} DoughnutData={DoughnutDataAssiduiteClasse} selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeAssiduite={assiduiteClass}/>
             </div>
             
           </div>
@@ -1188,7 +1310,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
 
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
-              <Assiduite id='Assiduite_matiere' selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeAssiduite={assiduiteMatiere}/>
+              <Assiduite id='Assiduite_matiere' Labels={absenceLabels} DoughnutData={DoughnutDataAssiduiteMatiere} selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeAssiduite={assiduiteMatiere}/>
             </div>
   
           </div> 
@@ -1211,7 +1333,7 @@ const resultatsMatiereHandler=(e)=>{
                     );
                 })}
               </select> 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'10vw'}}>
+              {/* <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'10vw'}}>
                 <div style={{display:'flex', flexDirection:'row', width:'8.7vw'}}>
                   <input type='radio' checked={resultatLevel==1}  value={'enreg'} name='resultatLevel'   onClick={()=> {setResultatLevel(1)}}/>
                   <label style={{color:'grey', marginLeft:'0.1vw', marginRight:1}}> {t('resultats_scolaires')} </label>
@@ -1222,7 +1344,7 @@ const resultatsMatiereHandler=(e)=>{
                   <label style={{color:'grey', marginLeft:'0.13vw', marginRight:1}}> {t('exams_officiels')}  </label>
                 </div>
 
-              </div> 
+              </div>  */}
 
             </div>
 
@@ -1244,7 +1366,7 @@ const resultatsMatiereHandler=(e)=>{
                   })}
               </select> 
 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
+              {/* <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
                 <div style={{display:'flex', flexDirection:'row', width:'8.7vw'}}>
                   <input type='radio' checked={resultatClass==1}  value={'enreg'} name='resultatClass'   onClick={()=> {setResultatClass(1)}}/>
                   <label style={{color:'grey', marginLeft:'0.1vw', marginRight:1}}> {t('resultats_scolaires')} </label>
@@ -1255,7 +1377,7 @@ const resultatsMatiereHandler=(e)=>{
                   <label style={{color:'grey', marginLeft:'0.13vw', marginRight:1}}> {t('exams_officiels')} </label>
                 </div>
 
-              </div> 
+              </div>  */}
 
             </div>
 
@@ -1275,13 +1397,13 @@ const resultatsMatiereHandler=(e)=>{
                       );
                   })}
               </select> 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
+              {/* <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
                 <div style={{display:'flex', flexDirection:'row', width:'8.7vw'}}>
                   <input type='radio' checked={resultatMatiere==1}  value={'enreg'} name='resultatMatiere'   onClick={()=> {setResultatMatiere(1)}}/>
                   <label style={{color:'grey', marginLeft:'0.1vw', marginRight:1}}> {t('resultats_scolaires')} </label>
                 </div>
 
-              </div> 
+              </div>  */}
             </div>
             <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
               <Resultats LabelsResult={LabelsResult} BarchartData={BarchartDataResultMatiere} selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeResultat={1}/>

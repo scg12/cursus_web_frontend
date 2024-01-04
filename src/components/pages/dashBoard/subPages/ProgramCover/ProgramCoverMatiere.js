@@ -94,8 +94,6 @@ function ProgramCoverMatiere(props){
   }
 
   function createProgressionMatieres(matiere){
-    console.log("iii")
-    console.log("bbb ",props.selectedMatiere)
     var tabMatieres=[];
     var listMat="";
     var matTab=[];
