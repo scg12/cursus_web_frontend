@@ -1,4 +1,5 @@
-{   "send"            :"Envoyer",
+{   "failed"          :"Echoué(e)",
+    "send"            :"Envoyer",
     "msg"            :"Message",
     "msg_deadline" :"Date Limite de Validité",
     "all"            :"Tous",

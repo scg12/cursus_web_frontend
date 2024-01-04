@@ -1,4 +1,5 @@
-{   "send"           :"Send",
+{   "failed"         :"Failed",
+    "send"           :"Send",
     "msg"            :"Message",
     "msg_deadline"   :"Message Validity Date",
     "all"            :"All",

@@ -59,7 +59,7 @@ function ListAdmis(props) {
 
     const formatList=(list) =>{
         var rang = 1;
-        var formattedList =[]
+        var formattedList =[];
         list.map((elt)=>{
             listElt={};
             listElt.rang           = rang; 
@@ -81,17 +81,16 @@ function ListAdmis(props) {
     }
 
       const  getExamStudentResultList=(examId)=>{
-        var listEleves = []
+        var listEleves;
         axiosInstance.post(`list-resultat-examen-officiel/`, {
             id_exam : examId,
         }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data.res)]
-            console.log(listEleves);
+            console.log("resultats",res.data);
+            listEleves = [...formatList(res.data.res)];
+            console.log("examen",listEleves);
             setGridRows(listEleves);
             console.log(gridRows);
         })  
-        return listEleves;     
     }
 
     function examChangeHandler(e){       
@@ -113,7 +112,7 @@ function ListAdmis(props) {
     const columnsFr = [
         {
             field          : 'id',
-            headerName     : 'ID',
+            headerName     : "ID",
             width          : 33,
             editable       : false,
             hide           : true,
@@ -121,7 +120,7 @@ function ListAdmis(props) {
         },
         {
             field           : 'rang',
-            headerName      : 'N°',
+            headerName      : "N°",
             width           : 33,
             editable        : false,
             headerClassName:classes.GridColumnStyle
@@ -141,7 +140,7 @@ function ListAdmis(props) {
             headerClassName:classes.GridColumnStyle
         },
         {
-            field          : "resultat",
+            field          : 'resultat',
             headerName     : "RESULTAT",
             width          : 90,
             editable       : false,
@@ -155,7 +154,7 @@ function ListAdmis(props) {
             headerClassName:classes.GridColumnStyle
         },
         {
-            field          : "moyenne",
+            field          : 'moyenne',
             headerName     : "MOYENNE",
             width          : 80,
             editable       : false,
@@ -177,7 +176,7 @@ function ListAdmis(props) {
         },
         {
             field           : 'rang',
-            headerName      : 'N°',
+            headerName      : "N°",
             width           : 33,
             editable        : false,
             headerClassName:classes.GridColumnStyle
@@ -197,7 +196,7 @@ function ListAdmis(props) {
             headerClassName:classes.GridColumnStyle
         },
         {
-            field          : "resultat",
+            field          : 'resultat',
             headerName     : "RESULT",
             width          : 90,
             editable       : false,
@@ -211,7 +210,7 @@ function ListAdmis(props) {
             headerClassName:classes.GridColumnStyle
         },
         {
-            field          : "moyenne",
+            field          : 'moyenne',
             headerName     : "SCORE",
             width          : 80,
             editable       : false,
@@ -354,7 +353,7 @@ function ListAdmis(props) {
                         <StripedDataGrid
                             rows={gridRows}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                            getCellClassName={(params) => (params.field ==='displayedName'||params.field ==='mention')? classes.gridMainRowStyle :  (params.field ==='resultat'&& params.value==t("admis")) ?  classes.gridSuccessRowStyle :  (params.field ==='resultat'&& params.value==t("failed")) ? classes.gridFailedRowStyle : classes.gridRowStyle }
                             
                             onCellClick={(params,event)=>{
                                 if(event.ignore) {
@@ -363,12 +362,12 @@ function ListAdmis(props) {
                                 }
                             }}  
                             
-                           onRowDoubleClick ={(params, event) => {
-                               if(!event.ignore){
-                                    event.defaultMuiPrevented = true;
-                                    consultRowData(params.row);
-                                }
-                            }}
+                        //    onRowDoubleClick ={(params, event) => {
+                        //        if(!event.ignore){
+                        //             event.defaultMuiPrevented = true;
+                        //             consultRowData(params.row);
+                        //         }
+                        //     }}
                             
                             //loading={loading}
                             //{...data}

@@ -86,18 +86,6 @@ function NewOfficialExam(props) {
             listElt.libelleNiveau     = elt.libelle_niveau;
             listElt.idClasses         = elt.id_classes;
             listElt.libelleClasses    = elt.libelle_classes.split('_').join(',');
-            // elt.idclasses         = '';
-            // elt.libelleclasses    = '';
-            // listElt.classes.map((elt, index)=>{
-            //     if(index == 0){
-            //         elt.idclasses      = elt.id_classe;
-            //         elt.libelleClasses = elt.libelle_classe;
-            //     } else 
-            //     {
-            //         elt.idclasses      = elt.id_classes +'_'+ elt.id;
-            //         elt.libelleClasses = elt.libelle_classes +'_'+ elt.libelle;
-            //     }
-            // }); 
             
             formattedList.push(listElt); 
             rang ++;          

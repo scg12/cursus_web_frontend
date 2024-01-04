@@ -12,6 +12,7 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
+import { srRS } from '@mui/material/locale';
 
 let CURRENT_EXAM_ID;
 let CURRENT_EXAM_LABEL;
@@ -94,6 +95,7 @@ function SaveExamNotes(props) {
         var formattedList = [];
         var elvSize       = list.length;
         var mentionsTab   = [];
+        resultatTAB       = [];
         
         list.map((elt)=>{
             resultatTAB.push({
@@ -219,6 +221,7 @@ function SaveExamNotes(props) {
                     msgTitle:"", 
                     message:""
                 });  
+                effectiveResultSave();
                return 1;        
             }
             
@@ -475,9 +478,7 @@ function SaveExamNotes(props) {
         setModalOpen(0)
     }
 
-    function saveExamResultsHandler(){
-        var appreciations   = [];
-
+    function effectiveResultSave(){
         var id_eleves       = [];
         var mention_eleves  = [];
         var moyennes_eleves = [];
@@ -508,6 +509,16 @@ function SaveExamNotes(props) {
                 message:t("success_add")
             })
         });
+    }
+
+    function saveExamResultsHandler(){
+        chosenMsgBox = MSG_CONFIRM;
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType:"question", 
+            msgTitle:t("confirm_M"), 
+            message:t("save_changes")
+        })   
     }
 
     /********************************** JSX Code **********************************/   

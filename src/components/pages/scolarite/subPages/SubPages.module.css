@@ -1162,6 +1162,22 @@ font-weight: 700;
 font-size: 0.9vw;
 }
 
+.gridSuccessRowStyle{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-weight: 700;
+    font-size: 0.9vw;
+    color:rgb(13, 144, 13);
+}
+
+.gridFailedRowStyle{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-weight: 700;
+    font-size: 0.9vw;
+    color:red;
+}
+
 .gridRangRowStyle{
     min-height: 5vh !important;
     max-height: 5vh !important;
@@ -1183,7 +1199,7 @@ font-size: 0.9vw;
 
 .GridColumnStyleNC{
     display:"flex";
-   margin-top: -1vh;
+    margin-top: -1vh;
     
     background-color: #d0290c;
     color:white;
