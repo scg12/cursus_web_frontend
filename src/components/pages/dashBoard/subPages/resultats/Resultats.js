@@ -64,7 +64,8 @@ function Resultats(props){
   {
     labels: props.LabelsResult,                
     datasets: [{        
-        label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+        // label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+        label: 'Resultats scolaires ',
         backgroundColor:  (props.codeResultat) ? 'green': 'blue',
         borderColor: 'rgba(0,0,0,1)',
         borderWidth: 1,
@@ -77,7 +78,8 @@ function Resultats(props){
       {
         labels: props.LabelsResult,               
         datasets: [{        
-            label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+            // label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+            label: 'Resultats scolaires ',
             backgroundColor:  (props.codeResultat==2) ? 'grey': 'rgb(72 107 218)',
             borderColor: 'rgba(0,0,0,1)',
             borderWidth: 1,
@@ -88,7 +90,8 @@ function Resultats(props){
     {
       labels: props.LabelsResult,               
       datasets: [{        
-          label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+          // label: (props.codeResultat==1) ? 'Resultats scolaires ' : 'Examens Officiels ',
+          label: 'Resultats scolaires ',
           backgroundColor:  (props.codeResultat==2) ? 'grey': 'rgb(72 107 218)',
           borderColor: 'rgba(0,0,0,1)',
           borderWidth: 1,

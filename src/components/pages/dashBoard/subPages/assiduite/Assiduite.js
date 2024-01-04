@@ -47,21 +47,22 @@ function Assiduite(props){
   const { t, i18n } = useTranslation();
   const currentUiContext = useContext(UiContext);
   const currentAppContext = useContext(AppContext);
-  const [DoughnutData, setDoughnutData] = useState([]);
+  const [DoughnutData, setDoughnutData] = useState(props.DoughnutData);
     
-  useEffect(()=> {
-    if(props.selectedNiveau!='') getDataNiveau(props.selectedNiveau, props.codeAssiduite);
-    else if (props.selectedClasse!='') getDataClasse(props.selectedClass, props.codeAssiduite);
-    else  getDataMatiere(props.selectedMatiere, props.codeAssiduite);
+  // useEffect(()=> {
+  //   if(props.selectedNiveau!='') getDataNiveau(props.selectedNiveau, props.codeAssiduite);
+  //   else if (props.selectedClasse!='') getDataClasse(props.selectedClass, props.codeAssiduite);
+  //   else  getDataMatiere(props.selectedMatiere, props.codeAssiduite);
     
-  },[]);
+  // },[]);
 
   const labels1=['< 10h', '10h-20h', '> 20h'];
   const labels2=['< 3jours', '3jours-5jours', '> 5jours'];
   const labels3=['   < 3jours  ', '   3jours-5jours   ', '      > 5jours  ', 'Exclusion definitive'];
 
   const state = {
-    labels: (props.codeAssiduite ==1) ? labels1 : (props.codeAssiduite ==2) ? labels2 : labels3 ,
+    // labels: (props.codeAssiduite ==1) ? labels1 : (props.codeAssiduite ==2) ? labels2 : labels3 ,
+    labels: props.Labels,
     datasets: [{        
         label: 'couverture',
         backgroundColor: [
@@ -78,7 +79,7 @@ function Assiduite(props){
             '#003350',
             '#35014F'
         ],
-        data: DoughnutData
+        data: props.DoughnutData
     }]  
   }  
 
