@@ -167,6 +167,10 @@ function ChangementClasse(props) {
     function dropDownHandler1(e){
         var tempTable=[];
         selectedElevesIds = new Array();
+
+        if(!document.getElementById("btnchgmt").classList.contains("disable")){
+            document.getElementById("btnchgmt").classList.add("disable");
+        } 
         
         if(e.target.value != optClasseDep[0].value){
             getClassStudentListDep(e.target.value);
@@ -192,6 +196,10 @@ function ChangementClasse(props) {
     }
 
     function dropDownHandler2(e){
+        if(!document.getElementById("btnchgmt").classList.contains("disable")){
+            document.getElementById("btnchgmt").classList.add("disable");
+        } 
+
         if(e.target.value != optClasseFin[0].value){
             getClassStudentListFin(e.target.value);
             FINAL_CLASSE_ID = e.target.value;
@@ -340,6 +348,8 @@ const columnsModel1Fr = [
 /*************************** Handler functions ***************************/
     function changeStudentClassHandler(e){
        
+        if(document.getElementById("btnchgmt").classList.contains("disable")) return;
+
         if(selectedElevesIds[0].length == 0) {
             chosenMsgBox = MSG_WARNING;
             currentUiContext.showMsgBox({
@@ -531,9 +541,17 @@ const columnsModel1Fr = [
                                 
                                 onSelectionModelChange={(id)=>{
                                     selectedElevesIds = new Array(id);
-                                    if(selectedElevesIds[0].length>0) setIsValid(true);
-                                    else setIsValid(false);
+                                    if(selectedElevesIds[0].length>0){
+                                        if(document.getElementById("btnchgmt").classList.contains("disable")){
+                                            document.getElementById("btnchgmt").classList.remove("disable");
+                                        }
+                                    } else  document.getElementById("btnchgmt").classList.add("disable"); 
                                     console.log(selectedElevesIds);
+
+                                    // if(selectedElevesIds[0].length>0) setIsValid(true);
+                                    // else setIsValid(false);
+                                    
+
                                 }}
 
                                
@@ -576,13 +594,15 @@ const columnsModel1Fr = [
                     <div className={classes.gridRowEltSmall}>
                         <div className={classes.gridEltAction}> 
                             <CustomButton
-                                btnText={t('deplacer')+' >'}
-                                hasIconImg= {false}
+                                id                 = {"btnchgmt"}
+                                btnText            = {t('deplacer')+' >'}
+                                hasIconImg         = {false}
                                 /*imgSrc='images/addNewUserOrg.png'
                                 imgStyle = {classes.grdBtnImgStyle}*/  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyleP}
-                                btnClickHandler={changeStudentClassHandler}
+                                buttonStyle        = {getGridButtonStyle()}
+                                btnTextStyle       = {classes.gridBtnTextStyleP}
+                                btnClickHandler    = {changeStudentClassHandler}
+                                disabledBtnHandler = {changeStudentClassHandler}
                                 disable={(isValid== false)}   
                             />
                         </div>

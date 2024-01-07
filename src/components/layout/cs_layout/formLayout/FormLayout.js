@@ -79,7 +79,7 @@ function FormLayout(props){
             case '102':  return   t('school_certificate_M');
             case '103':  return   t('generate_card_M');
             case '104':  return   t('conseils_classses');
-            case '105':  return   t('next_class_admission');
+            case '105':  return   t('changemnt_class');
 
             case '106':  return   t('schedules');
             case '107':  return   t("consult_schedule_M");
@@ -167,7 +167,7 @@ function FormLayout(props){
             case '102':   return  'images/certificateP.png';
             case '103':   return  'images/PrintSchoolCard.png';
             case '104':   return  'images/ConseilClasse.png';
-            case '105':   return  'images/ClassSup.png';
+            case '105':   return  'images/ChangemtClass.png';
 
             case '106':   return  'images/Schedule.png';
             case '107':   return  'images/lookSchedule.png';
