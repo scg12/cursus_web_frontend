@@ -190,9 +190,21 @@ function AddManuel(props) {
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImgP} src='images/addBookP.png'/>
                 </div>
-                <div className={classes.formMainTitle} >
-                    {t("new_manuel_M")}
-                </div>
+                {(props.formMode == "creation") ?
+                    <div className={classes.formMainTitle} >
+                        {t("new_manuel_M")}
+                    </div>
+                    :
+                    (props.formMode == "modif") ?
+                        <div className={classes.formMainTitle} >
+                            {t("update_manuel_M")}
+                        </div>
+                    :
+                    <div className={classes.formMainTitle} >
+                        {t("consult_manuel_M")}
+                    </div>
+                }
+                
                 
             </div>
 

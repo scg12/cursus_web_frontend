@@ -4,6 +4,26 @@
     margin-top: 3.0vh;
 }
 
+.imgStyleP {
+    width:7.8vw;
+    height:7.8vw;
+    border-radius: 1.7vw;
+    margin-bottom: 1vh;
+}
+
+
+.grdBtnImgStyleP{
+    /*position: relative;*/
+    background-color: white;
+    border-radius:3px;
+    /*z-index: 100;*/
+    width: 1.5vw;
+    height: 1.5vw;
+    margin-right: 1px;
+    margin-left: 0.3vw;
+    }
+    
+
 
 .size72Vw{
     min-width:72vw;    

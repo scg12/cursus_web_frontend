@@ -1,4 +1,12 @@
-{   "failed"         :"Failed",
+{   "liste_paiements"   : "Last Paiements",
+    "consult_manuel_M"  : "LOOK BOOK'S INFORMATIONS",
+    "update_manuel_M"   : "UPDATE BOOK INFORMATIONS",
+    "init_paiement"     : "Enable Paiement",
+    "new_paiement_M"    : "NEW SALARY PAIEMENT",
+    "new_paiement"      : "New Paiement",
+    "list_of_waiting_M" :"LIST OF PENDING PAIEMENTS",
+    "waiting_paiement_M":"PENDING SALARY PAIEMENTS",
+    "failed"         :"Failed",
     "send"           :"Send",
     "msg"            :"Message",
     "msg_deadline"   :"Message Validity Date",
@@ -78,10 +86,13 @@
     "school_work_evolution_classe"     :  "School work general evoluton by class",
 
 
-    "stat_school_fees"  : "Statistics on school Fees",
-    "couv_prog_cours"   : "Statistics on course completion",
-    "stat_absences"     : "Statistics on Attendance",
-    "paiement_profs"    : "Statistics on teachers salary",
+    "stat_school_fees"      : "Statistics on school Fees",
+    "couv_prog_cours"       : "Statistics on course completion",
+    "stat_absences"         : "Statistics on Attendance",
+    "paiement_profs"        : "Statistics on teachers salary",
+    "paiement_personnel"    : "Staff Salary Paiement ",
+
+
     "travail_scolaire"  : "Statistics on students school work",
 
     "last_level":"Last reached level",
@@ -376,6 +387,7 @@
     "paiement_history_M":"PAYMENTS LISTING",
     "apply":"Apply",
     "write_amount_to_pay" : "Write amount to be paid",
+    "amount_to_pay" : "Amount to be paid",
     "paid_amount":"Paid amount",
     "amount_to_be_paid":"Amount to be paid",
     "payment_history" : "Payments history",

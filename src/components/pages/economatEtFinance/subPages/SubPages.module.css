@@ -10,6 +10,18 @@
 
 }
 
+.grdBtnImgStyleP{
+    /*position: relative;*/
+    background-color: white;
+    border-radius:3px;
+    /*z-index: 100;*/
+    width: 1.5vw;
+    height: 1.5vw;
+    margin-right: 1px;
+    margin-left: 0.3vw;
+    }
+    
+
 .msgBoxImgStyleP{
     width:2.7vw;
     height: 2.7vw;
@@ -572,7 +584,7 @@
     width: 50vw;
     /*min-height: 60vh;*/
     max-height:83vh ;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
 
     background-color: rgb(255, 255, 255);
     position: fixed;

@@ -116,6 +116,7 @@ function FormLayout(props){
 
             case '206':  return   'Budget Previsionnel';
             case '207':  return   'Montant Total perÇu';
+            case '208':  return   t('paiement_personnel');
 
             //----STATS ----
             case '300':  return  t('evolution_effectifs');
@@ -202,6 +203,7 @@ function FormLayout(props){
 
             case '206':  return  'images/EvolutionBudget.png';
             case '207':  return  'images/EtatPaiement.png';
+            case '208':  return  'images/salaireProf.png';
 
             //----STATS ----
             case '300':  return  'images/EvolutionEffectifs.png';

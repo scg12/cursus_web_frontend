@@ -15,6 +15,7 @@ import EntreeFonds from './subPages/EntreeFonds';
 import SortieFonds from './subPages/SortieFonds';
 import RecapEntrees from './subPages/RecapEntrees';
 import RecapSorties from './subPages/RecapSorties';
+import PaiementStaff from './subPages/PaiementStaff'
 import Budget from './subPages/Budget';
 import TotalForm from './subPages/TotalForm';
 
@@ -93,13 +94,15 @@ function EconomatEtFinancePage() {
                     :
                     null
                 }
-                
+
                 {(currentAppContext.enableProfiles["FINANCE_B"]=='1') ? 
                     <MenuItemListP minWtdhStyle={classes.size72Vw}  libelle= {t("non_acad_fees")} theme={selectedTheme}>
-                        {(currentAppContext.enableProfiles["FINANCE_B1"]=='1') ? <MenuItemP menuItemId ='202' imgSource='images/EntreeFonds.png'        libelle={t("entree_fond")} itemSelected={showSideMenu}></MenuItemP> : null}
-                        {(currentAppContext.enableProfiles["FINANCE_B2"]=='1') ? <MenuItemP menuItemId ='203' imgSource='images/SortieFonds.png'        libelle={t("sortie_fond")} itemSelected={showSideMenu}></MenuItemP> : null}
+                        {/* pour le MenuItem ci, mettre le bon code */}
+                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='208' imgSource='images/salaireProf.png'        libelle={t("paiement_personnel")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}></MenuItemP>  : null}
+                        {(currentAppContext.enableProfiles["FINANCE_B1"]=='1') ? <MenuItemP menuItemId ='202' imgSource='images/EntreeFonds.png'        libelle={t("entree_fond")} itemSelected={showSideMenu}></MenuItemP>  : null}
+                        {(currentAppContext.enableProfiles["FINANCE_B2"]=='1') ? <MenuItemP menuItemId ='203' imgSource='images/SortieFonds.png'        libelle={t("sortie_fond")} itemSelected={showSideMenu}></MenuItemP>  : null}
                         {(currentAppContext.enableProfiles["FINANCE_B2"]=='1') ? <MenuItemP menuItemId ='204' imgSource='images/ListeEntrees.png'       libelle={t("recap_entree")} itemSelected={showSideMenu}></MenuItemP> : null}
-                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='205' imgSource='images/ListeSorties.png'       libelle={t("recap_sortie")} itemSelected={showSideMenu}></MenuItemP> :null}
+                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='205' imgSource='images/ListeSorties.png'       libelle={t("recap_sortie")} itemSelected={showSideMenu}></MenuItemP> : null}
                         {/*<MenuItemP libelle='Admission en claase2 ' itemSelected={showSideMenu}></MenuItemP>*/}
                     </MenuItemListP>
                     :
@@ -126,6 +129,7 @@ function EconomatEtFinancePage() {
                     {curentMenuItemPId== 203 && <SortieFonds/>   }
                     {curentMenuItemPId== 204 && <RecapEntrees/>  } 
                     {curentMenuItemPId== 205 && <RecapSorties/>  }
+                    {curentMenuItemPId== 208 && <PaiementStaff/>  }
                    
                     {curentMenuItemPId== 206 && <Budget/>        }
                     {curentMenuItemPId== 207 && <TotalForm/>     }
