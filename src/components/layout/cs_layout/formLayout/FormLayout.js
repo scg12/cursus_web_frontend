@@ -106,17 +106,18 @@ function FormLayout(props){
             
 
             //----FINANCES ----
-            case '200':  return   'Frais De Scolarité';
+            case '200':  return   t('frais_scolariteP');
             case '201':  return   'Etats Des Paiments Des Frais de Scolarité';
+            case '202':  return   t('paiement_personnel');
 
-            case '202':  return   'Nouvelle Entrée De Fonds';
-            case '203':  return   'Nouvelle Sortie De Fonds';
-            case '204':  return   'Recapitulatif Des Entrées de Fonds';
-            case '205':  return   'Recapitulatif Des Sorties De Fonds';
+            case '203':  return   'Nouvelle Entrée De Fonds';
+            case '204':  return   'Nouvelle Sortie De Fonds';
+            case '205':  return   'Recapitulatif Des Entrées de Fonds';
+            case '206':  return   'Recapitulatif Des Sorties De Fonds';
 
-            case '206':  return   'Budget Previsionnel';
-            case '207':  return   'Montant Total perÇu';
-            case '208':  return   t('paiement_personnel');
+            case '207':  return   'Budget Previsionnel';
+            case '208':  return   'Montant Total perÇu';
+            
 
             //----STATS ----
             case '300':  return  t('evolution_effectifs');
@@ -195,15 +196,16 @@ function FormLayout(props){
             //----FINANCES ----
             case '200':  return  'images/SchoolFees.png';
             case '201':  return  'images/ListeEntrees.png';
+            case '202':  return  'images/salaireProf.png';
 
-            case '202':  return  'images/EntreeFonds.png';
-            case '203':  return  'images/SortieFonds.png';
-            case '204':  return  'images/ListeEntrees.png';
-            case '205':  return  'images/ListeSorties.png';
+            case '203':  return  'images/EntreeFonds.png';
+            case '204':  return  'images/SortieFonds.png';
+            case '205':  return  'images/ListeEntrees.png';
+            case '206':  return  'images/ListeSorties.png';
 
-            case '206':  return  'images/EvolutionBudget.png';
-            case '207':  return  'images/EtatPaiement.png';
-            case '208':  return  'images/salaireProf.png';
+            case '207':  return  'images/EvolutionBudget.png';
+            case '208':  return  'images/EtatPaiement.png';
+           
 
             //----STATS ----
             case '300':  return  'images/EvolutionEffectifs.png';
