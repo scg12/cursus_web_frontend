@@ -46,6 +46,7 @@ function AddPaiementStaff(props) {
     ];
 
     var tabUser =[
+        {value:0, label:"--------- Choisir le beneficiaire -------"},
         {value:1, label:"MBARGA Lucas"},
         {value:2, label:"ADAMA Traore"},
         {value:2, label:"MAGNE ODETTE"},
@@ -174,8 +175,11 @@ function AddPaiementStaff(props) {
 
     }
 
-    function userChangeHandler(){
-        setListPaiements(tabLastPaiement1);
+    function userChangeHandler(e){
+        if(e.target.value>0)
+            setListPaiements(tabLastPaiement1);
+        else
+            setListPaiements([]);
     }
 
     /************************************ JSX Code ************************************/
