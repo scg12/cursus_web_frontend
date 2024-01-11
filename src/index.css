@@ -1,3 +1,22 @@
+[class^="rowHover"]:hover{
+  width:93%;
+  height: 5.3vh;
+  padding-top: 0.5vh;
+  padding-bottom: 0.5vh;
+  background-color: #065386;
+  color:white;
+  border-radius: 3px;
+}
+
+[class^="rowHover"]:hover img{
+  width: 1.63vw;
+  height: 1.87vw;
+  margin-right: 1vw;
+  border-radius: 3px;
+  border: 1px solid rgb(217, 215, 215) !important;
+}
+
+
 /*-----------------------------------LE CKEDITOR ------------------------------------*/
 div.ck.ck-editor{
   width:47vw;

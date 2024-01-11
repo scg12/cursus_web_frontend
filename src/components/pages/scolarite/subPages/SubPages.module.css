@@ -1,3 +1,5 @@
+
+
 .formET{
     display: flex;
     flex-direction: column;
@@ -43,7 +45,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items:flex-start;
-    min-height: 7vh;
+    min-height: 10vh;
     max-height: 40vh;
     height: auto;
     width: 93%;
@@ -52,7 +54,8 @@
     padding-top: 1vw; 
     /*padding-bottom: 1vw;*/
     border:solid 1px gray;  
-    border-radius: 7px;  
+    border-radius: 7px; 
+    background-color: beige; 
 
 }
 
