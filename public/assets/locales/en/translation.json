@@ -1,4 +1,5 @@
-{   "liste_paiements"   : "Last Paiements",
+{   "dossier_academique_of_student":"Academic folder of ",
+    "liste_paiements"   : "Last Paiements",
     "consult_manuel_M"  : "LOOK BOOK'S INFORMATIONS",
     "update_manuel_M"   : "UPDATE BOOK INFORMATIONS",
     "init_paiement"     : "Enable Paiement",

@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom';
 import classes from "../subPages/SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import FormPuce from '../../../formPuce/FormPuce';
+import PDFTemplate from '../reports/PDFTemplate';
+import StudentCursus from '../reports/StudentCursus';
+import BackDrop from '../../../backDrop/BackDrop';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import MsgBox from '../../../msgBox/MsgBox';
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
@@ -10,6 +15,10 @@ import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
 import { useTranslation } from "react-i18next";
 import { useFilePicker } from 'use-file-picker';
+import {isMobile} from 'react-device-detect';
+import {getTodayDate} from '../../../../store/SharedData/UtilFonctions';
+
+
 
 
 
@@ -17,6 +26,7 @@ import { useFilePicker } from 'use-file-picker';
 var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
+
 
 var cur_punitionDate='';
 var cur_punitionDuree;
@@ -26,12 +36,14 @@ var cur_punitionMotif='';
 var consignes_data =[];
 var exclusions_data =[];
 var other_data =[];
+var printedETFileName ='';
 
 
 const LIST_HEIGHT = 20;
 
 
 var dossierEleve=[];
+var studentFolderData = {};
 
 
 function CursusAcad(props) {
@@ -146,11 +158,36 @@ function CursusAcad(props) {
 
     function printDossierEleve(){
 
+        var eleveData = {};
+        eleveData.eleveInfo     = {...props.eleve};
+        eleveData.dossierEleve  = [...props.dossierEleve];
+
+
+        var PRINTING_DATA ={
+            dateText     : 'Yaounde, le '+getTodayDate(),
+            leftHeaders  : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders: ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+            rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+            pageImages   : ["images/collegeVogt.png"],
+            classeLabel  : props.dossierEleve[0].classe,
+            pageTitle    : t("dossier_academique_of_student") +' '+ props.eleve.nom+' '+props.eleve.prenom,
+            eleveData    : eleveData
+            //numberEltPerPage:ROWS_PER_PAGE  
+        };
+
+        printedETFileName = 'Dossier_academique('+props.eleve.nom+'_'+props.eleve.prenom+').pdf';
+        studentFolderData = PRINTING_DATA;
+        console.log("ici la",PRINTING_DATA);
+        setModalOpen(1);
     }
 
     function cancelHandler(){
         //MEETING={};
         props.cancelHandler();
+    }
+
+    function closePreview(){
+        setModalOpen(0);
     }
 
     /************************************ JSX Code ************************************/
@@ -198,6 +235,21 @@ function CursusAcad(props) {
     return (
         <div className={'card '+ classes.formContainerP} style={{height:(props.dossierEleve.length*LIST_HEIGHT)+ "vh", justifyContent:"flex-start", maxHeight:"97.3vh", minHeight:"67vh"}}>          
            
+            {(modalOpen!=0) && <BackDrop />}
+            {(modalOpen==1) &&              
+                <PDFTemplate  previewCloseHandler={closePreview}>
+                    {isMobile?
+                        <PDFDownloadLink  document ={<StudentCursus pageSet={studentFolderData}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height:"87.3vh", width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            <StudentCursus pageSet={studentFolderData}/>
+                        </PDFViewer>
+                    } 
+                </PDFTemplate>
+            } 
+
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg2} src='images/dossierEleve.png'/>

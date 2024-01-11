@@ -127,9 +127,9 @@ function SearchAcademicHistory(props) {
 
     const LigneEleve= (props)=>{
         return(
-            <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center', width:'100%', height:'5vh', paddingTop:'1vh', paddingBottom:'1vh', borderTop:'solid 0.7px black', backgroundColor: (props.index % 2 ==0)? '#dce4eb':'white'}} onDoubleClick={()=>{getEleveData(props.eleveData).then((elvData)=>{SEARCHED_ELEVE={...elvData}; console.log("elvdata",SEARCHED_ELEVE); setModalOpen(1);})}}>
-               <img  src={'images/dossierEleve.png'} alt='dossierIcon' style={{width:'1.63vw', height:'1.87vw', marginRight:'1vw',}}/>
-               <label style={{fontSize:'0.9vw', color:'black', fontWeight:'bold'}}>{props.nom +' '+ props.prenom}</label>
+            <div class={"rowHover"} style={{display:"flex", flexDirection:"row",marginBottom:"1.3vh", paddingLeft:"1vh"}}   onDoubleClick={()=>{getEleveData(props.eleveData).then((elvData)=>{SEARCHED_ELEVE={...elvData}; console.log("elvdata",SEARCHED_ELEVE); setModalOpen(1);})}}>
+               <img  src={'images/dossierEleve.png'} alt='dossierIcon' style={{width:'1.63vw', height:'1.87vw', marginRight:'1vw',borderRadius:"3px", border:"solid 1px #4a4646"}}/>
+               <div style={{fontSize:'0.9vw',  fontWeight:'bold'}}>{props.nom +' '+ props.prenom}</div>
             </div>
         );
     }
