@@ -32,6 +32,7 @@ function SynchroData(props) {
     const [fileSelected, setFileSelected] = useState(false)
     const [sequenceActivated, setSequenceActivated] = useState(false);
     const [checkDisabled, setCheckDisabled] = useState(true);
+    const [isInternetAvailable, setIsInternetAvailable] = useState(false);
     
     
    
@@ -243,6 +244,22 @@ function SynchroData(props) {
         }
     }
     
+    function testInternetConnection(){
+        axiosInstance.post(`test-internet-connection/`, {            
+        }).then((res)=>{   
+            console.log("resultat",res.data);
+            setIsInternetAvailable(res.data.status)
+        })
+    } 
+
+    function envoyerMessages(){
+        axiosInstance.post(`synchro-mongo-atlas/`, {   
+            id_sousetab:currentAppContext.currentEtab,         
+        }).then((res)=>{   
+            console.log("resultat",res.data);
+            setIsInternetAvailable(res.data.status)
+        })
+    }
 
     function activateOrDesactivateEvalPeriod(){
         var sequenceToUpdate = LISTE_SEQUENCES.find((elt)=>elt.id==cur_sequence);
@@ -325,7 +342,7 @@ function SynchroData(props) {
                         hasIconImg= {true}
                         imgSrc='images/connecttoWeb.png'
                         imgStyle = {classes.grdBtnImgStylePrim}
-                        btnClickHandler={activateOrDesactivateEvalPeriod}
+                        btnClickHandler={testInternetConnection}
                         // disable={(isValid) ? !isValid :!fileSelected}
                     />
 
@@ -337,7 +354,10 @@ function SynchroData(props) {
                         hasIconImg= {true}
                         imgSrc='images/SmsP.png'
                         imgStyle = {classes.grdBtnImgStylePrim}
+                        // btnClickHandler={props.cancelHandler}
                         btnClickHandler={props.cancelHandler}
+                        disable={envoyerMessages}
+                        // disable={(isInternetAvailable)?!isInternetAvailable:}
                     />                    
                     
                 </div>                   

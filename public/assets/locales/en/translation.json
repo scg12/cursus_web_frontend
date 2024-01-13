@@ -17,7 +17,7 @@
     "destinataire_M" : "MESSAGE RECEIVER",
     "destinataire"   : "Destinataire",
     "data_synchronisation_M" : "Data Synchronisation",
-    "connect_to_internet"    : "Connect to Internet",
+    "connect_to_internet"    : "Test Connection to Internet",
     "start_msg_transfer"     : "Start Messages Transfer",
     "enter_exam_name":"Please enter Exam name!",
     "no_classes_selected":"No classes has been associated to that Exam!",
