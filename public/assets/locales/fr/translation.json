@@ -1,4 +1,7 @@
-{   "dossier_academique_of_student":"Dossier académique de l'élèves ",
+{   "bilan_paiement_staff":"Bilan des Paiements",
+    "def_paiement_personnel":"Définition Des Salaires",
+    "staff_fees" : "Frais Liés au Personnel Enseignant et administratif",
+    "dossier_academique_of_student":"Dossier académique de l'élèves ",
     "liste_paiements"   : "Listing Des derniers Paiements",
     "consult_manuel_M"  : "CONSULTATION MANUEL",
     "update_manuel_M"   : "MODIFICATION MANUEL",

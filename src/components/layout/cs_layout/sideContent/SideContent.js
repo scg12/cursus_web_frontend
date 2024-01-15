@@ -4,14 +4,29 @@ import Select from 'react-select'
 import { Component, useContext } from "react";
 import UiContext from '../../../../store/UiContext';
 import AppContext from '../../../../store/AppContext';
-import CustomCalendar from '../../../CustomCalendar/CustomCalendar'
+import CustomCalendar from '../../../CustomCalendar/CustomCalendar';
 
+import axiosInstance from '../../../../axios'; 
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n'
 
 import 'react-materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import classes from './SideContent.module.css';
+
+//Necessaire pour l'emploi de temps
+let listMatieres = [];
+let matieres = [];
+let classess = [];
+let indexClasse = -1;
+let emploiDeTemps = [];
+let listProfs = [];
+let tab_jours = [];
+let tab_periodes = [];
+let tab_creneau_pause = [];
+let tab_valeur_horaire = [];
+
+
 
 
 function SideContent(props) {
@@ -97,7 +112,6 @@ function SideContent(props) {
         // console.log("currentYear: ",currentAppContext.currentYear," currentEtab: ", currentAppContext.currentEtab);
     },[])
   
- 
     function getSelectDropDownTextColr() {
         switch(selectedTheme){
             case 'Theme1': return 'rgb(60, 160, 21)';
@@ -128,6 +142,70 @@ function SideContent(props) {
     function onChangeEtabHandler(e){
         console.log("s_etab changé: ",e.target.value)
         currentAppContext.setCurrentEtab(e.target.value);
+        
+        //-On load les donnees de l'ET pour l'etablisseemnt la
+        loadEmploiDetemps(e.target.value);
+        currentUiContext.updateTab(getTheInitialActiveMenuId());
+    }
+
+    function loadEmploiDetemps(etabId){
+
+        listMatieres = [];
+        matieres = [];
+        classess = [];
+        indexClasse = -1;
+        emploiDeTemps = [];
+        listProfs = [];
+        tab_jours = [];
+        tab_periodes = [];
+        tab_creneau_pause = [];
+        tab_valeur_horaire = [];
+
+        axiosInstance.post(`get-current-emploi-de-temps/`, {
+            id_sousetab: etabId
+        }).then((res)=>{
+            console.log("ET",res.data, res.data.profPrincipaux);
+            res.data.matieres.map((m)=>{matieres.push(m)});
+            res.data.classes.map((c)=>{classess.push(c)});
+            res.data.ListMatieres.map((lm)=>{listMatieres.push(lm)});
+            res.data.emploiDeTemps.map((em)=>{emploiDeTemps.push(em)});
+            res.data.listProfs.map((lp)=>{listProfs.push(lp)});
+            res.data.TAB_JOURS.map((j)=>{tab_jours.push(j)});
+            res.data.TAB_PERIODES.map((p)=>{tab_periodes.push(p)});
+            res.data.TAB_CRENEAU_PAUSE.map((p)=>{tab_creneau_pause.push(p)});
+            res.data.TAB_VALEUR_HORAIRE.map((vh)=>{tab_valeur_horaire.push(vh)});
+            
+            currentUiContext.setClasseEmploiTemps(classess);
+            currentUiContext.setListMatieres(listMatieres);
+            currentUiContext.setListProfs(listProfs);
+            currentUiContext.setIndexClasse(indexClasse);
+            currentUiContext.setMatiereSousEtab(matieres);
+            currentUiContext.setTAB_JOURS(tab_jours);
+            currentUiContext.setTAB_PERIODES(tab_periodes);
+            currentUiContext.setTAB_VALEUR_HORAIRE(tab_valeur_horaire);
+            currentUiContext.setEmploiDeTemps(emploiDeTemps);
+            currentUiContext.setTAB_CRENEAU_PAUSE(tab_creneau_pause);
+            currentUiContext.setCurrentPPList(res.data.profPrincipaux);
+           
+
+            console.log("------ListProfs:------", listProfs)
+
+            if(tab_valeur_horaire.length>0){
+            currentUiContext.setIntervalleMaxTranche(tab_valeur_horaire[0]+"_"+tab_valeur_horaire[tab_valeur_horaire.length-1]);
+        }})
+        
+    }
+
+    function getTheInitialActiveMenuId() {      
+        //Ici voir avec Ge
+        if(currentAppContext.enableProfiles["SCOLARITE"]=='1')    return 'menuLi0';
+        if(currentAppContext.enableProfiles["SCOLARITE"]=='1')    return 'menuLi1';
+        if(currentAppContext.enableProfiles["FINANCE"]=='1')      return 'menuLi2';
+        if(currentAppContext.enableProfiles["STATS"]=='1')        return 'menuLi3';
+        if(currentAppContext.enableProfiles["IMPRESSIONS"]=='1')  return 'menuLi4';
+        if(currentAppContext.enableProfiles["COMM_PARENT"]=='1')  return 'menuLi5';
+        if(currentAppContext.enableProfiles["EXTRAS"]=='1')       return 'menuLi6';
+        if(currentAppContext.enableProfiles["CONFIG"]=='1')       return 'menuLi7';
     }
 
     function onChangeAnneeHandler(e){

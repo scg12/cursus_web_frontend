@@ -63,8 +63,8 @@ function SaveExamNotes(props) {
         axiosInstance
         .post(`list-appreciations-notes-exam/`,{id_sousetab: currentAppContext.currentEtab}).then((res)=>{
                 res.data.map((appreciation)=>{ appreciations.push({
-                    // value:appreciation.code, 
-                    value:appreciation.libelle, 
+                    value:appreciation.code, 
+                    //value:appreciation.libelle, 
                     label:appreciation.libelle, 
                     minNote:appreciation.min_note, 
                     maxNote:appreciation.max_note
@@ -103,7 +103,7 @@ function SaveExamNotes(props) {
                 idEleve   : elt.id,
                 admis     : elt.resultat,
                 moyenne   : elt.moyenne == "" ? 0.0 : elt.moyenne,
-                mention   : elt.mention == "" ? optMention[0].label : elt.mention,                
+                mention   : elt.mention == "" ? optMention[0].value : elt.mention,                
             }); 
 
             if(elt.mention == "")
@@ -151,7 +151,7 @@ function SaveExamNotes(props) {
         }).then((res)=>{
             console.log(res.data);
             listEleves = [...formatList(res.data.res)]
-            console.log(listEleves);
+            console.log("gggg",listEleves);
             setGridRows(listEleves);
           
         })  

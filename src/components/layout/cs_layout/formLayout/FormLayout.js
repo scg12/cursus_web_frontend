@@ -108,15 +108,18 @@ function FormLayout(props){
             //----FINANCES ----
             case '200':  return   t('frais_scolariteP');
             case '201':  return   'Etats Des Paiments Des Frais de Scolarité';
-            case '202':  return   t('paiement_personnel');
+            
+            case '202':  return   t("def_paiement_personnel");
+            case '203':  return   t('paiement_personnel');
+            case '204':  return   t("bilan_paiement_staff");
 
-            case '203':  return   'Nouvelle Entrée De Fonds';
-            case '204':  return   'Nouvelle Sortie De Fonds';
-            case '205':  return   'Recapitulatif Des Entrées de Fonds';
-            case '206':  return   'Recapitulatif Des Sorties De Fonds';
+            case '205':  return   t("entree_fond");
+            case '206':  return   t("sortie_fond");
+            case '207':  return   t("recap_entree");
+            case '208':  return   t("recap_sortie");
 
-            case '207':  return   'Budget Previsionnel';
-            case '208':  return   'Montant Total perÇu';
+            case '209':  return   t("budget_evolution");
+            case '210':  return   t("total_percu");
             
 
             //----STATS ----
@@ -196,15 +199,18 @@ function FormLayout(props){
             //----FINANCES ----
             case '200':  return  'images/SchoolFees.png';
             case '201':  return  'images/ListeEntrees.png';
-            case '202':  return  'images/salaireProf.png';
+            
+            case '202':  return  'images/confSalaire.png';
+            case '203':  return  'images/salaireProf.png';
+            case '204':  return  'images/ListeSorties.png';
+            
+            case '205':  return  'images/EntreeFonds.png';
+            case '206':  return  'images/SortieFonds.png';
+            case '207':  return  'images/ListeEntrees.png';
+            case '208':  return  'images/ListeSorties.png';
 
-            case '203':  return  'images/EntreeFonds.png';
-            case '204':  return  'images/SortieFonds.png';
-            case '205':  return  'images/ListeEntrees.png';
-            case '206':  return  'images/ListeSorties.png';
-
-            case '207':  return  'images/EvolutionBudget.png';
-            case '208':  return  'images/EtatPaiement.png';
+            case '209':  return  'images/EvolutionBudget.png';
+            case '210':  return  'images/EtatPaiement.png';
            
 
             //----STATS ----

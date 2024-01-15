@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import {Link} from 'react-router-dom';
 
 import { useContext} from "react";
@@ -45,6 +45,10 @@ function HeadAndNav(props) {
             console.log(res.data);                                     
         })  
     };
+
+    useEffect(()=> {
+        currentUiContext.updateFirstLoad(true);
+    },[])
     currentUiContext.updateTab(getTheInitialActiveMenuId())
 
     //currentActiveMenuId = getTheInitialActiveMenuId();
@@ -126,13 +130,16 @@ function HeadAndNav(props) {
     
     function getTheInitialActiveMenuId() {
         if(currentUiContext.firstLoad==true){
+            //Ici voir avec Ge
             if(currentAppContext.enableProfiles["SCOLARITE"]=='1')    return 'menuLi0';
-            if(currentAppContext.enableProfiles["FINANCE"]=='1')      return 'menuLi1';
-            if(currentAppContext.enableProfiles["STATS"]=='1')        return 'menuLi2';
-            if(currentAppContext.enableProfiles["IMPRESSIONS"]=='1')  return 'menuLi3';
-            if(currentAppContext.enableProfiles["COMM_PARENT"]=='1')  return 'menuLi4';
-            if(currentAppContext.enableProfiles["EXTRAS"]=='1')       return 'menuLi5';
-            if(currentAppContext.enableProfiles["CONFIG"]=='1')       return 'menuLi6';
+            if(currentAppContext.enableProfiles["SCOLARITE"]=='1')    return 'menuLi1';
+            if(currentAppContext.enableProfiles["FINANCE"]=='1')      return 'menuLi2';
+            if(currentAppContext.enableProfiles["STATS"]=='1')        return 'menuLi3';
+            if(currentAppContext.enableProfiles["IMPRESSIONS"]=='1')  return 'menuLi4';
+            if(currentAppContext.enableProfiles["COMM_PARENT"]=='1')  return 'menuLi5';
+            if(currentAppContext.enableProfiles["EXTRAS"]=='1')       return 'menuLi6';
+            if(currentAppContext.enableProfiles["CONFIG"]=='1')       return 'menuLi7';
+          
 
         } else {
             return currentUiContext.selectedTab;

@@ -1,4 +1,7 @@
-{   "dossier_academique_of_student":"Academic folder of ",
+{   "bilan_paiement_staff":"Paiement Summary",
+    "def_paiement_personnel":"Salaries Definition",
+    "staff_fees" : "Fees Related To Administrative and School Staff",
+    "dossier_academique_of_student":"Academic folder of ",
     "liste_paiements"   : "Last Paiements",
     "consult_manuel_M"  : "LOOK BOOK'S INFORMATIONS",
     "update_manuel_M"   : "UPDATE BOOK INFORMATIONS",
