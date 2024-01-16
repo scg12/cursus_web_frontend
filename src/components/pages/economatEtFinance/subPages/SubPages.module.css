@@ -34,8 +34,25 @@
     font-weight: 657;
     align-self: center;
     margin-left: 0.17vw;
-
 }
+
+.formHeaderImg{
+    border-style: none;
+    width:3.9vw;
+    height: 3.7vw;
+    border-radius: 7px;
+    background-color: white;
+}
+
+.formHeaderImgP{
+    border-style: none;
+    width:3.5vw;
+    height: 3.7vw;
+    border-radius: 7px;
+    background-color: white;
+}
+
+
     
 
 .clotureStyle{
@@ -548,6 +565,30 @@
    
     /*color:rgb(8, 167, 101); */
 }
+
+.formCanvas {
+    z-index: 1200;
+    align-self: center;
+    padding-top: 3vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 50vw;
+    height: 47vh;
+    
+    background-color: rgb(255, 255, 255);
+    position: fixed;
+    /*padding-left: 1vw;
+    padding-right: 1vw; */ 
+    border-radius: 7px; 
+    
+    border-color: rgb(218, 214, 214);
+    border-width: 0.5px;
+    border-style: solid;
+    font-size: 1.07vw;
+    font-weight: 474;    
+}
+
 
 .formContainer {
     z-index: 1200;

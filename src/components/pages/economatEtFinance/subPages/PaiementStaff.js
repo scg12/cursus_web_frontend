@@ -652,7 +652,7 @@ function PaiementStaff(props) {
             }
             <div className={classes.inputRow} >
                 <div className={classes.formTitle}>
-                    {t('waiting_paiement_M')} 
+                    {t('paiement_personnel_M')} 
                 </div>
             </div>
             <div className={classes.formGridContent}>
