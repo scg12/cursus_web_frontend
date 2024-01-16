@@ -29,7 +29,7 @@
     "destinataire_M" : "DESTINATAIRE",
     "destinataire"   : "Destinataire",
     "data_synchronisation_M" : "Synchronisation des Données",
-    "connect_to_internet"    : "Connexion  à Internet",
+    "connect_to_internet"    : "Tester Connexion  à Internet",
     "start_msg_transfer"     : "Lancer l'envoi des Messages",
     "enter_exam_name":"Veuillez entrez le nom de l'Examen!",
     "no_classes_selected":"Aucune classe n'a été associée à cet Examen !",
