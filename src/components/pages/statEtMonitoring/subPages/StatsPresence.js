@@ -4,6 +4,7 @@ import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import FormPuce from "../../../formPuce/FormPuce";
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import axiosInstance from '../../../../axios';
 import Select from 'react-select';
 
 import UiContext  from '../../../../store/UiContext';
@@ -177,6 +178,82 @@ function StatsPresence(props){
         "2018_2019_2020_2021_2022*65_59_23_81_79*30_35_80_32_24",
     ];
 
+
+
+    function getEtabProgressions(etabId){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : etabId,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'sousetab'
+    
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_sousetab.join('_');
+                console.log("la chaine",resSting);
+                resolve(resSting);    
+            });
+            
+        });
+      
+    }
+
+    
+    function getCycleProgressions(selected_cycle){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_cycle.join('_');
+                resolve(resSting);
+            });
+        });
+    }
+
+    
+    function getNiveauProgressions(selected_niveau){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_niveau.join('_');
+                resolve(resSting);
+            });
+        });
+    }
+
+
+
+    function getClasseProgressions(selected_classe){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'classe'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_classe.join('_');
+                resolve(resSting);
+            });
+        })
+    }
     
      
     function getProgressions(classe){

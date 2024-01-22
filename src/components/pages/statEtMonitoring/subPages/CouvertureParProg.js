@@ -4,6 +4,7 @@ import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import FormPuce from "../../../formPuce/FormPuce";
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import axiosInstance from '../../../../axios';
 import Select from 'react-select';
 
 import UiContext  from '../../../../store/UiContext';
@@ -73,20 +74,20 @@ function CouvertureParProg(props){
         //setTitleSuffix(suffixeClasse);  
         /*---- Stats ETAB ----*/        
         drawEffectifGenEtab(currentAppContext.currentEtab);  
-        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
+        //drawEffectifEtabParSexe(currentAppContext.currentEtab);  
 
         /*---- Stats CYCLE ----*/
         drawEffectifParCycle(selected_cycle);  
-        drawEffectifParCycleParSexe(selected_cycle);   
+        //drawEffectifParCycleParSexe(selected_cycle);   
 
         /*---- Stats NIVEAU ----*/
 
         drawEffectifParNiveau(selected_niveau);  
-        drawEffectifParNiveauParSexe(selected_niveau); 
+        //drawEffectifParNiveauParSexe(selected_niveau); 
 
         /*---- Stats CLASSE ----*/
         drawEffectifParClasse(selected_classe);  
-        drawEffectifParClasseParSexe(selected_classe); 
+        //drawEffectifParClasseParSexe(selected_classe); 
 
     },[]);
 
@@ -177,6 +178,83 @@ function CouvertureParProg(props){
     ];
 
     
+    function getEtabProgressions(etabId){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : etabId,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'sousetab'
+    
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_sousetab.join('_');
+                console.log("la chaine",resSting);
+                resolve(resSting);    
+            });
+            
+        });
+      
+    }
+
+    
+    function getCycleProgressions(selected_cycle){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_cycle.join('_');
+                resolve(resSting);
+            });
+        });
+    }
+
+    
+    function getNiveauProgressions(selected_niveau){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_niveau.join('_');
+                resolve(resSting);
+            });
+        });
+    }
+
+
+    function getClasseProgressions(selected_classe){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`couverture-programme/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'classe'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_classe.join('_');
+                resolve(resSting);
+            });
+        })
+    }
+
+
+
+    
      
     function getProgressions(classe){
         switch(classe){
@@ -243,268 +321,230 @@ function CouvertureParProg(props){
     /******************************* Handlers *******************************/
     function drawEffectifGenEtab(etabId){
         var tabProgress=[];
-        var currentProgressionList;
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
 
         if(etabId!= undefined){        
-            currentProgressionList = getProgressions('6em1');
-            tabProgress = currentProgressionList.split('*');
+            getEtabProgressions(etabId).then((progressionList)=>{
+                tabProgress = progressionList.split('*');
 
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: 'rgb(221,93,19)',
-                        borderColor: 'rgb(255, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsGenEtab');       
-            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+                var selectedState = {
+                    labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
+                    datasets: [
+                        {
+                            label: 'Evolution des effectifs en '+libelleClasse,
+                            backgroundColor: 'rgb(221,93,19)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 2,
+                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
+                        }
+                    ]
+                }
+                containerDiv = document.getElementById('effectifsGenEtab');       
+                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+
+            });
+            
         } else {
             containerDiv = document.getElementById('effectifsGenEtab');  
             ReactDOM.render(null,containerDiv);
         }
     }
-
-    function drawEffectifEtabParSexe(etabId){
-        var tabProgress=[];
-        var currentProgressionList;
-        var containerDiv;
-        var title = 'Effectif'+ ' en '+libelleClasse;
-        if(etabId != undefined) {
-            currentProgressionList = getProgressionsSexe('6em1');
-            tabProgress = currentProgressionList.split('*');
-
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: 'Garcons '+libelleClasse,
-                        backgroundColor: 'rgb(14, 94, 199)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    },
-                    {
-                        label: 'Filles '+libelleClasse,
-                        backgroundColor: 'rgb(250, 19, 19)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[2].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsEtabParSexe');       
-            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
-        } else {
-            containerDiv = document.getElementById('effectifsEtabParSexe');       
-            ReactDOM.render(null,containerDiv);
-        }        
-    }
-
+   
 
     function drawEffectifParCycle(cycleId){
         var tabProgress=[];
-        var currentProgressionList;
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
 
         if(cycleId!= undefined){        
-            currentProgressionList = getProgressions('6em1');
-            tabProgress = currentProgressionList.split('*');
+            getCycleProgressions(cycleId).then((progressionList)=>{
+                tabProgress = progressionList.split('*');
 
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor:'rgb(221,93,19)',
-                        borderColor: 'rgb(255, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsEtabParCycle');       
-            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+                var selectedState = {
+                    labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
+                    datasets: [
+                        {
+                            label: 'Evolution des effectifs en '+libelleClasse,
+                            backgroundColor: 'rgb(221,93,19)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 2,
+                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
+                        }
+                    ]
+                }
+                containerDiv = document.getElementById('effectifsEtabParCycle');       
+                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+
+            });
+            
         } else {
             containerDiv = document.getElementById('effectifsEtabParCycle');  
             ReactDOM.render(null,containerDiv);
         }
     }
 
-    function drawEffectifParCycleParSexe(cycleId){
-        var tabProgress=[];
-        var currentProgressionList;
-        var containerDiv;
-        var title = 'Effectif'+ ' en '+libelleClasse;
-        if(cycleId != undefined) {
-            currentProgressionList = getProgressionsSexe('6em1');
-            tabProgress = currentProgressionList.split('*');
-
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: 'Garcons '+libelleClasse,
-                        backgroundColor: 'rgb(14, 94, 199)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    },
-                    {
-                        label: 'Filles '+libelleClasse,
-                        backgroundColor: 'rgb(250, 19, 19)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[2].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsParCycleParSexe');       
-            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
-        } else {
-            containerDiv = document.getElementById('effectifsParCycleParSexe');       
-            ReactDOM.render(null,containerDiv);
-        }        
-    }
-
+    
 
     function drawEffectifParNiveau(niveauId){
         var tabProgress=[];
-        var currentProgressionList;
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
 
         if(niveauId!= undefined){        
-            currentProgressionList = getProgressions('6em1');
-            tabProgress = currentProgressionList.split('*');
+            getNiveauProgressions(niveauId).then((progressionList)=>{
+                tabProgress = progressionList.split('*');
 
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: 'rgb(221,93,19)',
-                        borderColor: 'rgb(255, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsEtabParNiveau');       
-            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+                var selectedState = {
+                    labels:(tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
+                    datasets: [
+                        {
+                            label: 'Evolution des effectifs en '+libelleClasse,
+                            backgroundColor: 'rgb(221,93,19)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 2,
+                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
+                        }
+                    ]
+                }
+                containerDiv = document.getElementById('effectifsEtabParNiveau');       
+                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            })
+            
         } else {
             containerDiv = document.getElementById('effectifsEtabParNiveau');  
             ReactDOM.render(null,containerDiv);
         }
     }
 
-    function drawEffectifParNiveauParSexe(niveauId){
-        var tabProgress=[];
-        var currentProgressionList;
-        var containerDiv;
-        var title = 'Effectif'+ ' en '+libelleClasse;
-        if(niveauId != undefined) {
-            currentProgressionList = getProgressionsSexe('6em1');
-            tabProgress = currentProgressionList.split('*');
-
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: 'Garcons '+libelleClasse,
-                        backgroundColor: 'rgb(14, 94, 199)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    },
-                    {
-                        label: 'Filles '+libelleClasse,
-                        backgroundColor: 'rgb(250, 19, 19)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[2].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsParNiveauParSexe');       
-            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
-        } else {
-            containerDiv = document.getElementById('effectifsParNiveauParSexe');       
-            ReactDOM.render(null,containerDiv);
-        }        
-    }
-
+    
     function drawEffectifParClasse(classeId){
         var tabProgress=[];
-        var currentProgressionList;
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
 
         if(classeId!= undefined){        
-            currentProgressionList = getProgressions('6em1');
-            tabProgress = currentProgressionList.split('*');
+            getClasseProgressions(classeId).then((ProgressionList)=>{
+                tabProgress = ProgressionList.split('*');
 
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: 'Evolution des effectifs en '+libelleClasse,
-                        backgroundColor: 'rgb(221,93,19)',
-                        borderColor: 'rgb(255, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsEtabParClasse');       
-            ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+                var selectedState = {
+                    labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
+                    datasets: [
+                        {
+                            label: 'Evolution des effectifs en '+libelleClasse,
+                            backgroundColor: 'rgb(221,93,19)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 2,
+                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
+                        }
+                    ]
+                }
+                containerDiv = document.getElementById('effectifsEtabParClasse');   
+                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);    
+            });
+            
         } else {
             containerDiv = document.getElementById('effectifsEtabParClasse');  
             ReactDOM.render(null,containerDiv);
         }
     }
 
-    function drawEffectifParClasseParSexe(classeId){
-        var tabProgress=[];
-        var currentProgressionList;
-        var containerDiv;
-        var title = 'Effectif'+ ' en '+libelleClasse;
-        if(classeId != undefined) {
-            currentProgressionList = getProgressionsSexe('6em1');
-            tabProgress = currentProgressionList.split('*');
 
-            var selectedState = {
-                labels: [...tabProgress[0].split('_')],
-                datasets: [
-                    {
-                        label: t('garcons'),
-                        backgroundColor: 'rgb(14, 94, 199)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[1].split('_')]
-                    },
-                    {
-                        label: t('filles'),
-                        backgroundColor: 'rgb(250, 19, 19)',
-                        borderColor: 'rgb(250, 255, 255)',
-                        borderWidth: 2,
-                        data: [...tabProgress[2].split('_')]
-                    }
-                ]
-            }
-            containerDiv = document.getElementById('effectifsParClasseParSexe');       
-            ReactDOM.render(<GenderBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+
+    function drawEffectifParCycle(cycleId){
+        var tabProgress=[];
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(cycleId!= undefined){        
+            getCycleProgressions(cycleId).then((progressionList)=>{
+                tabProgress = progressionList.split('*');
+
+                var selectedState = {
+                    labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
+                    datasets: [
+                        {
+                            label: 'Evolution des effectifs en '+libelleClasse,
+                            backgroundColor: 'rgb(221,93,19)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 2,
+                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
+                        }
+                    ]
+                }
+                containerDiv = document.getElementById('effectifsEtabParCycle');       
+                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+
+            });
+            
         } else {
-            containerDiv = document.getElementById('effectifsParClasseParSexe');       
+            containerDiv = document.getElementById('effectifsEtabParCycle');  
             ReactDOM.render(null,containerDiv);
-        }        
+        }
+    }
+
+    
+    function drawEffectifParNiveau(niveauId){
+        var tabProgress=[];
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(niveauId!= undefined){        
+            getNiveauProgressions(niveauId).then((progressionList)=>{
+                tabProgress = progressionList.split('*');
+
+                var selectedState = {
+                    labels:(tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
+                    datasets: [
+                        {
+                            label: 'Evolution des effectifs en '+libelleClasse,
+                            backgroundColor: 'rgb(221,93,19)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 2,
+                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
+                        }
+                    ]
+                }
+                containerDiv = document.getElementById('effectifsEtabParNiveau');       
+                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
+            })
+            
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParNiveau');  
+            ReactDOM.render(null,containerDiv);
+        }
+    }
+
+
+    function drawEffectifParClasse(classeId){
+        var tabProgress=[];
+        var containerDiv;
+        var title = 'Effectif '+ ' en '+libelleClasse;
+
+        if(classeId!= undefined){        
+            getClasseProgressions(classeId).then((ProgressionList)=>{
+                tabProgress = ProgressionList.split('*');
+
+                var selectedState = {
+                    labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
+                    datasets: [
+                        {
+                            label: 'Evolution des effectifs en '+libelleClasse,
+                            backgroundColor: 'rgb(221,93,19)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 2,
+                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
+                        }
+                    ]
+                }
+                containerDiv = document.getElementById('effectifsEtabParClasse');   
+                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);    
+            });
+            
+        } else {
+            containerDiv = document.getElementById('effectifsEtabParClasse');  
+            ReactDOM.render(null,containerDiv);
+        }
     }
 
 
@@ -529,19 +569,19 @@ function CouvertureParProg(props){
 
         /*---- Stats ETAB ----*/        
         drawEffectifGenEtab(currentAppContext.currentEtab);  
-        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
+        //drawEffectifEtabParSexe(currentAppContext.currentEtab);  
 
         /*---- Stats CYCLE ----*/
         drawEffectifParCycle(selected_cycle);  
-        drawEffectifParCycleParSexe(selected_cycle);   
+        //drawEffectifParCycleParSexe(selected_cycle);   
 
         /*---- Stats NIVEAU ----*/
         drawEffectifParNiveau(selected_niveau);  
-        drawEffectifParNiveauParSexe(selected_niveau); 
+        //drawEffectifParNiveauParSexe(selected_niveau); 
 
         /*---- Stats CLASSE ----*/
         drawEffectifParClasse(selected_classe);  
-        drawEffectifParClasseParSexe(selected_classe); 
+        //drawEffectifParClasseParSexe(selected_classe); 
         
     }
 
@@ -563,13 +603,13 @@ function CouvertureParProg(props){
         }  
 
         
-         /*---- Stats NIVEAU ----*/
-         drawEffectifParNiveau(selected_niveau);  
-         drawEffectifParNiveauParSexe(selected_niveau); 
- 
-         /*---- Stats CLASSE ----*/
-         drawEffectifParClasse(selected_classe);  
-         drawEffectifParClasseParSexe(selected_classe); 
+        /*---- Stats NIVEAU ----*/
+        drawEffectifParNiveau(selected_niveau);  
+        //drawEffectifParNiveauParSexe(selected_niveau); 
+
+        /*---- Stats CLASSE ----*/
+        drawEffectifParClasse(selected_classe);  
+        //drawEffectifParClasseParSexe(selected_classe); 
         
     }
 
@@ -591,19 +631,19 @@ function CouvertureParProg(props){
         //setTitleSuffix(suffixeClasse);          
         /*---- Stats ETAB ----*/        
         drawEffectifGenEtab(currentAppContext.currentEtab);  
-        drawEffectifEtabParSexe(currentAppContext.currentEtab);  
+        //drawEffectifEtabParSexe(currentAppContext.currentEtab);  
 
         /*---- Stats CYCLE ----*/
         drawEffectifParCycle(selected_cycle);  
-        drawEffectifParCycleParSexe(selected_cycle);   
+        //drawEffectifParCycleParSexe(selected_cycle);   
 
         /*---- Stats NIVEAU ----*/
         drawEffectifParNiveau(selected_niveau);  
-        drawEffectifParNiveauParSexe(selected_niveau); 
+        //drawEffectifParNiveauParSexe(selected_niveau); 
 
         /*---- Stats CLASSE ----*/
         drawEffectifParClasse(selected_classe);  
-        drawEffectifParClasseParSexe(selected_classe); 
+        //drawEffectifParClasseParSexe(selected_classe); 
     }
 
     
@@ -615,7 +655,7 @@ function CouvertureParProg(props){
             <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsGenEtab' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsEtabParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                {/* <div id='effectifsEtabParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/> */}
             </div>
 
             <div className={classes.inputRow}>
@@ -638,7 +678,7 @@ function CouvertureParProg(props){
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParCycle' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                {/* <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/> */}
             </div>
 
             <div className={classes.inputRow}>
@@ -661,7 +701,7 @@ function CouvertureParProg(props){
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_niveau')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParNiveau' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsParNiveauParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                {/* <div id='effectifsParNiveauParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/> */}
             </div>
 
 
@@ -684,7 +724,7 @@ function CouvertureParProg(props){
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_classe')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
             <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
                 <div id='effectifsEtabParClasse'    className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
-                <div id='effectifsParClasseParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
+                {/* <div id='effectifsParClasseParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/> */}
             </div>
             
                     

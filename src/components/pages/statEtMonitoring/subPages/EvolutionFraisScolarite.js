@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import FormPuce from "../../../formPuce/FormPuce";
+import axiosInstance from '../../../../axios';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Select from 'react-select';
 
@@ -176,6 +177,231 @@ function EvolutionFraisScolarite(props){
         "2018_2019_2020_2021_2022*65_80_18_48_74*43_35_85_32_24",
         "2018_2019_2020_2021_2022*65_59_23_81_79*30_35_80_32_24",
     ];
+
+    function getEtabProgressions(etabId){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : etabId,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'sousetab'
+    
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_sousetab.join('_');
+                console.log("la chaine",resSting);
+                resolve(resSting);    
+            });
+            
+        });
+        
+
+        // switch(classe){
+        //     case '6em1': return listProgressions[0] ;
+        //     case '5em2': return listProgressions[1] ;
+        //     case '4A2':  return listProgressions[3] ;
+        //     case '3E':   return listProgressions[4] ;
+        //     case '2c1':  return listProgressions[0] ;
+        //     case '1E':   return listProgressions[1] ;
+        //     case 'TE':   return listProgressions[2] ;
+        // }      
+    }
+
+    function getEtabProgressionsParSexe(etabId){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : etabId,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'sousetab'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_sousetab_garcon.join('_')+'*'+res.data.res_sousetab_fille.join('_');
+                resolve(resSting);
+            });
+        });
+
+        // switch(classe){
+        //     case '6em1': return listProgressions[0] ;
+        //     case '5em2': return listProgressions[1] ;
+        //     case '4A2':  return listProgressions[3] ;
+        //     case '3E':   return listProgressions[4] ;
+        //     case '2c1':  return listProgressions[0] ;
+        //     case '1E':   return listProgressions[1] ;
+        //     case 'TE':   return listProgressions[2] ;
+        // }      
+    }
+   
+    function getCycleProgressions(selected_cycle){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_cycle.join('_');
+                resolve(resSting);
+            });
+        });
+
+        // switch(classe){
+        //     case '6em1': return listProgressions[0] ;
+        //     case '5em2': return listProgressions[1] ;
+        //     case '4A2':  return listProgressions[3] ;
+        //     case '3E':   return listProgressions[4] ;
+        //     case '2c1':  return listProgressions[0] ;
+        //     case '1E':   return listProgressions[1] ;
+        //     case 'TE':   return listProgressions[2] ;
+        // }      
+    }
+
+    function getCycleProgressionsParSexe(selected_cycle){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_cycle_garcon.join('_')+'*'+res.data.res_cycle_fille.join('_');
+                resolve(resSting);
+            });
+        })
+
+        // switch(classe){
+        //     case '6em1': return listProgressionsSexe[0] ;
+        //     case '5em2': return listProgressionsSexe[1] ;
+        //     case '4A2':  return listProgressionsSexe[3] ;
+        //     case '3E':   return listProgressionsSexe[4] ;
+        //     case '2c1':  return listProgressionsSexe[0] ;
+        //     case '1E':   return listProgressionsSexe[1] ;
+        //     case 'TE':   return listProgressionsSexe[2] ;
+        // }      
+    }
+
+    function getNiveauProgressions(selected_niveau){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_niveau.join('_');
+                resolve(resSting);
+            });
+        });
+
+        // switch(classe){
+        //     case '6em1': return listProgressions[0] ;
+        //     case '5em2': return listProgressions[1] ;
+        //     case '4A2':  return listProgressions[3] ;
+        //     case '3E':   return listProgressions[4] ;
+        //     case '2c1':  return listProgressions[0] ;
+        //     case '1E':   return listProgressions[1] ;
+        //     case 'TE':   return listProgressions[2] ;
+        // }      
+    }
+
+
+
+    function getNiveauProgressionsParSexe(selected_classe){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'niveau'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_sousetab_garcon.join('_')+'*'+res.data.res_niveau_fille.join('_');
+                resolve(resSting);
+            });
+        });
+
+        // switch(classe){
+        //     case '6em1': return listProgressionsSexe[0] ;
+        //     case '5em2': return listProgressionsSexe[1] ;
+        //     case '4A2':  return listProgressionsSexe[3] ;
+        //     case '3E':   return listProgressionsSexe[4] ;
+        //     case '2c1':  return listProgressionsSexe[0] ;
+        //     case '1E':   return listProgressionsSexe[1] ;
+        //     case 'TE':   return listProgressionsSexe[2] ;
+        // }      
+    }
+
+
+    function getClasseProgressions(selected_classe){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'classe'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_classe.join('_');
+                resolve(resSting);
+            });
+        })
+
+        // switch(classe){
+        //     case '6em1': return listProgressions[0] ;
+        //     case '5em2': return listProgressions[1] ;
+        //     case '4A2':  return listProgressions[3] ;
+        //     case '3E':   return listProgressions[4] ;
+        //     case '2c1':  return listProgressions[0] ;
+        //     case '1E':   return listProgressions[1] ;
+        //     case 'TE':   return listProgressions[2] ;
+        // }      
+    }
+
+
+
+    function getClasseProgressionsParSexe(selected_classe){
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`evolution-effectifs/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_cycle    : selected_cycle,
+                id_niveau   : selected_niveau,
+                id_classe   : selected_classe,
+                option      : 'classe'
+
+            }).then((res)=>{
+                console.log(res.data);
+                var resSting = res.data.annees.join("_")+'*'+res.data.res_classe_garcon.join('_')+'*'+res.data.res_classe_fille.join('_');
+                resolve(resSting);
+            });
+        });
+
+        // switch(classe){
+        //     case '6em1': return listProgressionsSexe[0] ;
+        //     case '5em2': return listProgressionsSexe[1] ;
+        //     case '4A2':  return listProgressionsSexe[3] ;
+        //     case '3E':   return listProgressionsSexe[4] ;
+        //     case '2c1':  return listProgressionsSexe[0] ;
+        //     case '1E':   return listProgressionsSexe[1] ;
+        //     case 'TE':   return listProgressionsSexe[2] ;
+        // }      
+    }
+
 
     
      
