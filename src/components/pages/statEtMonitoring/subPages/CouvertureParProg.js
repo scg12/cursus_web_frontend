@@ -73,22 +73,18 @@ function CouvertureParProg(props){
         
         //setTitleSuffix(suffixeClasse);  
         /*---- Stats ETAB ----*/        
-        drawEffectifGenEtab(currentAppContext.currentEtab);  
-        //drawEffectifEtabParSexe(currentAppContext.currentEtab);  
-
+        drawCouvparProgEtab(currentAppContext.currentEtab);  
+        
         /*---- Stats CYCLE ----*/
-        drawEffectifParCycle(selected_cycle);  
-        //drawEffectifParCycleParSexe(selected_cycle);   
-
+        drawCouvParProgParCycle(selected_cycle);  
+        
         /*---- Stats NIVEAU ----*/
 
-        drawEffectifParNiveau(selected_niveau);  
-        //drawEffectifParNiveauParSexe(selected_niveau); 
-
+        drawCouvParProgParNiveau(selected_niveau);  
+        
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(selected_classe);  
-        //drawEffectifParClasseParSexe(selected_classe); 
-
+        drawCouvParProgParClasse(selected_classe);  
+        
     },[]);
 
     function getButtonStyle()
@@ -131,7 +127,10 @@ function CouvertureParProg(props){
         tabCycles.map((cycle)=>{
             tempTable.push({value:cycle.id_cycle, label:cycle.libelle});
         });
+
         selected_cycle = tempTable[0].value;
+        libelleCycle   = tempTable[0].label;
+
         setOptCycle(tempTable);
     }
 
@@ -143,7 +142,10 @@ function CouvertureParProg(props){
         tabNiveau.map((nivo)=>{
             tempTable.push({value:nivo.id_niveau, label:nivo.libelle});
         });
+
         selected_niveau = tempTable[0].value;
+        libelleNiveau   = tempTable[0].label;
+
         setOptNiveau(tempTable);
         console.log("done well")
     }
@@ -157,25 +159,10 @@ function CouvertureParProg(props){
             tempTable.push({value:cls.id_classe, label:cls.libelle});
         });
         selected_classe = tempTable[0].value;
+        libelleClasse   = tempTable[0].label;
+
         setOptClasse(tempTable);
     }
-
-    const listProgressions =[
-        "2018_2019_2020_2021_2022*65_59_80_81_56",
-        "2018_2019_2020_2021_2022*85_80_82_65_57",
-        "2018_2019_2020_2021_2022*84_82_84_58_68",
-        "2018_2019_2020_2021_2022*65_80_80_48_74",
-        "2018_2019_2020_2021_2022*65_59_90_81_79",
-    ];
-
-
-    const listProgressionsSexe =[
-        "2018_2019_2020_2021_2022*65_59_80_81_56*27_45_87_32_28",
-        "2018_2019_2020_2021_2022*85_80_82_65_57*43_35_85_32_24",
-        "2018_2019_2020_2021_2022*84_82_84_58_68*13_35_23_32_24",
-        "2018_2019_2020_2021_2022*65_80_18_48_74*43_35_85_32_24",
-        "2018_2019_2020_2021_2022*65_59_23_81_79*30_35_80_32_24",
-    ];
 
     
     function getEtabProgressions(etabId){
@@ -251,35 +238,8 @@ function CouvertureParProg(props){
             });
         })
     }
-
-
-
-    
-     
-    function getProgressions(classe){
-        switch(classe){
-            case '6em1': return listProgressions[0] ;
-            case '5em2': return listProgressions[1] ;
-            case '4A2':  return listProgressions[3] ;
-            case '3E':   return listProgressions[4] ;
-            case '2c1':  return listProgressions[0] ;
-            case '1E':   return listProgressions[1] ;
-            case 'TE':   return listProgressions[2] ;
-        }      
-    }
-
-    function getProgressionsSexe(classe){
-        switch(classe){
-            case '6em1': return listProgressionsSexe[0] ;
-            case '5em2': return listProgressionsSexe[1] ;
-            case '4A2':  return listProgressionsSexe[3] ;
-            case '3E':   return listProgressionsSexe[4] ;
-            case '2c1':  return listProgressionsSexe[0] ;
-            case '1E':   return listProgressionsSexe[1] ;
-            case 'TE':   return listProgressionsSexe[2] ;
-        }      
-    }
-
+   
+  
     const SimpleBarDiagram =(props) =>{
         return(
             <Bar
@@ -319,7 +279,7 @@ function CouvertureParProg(props){
     }
 
     /******************************* Handlers *******************************/
-    function drawEffectifGenEtab(etabId){
+    function drawCouvparProgEtab(etabId){
         var tabProgress=[];
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
@@ -332,7 +292,7 @@ function CouvertureParProg(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label: t('general_course_cover'),
                             backgroundColor: 'rgb(221,93,19)',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
@@ -352,10 +312,10 @@ function CouvertureParProg(props){
     }
    
 
-    function drawEffectifParCycle(cycleId){
+    function drawCouvParProgParCycle(cycleId){
         var tabProgress=[];
         var containerDiv;
-        var title = 'Effectif '+ ' en '+libelleClasse;
+        var title = 'couverture '+ ' en '+libelleClasse;
 
         if(cycleId!= undefined){        
             getCycleProgressions(cycleId).then((progressionList)=>{
@@ -365,7 +325,7 @@ function CouvertureParProg(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label: t('course_completion_progress')+' '+libelleCycle,
                             backgroundColor: 'rgb(221,93,19)',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
@@ -386,10 +346,10 @@ function CouvertureParProg(props){
 
     
 
-    function drawEffectifParNiveau(niveauId){
+    function drawCouvParProgParNiveau(niveauId){
         var tabProgress=[];
         var containerDiv;
-        var title = 'Effectif '+ ' en '+libelleClasse;
+        var title = 'Effectif '+ ' en '+libelleNiveau;
 
         if(niveauId!= undefined){        
             getNiveauProgressions(niveauId).then((progressionList)=>{
@@ -399,7 +359,7 @@ function CouvertureParProg(props){
                     labels:(tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label: t('course_completion_progress')+' '+libelleNiveau,
                             backgroundColor: 'rgb(221,93,19)',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
@@ -418,7 +378,7 @@ function CouvertureParProg(props){
     }
 
     
-    function drawEffectifParClasse(classeId){
+    function drawCouvParProgParClasse(classeId){
         var tabProgress=[];
         var containerDiv;
         var title = 'Effectif '+ ' en '+libelleClasse;
@@ -431,7 +391,7 @@ function CouvertureParProg(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label: t('course_completion_progress')+' '+libelleClasse,
                             backgroundColor: 'rgb(221,93,19)',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
@@ -450,102 +410,6 @@ function CouvertureParProg(props){
     }
 
 
-
-    function drawEffectifParCycle(cycleId){
-        var tabProgress=[];
-        var containerDiv;
-        var title = 'Effectif '+ ' en '+libelleClasse;
-
-        if(cycleId!= undefined){        
-            getCycleProgressions(cycleId).then((progressionList)=>{
-                tabProgress = progressionList.split('*');
-
-                var selectedState = {
-                    labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
-                    datasets: [
-                        {
-                            label: 'Evolution des effectifs en '+libelleClasse,
-                            backgroundColor: 'rgb(221,93,19)',
-                            borderColor: 'rgb(255, 255, 255)',
-                            borderWidth: 2,
-                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
-                        }
-                    ]
-                }
-                containerDiv = document.getElementById('effectifsEtabParCycle');       
-                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
-
-            });
-            
-        } else {
-            containerDiv = document.getElementById('effectifsEtabParCycle');  
-            ReactDOM.render(null,containerDiv);
-        }
-    }
-
-    
-    function drawEffectifParNiveau(niveauId){
-        var tabProgress=[];
-        var containerDiv;
-        var title = 'Effectif '+ ' en '+libelleClasse;
-
-        if(niveauId!= undefined){        
-            getNiveauProgressions(niveauId).then((progressionList)=>{
-                tabProgress = progressionList.split('*');
-
-                var selectedState = {
-                    labels:(tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
-                    datasets: [
-                        {
-                            label: 'Evolution des effectifs en '+libelleClasse,
-                            backgroundColor: 'rgb(221,93,19)',
-                            borderColor: 'rgb(255, 255, 255)',
-                            borderWidth: 2,
-                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
-                        }
-                    ]
-                }
-                containerDiv = document.getElementById('effectifsEtabParNiveau');       
-                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);
-            })
-            
-        } else {
-            containerDiv = document.getElementById('effectifsEtabParNiveau');  
-            ReactDOM.render(null,containerDiv);
-        }
-    }
-
-
-    function drawEffectifParClasse(classeId){
-        var tabProgress=[];
-        var containerDiv;
-        var title = 'Effectif '+ ' en '+libelleClasse;
-
-        if(classeId!= undefined){        
-            getClasseProgressions(classeId).then((ProgressionList)=>{
-                tabProgress = ProgressionList.split('*');
-
-                var selectedState = {
-                    labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
-                    datasets: [
-                        {
-                            label: 'Evolution des effectifs en '+libelleClasse,
-                            backgroundColor: 'rgb(221,93,19)',
-                            borderColor: 'rgb(255, 255, 255)',
-                            borderWidth: 2,
-                            data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
-                        }
-                    ]
-                }
-                containerDiv = document.getElementById('effectifsEtabParClasse');   
-                ReactDOM.render(<SimpleBarDiagram ChartTextTitle= {title} state={selectedState}/>,containerDiv);    
-            });
-            
-        } else {
-            containerDiv = document.getElementById('effectifsEtabParClasse');  
-            ReactDOM.render(null,containerDiv);
-        }
-    }
 
 
     function dropDownCycleHandler(e){
@@ -559,8 +423,8 @@ function CouvertureParProg(props){
             document.getElementById("select_level").options[0].selected  = true;
             document.getElementById("select_classe").options[0].selected = true;
 
-            console.log(libelleClasse);
-            suffixeClasse = ' en '+libelleCycle;     
+            console.log(libelleCycle);
+              
         } else {
             selected_cycle  = undefined;
             libelleCycle ='';
@@ -568,20 +432,17 @@ function CouvertureParProg(props){
         }  
 
         /*---- Stats ETAB ----*/        
-        drawEffectifGenEtab(currentAppContext.currentEtab);  
-        //drawEffectifEtabParSexe(currentAppContext.currentEtab);  
+        drawCouvparProgEtab(currentAppContext.currentEtab);  
+        
 
         /*---- Stats CYCLE ----*/
-        drawEffectifParCycle(selected_cycle);  
-        //drawEffectifParCycleParSexe(selected_cycle);   
-
+        drawCouvParProgParCycle(selected_cycle);  
+      
         /*---- Stats NIVEAU ----*/
-        drawEffectifParNiveau(selected_niveau);  
-        //drawEffectifParNiveauParSexe(selected_niveau); 
-
+        drawCouvParProgParNiveau(selected_niveau);  
+      
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(selected_classe);  
-        //drawEffectifParClasseParSexe(selected_classe); 
+        drawCouvParProgParClasse(selected_classe);  
         
     }
 
@@ -594,8 +455,8 @@ function CouvertureParProg(props){
             getEtabClasses();
             document.getElementById("select_classe").options[0].selected = true;
 
-            console.log(libelleClasse);
-            suffixeClasse = ' en '+libelleNiveau;     
+            console.log(libelleNiveau);
+              
         } else {
             selected_niveau  = undefined;
             libelleNiveau ='';
@@ -604,12 +465,12 @@ function CouvertureParProg(props){
 
         
         /*---- Stats NIVEAU ----*/
-        drawEffectifParNiveau(selected_niveau);  
-        //drawEffectifParNiveauParSexe(selected_niveau); 
+        drawCouvParProgParNiveau(selected_niveau);  
+       
 
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(selected_classe);  
-        //drawEffectifParClasseParSexe(selected_classe); 
+        drawCouvParProgParClasse(selected_classe);  
+        
         
     }
 
@@ -621,7 +482,7 @@ function CouvertureParProg(props){
             libelleClasse   = optClasse[cur_index].label;
 
             console.log(libelleClasse);
-            suffixeClasse = ' en '+libelleClasse;     
+                
         } else {
             selected_classe  = undefined;
             libelleClasse ='';
@@ -630,20 +491,19 @@ function CouvertureParProg(props){
         
         //setTitleSuffix(suffixeClasse);          
         /*---- Stats ETAB ----*/        
-        drawEffectifGenEtab(currentAppContext.currentEtab);  
-        //drawEffectifEtabParSexe(currentAppContext.currentEtab);  
-
+        drawCouvparProgEtab(currentAppContext.currentEtab);  
+        
         /*---- Stats CYCLE ----*/
-        drawEffectifParCycle(selected_cycle);  
-        //drawEffectifParCycleParSexe(selected_cycle);   
+        drawCouvParProgParCycle(selected_cycle);  
+        
 
         /*---- Stats NIVEAU ----*/
-        drawEffectifParNiveau(selected_niveau);  
-        //drawEffectifParNiveauParSexe(selected_niveau); 
+        drawCouvParProgParNiveau(selected_niveau);  
+        
 
         /*---- Stats CLASSE ----*/
-        drawEffectifParClasse(selected_classe);  
-        //drawEffectifParClasseParSexe(selected_classe); 
+        drawCouvParProgParClasse(selected_classe);  
+        
     }
 
     

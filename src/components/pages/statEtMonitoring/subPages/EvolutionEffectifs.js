@@ -133,6 +133,7 @@ function EvolutionEffectifs(props){
         });
         
         selected_cycle = tempTable[0].value;
+        libelleCycle   = tempTable[0].label;
         setOptCycle(tempTable);
         //getEtabNiveaux();
     }
@@ -146,6 +147,8 @@ function EvolutionEffectifs(props){
             tempTable.push({value:nivo.id_niveau, label:nivo.libelle});
         });
         selected_niveau = tempTable[0].value;
+        libelleNiveau   = tempTable[0].label;
+
         setOptNiveau(tempTable);
        // getEtabClasses();
         console.log("done well")
@@ -159,26 +162,12 @@ function EvolutionEffectifs(props){
         tabClasses.map((cls)=>{
             tempTable.push({value:cls.id_classe, label:cls.libelle});
         });
+
         selected_classe = tempTable[0].value;
+        libelleClasse   = tempTable[0].label;
+
         setOptClasse(tempTable);
     }
-
-    const listProgressions =[
-        "2018_2019_2020_2021_2022*65_59_80_81_56",
-        "2018_2019_2020_2021_2022*85_80_82_65_57",
-        "2018_2019_2020_2021_2022*84_82_84_58_68",
-        "2018_2019_2020_2021_2022*65_80_80_48_74",
-        "2018_2019_2020_2021_2022*65_59_90_81_79",
-    ];
-
-
-    const listProgressionsSexe =[
-        "2018_2019_2020_2021_2022*65_59_80_81_56*27_45_87_32_28",
-        "2018_2019_2020_2021_2022*85_80_82_65_57*43_35_85_32_24",
-        "2018_2019_2020_2021_2022*84_82_84_58_68*13_35_23_32_24",
-        "2018_2019_2020_2021_2022*65_80_18_48_74*43_35_85_32_24",
-        "2018_2019_2020_2021_2022*65_59_23_81_79*30_35_80_32_24",
-    ];
 
     
     function getEtabProgressions(etabId){
@@ -198,17 +187,7 @@ function EvolutionEffectifs(props){
             });
             
         });
-        
-
-        // switch(classe){
-        //     case '6em1': return listProgressions[0] ;
-        //     case '5em2': return listProgressions[1] ;
-        //     case '4A2':  return listProgressions[3] ;
-        //     case '3E':   return listProgressions[4] ;
-        //     case '2c1':  return listProgressions[0] ;
-        //     case '1E':   return listProgressions[1] ;
-        //     case 'TE':   return listProgressions[2] ;
-        // }      
+       
     }
 
     function getEtabProgressionsParSexe(etabId){
@@ -226,16 +205,7 @@ function EvolutionEffectifs(props){
                 resolve(resSting);
             });
         });
-
-        // switch(classe){
-        //     case '6em1': return listProgressions[0] ;
-        //     case '5em2': return listProgressions[1] ;
-        //     case '4A2':  return listProgressions[3] ;
-        //     case '3E':   return listProgressions[4] ;
-        //     case '2c1':  return listProgressions[0] ;
-        //     case '1E':   return listProgressions[1] ;
-        //     case 'TE':   return listProgressions[2] ;
-        // }      
+      
     }
    
     function getCycleProgressions(selected_cycle){
@@ -253,16 +223,7 @@ function EvolutionEffectifs(props){
                 resolve(resSting);
             });
         });
-
-        // switch(classe){
-        //     case '6em1': return listProgressions[0] ;
-        //     case '5em2': return listProgressions[1] ;
-        //     case '4A2':  return listProgressions[3] ;
-        //     case '3E':   return listProgressions[4] ;
-        //     case '2c1':  return listProgressions[0] ;
-        //     case '1E':   return listProgressions[1] ;
-        //     case 'TE':   return listProgressions[2] ;
-        // }      
+       
     }
 
     function getCycleProgressionsParSexe(selected_cycle){
@@ -281,15 +242,6 @@ function EvolutionEffectifs(props){
             });
         })
 
-        // switch(classe){
-        //     case '6em1': return listProgressionsSexe[0] ;
-        //     case '5em2': return listProgressionsSexe[1] ;
-        //     case '4A2':  return listProgressionsSexe[3] ;
-        //     case '3E':   return listProgressionsSexe[4] ;
-        //     case '2c1':  return listProgressionsSexe[0] ;
-        //     case '1E':   return listProgressionsSexe[1] ;
-        //     case 'TE':   return listProgressionsSexe[2] ;
-        // }      
     }
 
     function getNiveauProgressions(selected_niveau){
@@ -308,15 +260,6 @@ function EvolutionEffectifs(props){
             });
         });
 
-        // switch(classe){
-        //     case '6em1': return listProgressions[0] ;
-        //     case '5em2': return listProgressions[1] ;
-        //     case '4A2':  return listProgressions[3] ;
-        //     case '3E':   return listProgressions[4] ;
-        //     case '2c1':  return listProgressions[0] ;
-        //     case '1E':   return listProgressions[1] ;
-        //     case 'TE':   return listProgressions[2] ;
-        // }      
     }
 
 
@@ -337,15 +280,7 @@ function EvolutionEffectifs(props){
             });
         });
 
-        // switch(classe){
-        //     case '6em1': return listProgressionsSexe[0] ;
-        //     case '5em2': return listProgressionsSexe[1] ;
-        //     case '4A2':  return listProgressionsSexe[3] ;
-        //     case '3E':   return listProgressionsSexe[4] ;
-        //     case '2c1':  return listProgressionsSexe[0] ;
-        //     case '1E':   return listProgressionsSexe[1] ;
-        //     case 'TE':   return listProgressionsSexe[2] ;
-        // }      
+       
     }
 
 
@@ -364,16 +299,7 @@ function EvolutionEffectifs(props){
                 resolve(resSting);
             });
         })
-
-        // switch(classe){
-        //     case '6em1': return listProgressions[0] ;
-        //     case '5em2': return listProgressions[1] ;
-        //     case '4A2':  return listProgressions[3] ;
-        //     case '3E':   return listProgressions[4] ;
-        //     case '2c1':  return listProgressions[0] ;
-        //     case '1E':   return listProgressions[1] ;
-        //     case 'TE':   return listProgressions[2] ;
-        // }      
+        
     }
 
 
@@ -393,16 +319,7 @@ function EvolutionEffectifs(props){
                 resolve(resSting);
             });
         });
-
-        // switch(classe){
-        //     case '6em1': return listProgressionsSexe[0] ;
-        //     case '5em2': return listProgressionsSexe[1] ;
-        //     case '4A2':  return listProgressionsSexe[3] ;
-        //     case '3E':   return listProgressionsSexe[4] ;
-        //     case '2c1':  return listProgressionsSexe[0] ;
-        //     case '1E':   return listProgressionsSexe[1] ;
-        //     case 'TE':   return listProgressionsSexe[2] ;
-        // }      
+    
     }
 
     const SimpleBarDiagram =(props) =>{
@@ -457,7 +374,7 @@ function EvolutionEffectifs(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label: t('effectif_general'),
                             backgroundColor: '#9c42c6',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
@@ -488,14 +405,14 @@ function EvolutionEffectifs(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Garcons '+libelleClasse,
+                            label: t('garcons'),
                             backgroundColor: 'rgb(14, 94, 199)',
                             borderColor: 'rgb(250, 255, 255)',
                             borderWidth: 2,
                             data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[] 
                         },
                         {
-                            label: 'Filles '+libelleClasse,
+                            label: t('filles'),
                             backgroundColor: 'rgb(250, 19, 19)',
                             borderColor: 'rgb(250, 255, 255)',
                             borderWidth: 2,
@@ -528,7 +445,7 @@ function EvolutionEffectifs(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label: t('effectifs_progress')+' '+libelleCycle,
                             backgroundColor: '#9c42c6',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
@@ -559,14 +476,14 @@ function EvolutionEffectifs(props){
                     labels:  (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Garcons '+libelleClasse,
+                            label: t('garcons'),
                             backgroundColor: 'rgb(14, 94, 199)',
                             borderColor: 'rgb(250, 255, 255)',
                             borderWidth: 2,
                             data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[] 
                         },
                         {
-                            label: 'Filles '+libelleClasse,
+                            label: t('filles'),
                             backgroundColor: 'rgb(250, 19, 19)',
                             borderColor: 'rgb(250, 255, 255)',
                             borderWidth: 2,
@@ -600,7 +517,7 @@ function EvolutionEffectifs(props){
                     labels:(tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label:  t('effectifs_progress')+' '+libelleNiveau,
                             backgroundColor: '#9c42c6',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
@@ -630,14 +547,14 @@ function EvolutionEffectifs(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Garcons '+libelleClasse,
+                            label: t('garcons'),
                             backgroundColor: 'rgb(14, 94, 199)',
                             borderColor: 'rgb(250, 255, 255)',
                             borderWidth: 2,
                             data: (tabProgress.length > 0) ? [...tabProgress[1].split('_')]:[]
                         },
                         {
-                            label: 'Filles '+libelleClasse,
+                            label: t('filles'),
                             backgroundColor: 'rgb(250, 19, 19)',
                             borderColor: 'rgb(250, 255, 255)',
                             borderWidth: 2,
@@ -668,7 +585,7 @@ function EvolutionEffectifs(props){
                     labels: (tabProgress.length > 0) ? [...tabProgress[0].split('_')]:[],
                     datasets: [
                         {
-                            label: 'Evolution des effectifs en '+libelleClasse,
+                            label:  t('effectifs_progress')+' '+libelleClasse,
                             backgroundColor: '#9c42c6',
                             borderColor: 'rgb(255, 255, 255)',
                             borderWidth: 2,
