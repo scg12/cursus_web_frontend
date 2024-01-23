@@ -442,19 +442,15 @@ function CouvertureParCours(props){
     function dropDownMatiereHandler(e){
         if(e.target.value > 0){
             selected_cours = e.target.value;
-            var cur_index  = optCours.findIndex((index)=>index.value == selected_cycle);
+            var cur_index  = optCours.findIndex((index)=>index.value == selected_cours);
             libelleCours   = optCours[cur_index].label;
-            // getEtabNiveaux();
-            // getEtabClasses();
-
-            document.getElementById("select_cours").options[0].selected  = true;
-            //document.getElementById("select_classe").options[0].selected = true;
+            
 
             console.log(libelleCours);
             suffixeClasse = ' en '+libelleCours;     
         } else {
-            selected_cycle  = undefined;
-            libelleCycle ='';
+            selected_cours  = undefined;
+            libelleCours ='';
             suffixeClasse = '';
         }  
 
@@ -578,11 +574,11 @@ function CouvertureParCours(props){
         <div className={classes.formStyle}>
       
             <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('couv_progs_cours_gen')}  itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce> 
-            <div className={classes.inputRow}>
+            <div className={classes.inputRow} style ={{marginTop:"-3.7vh", marginLeft:"-17vw"}}>
                 <div className={classes.bold+ ' '+classes.fontSize1} style={{alignSelf:'center'}}>
-                   {t("course_M")}   :                       
+                    :                       
                 </div>
-                <div>
+                <div style={{marginLeft:"1vw"}}>
                     <select id="select_cours" onChange={dropDownMatiereHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                         {(optCours||[]).map((option)=> {
                             return(
