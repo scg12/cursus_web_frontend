@@ -1,4 +1,5 @@
-{   "school_fees_progress"    : "Evolution Des Frais",
+{   "result_dashBoard_M":"TABLEAU DE BORD DE PRESENTATION DE L'EVOLUTION DES RESULTATS SCOLAIRES",
+    "school_fees_progress"    : "Evolution Des Frais",
     "school_fees_gen_evol"    : "Evolution Générale Frais de Scolarité",
     "student_check_progress"  : "Evolution de la Présence",
     "overall_studChecck_evol" : "Evolution Générale Des présences",
