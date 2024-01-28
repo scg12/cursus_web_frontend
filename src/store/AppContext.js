@@ -26,6 +26,9 @@ const AppContext = createContext({
     /*---------- Gestion des lecons -----------*/
     etatLesson:0,
     currentLesson:{},
+
+    /*---------- Gestion des messages -----------*/
+    tabNotifs : {},
     
 
 
@@ -54,6 +57,9 @@ const AppContext = createContext({
     /*---------- Gestion des lecons -----------*/
     setEtatLesson:(etat) => {},
     setCurrentLesson:(lecon)=>{},
+
+    /*---------- Gestion des messages -----------*/
+    setTabNotif:(listNotifs) => {},
     
 });
 
@@ -83,6 +89,10 @@ export function AppContextProvider(props)
     /*---------- Gestion des lecons -----------*/
     const [etatLesson, setEtatLesson] = useState(0);
     const [currentLesson, setCurrentLesson] = useState({});
+
+    /*---------- Gestion des messages -----------*/
+    const [tabNotifs, setTabNotifs] = useState([]);
+   
     
   
     
@@ -167,6 +177,11 @@ export function AppContextProvider(props)
         setCurrentLesson(lecon)
     }
 
+    /*---------- Gestion des messages -----------*/
+    function setTabNotifsHandler(notifList){
+        setTabNotifs(notifList);
+    }
+
    
 
     
@@ -184,7 +199,7 @@ export function AppContextProvider(props)
         activatedYear  : activatedYear,
         infoAnnees     : infoAnnees,
         infoSetabs     : infoSetabs,
-        infoUser     : infoUser,
+        infoUser       : infoUser,
         infoCycles     : infoCycles,
         infoNiveaux    : infoNiveaux,
         infoClasses    : infoClasses,
@@ -193,7 +208,9 @@ export function AppContextProvider(props)
         /*---------- Gestion des Lesons -----------*/
         etatLesson     : etatLesson,
         currentLesson  : currentLesson,
-        
+
+        /*---------- Gestion des messages -----------*/
+        tabNotifs      : tabNotifs,
        
         setUsrConnected   : connectHandler,
         setUsrLogin       : connectedUserHandler,
@@ -209,7 +226,7 @@ export function AppContextProvider(props)
         setActivatedYear  : setActivatedYearHandler,
         setInfoAnnees     : setInfoAnneesHandler,
         setInfoSetabs     : setInfoSetabsHandler,
-        setInfoUser     : setInfoUserHandler,
+        setInfoUser       : setInfoUserHandler,
         setInfoCycles     : setInfoCyclesHandler,
         setInfoNiveaux    : setInfoNiveauxHandler,
         setInfoClasses    : setInfoClassesHandler,
@@ -217,9 +234,11 @@ export function AppContextProvider(props)
         setInfoCours      : setInfoCoursHandler,
 
         /*---------- Gestion des lecons -----------*/
-        setEtatLesson    : setEtatLessonHandler,
-        setCurrentLesson : setCurrentLessonHandler   
-         
+        setEtatLesson     : setEtatLessonHandler,
+        setCurrentLesson  : setCurrentLessonHandler,  
+        
+        /*---------- Gestion des messages -----------*/
+        setTabNotifs      : setTabNotifsHandler,         
     };
 
 

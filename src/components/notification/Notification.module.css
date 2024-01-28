@@ -1,0 +1,47 @@
+.infoBg{
+    background-color: #1e6fe8e6;
+
+}
+
+
+.releaseBg{
+    background-color: #d69111eb;
+
+}
+
+.urgentBg{
+    background-color: #e1270ae6
+}
+
+.notifContainerStyle{
+    color:white;
+    max-height: 27vh;
+    height: fit-content;
+    width : 20vw;
+    border-radius: 7px;
+    position : relative;
+    z-index  : 9999; 
+}
+
+.notifZone{
+    display : "flex";
+    flex-direction : column;
+    justify-content: center;
+    width    : 20vw;
+    
+    position : absolute;
+    bottom   : 0;
+    z-index  : 9999;
+}
+
+.closeNotif:hover{
+    border: solid 1px white;
+    border-radius: 3px;
+    width: 3vh;
+    height:3vh;
+    /* margin-top: 3vh; */
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

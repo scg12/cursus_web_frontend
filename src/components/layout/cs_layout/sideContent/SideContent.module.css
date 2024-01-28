@@ -16,17 +16,28 @@
 }
 
 .mainInfosStyle{
-  display: flex;
-  flex-direction: column;
+  display        : flex;
+  flex-direction : column;
   justify-content: center;
-  margin-left: 15%;
-  margin-top: 7%;
-  margin-bottom: 2%;
-  height: 50vh;
+  margin-left    : 15%;
+  margin-top     : 7%;
+  margin-bottom  : 2%;
+  height         : 50vh;
 }
 
 .upperCase{
   text-transform: uppercase;
+}
+
+.notifZone{
+  display : "flex";
+  flex-direction : column;
+  justify-content: center;
+  width   : 20vw;
+  
+  position : absolute;
+  /* top      : 90vh;   */
+  z-index  : 9999;
 }
 
 
