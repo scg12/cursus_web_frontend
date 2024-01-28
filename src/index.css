@@ -1,3 +1,31 @@
+  .moveNotifToTop {
+    animation-duration: 2s;
+    animation-name: toTop;
+    /* top:17vh; */
+  }
+
+  @keyframes toTop {
+    from {
+      top: 90vh;
+    }
+
+    75% {
+      top: 60vh;
+    }
+
+    to {
+      top: 17vh; 
+    }
+  }
+
+  .notifFrom {
+    top: 90vh;
+  }
+
+  .notifTo {
+    top: 17vh;
+  }
+/*--------------------------------Hover de l'historique ---------------------------------*/
 [class^="rowHover"]:hover{
   width:93%;
   height: 5.3vh;

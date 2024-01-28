@@ -227,7 +227,7 @@ function LoginForm(props){
             default: return classes.Theme1_formHeader;
         }
     }
-   
+
     const getRightsStringFromProfile = (profile) => {
         console.log("profile:",profile)
         switch(profile) {

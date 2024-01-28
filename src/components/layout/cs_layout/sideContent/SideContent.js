@@ -5,6 +5,7 @@ import { Component, useContext } from "react";
 import UiContext from '../../../../store/UiContext';
 import AppContext from '../../../../store/AppContext';
 import CustomCalendar from '../../../CustomCalendar/CustomCalendar';
+import Notification from '../../../notification/Notification';
 
 import axiosInstance from '../../../../axios'; 
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,52 @@ let tab_periodes = [];
 let tab_creneau_pause = [];
 let tab_valeur_horaire = [];
 
+const LIGNE_WIDTH = 70;
+const MIN_HEIGHT  = 7;
+
+var msgText1={
+    type   : "info",
+    title  : "Message Test",
+    message: "dffdfdffdfdffdffdfdfdffdfdfdffd",
+    hasAction : false
+}
+
+var msgText2={
+    type   : "release",
+    title  : "Message Test",
+    message: "dffdfdffdfdffdffdfdfdffdfdfdffd",
+    hasAction : false
+}
+
+var msgText3={
+    type   : "urgent",
+    title  : "Message Test",
+    message: "dffdfdffdfdffdffdfdfdffdfdfdffd dffdfdffdfdffdffdfdfdffdfdfdffddffdfdf fdfdffdffdfdfdffdfdfdf fddffdfdffdfdffdffdfdfdffdfdfdffd",
+    hasAction : true,
+    btnText:"ok",
+    
+    btnStyle :{
+        display:"flex",
+        justifyContent:"center",
+        alignItems : "center",
+        backgroundColor : "blue",
+        borderRadius : "3px",
+        width: "3vw",
+        height:"3vh", 
+        fontSize :"0.8vw",
+        marginBottom:"1vh",
+        alignSelf:"flex-end",
+        marginRight:"1vh"
+    },
+
+    btnTextStyle:{
+        fontSize :"0.8vw"
+    },
+
+    btnClickHandler:{
+
+    }
+}
 
 
 
@@ -85,11 +132,31 @@ function SideContent(props) {
             default: return classes.Theme1_sideContentLabel;
         }
     }
+
+    
+    // function startnotifMotion(){
+    //     var notifZone = document.getElementById("notifZone"); 
+
+    //     if(!notifZone.classList.contains('notifTo')){
+    //         notifZone.classList.add('notifFrom');
+    //     }
+        
+    //     if(!notifZone.classList.contains('moveNotifToTop')){
+    //         notifZone.classList.add('moveNotifToTop');
+    //     }
+
+    //     if(!notifZone.classList.contains('notifTo')){
+    //         notifZone.classList.add('notifTo');
+    //     }
+    // }
+   
     let id_etab_init = 0;
     let id_annee_init = 0;
     
 
     useEffect(()=> {
+
+        
         id_etab_init = currentAppContext.idEtabInit;
         id_annee_init = currentAppContext.activatedYear.id_annee;
         setOpAnnee(createOption(currentAppContext.infoAnnees,"id_annee","libelle"));
@@ -110,6 +177,10 @@ function SideContent(props) {
         setChangeCycleSelected(createOption(currentAppContext.infoCycles.filter((cycle)=>cycle.id_setab == id_etab_init),'id_cycle','libelle')[0]);
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == id_etab_init),'id_cycle','libelle')[0]);
         // console.log("currentYear: ",currentAppContext.currentYear," currentEtab: ", currentAppContext.currentEtab);
+
+        //startnotifMotion();
+
+        console.log("longueur", Math.ceil(msgText1.message.length/LIGNE_WIDTH), Math.ceil(msgText1.message.length/LIGNE_WIDTH)*MIN_HEIGHT)
     },[])
   
     function getSelectDropDownTextColr() {
@@ -121,7 +192,6 @@ function SideContent(props) {
         }
         
     }
-
 
     function createOption(tabOption,idField, labelField){
         var newTab=[];
@@ -207,6 +277,7 @@ function SideContent(props) {
         if(currentAppContext.enableProfiles["EXTRAS"]=='1')       return 'menuLi6';
         if(currentAppContext.enableProfiles["CONFIG"]=='1')       return 'menuLi7';
     }
+    
 
     function onChangeAnneeHandler(e){
         setIdAnnee(idAnnee);
@@ -269,8 +340,15 @@ function SideContent(props) {
     return (
 
         <div> 
+            
             <CustomCalendar/>
             <div className= {classes.mainInfosStyle}>
+                <div id="notifZone" className={classes.notifZone + " notifFrom"}>
+                    <Notification msg={msgText1} notifStyle={{marginBottom:"0.3vh"}}/*notifStyle={{top:"20vh"}}*//>
+                    <Notification msg={msgText2} notifStyle={{marginBottom:"0.3vh"}}/*notifStyle={{top:(20 + Math.ceil(msgText1.message.length/LIGNE_WIDTH)*MIN_HEIGHT+1)+"vh"}}*//>
+                    <Notification msg={msgText3} notifStyle={{marginBottom:"0.3vh"}}/*notifStyle={{top:(20 + Math.ceil(msgText1.message.length/LIGNE_WIDTH)*MIN_HEIGHT+1 + Math.ceil(msgText2.message.length/LIGNE_WIDTH)*MIN_HEIGHT+1)+"vh"}}*//>
+                </div>
+                
 
                 <div> 
                     <label className= {getCurrentThemeSideLabel() +' '+ classes.upperCase}> 
@@ -311,7 +389,7 @@ function SideContent(props) {
                         {t("trimestre")} 
                     </label> 
                 </div>
-                { <div id='trimestre'>
+                <div id='trimestre'>
                     <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'14.3vw',borderColor:getSelectDropDownTextColr()}}>
                         {(optTrimestre||[]).map((option)=> {
                             return(
@@ -319,24 +397,8 @@ function SideContent(props) {
                             );
                         })}
                     </select>
-                </div> }
-
-               {/* <div> 
-                    <label className= {getCurrentThemeSideLabel() +' '+ classes.upperCase}> 
-                        {t("sequence")} 
-                    </label> 
-                </div>
+                </div> 
                 
-                <div id='sequence'>
-                    <select className={classes.comboBoxStyle} style={{color:getSelectDropDownTextColr(), width:'14.3vw',borderColor:getSelectDropDownTextColr()}}>
-                        {(optNiveau||[]).map((option)=> {
-                            return(
-                                <option style={{color:'black'}} value={option.value}>{option.label}</option>
-                            );
-                        })}
-                    </select>
-                    </div>*/
-                }
            
             </div>
         </div>

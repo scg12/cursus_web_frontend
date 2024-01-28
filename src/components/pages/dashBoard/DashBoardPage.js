@@ -127,6 +127,8 @@ function DashBoardPage() {
     ;
     var curentClass = {'id':'0','label':"Toutes"};
     var curentMatiere = {'id':'0','label':"Toutes"};
+
+
   useEffect(()=> {
     var tabNiveaux  = [...getEtabNiveaux(currentAppContext.currentEtab)];
     var tabClasses  = [... getEtabClassesNiveau(currentAppContext.currentEtab, 0)];
@@ -154,12 +156,31 @@ function DashBoardPage() {
     setOptMatieresASS(tabMatieres);
     setOptMatieresRES(tabMatieres);
 
-    init();   
+    init();  
+    
+    startnotifMotion();
+    
   },[]);
+
+  function startnotifMotion(){
+    var notifZone = document.getElementById("notifZone"); 
+
+    if(notifZone.classList.contains('notifFrom')){
+        notifZone.classList.remove('notifFrom');
+    }
+    
+    if(!notifZone.classList.contains('moveNotifToTop')){
+        notifZone.classList.add('moveNotifToTop');
+    }
+
+    if(!notifZone.classList.contains('notifTo')){
+        notifZone.classList.add('notifTo');
+    }
+  }
 
 
   function getCurrentContaintTheme()
-{ // Choix du theme courant
+  { // Choix du theme courant
 
     if(isMobile){
       switch(selectedTheme){
