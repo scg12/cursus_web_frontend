@@ -257,7 +257,27 @@ function SynchroData(props) {
             id_sousetab:currentAppContext.currentEtab,         
         }).then((res)=>{   
             console.log("resultat",res.data);
-            setIsInternetAvailable(res.data.status)
+            console.log("Initialisation des messages des éventuels nouveaux élèves");
+            axiosInstance.post(`update-paiement-mongo-atlas/`, { 
+            id_sousetab:currentAppContext.currentEtab
+            }).then((res)=>{   
+                console.log("resultat",res.data);
+                console.log("Mise à jour des informations de payement des élèves");
+                axiosInstance.post(`modifier-annuaire-mongo-atlas/`, { 
+            id_sousetab:currentAppContext.currentEtab
+                }).then((res)=>{   
+                    console.log("resultat",res.data);
+                    console.log("Modification eventuelles des info des eleves dans l'annuaire en ligne");
+                    axiosInstance.post(`send-message-mongo-atlas/`, { 
+            id_sousetab:currentAppContext.currentEtab
+                    }).then((res)=>{   
+                        console.log("resultat",res.data);
+                    console.log("Envoie des messages aux parents...");
+
+                    })
+                })
+            })
+            
         })
     }
 
