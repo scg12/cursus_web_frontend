@@ -251,7 +251,7 @@ function DefPaiementEns(props) {
                                 </div>
                                  
                                 <div> 
-                                    <input id="nom_manuel" type="text" disabled={(props.formMode == 'consult')? true:false}  defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
+                                    <input id="montant" type="number" disabled={(props.formMode == 'consult')? true:false}  style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
                                 </div>
                             </div>
                             :
@@ -261,7 +261,7 @@ function DefPaiementEns(props) {
                                 </div>
                                     
                                 <div> 
-                                    <input id="description" type="text" disabled={(props.formMode == 'consult')? true:false}  defaultValue={currentUiContext.formInputs[2]} style={{marginLeft:'0.5vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
+                                    <input id="montant" type="number" disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'0.5vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
                                 </div>
                             </div>
                         }

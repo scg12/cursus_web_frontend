@@ -36,7 +36,7 @@ function Notification(props) {
         <div className={'card '+ getNotifBackgrd()} style={isMobile?{left:'35%',...props.mobNotifStyle}:props.notifStyle}>
             <div style={{display:"flex", flexDirection:"column", justifyContent:"center", width:"100%", marginBottom:"1vh"}} >
                 <div  style={{alignSelf:"center", fontSize:"2.3vh", fontWeight:"bold"}}>
-                    {props.msg.title}
+                    {props.msg.libelle}
                 </div>
 
                 <div className={classes.closeNotif}  style={{alignSelf:"flex-end", marginTop:"-2.7vh", fontSize:"2.3vh", fontWeight:"bold", marginRight:"1vw", cursor:"pointer"}} onClick={props.closeNotif}>
@@ -45,7 +45,7 @@ function Notification(props) {
             </div> 
 
             <div style={{display:"flex", marginLeft:"1.3vw", flexDirection:"column", fontSize:"0.97vw",  justifyContent:"center",}}>                           
-                {props.msg.message}                  
+                {props.msg.Description}                  
             </div>
                 
             

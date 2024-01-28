@@ -59,7 +59,7 @@ const AppContext = createContext({
     setCurrentLesson:(lecon)=>{},
 
     /*---------- Gestion des messages -----------*/
-    setTabNotif:(listNotifs) => {},
+    setTabNotifs:(listNotifs) => {},
     
 });
 

@@ -28,6 +28,7 @@ function DefPaiementAdm(props) {
     const [typeContrat, setTypeContrat]     = useState(1);
     const [tabChecked, setTabChecked]       = useState([]);
     const [manuelClasses, setManuelClasses] = useState([]);
+    const [isAdmOnly, setIsAdmOnly] = useState(true);
     
     var tabContrat =[
         {value:1, label:"Permanent"},
@@ -190,7 +191,7 @@ function DefPaiementAdm(props) {
     /************************************ JSX Code ************************************/
 
     return (
-        <div className={'card '+ classes.formCanvas} style={{width:"37vw", height:"63vh"}}>
+        <div className={'card '+ classes.formCanvas} style={{width:"37vw", height:isAdmOnly? "43vh":"58.7vh"}}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImgP} src='images/confSalaire.png'/>
@@ -216,7 +217,7 @@ function DefPaiementAdm(props) {
 
                 <div className={classes.inputRow} style ={{justifyContent:"flex-start"}}>
                     <div className={classes.groupInfo} style={{paddingTop:"2.3vh"}}>                       
-                        <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"1.7vh"}}> 
+                        <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"1vh"}}> 
                             <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
                             <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
                                 {t("form_nom") + ' ' + t('form_prenom')}: 
@@ -228,76 +229,94 @@ function DefPaiementAdm(props) {
 
                         <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"2vh"}}> 
                             <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
-                            <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
-                                {t("salaire_globale")}: 
+                            <div className={classes.inputRowLabelP} style={{fontWeight:570, width:"15vw"}}>
+                                {t("personnel_adm_excl")}?: 
                             </div>                    
-                            <div style={{marginBottom:'1.3vh', marginLeft:'-5vw'}}>  
-                                <input id="niveau" type="text"    className={classes.inputRowControl }  defaultValue={props.currentLeveLabel} style={{width:'15vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#494646'}} />
+                            <div style={{marginBottom:'1.3vh', marginLeft:'0vw', display:"flex", flexDirection:"row",}}>  
+                                <div style={{display:"flex", flexDirection:"row"}}>
+                                    <input type="radio"  name="pers_adm" checked={isAdmOnly} onClick={()=>{isAdmOnly? setIsAdmOnly(false) : setIsAdmOnly(true)}}/>
+                                    <div>{t('yes')}</div>
+                                </div>
+
+                                <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
+                                    <input type="radio"  name="pers_adm" checked={!isAdmOnly}  onClick={()=>{isAdmOnly? setIsAdmOnly(false) : setIsAdmOnly(true)}}/>
+                                    <div>{t('no')}</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div className={classes.inputRowLeft} style={{marginBottom:"2vh"}}> 
-                            <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                {t("adm_function")}:
+                        {isAdmOnly &&
+                            <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"2vh"}}> 
+                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                                <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
+                                    {t("salaire_globale")}: 
+                                </div>                    
+                                <div style={{marginBottom:'1.3vh', marginLeft:'-5vw'}}>  
+                                    <input id="niveau" type="number"    className={classes.inputRowControl }  style={{width:'15vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#494646'}} />
+                                </div>
                             </div>
+                        }
 
-                            <div style={{display:'flex', flexDirection:"row", justifyContent:"flex-start", flexWrap:"wrap", width:"13vw"}}> 
-                                <select id='selectTypePaiement' onChange={contratChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
-                                    {(optContrat||[]).map((option)=> {
-                                        return(
-                                            <option  style={{textAlign:"left"}}  value={option.value}>{option.label}</option>
-                                        );
-                                    })}
-                                </select>                              
-                            </div>    
+                        {!isAdmOnly &&
+                            <div className={classes.inputRowLeft} style={{marginBottom:"2vh"}}> 
+                                <div className={classes.inputRowLabel} style={{fontWeight:570}}>
+                                    {t("adm_post_salary")}:
+                                </div>
 
-                        </div>
-
-                        <div className={classes.inputRowLeft} style={{marginBottom:"2vh"}}> 
-                            <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                {t("type_paiement")}:
+                                <div style={{marginBottom:'1.3vh', marginLeft:'-2.7vw'}}>  
+                                    <input id="niveau" type="number"    className={classes.inputRowControl }   style={{width:'15vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#494646'}} />
+                                </div>
+     
                             </div>
-
-                            <div style={{display:'flex', flexDirection:"row", justifyContent:"flex-start", flexWrap:"wrap", width:"13vw"}}> 
-                                <select id='selectTypePaiement' onChange={contratChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
-                                    {(optContrat||[]).map((option)=> {
-                                        return(
-                                            <option  style={{textAlign:"left"}}  value={option.value}>{option.label}</option>
-                                        );
-                                    })}
-                                </select>                              
-                            </div>    
-
-                        </div>
+                        }
                         
-                      
-                        <div className={classes.inputRowLeft}> 
-                        
-                            <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                {t("salaire")}:
-                            </div>
-                                
-                            <div> 
-                                <input id="nom_manuel" type="text" disabled={(props.formMode == 'consult')? true:false}  defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
-                            </div>
-                        </div>
+                        {!isAdmOnly &&
+                            <div className={classes.inputRowLeft} style={{marginBottom:"3vh"}}> 
+                                <div className={classes.inputRowLabel} style={{fontWeight:570}}>
+                                    {t("teacher")}:
+                                </div>
 
-                        
-                        <div className={classes.inputRowLeft}> 
-                            <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                {t("montant_quota")}:
+                                <div style={{display:'flex', flexDirection:"row", justifyContent:"flex-start", flexWrap:"wrap", width:"13vw"}}> 
+                                    <select id='selectTypePaiement' onChange={contratChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
+                                        {(optContrat||[]).map((option)=> {
+                                            return(
+                                                <option  style={{textAlign:"left"}}  value={option.value}>{option.label}</option>
+                                            );
+                                        })}
+                                    </select>                              
+                                </div>    
+
                             </div>
-                                
-                            <div> 
-                                <input id="description" type="text" disabled={(props.formMode == 'consult')? true:false}  defaultValue={currentUiContext.formInputs[2]} style={{marginLeft:'0.5vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
-                            </div>
-                        </div>
-                        
+                        }
+
                        
-
-
                         
- 
+                        {(typeContrat == 1) ?
+
+                            (!isAdmOnly) &&
+                            <div className={classes.inputRowLeft}> 
+                            
+                                <div className={classes.inputRowLabel} style={{fontWeight:570}}>
+                                    {t("salaire")}:
+                                </div>
+                                 
+                                <div> 
+                                    <input id="nom_manuel" type="number" disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
+                                </div>
+                            </div>
+                            :
+                            (!isAdmOnly) &&
+                            <div className={classes.inputRowLeft}> 
+                                <div className={classes.inputRowLabel} style={{fontWeight:570}}>
+                                    {t("montant_quota")}:
+                                </div>
+                                    
+                                <div> 
+                                    <input id="description" type="number" disabled={(props.formMode == 'consult')? true:false}  style={{marginLeft:'0.5vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
+                                </div>
+                            </div>
+                        }
+                      
                     </div>
 
                 </div>

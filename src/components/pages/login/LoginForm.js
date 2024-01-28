@@ -21,6 +21,72 @@ import {initFeaturesCode,initAppFeatureTable} from '../../Features/FeaturesCode'
 var userProfile = ''
 var profileAuthorisationString = ''
 var ERROR_CODE;
+
+var msgText1={
+    type   : "info",
+    libelle  : "Message Test",
+    Description: "dffdfdffdfdffdffdfdfdffdfdfdffd",
+    date_debut_validite:"07/01/2024",
+    date_fin_validite:"31/01/2024",
+    hasAction : false
+}
+
+var msgText2={
+    type   : "release",
+    libelle  : "Message Test",
+    Description: "dffdfdffdfdffdffdfdfdffdfdfdffd",
+    date_debut_validite:"07/01/2024",
+    date_fin_validite:"31/01/2024",
+    hasAction : false
+}
+
+var msgText3={
+    type   : "urgent",
+    libelle  : "Message Test",
+    Description: "dffdfdffdfdffdffdfdfdffdfdfdffd dffdfdffdfdffdffdfdfdffdfdfdffddffdfdf fdfdffdffdfdfdffdfdfdf fddffdfdffdfdffdffdfdfdffdfdfdffd",
+    date_debut_validite:"07/01/2024",
+    date_fin_validite:"31/01/2024",
+    hasAction : true,
+    btnText:"ok",
+    
+    btnStyle :{
+        display:"flex",
+        justifyContent:"center",
+        alignItems : "center",
+        backgroundColor : "blue",
+        borderRadius : "3px",
+        width: "3vw",
+        height:"3vh", 
+        fontSize :"0.8vw",
+        marginBottom:"1vh",
+        alignSelf:"flex-end",
+        marginRight:"1vh"
+    },
+
+    btnTextStyle:{
+        fontSize :"0.8vw"
+    },
+
+    btnClickHandler:{
+
+    }
+}
+
+var listNotifs=[
+    {   msg: msgText1, 
+        isVisible: true,  
+    },
+
+    {   msg: msgText2, 
+        isVisible: true,  
+    },
+
+    {   msg: msgText3, 
+        isVisible: true,  
+    },
+];
+
+
 // let FeaturesCode = {
 //     "SCOLARITE": "1",
 //     "SCOLARITE_A": "1",
@@ -133,6 +199,7 @@ var ERROR_CODE;
 //     "CONFIG_E2": "1",
 //     "EXTRAS": "1"
 // }
+
 let FeaturesCode = {}
 function LoginForm(props){
 
@@ -518,10 +585,16 @@ function LoginForm(props){
             loadEmploiDetemps(res.data.id_etab_init);
             setIsLoading(false);
 
+            //Ici, on va aller chercher toutes les notifs non lu du user
+            console.log("notifs",listNotifs);
+            currentAppContext.setTabNotifs(listNotifs); 
+
+
             currentUiContext.updateTheme(res.data.theme);
             i18n.changeLanguage(res.data.langue);
             updateCalendarTheme(res.data.theme);
 
+           
             history.replace('/');
         },(res)=>{
             ERROR_CODE = res.response.status;

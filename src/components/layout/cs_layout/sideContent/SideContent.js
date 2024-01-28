@@ -180,7 +180,7 @@ function SideContent(props) {
 
         //startnotifMotion();
 
-        console.log("longueur", Math.ceil(msgText1.message.length/LIGNE_WIDTH), Math.ceil(msgText1.message.length/LIGNE_WIDTH)*MIN_HEIGHT)
+        console.log("notifs", currentAppContext.tabNotifs);
     },[])
   
     function getSelectDropDownTextColr() {
@@ -336,6 +336,12 @@ function SideContent(props) {
     function onChangeNiveauHandler(e){
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_cycle == e.value),'id_cycle','libelle')[0]);
     }
+
+    function closeNotifHandler(index){
+        var notifs = [...currentAppContext.tabNotifs];
+        notifs[index].isVisible = false;
+        currentAppContext.setTabNotifs((notifs));
+    }
           
     return (
 
@@ -344,9 +350,15 @@ function SideContent(props) {
             <CustomCalendar/>
             <div className= {classes.mainInfosStyle}>
                 <div id="notifZone" className={classes.notifZone + " notifFrom"}>
-                    <Notification msg={msgText1} notifStyle={{marginBottom:"0.3vh"}}/*notifStyle={{top:"20vh"}}*//>
-                    <Notification msg={msgText2} notifStyle={{marginBottom:"0.3vh"}}/*notifStyle={{top:(20 + Math.ceil(msgText1.message.length/LIGNE_WIDTH)*MIN_HEIGHT+1)+"vh"}}*//>
-                    <Notification msg={msgText3} notifStyle={{marginBottom:"0.3vh"}}/*notifStyle={{top:(20 + Math.ceil(msgText1.message.length/LIGNE_WIDTH)*MIN_HEIGHT+1 + Math.ceil(msgText2.message.length/LIGNE_WIDTH)*MIN_HEIGHT+1)+"vh"}}*//>
+                    {currentAppContext.tabNotifs.map((notif, index)=>{
+                        return(
+                            (notif.isVisible) && <Notification msg={notif.msg} notifStyle={{marginBottom:"0.3vh"}} closeNotif={()=>{closeNotifHandler(index)}}/>
+                        )
+                       
+                    })}
+                    {/* <Notification msg={msgText1} notifStyle={{marginBottom:"0.3vh"}}/>
+                    <Notification msg={msgText2} notifStyle={{marginBottom:"0.3vh"}}/>
+                    <Notification msg={msgText3} notifStyle={{marginBottom:"0.3vh"}}/> */}
                 </div>
                 
 
