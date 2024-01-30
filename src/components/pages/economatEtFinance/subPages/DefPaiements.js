@@ -56,7 +56,9 @@ function DefPaiements(props) {
       
        setOpQualite(tabQualite)
        CURRENT_QUALITE_ID    = tabQualite[0].value; 
-       CURRENT_QUALITE_LABEL = tabQualite[0].label;        
+       CURRENT_QUALITE_LABEL = tabQualite[0].label; 
+
+       getListPersonnel(currentAppContext.currentEtab, CURRENT_QUALITE_ID);       
     },[]);
 
     var tabQualite =[
@@ -65,49 +67,93 @@ function DefPaiements(props) {
     ]
 
    
-    const  getListMessages=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
+    const  getListPersonnel=(sousEtabId, qualiteId)=>{
+        var listPersonnel = []
+        axiosInstance.post(`list-personnel/`, {
+            id_sousetab: sousEtabId,
         }).then((res)=>{
             console.log(res.data);
-            listEleves = [...formatList(res.data)]
-            console.log(listEleves);
-            setGridRows(listEleves);
+            if(qualiteId == 1){
+                listPersonnel = [...formatListEns(res.data.enseignants)]
+            } else {
+                listPersonnel = [...formatListAdm(res.data.adminstaffs)]
+            }
+           
+            console.log("data staff",listPersonnel);
+            setGridRows(listPersonnel);
             console.log(gridRows);
         })  
-        return listEleves;     
     }
 
-    const formatList=(list) =>{
+    const formatListEns=(list) =>{
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
+            listElt.id             = elt.id 
+            listElt.id_ens         = elt.id_ens;
             listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
-            listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
+            listElt.nom            = elt.nom;
+            listElt.prenom         = elt.prenom;
+            listElt.rang           = rang; 
+            listElt.type_salaire   = elt.type_salaire==""? t("to_define"):elt.type_salaire; 
+            listElt.type_salaire_libelle = elt.type_salaire==""? t("to_define"):t(elt.type_salaire);
+            listElt.salaire        = listElt.type_salaire=="permanent"? elt.salaire:0;
+            listElt.quota_horaire  = listElt.type_salaire=="permanent"? 0:elt.salaire;
+            listElt.portee_salaire = elt.portee_salaire;
+            formattedList.push(listElt);
+            rang ++;
+        })
+        return formattedList;
+    }
 
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
+    const formatListAdm=(list) =>{
+        var rang = 1;
+        var formattedList         = []
+        var adm_fonctions         = "";
+        var salaire_fonctions     = 0;
+        var list_salaire_fonction = "";
+        var adm_data;
+        list.map((elt)=>{
+            listElt = {};
+            listElt.id                    =  elt.id ;
+            listElt.id_ens                =  elt.id_ens;
+            listElt.displayedName         = elt.nom +' '+elt.prenom;
+            listElt.nom                   = elt.nom;
+            listElt.prenom                = elt.prenom;
+            listElt.rang                  = rang; 
+            listElt.is_prof               = elt.is_prof ; 
+            listElt.adm_data              = elt.admin_data;
+            adm_data                      = elt.admin_data;
 
+            adm_data.map((elt, index)=>{
+                if(index < adm_data.length-1){
+                    adm_fonctions         = adm_fonctions + elt.hierarchie + ', ';
+                    list_salaire_fonction = list_salaire_fonction + elt.salaire +'_';
+                } else {
+                    adm_fonctions         = adm_fonctions + elt.hierarchie;
+                    list_salaire_fonction = list_salaire_fonction + elt.salaire;
+                } 
+                    salaire_fonctions     = salaire_fonctions + elt.salaire;
+            })
+            
+            console.log("fonctions", adm_fonctions);
+            
+            listElt.list_salaire_fonction = list_salaire_fonction;
+            listElt.salaire_fonctions     = salaire_fonctions;
+            listElt.salaire_prof          = listElt.is_prof ? elt.salaire_prof : 0;
+            listElt.salaire               = listElt.salaire_fonctions +  listElt.salaire_prof;
+
+            listElt.fonctions             = adm_fonctions; 
+            listElt.fonctions_Gen         = listElt.is_prof ? adm_fonctions + ", " + t("teacher") : adm_fonctions ; 
+
+            
+            listElt.type_salaire          = listElt.is_prof  ? elt.type_salaire_prof : ""; 
+            listElt.portee_salaire        = elt.admin_data.portee_salaire;
+            
+            adm_fonctions         = '';
+            list_salaire_fonction = "";
+            salaire_fonctions     = 0;
             
             formattedList.push(listElt);
             rang ++;
@@ -119,12 +165,38 @@ function DefPaiements(props) {
     function dropDownHandler(e){  
         CURRENT_QUALITE_ID = e.target.value; 
         CURRENT_QUALITE_LABEL = optQualite[optQualite.findIndex((classe)=>(classe.value == CURRENT_QUALITE_ID))].label;
-        getListMessages(CURRENT_QUALITE_ID);   
-        console.log(CURRENT_QUALITE_LABEL) 
+        getListPersonnel(currentAppContext.currentEtab, CURRENT_QUALITE_ID);  
+        // console.log(CURRENT_QUALITE_LABEL) 
     }
  
 /*************************** DataGrid Declaration ***************************/    
     const columnsFr = [
+
+        {
+            field: 'id',
+            headerName: "",
+            width: 50,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id_ens',
+            headerName: "",
+            width: 50,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'id_adminstaff_ens',
+            headerName: "",
+            width: 50,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
        
         {
             field: 'rang',
@@ -141,19 +213,57 @@ function DefPaiements(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'adm_data',
+            headerName:"FONCTIONS",
+            width: 300,
+            editable: false,
+            hide :  true,
+            headerClassName:classes.GridColumnStyle
+        },
         
         {
-            field: 'functions',
+            field: 'fonctions',
             headerName:"FONCTIONS",
-            width: 150,
+            width: 300,
+            editable: false,
+            hide :  true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'fonctions_Gen',
+            headerName:"FONCTIONS",
+            width: 300,
             editable: false,
             hide :  (CURRENT_QUALITE_ID == 1)? true : false,
             headerClassName:classes.GridColumnStyle
         },
 
+        
+
         {
-            field: 'type_paiement',
-            headerName: "TYPE DE PAIEMENT",
+            field: 'list_salaire_fonction',
+            headerName:"FONCTIONS",
+            width: 300,
+            editable: false,
+            hide :  true,
+            headerClassName:classes.GridColumnStyle
+        },
+        
+        {
+            field: 'type_salaire',
+            headerName: "TYPE DE CONTRAT",
+            width:120,
+            editable: false,
+            hide : true,
+            headerClassName:classes.GridColumnStyle
+        },    
+
+        {
+            field: 'type_salaire_libelle',
+            headerName: "TYPE DE CONTRAT",
             width:120,
             editable: false,
             hide :  (CURRENT_QUALITE_ID == 2)? true : false,
@@ -169,10 +279,37 @@ function DefPaiements(props) {
             hide :  (CURRENT_QUALITE_ID == 2)? true : false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'is_prof',
+            headerName: "",
+            width: 100,
+            editable: false,
+            hide :  true ,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'salaire_fonctions',
+            headerName:"SALAIRE ADM.",
+            width: 90,
+            editable: false,
+            hide :  (CURRENT_QUALITE_ID == 1)? true : false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'salaire_prof',
+            headerName:"SALAIRE ENS.",
+            width: 90,
+            editable: false,
+            hide :  (CURRENT_QUALITE_ID == 1)? true : false,
+            headerClassName:classes.GridColumnStyle
+        },
         
         {
             field: 'salaire',
-            headerName:"SALAIRE",
+            headerName:"SALAIRE TOTAL",
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -206,6 +343,32 @@ function DefPaiements(props) {
 
     const columnsEn = [
         {
+            field: 'id',
+            headerName: "",
+            width: 50,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id_ens',
+            headerName: "",
+            width: 50,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'id_adminstaff_ens',
+            headerName: "",
+            width: 50,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'rang',
             headerName: "N°",
             width: 50,
@@ -222,20 +385,56 @@ function DefPaiements(props) {
         },
 
         {
-            field: 'functions',
-            headerName:"FONCTIONS",  // a trduire
-            width: 150,
+            field: 'adm_data',
+            headerName:"FONCTIONS",
+            width: 300,
             editable: false,
-            hide :  (CURRENT_QUALITE_ID == 1)? true:false,
+            hide :  true,
             headerClassName:classes.GridColumnStyle
         },
 
         {
-            field: 'type_paiement',
-            headerName: "PAIEMENT TYPE",
+            field: 'fonctions',
+            headerName:"FONCTIONS",
+            width: 300,
+            editable: false,
+            hide :  true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'fonctions_Gen',
+            headerName:"FONCTIONS",
+            width: 300,
+            editable: false,
+            hide :  (CURRENT_QUALITE_ID == 1)? true : false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'list_salaire_fonction',
+            headerName:"FONCTIONS",
+            width: 300,
+            editable: false,
+            hide :  true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'type_salaire',
+            headerName: "CONTRACT TYPE",
             width:120,
             editable: false,
-            hide : (CURRENT_QUALITE_ID == 2)? true : false,
+            hide : true,
+            headerClassName:classes.GridColumnStyle
+        },  
+        
+        {
+            field: 'type_salaire_libelle',
+            headerName: "TYPE DE CONTRAT",
+            width:120,
+            editable: false,
+            hide :  (CURRENT_QUALITE_ID == 2)? true : false,
             headerClassName:classes.GridColumnStyle
         },   
 
@@ -249,8 +448,35 @@ function DefPaiements(props) {
         },
 
         {
+            field: 'is_prof',
+            headerName: "",
+            width: 100,
+            editable: false,
+            hide :  true ,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'salaire_fonctions',
+            headerName:"ADM. SALARY",
+            width: 90,
+            editable: false,
+            hide :  (CURRENT_QUALITE_ID == 1)? true : false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'salaire_prof',
+            headerName:"TEACHER SALARY",
+            width: 120,
+            editable: false,
+            hide :  (CURRENT_QUALITE_ID == 1)? true : false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'salaire',
-            headerName:"SALAIRE",  //a traduire
+            headerName:"GLOBAL SALARY",  //a traduire
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -293,15 +519,6 @@ function DefPaiements(props) {
     }
     
 /*************************** Handler functions ***************************/
-    
-
-    function handleDeleteRow(params){
-        if(params.field=='id'){
-            //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
-        }
-    }
-
     function initFormInputs(){
         var inputs=[];
         inputs[0] = '';
@@ -325,28 +542,26 @@ function DefPaiements(props) {
     function handleEditRow(row, qualiteId){       
         var inputs=[];
         
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
-        console.log("laligne",row);
+        if(qualiteId == 1){
+            inputs[0]= row.id + '_' + row.id_ens;
+            inputs[1]= row.displayedName;
+            inputs[2]= row.type_salaire == "permanent" ? row.salaire : row.quota_horaire;
+            inputs[3]= row.salaire;  
+            inputs[4]= row.type_salaire;      
+        } else {
+            inputs[0]= row.id + '_' + row.id_ens;
+            inputs[1]= row.displayedName;
+            inputs[2]= row.salaire_prof;
+            inputs[3]= row.salaire;
+            inputs[4]= row.salaire_fonctions;
+            inputs[5]= row.salaire_prof;
+            inputs[6]= row.is_prof;
+            inputs[7]= row.type_salaire;
+            inputs[8]= row.fonctions;
+            inputs[9]= row.list_salaire_fonction;
+            inputs[10]= row.adm_data;
+        }
+       
         currentUiContext.setFormInputs(inputs)
         
         if(qualiteId == 1) {
@@ -397,45 +612,35 @@ function DefPaiements(props) {
 
     }
 
-    function saveMsg(msg) {       
-        console.log('Ajout',msg);
-           
-        // axiosInstance.post(`create-eleve/`, {
-        //     id_classe : CURRENT_QUALITE_ID,
-        //     id_sousetab:currentAppContext.currentEtab,
-        //     matricule : eleve.matricule, 
-        //     nom : eleve.nom,
-        //     adresse : eleve.adresse,
-        //     prenom : eleve.prenom, 
-        //     sexe : eleve.sexe,
-        //     date_naissance : eleve.date_naissance,
-        //     lieu_naissance : eleve.lieu_naissance,
-        //     date_entree : eleve.date_entree,
-        //     nom_pere : eleve.nom_pere,
-        //     prenom_pere : eleve.prenom_pere, 
-        //     nom_mere : eleve.nom_mere,
-        //     prenom_mere : eleve.prenom_mere, 
-        //     tel_pere : eleve.tel_pere,    
-        //     tel_mere : eleve.tel_mere,    
-        //     email_pere : eleve.email_pere,
-        //     email_mere : eleve.email_mere,
-        //     photo_url : eleve.photo_url, 
-        //     redouble : (eleve.redouble == "O") ? true : false,
-        //     age :  eleve.age,
-        //     est_en_regle : eleve.est_en_regle,
-        //     etab_provenance : eleve.etab_provenance,            
-        // }).then((res)=>{
-        //     console.log(res.data);
-
-        //     //setModalOpen(0);
-        //     chosenMsgBox = MSG_SUCCESS;
-        //     currentUiContext.showMsgBox({
-        //         visible:true, 
-        //         msgType:"info", 
-        //         msgTitle:t("success_add_M"), 
-        //         message:t("success_add")
-        //     })
-        // })      
+    function updatePaiement(CURRENT_PAIEMENT) {       
+        console.log('Ajout',CURRENT_PAIEMENT);
+        axiosInstance.post(`update-salaire-personnel/`, {
+            
+            id_sousetab                        : CURRENT_PAIEMENT.id_sousetab,
+            type_personnel                     : CURRENT_PAIEMENT.type_personnel,
+            type_salaire                       : CURRENT_PAIEMENT.type_salaire,
+            portee_salaire                     : CURRENT_PAIEMENT.portee_salaire,
+            id_user                            : CURRENT_PAIEMENT.id_user,
+            id_ens                             : CURRENT_PAIEMENT.id_ens,
+            salaire                            : CURRENT_PAIEMENT.salaire,
+            is_salaire_total                   : CURRENT_PAIEMENT.is_salaire_total==true? "true":"false",
+            tab_salaire                        : CURRENT_PAIEMENT.tab_salaire,
+            is_enseignant                      : CURRENT_PAIEMENT.is_enseignant==true? "true":"false",
+            id_adminstaff_enseignant           : CURRENT_PAIEMENT.id_adminstaff_enseignant,
+            type_salaire_adminstaff_enseignant : CURRENT_PAIEMENT.type_salaire_adminstaff_enseignant,
+            salaire_adminstaff_enseignant      : CURRENT_PAIEMENT.salaire_adminstaff_enseignant,
+     
+        }).then((res)=>{
+            console.log(res.data);
+            //setModalOpen(0);
+            chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"info", 
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")
+            })
+        })      
     }
     
     function modifyStudent(eleve) {
@@ -527,7 +732,7 @@ function DefPaiements(props) {
                     msgTitle:"", 
                     message:""
                 }) 
-                getListMessages(CURRENT_QUALITE_ID); 
+                getListPersonnel(currentAppContext.currentEtab, CURRENT_QUALITE_ID);
                 return 1;
             }
 
@@ -635,16 +840,16 @@ function DefPaiements(props) {
             {(typePaiement != 0) && <BackDrop/>}
             {(typePaiement == 1) && 
                 <DefPaiementEns 
-                    formMode      = {(modalOpen==1) ? 'creation': 'consult'}  
-                    actionHandler = {saveMsg} 
+                    formMode      = 'creation'
+                    actionHandler = {updatePaiement} 
                     cancelHandler = {quitForm}
                 />
             }
 
             {(typePaiement == 2) && 
                 <DefPaiementAdm  
-                    formMode      = {(modalOpen==1) ? 'creation': 'consult'}  
-                    actionHandler = {saveMsg} 
+                    formMode      = 'creation' 
+                    actionHandler = {updatePaiement} 
                     cancelHandler = {quitForm}
                 />
             }
@@ -740,7 +945,7 @@ function DefPaiements(props) {
                         
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : (params.field==='quota_horaire' || params.field==='salaire_fonctions'|| params.field==='salaire_prof')? classes.gridRowRightStyle : (params.field ==='salaire') ? classes.gridRowRightBoldStyle : classes.gridRowStyle}
                         // onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {

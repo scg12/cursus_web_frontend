@@ -13,8 +13,9 @@ import { useTranslation } from "react-i18next";
 
 var CURRENT_ELEVE = {};
 var CURRENT_ANNEE_SCOLAIRE;
-var CURRENT_MANUEL;
+var CURRENT_PAIEMENT;
 var TABCLASSE     = [];
+var tabSalaireFonctions;
 
 
 function DefPaiementAdm(props) {
@@ -23,39 +24,48 @@ function DefPaiementAdm(props) {
     const currentUiContext   = useContext(UiContext);
     const currentAppContext  = useContext(AppContext);
     const selectedTheme      = currentUiContext.theme;
-    // const [isValid, setIsValid] = useState(false);
-    const [optContrat,  setOptContrat]      = useState([]);
-    const [typeContrat, setTypeContrat]     = useState(1);
-    const [tabChecked, setTabChecked]       = useState([]);
-    const [manuelClasses, setManuelClasses] = useState([]);
-    const [isAdmOnly, setIsAdmOnly] = useState(true);
+    const [optContrat,  setOptContrat]      = useState(tabContrat);
+    const [typeContrat, setTypeContrat]     = useState("permanent");
+    const [isAdmOnly, setIsAdmOnly]         = useState(!currentUiContext.formInputs[6]);
+    const [montantTotal, setMontantTotal]   = useState(currentUiContext.formInputs[3]);
+    const [fonctions, setFonctions]         = useState([])
     
     var tabContrat =[
-        {value:1, label:"Permanent"},
-        {value:2, label:"Vacataire"}, 
+        {value:"permanent", label:t("permanent")},
+        {value:"vacataire", label:t("vacataire")}, 
     ]
 
 
     useEffect(()=> {        
-        CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
-        getEtabClasses(); 
-        setOptContrat(tabContrat);      
-
-        // if(props.formMode != 'creation'){ 
-        //     CURRENT_MANUEL = {};
-        //     CURRENT_MANUEL.id_manuel   = currentUiContext.formInputs[0];
-        //     CURRENT_MANUEL.description = currentUiContext.formInputs[0]
-        // }      
+        CURRENT_ANNEE_SCOLAIRE  = document.getElementById("activated_annee").options[0].label;
+        var tabFonctions        = currentUiContext.formInputs[8].split(",");
+        tabSalaireFonctions     = currentUiContext.formInputs[9].split("_");
+        
+        setFonctions(tabFonctions);
+      
+        var currrentContrat =  currentUiContext.formInputs[7];  
+        var indexContrat    = tabContrat.findIndex((elt)=>elt.value==currrentContrat);
+        
+        if(indexContrat >= 0) {
+            var cur_Contrat = tabContrat[indexContrat];
+            tabContrat.splice(indexContrat,1);
+            tabContrat.unshift(cur_Contrat);
+            setOptContrat(tabContrat);
+            setTypeContrat(currrentContrat);
+        } else {
+            setOptContrat(tabContrat);
+            setTypeContrat("permanent");
+        }
     },[]);
 
 
-    function saveManuel(){
+    function updatePaiementAdm(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        console.log('avant:',CURRENT_MANUEL);
+        console.log('avant:',CURRENT_PAIEMENT);
         getFormData();
-        console.log('apres:',CURRENT_MANUEL);
+        console.log('apres:',CURRENT_PAIEMENT);
 
-        var fomCheckErrorStr =  formDataCheck1(CURRENT_MANUEL);
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_PAIEMENT);
         
         if(fomCheckErrorStr.length == 0){
            
@@ -63,7 +73,7 @@ function DefPaiementAdm(props) {
                 errorDiv.className = null;
                 errorDiv.textContent = '';
             }
-            props.actionHandler(CURRENT_MANUEL);  
+            props.actionHandler(CURRENT_PAIEMENT);  
     
         } else {
             errorDiv.textContent = fomCheckErrorStr;
@@ -71,49 +81,65 @@ function DefPaiementAdm(props) {
         }
     }
 
+    function createSalairesHierarchie(fonctionsAdm, adm_data){
+        var idHier_sal = "";
+        console.log("hierrarchie",fonctionsAdm, adm_data);
+        fonctionsAdm.map((fct, index)=>{
+            var admElt = adm_data.find((elt)=>elt.hierarchie.trim() == fct.trim());
+            console.log("trove",adm_data,admElt,fct);
+
+            if(index < fonctionsAdm.length-1){
+                idHier_sal = idHier_sal + admElt.id_adminstaff+"²²"+document.getElementById("adm_salaire_"+index).value + '_';
+            } else {
+                idHier_sal = idHier_sal + admElt.id_adminstaff+"²²"+document.getElementById("adm_salaire_"+index).value;
+            }
+        })
+        console.log("list Salaires", idHier_sal);
+        return idHier_sal
+    }
+
     function getFormData(){
         
-        CURRENT_MANUEL = {};
-        var selected_classes =  manuelClasses.filter((elt)=>elt!=0);
-
-        if(props.formMode == "creation"){
-            CURRENT_MANUEL.id_manuel  = -1;
-        } else {
-            CURRENT_MANUEL.id_manuel  = currentUiContext.formInputs[0];
-        }
-     
-        CURRENT_MANUEL.nomLivre    = document.getElementById('nom_manuel').value;
-        CURRENT_MANUEL.description = document.getElementById('description').value; 
-        CURRENT_MANUEL.prix        = document.getElementById('prix_en_vigueur').value;
-        CURRENT_MANUEL.data        = CURRENT_MANUEL.nomLivre+'²²'+CURRENT_MANUEL.description+'²²'+ CURRENT_MANUEL.prix; 
-
-        CURRENT_MANUEL.id_sousetab = currentAppContext.currentEtab;
-        CURRENT_MANUEL.id_classes  = selected_classes.length >0 ? selected_classes.join("²²"):'';
-        CURRENT_MANUEL.id_niveau      = parseInt(props.currentLevel);                  
+        CURRENT_PAIEMENT = {};
+        CURRENT_PAIEMENT.id_sousetab    = currentAppContext.currentEtab;  
+        CURRENT_PAIEMENT.type_personnel = "administaff"; 
+        CURRENT_PAIEMENT.type_salaire   = typeContrat;
+  
+        CURRENT_PAIEMENT.portee_salaire = "locale";
+        CURRENT_PAIEMENT.id_user        = currentUiContext.formInputs[0].split('_')[0];
+        CURRENT_PAIEMENT.id_ens         = currentUiContext.formInputs[0].split('_')[1];
+        CURRENT_PAIEMENT.salaire        = montantTotal
+   
+        CURRENT_PAIEMENT.is_salaire_total                   = false;
+        CURRENT_PAIEMENT.tab_salaire                        = createSalairesHierarchie(fonctions, currentUiContext.formInputs[10]);
+        CURRENT_PAIEMENT.is_enseignant                      = !isAdmOnly;
+        CURRENT_PAIEMENT.id_adminstaff_enseignant           = currentUiContext.formInputs[0].split('_')[1];
+        CURRENT_PAIEMENT.type_salaire_adminstaff_enseignant = typeContrat;
+        CURRENT_PAIEMENT.salaire_adminstaff_enseignant      = !isAdmOnly ? parseInt(document.getElementById("salaire_prof").value) : 0;  
     }
 
     function formDataCheck1(manuel){       
         var errorMsg='';
-        if(manuel.nomLivre.length == 0){
-            errorMsg= t('enter_manuel_name'); 
-            return errorMsg;
-        }
+        // if(manuel.nomLivre.length == 0){
+        //     errorMsg= t('enter_manuel_name'); 
+        //     return errorMsg;
+        // }
 
-        if (manuel.prix.length == 0) {
-            errorMsg= t('enter_manuel_price'); 
-            return errorMsg;
-        }
+        // if (manuel.prix.length == 0) {
+        //     errorMsg= t('enter_manuel_price'); 
+        //     return errorMsg;
+        // }
 
-        if(isNaN(manuel.prix)) {
-            errorMsg= t('enter_correct_manuel_price'); 
-            return errorMsg;
-        } 
+        // if(isNaN(manuel.prix)) {
+        //     errorMsg= t('enter_correct_manuel_price'); 
+        //     return errorMsg;
+        // } 
 
 
-        if(manuel.id_classes.length == 0 ){
-            errorMsg= t('no_manuel_classes_selected');  
-            return errorMsg;       
-        }    
+        // if(manuel.id_classes.length == 0 ){
+        //     errorMsg= t('no_manuel_classes_selected');  
+        //     return errorMsg;       
+        // }    
         return errorMsg;  
     }
 
@@ -140,73 +166,56 @@ function DefPaiementAdm(props) {
     }
    
     /************************************ Handlers ************************************/   
-  
-    function putToEmptyStringIfUndefined(chaine){
-        if (chaine==undefined) return '';
-        else return chaine;
-    }
-   
-    function getEtabClasses(){
-        var listClasseCible = [];
-        var tempTable       = [];
-        var tabClasses      = [];
-        TABCLASSE = [];
-        
-         
-        tabClasses =  currentAppContext.infoClasses.filter((cls)=>cls.id_setab == currentAppContext.currentEtab && cls.id_niveau==props.currentLevel)
-        tabClasses.map((cls)=>{
-            tempTable.push({value:cls.id_classe, label:cls.libelle});
-            TABCLASSE.push(cls.id_classe); 
-            listClasseCible.push(0);
-        });
-
-        if(props.formMode != 'creation'){ 
-            var selectedClasse =  currentUiContext.formInputs[4].split(',');
-            selectedClasse.map((elt)=>{
-                for(var i=0; i<TABCLASSE.length; i++){
-                    if(TABCLASSE[i]== elt) listClasseCible[i] = elt;
-                }               
-            });
-
-            TABCLASSE = [...listClasseCible];            
-        }
-
-        //setOptClasse(tempTable);
-        setManuelClasses(TABCLASSE);
-    }
-
-
-    function manageChbxChange(e, index){
-        // if(e.target.checked) TABCLASSE[index] = optClasse[index].value;        
-        // else TABCLASSE[index] = 0;
-        // setManuelClasses(TABCLASSE);
-        // console.log("checked",TABCLASSE.join('_'));
-    }
-
     function contratChangeHandler(e){
         setTypeContrat(e.target.value);
+        
+        var sommeTotale = 0; 
+        fonctions.map((elt,index)=>{
+            sommeTotale = sommeTotale + parseInt(document.getElementById("adm_salaire_"+index).value);
+        })
+        setMontantTotal(sommeTotale);
+        
+    }
+
+    function calculSalaireTotal(isAdmOnly, typeContrat){
+        var sommeTotale = 0;
+        
+
+        fonctions.map((elt,index)=>{
+            sommeTotale = sommeTotale + parseInt(document.getElementById("adm_salaire_"+index).value);
+        })
+
+        if(isAdmOnly == false){
+            console.log("hdhdhhdh");
+            sommeTotale = 0; 
+            fonctions.map((elt,index)=>{
+                sommeTotale = sommeTotale + parseInt(document.getElementById("adm_salaire_"+index).value);
+            })
+        
+            if(typeContrat=="permanent"){ 
+                sommeTotale = sommeTotale + parseInt(document.getElementById("salaire_prof").value);
+            } else {
+                sommeTotale = sommeTotale + parseInt(document.getElementById("quota").value);
+            }
+        }
+
+       setMontantTotal(sommeTotale);
+       console.log("icic",sommeTotale )
+
     }
 
    
     /************************************ JSX Code ************************************/
 
     return (
-        <div className={'card '+ classes.formCanvas} style={{width:"37vw", height:isAdmOnly? "43vh":"58.7vh"}}>
+        <div className={'card '+ classes.formCanvas} style={{width:"37vw", height:isAdmOnly? (38 + fonctions.length*7)+"vh":(63 + fonctions.length*5)+"vh"}}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImgP} src='images/confSalaire.png'/>
                 </div>
-                {(props.formMode == "creation") ?
-                    <div className={classes.formMainTitle} >
-                        {t("def_paiemennt_adm_M")}
-                    </div>
-                    :
-                    <div className={classes.formMainTitle} >
-                        {t("consult_paiement_adm_M")}
-                    </div>
-                }
-                
-                
+                <div className={classes.formMainTitle} >
+                    {t("def_paiemennt_adm_M")}
+                </div>
             </div>
 
                
@@ -220,10 +229,10 @@ function DefPaiementAdm(props) {
                         <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"1vh"}}> 
                             <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
                             <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
-                                {t("form_nom") + ' ' + t('form_prenom')}: 
+                            {t("form_nom") + " "+t('and')+" " + t('form_prenom')}: 
                             </div>                    
-                            <div style={{marginBottom:'1.3vh', marginLeft:'-5vw'}}>  
-                                <input id="niveau" type="text"    className={classes.inputRowControl }  defaultValue={props.currentLeveLabel} style={{width:'15vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#494646'}} />
+                            <div style={{marginBottom:'1.3vh', marginLeft:'-3vw'}}>  
+                                <input id="niveau" type="text"    className={classes.inputRowControl }  defaultValue={currentUiContext.formInputs[1]} style={{width:'15vw', textAlign:'left', height:'1.3vw', fontSize:'1.23vw', marginLeft:'0vw', color:'#494646'}} />
                             </div>
                         </div>
 
@@ -234,40 +243,37 @@ function DefPaiementAdm(props) {
                             </div>                    
                             <div style={{marginBottom:'1.3vh', marginLeft:'0vw', display:"flex", flexDirection:"row",}}>  
                                 <div style={{display:"flex", flexDirection:"row"}}>
-                                    <input type="radio"  name="pers_adm" checked={isAdmOnly} onClick={()=>{isAdmOnly? setIsAdmOnly(false) : setIsAdmOnly(true)}}/>
+                                    <input type="radio"  name="pers_adm" checked={isAdmOnly} /*onClick={()=>{isAdmOnly? setIsAdmOnly(false) : setIsAdmOnly(true)}}*//>
                                     <div>{t('yes')}</div>
                                 </div>
 
                                 <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
-                                    <input type="radio"  name="pers_adm" checked={!isAdmOnly}  onClick={()=>{isAdmOnly? setIsAdmOnly(false) : setIsAdmOnly(true)}}/>
+                                    <input type="radio"  name="pers_adm" checked={!isAdmOnly}  /*onClick={()=>{isAdmOnly? setIsAdmOnly(false) : setIsAdmOnly(true)}}*//>
                                     <div>{t('no')}</div>
                                 </div>
                             </div>
                         </div>
 
-                        {isAdmOnly &&
-                            <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"2vh"}}> 
-                                <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
-                                <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
-                                    {t("salaire_globale")}: 
-                                </div>                    
-                                <div style={{marginBottom:'1.3vh', marginLeft:'-5vw'}}>  
-                                    <input id="niveau" type="number"    className={classes.inputRowControl }  style={{width:'15vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#494646'}} />
-                                </div>
-                            </div>
-                        }
+                       
 
-                        {!isAdmOnly &&
-                            <div className={classes.inputRowLeft} style={{marginBottom:"2vh"}}> 
-                                <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                    {t("adm_post_salary")}:
-                                </div>
+                        { 
+                            fonctions.map((fonct_adm, index)=>{
+                                return(
+                                    <div className={classes.inputRowLeft} style={{marginBottom:"0.3vh"}}> 
+                                        <div className={classes.inputRowLabel} style={{fontWeight:570,marginRight:'1.7vw'}}>
+                                            {fonct_adm}:
+                                        </div>
 
-                                <div style={{marginBottom:'1.3vh', marginLeft:'-2.7vw'}}>  
-                                    <input id="niveau" type="number"    className={classes.inputRowControl }   style={{width:'15vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#494646'}} />
-                                </div>
+                                        <div style={{marginBottom:'0.7vh', marginLeft:'0vw'}}>  
+                                            <input id={"adm_salaire_"+index} type="number"  onChange={(e)=> calculSalaireTotal(isAdmOnly,typeContrat)} defaultValue={tabSalaireFonctions[index]}   className={classes.inputRowControl }   style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1vw', marginLeft:'1vw', color:'#494646'}} />
+                                            <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
+                                        </div>
      
-                            </div>
+                                    </div>
+                                );                                
+
+                            })
+                           
                         }
                         
                         {!isAdmOnly &&
@@ -289,33 +295,46 @@ function DefPaiementAdm(props) {
                             </div>
                         }
 
-                       
-                        
-                        {(typeContrat == 1) ?
-
+                        {
                             (!isAdmOnly) &&
                             <div className={classes.inputRowLeft}> 
                             
                                 <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                    {t("salaire")}:
+                                    { typeContrat == "permanent" ? t("salaire"):t("montant_quota")}:
                                 </div>
                                  
                                 <div> 
-                                    <input id="nom_manuel" type="number" disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
+                                    <input id="salaire_prof" type="number" onChange={(e)=> calculSalaireTotal(isAdmOnly,typeContrat)} defaultValue={currentUiContext.formInputs[2]== undefined ? 0 : currentUiContext.formInputs[2]} disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
+                                    <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
                                 </div>
                             </div>
-                            :
-                            (!isAdmOnly) &&
+                        }
+                            
+                        {/* {    
+                            (!isAdmOnly && typeContrat == "vacataire") &&
                             <div className={classes.inputRowLeft}> 
                                 <div className={classes.inputRowLabel} style={{fontWeight:570}}>
                                     {t("montant_quota")}:
                                 </div>
                                     
-                                <div> 
-                                    <input id="description" type="number" disabled={(props.formMode == 'consult')? true:false}  style={{marginLeft:'0.5vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'15vw'}}/>
+                                <div style={{display:"flex", flexDirection:"row"}}> 
+                                    <input id="quota" type="number" onChange={(e)=> calculSalaireTotal(isAdmOnly,typeContrat)} defaultValue={currentUiContext.formInputs[2]==undefined? 0 :currentUiContext.formInputs[2]} disabled={(props.formMode == 'consult')? true:false}  style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
+                                    <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
                                 </div>
                             </div>
-                        }
+                        } */}
+
+                        
+                        <div className={classes.inputRowLeft} style={{height:'4.7vh', marginBottom:"2vh"}}> 
+                            <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[0]}/>
+                            <div className={classes.inputRowLabelP} style={{fontWeight:570, }}>
+                                {t("salaire_globale")}: 
+                            </div>                    
+                            <div style={{marginBottom:'1.3vh', marginLeft:'-5vw', display:"flex", flexDirection:"row"}}>  
+                                <input id="salaire_total" type="number" value={montantTotal}   disabled={true} className={classes.inputRowControl }  style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw',  fontWeight:"bold", color: "black"}} />
+                                <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', fontWeight:"bold", color:"black", border:"none"}} />
+                            </div>
+                        </div>
                       
                     </div>
 
@@ -344,7 +363,7 @@ function DefPaiementAdm(props) {
                         imgStyle = {classes.frmBtnImgStyle2} 
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={saveManuel}
+                        btnClickHandler={updatePaiementAdm}
                         // disable={(isValid==false)}
                     />
                 }
@@ -357,7 +376,7 @@ function DefPaiementAdm(props) {
                         imgStyle = {classes.frmBtnImgStyle2} 
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={saveManuel}
+                        btnClickHandler={updatePaiementAdm}
                         // disable={(isValid==false)}
                     />  
                 }    

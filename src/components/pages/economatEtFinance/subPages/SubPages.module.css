@@ -860,6 +860,25 @@
     font-size: 0.9vw;
 }
 
+.gridRowRightStyle{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-size: 0.9vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end !important;
+}
+
+.gridRowRightBoldStyle{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-size: 0.9vw;
+    font-weight: bolder;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end !important;
+}
+
 .gridAddedRows{
     min-height: 5vh !important;
     max-height: 5vh !important;
