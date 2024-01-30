@@ -13,7 +13,7 @@ import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 import { srRS } from '@mui/material/locale';
-
+// import Webcam from "react-webcam";
 let CURRENT_EXAM_ID;
 let CURRENT_EXAM_LABEL;
 
@@ -558,6 +558,8 @@ function SaveExamNotes(props) {
       },
     }));
 
+    // const WebcamComponent = () => <Webcam />;
+
     return (
         <div className={classes.formStyleP}>
             {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
@@ -666,6 +668,7 @@ function SaveExamNotes(props) {
             </div>
            
         </div>
+        // <Webcam />
         
     );
 } 
