@@ -1,4 +1,5 @@
-{   "msg_object"        : "Objet",
+{   "accept_paiement"   : "Accepter Paiement",
+    "msg_object"        : "Objet",
     "msg_type"          : "Type Msg",
     "and"               : "&",
     "permanent"         : "Permanent",

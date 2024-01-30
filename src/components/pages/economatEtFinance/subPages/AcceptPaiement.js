@@ -34,7 +34,7 @@ var ElevePageSet=[];
 var printedETFileName ='';
 
 
-function PaiementStaff(props) {
+function AcceptPaiement(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -592,7 +592,7 @@ function PaiementStaff(props) {
                                 
                     <div className={classes.gridAction}> 
                      
-                        <CustomButton
+                        {/* <CustomButton
                             btnText={t('new_paiement')}
                             hasIconImg= {true}
                             imgSrc='images/addSalaireProf.png'
@@ -603,7 +603,7 @@ function PaiementStaff(props) {
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={initiatePaiement}
                             // disable={(isValid==false)}   
-                        />
+                        /> */}
                          
 
                         {/* <CustomButton
@@ -676,4 +676,4 @@ function PaiementStaff(props) {
         
     );
 } 
-export default PaiementStaff;
+export default AcceptPaiement;

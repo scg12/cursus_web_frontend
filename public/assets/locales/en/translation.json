@@ -1,4 +1,5 @@
-{   "msg_object"        : "Object",
+{   
+    "accept_paiement"   : "Accept Payment",
     "msg_type"          : "Msg Type",
     "and"               : "&",
     "permanent"         : "Permanent",
@@ -25,7 +26,7 @@
     "salaire" : "Salary",
     "montant_quota" : "Quota Horaire",
     "type_de_salarie_M":"USER FUNCTION",
-    "bilan_paiement_staff":"Paiement Summary",
+    "bilan_paiement_staff":"Payment Summary",
     "def_paiement_personnel":"Salaries Definition",
     "def_paiement_personnel_M":"SALAIRIES DEFINITION",
     "staff_fees" : "Fees Related To Administrative and School Staff",

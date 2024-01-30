@@ -111,15 +111,16 @@ function FormLayout(props){
             
             case '202':  return   t("def_paiement_personnel");
             case '203':  return   t('paiement_personnel');
-            case '204':  return   t("bilan_paiement_staff");
+            case '204':  return   t('accept_paiement');
+            case '205':  return   t("bilan_paiement_staff");
 
-            case '205':  return   t("entree_fond");
-            case '206':  return   t("sortie_fond");
-            case '207':  return   t("recap_entree");
-            case '208':  return   t("recap_sortie");
+            case '206':  return   t("entree_fond");
+            case '207':  return   t("sortie_fond");
+            case '208':  return   t("recap_entree");
+            case '209':  return   t("recap_sortie");
 
-            case '209':  return   t("budget_evolution");
-            case '210':  return   t("total_percu");
+            case '210':  return   t("budget_evolution");
+            case '211':  return   t("total_percu");
             
 
             //----STATS ----
@@ -202,15 +203,16 @@ function FormLayout(props){
             
             case '202':  return  'images/confSalaire.png';
             case '203':  return  'images/salaireProf.png';
-            case '204':  return  'images/ListeSorties.png';
+            case '204':  return  'images/acceptPaiement.png';
+            case '205':  return  'images/ListeSorties.png';
             
-            case '205':  return  'images/EntreeFonds.png';
-            case '206':  return  'images/SortieFonds.png';
-            case '207':  return  'images/ListeEntrees.png';
-            case '208':  return  'images/ListeSorties.png';
+            case '206':  return  'images/EntreeFonds.png';
+            case '207':  return  'images/SortieFonds.png';
+            case '208':  return  'images/ListeEntrees.png';
+            case '209':  return  'images/ListeSorties.png';
 
-            case '209':  return  'images/EvolutionBudget.png';
-            case '210':  return  'images/EtatPaiement.png';
+            case '210':  return  'images/EvolutionBudget.png';
+            case '211':  return  'images/EtatPaiement.png';
            
 
             //----STATS ----
