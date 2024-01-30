@@ -17,13 +17,13 @@ function Notification(props) {
     function getNotifBackgrd()
     {  // Choix du theme courant
        switch(props.msg.type){
-            case 'info'   : {
-                switch(selectedTheme){
-                    case 'Theme1': return classes.infoBg    +' '+ classes.notifContainerStyle;
-                    case 'Theme2': return classes.infoBgP    +' '+ classes.notifContainerStyle;
-                    case 'Theme3': return classes.infoBgP    +' '+ classes.notifContainerStyle;
-                    default: return classes.infoBg    +' '+ classes.notifContainerStyle;
-                }
+            case 'info'   : { return classes.infoBg    +' '+ classes.notifContainerStyle;
+                // switch(selectedTheme){
+                //     case 'Theme1': return classes.infoBg    +' '+ classes.notifContainerStyle;
+                //     case 'Theme2': return classes.infoBg    +' '+ classes.notifContainerStyle;
+                //     case 'Theme3': return classes.infoBg    +' '+ classes.notifContainerStyle;
+                //     default: return classes.infoBg    +' '+ classes.notifContainerStyle;
+                // }
             }
             case 'release': return classes.releaseBg +' '+ classes.notifContainerStyle;
             case 'urgent' : return classes.urgentBg  +' '+ classes.notifContainerStyle;

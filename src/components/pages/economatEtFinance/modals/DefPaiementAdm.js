@@ -157,7 +157,7 @@ function DefPaiementAdm(props) {
    
     function getCurrentHeaderTheme()
     {  // Choix du theme courant
-       switch(selectedTheme){
+        switch(selectedTheme){
             case 'Theme1': return classes.Theme1_formHeader+ ' ' + classes.formHeader;
             case 'Theme2': return classes.Theme2_formHeader + ' ' + classes.formHeader;
             case 'Theme3': return classes.Theme3_formHeader + ' ' +classes.formHeader;
