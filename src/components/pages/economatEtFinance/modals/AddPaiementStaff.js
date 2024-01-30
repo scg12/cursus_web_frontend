@@ -11,10 +11,13 @@ import { fontSize } from '@mui/system';
 import { useTranslation } from "react-i18next";
 
 
-let tabSexePrim=[];
-let tabRedoublePrim=[];
-var BASE_MONTANT_VERSE;
-var BAESE_MONTANT_RESTANT;
+let CURRENT_QUALITE_ID;
+let CURRENT_QUALITE_LABEL;
+let CURRENT_PAIEMENT;
+let USER_TO_PAY_ID;
+let SALAIRE_TO_PAY;
+
+var listElt = {}
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -26,8 +29,9 @@ const MSG_CONFIRM =4;
 function AddPaiementStaff(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
+
     const [isValid, setIsValid] = useState(props.formMode=='modif');
-    const [montantRestant, setMontantRestant] = useState(Number(0?currentUiContext.formInputs[4]>=currentUiContext.formInputs[7] : currentUiContext.formInputs[7]-currentUiContext.formInputs[4]));
     const [optQualite, setOptQualite]       = useState([]);
     const [optUser, setOptUser]             = useState([]);
     const [listPaiements, setListPaiements] = useState([]);
@@ -35,22 +39,91 @@ function AddPaiementStaff(props) {
     
     useEffect(()=> {
         setOptQualite(tabQualite);
-    //    setListPaiements(tabLastPaiement2);
-        setOptUser(tabUser);
-
-    },[])
+        CURRENT_QUALITE_ID    = tabQualite[0].value; 
+        CURRENT_QUALITE_LABEL = tabQualite[0].label; 
+        getListPersonnel(currentAppContext.currentEtab, CURRENT_QUALITE_ID);
+    },[]);
 
     var tabQualite =[
-        {value:1, label:"Enseignant"},
-        {value:2, label:"Administration"},
-    ];
+        {value:"enseignant", label:i18n.language=='fr'? "Enseignant" : "Teacher"},
+        {value:"administration", label:i18n.language=='fr'? "Administration" : "Administration"}
+    ]
 
-    var tabUser =[
-        {value:0, label:"--------- Choisir le beneficiaire -------"},
-        {value:1, label:"MBARGA Lucas"},
-        {value:2, label:"ADAMA Traore"},
-        {value:2, label:"MAGNE ODETTE"},
-    ];
+    const  getListPersonnel=(sousEtabId, qualiteId)=>{
+        axiosInstance.post(`list-personnel/`, {
+            id_sousetab: sousEtabId,
+        }).then((res)=>{
+            console.log(res.data);
+            if(qualiteId == "enseignant"){
+                formatListEns(res.data.enseignants)
+            } else {
+                formatListAdm(res.data.adminstaffs)
+            } 
+        })  
+    }
+
+    const formatListEns=(list) =>{       
+        var tabUser=[{value: "",      label: (i18n.language=='fr') ? '  ----  Choisir un Enseignant ----  ' : '   ---- Select a Teacher ---- '  }];
+        list.map((elt)=>{
+            listElt={};
+            listElt.value          = elt.id; 
+            listElt.label          = elt.nom +' '+elt.prenom;
+            listElt.salaire        = elt.salaire;
+            listElt.id_ens         = elt.id_ens;            
+            tabUser.push(listElt);
+        })
+        setOptUser(tabUser);
+    }
+
+
+    const formatListAdm=(list) =>{
+         var adm_fonctions         = "";
+        var salaire_fonctions     = 0;
+        var list_salaire_fonction = "";
+        var adm_data;
+        var tabUser=[{value: "",      label: (i18n.language=='fr') ? ' ---- Choisir un Administratif ---- ' : '---- Select an admin Staff member ---- '  }];
+        list.map((elt)=>{
+            listElt = {};
+            listElt.value          = elt.id; 
+            listElt.label          = elt.nom +' '+elt.prenom;
+            listElt.id_ens         = elt.id_ens;       
+            listElt.is_prof        = elt.is_prof ; 
+            listElt.adm_data       = elt.admin_data;
+            adm_data               = elt.admin_data;
+
+            adm_data.map((elt, index)=>{
+                if(index < adm_data.length-1){
+                    adm_fonctions         = adm_fonctions + elt.hierarchie + ', ';
+                    list_salaire_fonction = list_salaire_fonction + elt.salaire +'_';
+                } else {
+                    adm_fonctions         = adm_fonctions + elt.hierarchie;
+                    list_salaire_fonction = list_salaire_fonction + elt.salaire;
+                } 
+                    salaire_fonctions     = salaire_fonctions + elt.salaire;
+            })
+            
+            console.log("fonctions", adm_fonctions);
+            
+            listElt.list_salaire_fonction = list_salaire_fonction;
+            listElt.salaire_fonctions     = salaire_fonctions;
+            listElt.salaire_prof          = listElt.is_prof ? elt.salaire_prof : 0;
+            listElt.salaire               = listElt.salaire_fonctions +  listElt.salaire_prof;
+
+            listElt.fonctions             = adm_fonctions; 
+            listElt.fonctions_Gen         = listElt.is_prof ? adm_fonctions + ", " + t("teacher") : adm_fonctions ; 
+
+            
+            listElt.type_salaire          = listElt.is_prof  ? elt.type_salaire_prof : ""; 
+            listElt.portee_salaire        = elt.admin_data.portee_salaire;
+            
+            adm_fonctions         = '';
+            list_salaire_fonction = "";
+            salaire_fonctions     = 0;
+            
+            tabUser.push(listElt);
+        })
+        setOptUser(tabUser);
+    }
 
     var tabLastPaiement1 = [
         {rang:"1", montant:"120 000", date:"12/05/2023" },
@@ -58,21 +131,7 @@ function AddPaiementStaff(props) {
         {rang:"3", montant:"120 000", date:"12/03/2023" },
         {rang:"4", montant:"120 000", date:"12/02/2023" },
     ];
-
-    var tabLastPaiement2 = [
-        {rang:"1", montant:"80 000", date:"12/05/2023" },
-        {rang:"2", montant:"60 000", date:"12/04/2023" },
-        {rang:"3", montant:"80 000", date:"12/03/2023" },
-        {rang:"4", montant:"80 000", date:"12/02/2023" },
-    ];
-
-    var tabLastPaiement3 = [
-        {rang:"1", montant:"75 000", date:"12/05/2023" },
-        {rang:"2", montant:"60 000", date:"12/04/2023" },
-        {rang:"3", montant:"80 000", date:"12/03/2023" },
-        {rang:"4", montant:"80 000", date:"12/02/2023" },
-    ];
-    
+ 
     function getButtonStyle()
     { // Choix du theme courant
         switch(selectedTheme){
@@ -114,25 +173,6 @@ function AddPaiementStaff(props) {
     
     /************************************ Handlers ************************************/
     
-    function putToEmptyStringIfUndefined(chaine){
-        if (chaine==undefined) return '';
-        else return chaine;
-    }
-
-    function handleChange(e){
-        var frais;
-      
-        frais = e.target.value;        
-        if(frais!=undefined && frais>0) { 
-            
-          
-            setIsValid(true);
-        } else {
-          
-            setIsValid(false)
-        }
-    }
-
     function actionHandler(){
         
         var payements = { 
@@ -171,15 +211,99 @@ function AddPaiementStaff(props) {
     
     }
 
-    function qualiteChangeHandler(){
+    function getListingPaiementUser(userId){
+        var tabPaiements = [];
+        
+        axiosInstance.post(`list-payements-acceptes-for-a-user/`, {
+            type_personnel : CURRENT_QUALITE_ID,
+            id_user        : userId
+        }).then((res)=>{
+            console.log("listing",res.data.res);
+            var listingPaiements = res.data.res;
+            listingPaiements.map((elt, index)=>{
+                tabPaiements.push({rang:index+1, montant:elt.montant, date:elt.date})
+            })
+            setListPaiements(tabPaiements);
+        })
+    }
 
+    function qualiteChangeHandler(e){
+        CURRENT_QUALITE_ID = e.target.value; 
+        CURRENT_QUALITE_LABEL = optQualite[optQualite.findIndex((classe)=>(classe.value == CURRENT_QUALITE_ID))].label;
+        getListPersonnel(currentAppContext.currentEtab, CURRENT_QUALITE_ID);
+        document.getElementById("optUser").options[0].selected = true; 
     }
 
     function userChangeHandler(e){
-        if(e.target.value>0)
-            setListPaiements(tabLastPaiement1);
-        else
+        if(e.target.value.length>0){
+            var user_to_pay = optUser.find((user)=>user.value == e.target.value);
+            USER_TO_PAY_ID  = user_to_pay.value;
+            SALAIRE_TO_PAY  = user_to_pay.salaire;
+            document.getElementById("montant_a_paye").value = SALAIRE_TO_PAY; 
+            getListingPaiementUser(user_to_pay.value);         
+            setIsValid(true);
+        } else {
+            USER_TO_PAY_ID = undefined;
+            SALAIRE_TO_PAY = 0;
+            document.getElementById("montant_a_paye").value = 0;
             setListPaiements([]);
+            setIsValid(false);
+        }
+            
+    }
+
+    function manageInitPaiement(){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        console.log('avant:',CURRENT_PAIEMENT);
+        getFormData();
+        console.log('apres:',CURRENT_PAIEMENT);
+
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_PAIEMENT);
+        
+        if(fomCheckErrorStr.length == 0){
+           
+            if(errorDiv.textContent.length!=0){
+                errorDiv.className = null;
+                errorDiv.textContent = '';
+            }
+            props.actionHandler(CURRENT_PAIEMENT);  
+    
+        } else {
+            errorDiv.textContent = fomCheckErrorStr;
+            errorDiv.className   = classes.formErrorMsg;            
+        }
+    }
+
+    function getFormData(){
+        CURRENT_PAIEMENT = {};
+        CURRENT_PAIEMENT.type_personnel = CURRENT_QUALITE_ID;
+        CURRENT_PAIEMENT.id_user        = USER_TO_PAY_ID;
+        CURRENT_PAIEMENT.montant        = SALAIRE_TO_PAY;
+    }
+
+    function formDataCheck1(){
+        var errorMsg='';
+        // if(manuel.nomLivre.length == 0){
+        //     errorMsg= t('enter_manuel_name'); 
+        //     return errorMsg;
+        // }
+
+        // if (manuel.prix.length == 0) {
+        //     errorMsg= t('enter_manuel_price'); 
+        //     return errorMsg;
+        // }
+
+        // if(isNaN(manuel.prix)) {
+        //     errorMsg= t('enter_correct_manuel_price'); 
+        //     return errorMsg;
+        // } 
+
+
+        // if(manuel.id_classes.length == 0 ){
+        //     errorMsg= t('no_manuel_classes_selected');  
+        //     return errorMsg;       
+        // }    
+        return errorMsg;
     }
 
     /************************************ JSX Code ************************************/
@@ -260,7 +384,7 @@ function AddPaiementStaff(props) {
                     </div>
                         
                     <div style={{marginBottom:'0vh', marginLeft:'1vw'}}>                         
-                        <select id='optQualite' defaultValue={1} onChange={userChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'1.73rem',width:'19vw'}}>
+                        <select id='optUser' defaultValue={1} onChange={userChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'1.73rem',width:'19vw'}}>
                             {(optUser||[]).map((option)=> {
                                 return(
                                     <option  value={option.value}>{option.label}</option>
@@ -277,14 +401,12 @@ function AddPaiementStaff(props) {
                 </div>
                     
                 <div> 
-                    <input id="montant_paye" type="number" min="0" onChange={handleChange} className={classes.inputRowControl + ' formInput medium'}/>
+                    <input id="montant_a_paye" type="number" min="0"  disabled={true} className={classes.inputRowControl + ' formInput medium'} style={{textAlign:"center", color:'#494646'}}/>
+                    <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
                 </div>
             </div>
 
-           <div>
-                <input id="idClasse" type="hidden"  value={currentUiContext.formInputs[5]}/>
-                <input id="idEleve" type="hidden"  value={currentUiContext.formInputs[2]}/>
-            </div>
+          
 
             
             <div className={classes.buttonRow} style={{alignSelf:'center', width:'20vw', marginBottom:"3vh"}}>
@@ -293,7 +415,7 @@ function AddPaiementStaff(props) {
                     btnText={(props.formMode=='creation') ? t('init_paiement'):t('save')} 
                     buttonStyle={getButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={(isValid) ? actionHandler : null}
+                    btnClickHandler={manageInitPaiement}
                     style ={{width:"12vw"}}
                     disable={!isValid}
                 />

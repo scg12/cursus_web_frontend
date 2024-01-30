@@ -389,45 +389,25 @@ function PaiementStaff(props) {
 
     }
 
-    function saveMsg(msg) {       
-        console.log('Ajout',msg);
+    function initierPaiement(paiement) {       
+        console.log('Ajout',paiement);
            
-        // axiosInstance.post(`create-eleve/`, {
-        //     id_classe : CURRENT_DESTINATAIRE_ID,
-        //     id_sousetab:currentAppContext.currentEtab,
-        //     matricule : eleve.matricule, 
-        //     nom : eleve.nom,
-        //     adresse : eleve.adresse,
-        //     prenom : eleve.prenom, 
-        //     sexe : eleve.sexe,
-        //     date_naissance : eleve.date_naissance,
-        //     lieu_naissance : eleve.lieu_naissance,
-        //     date_entree : eleve.date_entree,
-        //     nom_pere : eleve.nom_pere,
-        //     prenom_pere : eleve.prenom_pere, 
-        //     nom_mere : eleve.nom_mere,
-        //     prenom_mere : eleve.prenom_mere, 
-        //     tel_pere : eleve.tel_pere,    
-        //     tel_mere : eleve.tel_mere,    
-        //     email_pere : eleve.email_pere,
-        //     email_mere : eleve.email_mere,
-        //     photo_url : eleve.photo_url, 
-        //     redouble : (eleve.redouble == "O") ? true : false,
-        //     age :  eleve.age,
-        //     est_en_regle : eleve.est_en_regle,
-        //     etab_provenance : eleve.etab_provenance,            
-        // }).then((res)=>{
-        //     console.log(res.data);
+        axiosInstance.post(`initier-payement-personnel/`, {
+            type_personnel : paiement.type_personnel,
+            id_user        : paiement.id_user,
+            montant        : paiement.montant        
+        }).then((res)=>{
+            console.log(res.data);
 
-        //     //setModalOpen(0);
-        //     chosenMsgBox = MSG_SUCCESS;
-        //     currentUiContext.showMsgBox({
-        //         visible:true, 
-        //         msgType:"info", 
-        //         msgTitle:t("success_add_M"), 
-        //         message:t("success_add")
-        //     })
-        // })      
+            //setModalOpen(0);
+            chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"info", 
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")
+            })
+        })      
     }
     
     function modifyStudent(eleve) {
@@ -628,7 +608,7 @@ function PaiementStaff(props) {
             {(modalOpen >0 && modalOpen<3) && 
                 <AddPaiementStaff 
                     formMode      = {(modalOpen==1) ? 'creation': 'consult'}  
-                    actionHandler = {saveMsg} 
+                    actionHandler = {initierPaiement} 
                     cancelHandler = {quitForm}
                 />
             }
