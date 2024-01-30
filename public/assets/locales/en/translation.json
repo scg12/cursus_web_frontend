@@ -1,4 +1,6 @@
-{   "and"               : "&",
+{   "msg_object"        : "Object",
+    "msg_type"          : "Msg Type",
+    "and"               : "&",
     "permanent"         : "Permanent",
     "vacataire"         : "Substitute",
     "to_define"         : "To Define",
