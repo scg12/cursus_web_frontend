@@ -13,8 +13,16 @@ import BackDrop from '../../../backDrop/BackDrop';
 import MsgBox from '../../../msgBox/MsgBox';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import {getTodayDate, changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
 
 var CURRENT_COMM;
+var CURRENT_QUALITE;
+var msgTitle      = "";
+var msgDesciption = "";
+var msgJour  = "";
+var msgMois  = "";
+var msgAnnee = "";
+var listReceipient = "";
 
 
 var chosenMsgBox;
@@ -29,10 +37,12 @@ function InternMsg(props) {
     const selectedTheme = currentUiContext.theme;
     const [msgType, setMsgType] = useState("info") //1- info, 2- release, 3- urgent
     const [optDestinataire, setOpDestinataire] = useState([]);
-    const [inputDataCorrect, setInputDataCorrect] = useState(false);
+   
 
     useEffect(()=> {
         setOpDestinataire(tabDestinataires);
+        CURRENT_QUALITE = 0
+        getListPersonnel(currentAppContext.currentEtab,CURRENT_QUALITE);
         currentUiContext.setIsParentMsgBox(false);
     },[]);
 
@@ -122,9 +132,6 @@ function InternMsg(props) {
         
     }
     
-    
-
-    
     function getGridButtonStyle()
     { // Choix du theme courant
         switch(selectedTheme){
@@ -191,6 +198,41 @@ function InternMsg(props) {
      
     }
 
+    const  getListPersonnel=(sousEtabId, qualiteId)=>{
+        listReceipient = "";
+        axiosInstance.post(`list-personnel/`, {
+            id_sousetab: sousEtabId,
+        }).then((res)=>{
+            console.log(res.data);
+            
+            if(qualiteId == 1){
+                listReceipient = formatListEns(res.data.enseignants)
+            } else {
+                if(qualiteId == 2){            
+                    listReceipient = formatListEns(res.data.adminstaffs)
+                } else {
+                    listReceipient = formatListEns(res.data.enseignants)+'_'+formatListEns(res.data.adminstaffs);
+                }
+            }
+        })  
+    }
+
+
+    const formatListEns=(list) =>{
+        var receipient = ""
+       
+        list.map((elt, index)=>{
+            if(index < list.length-1){
+                receipient = receipient + elt.id + '_';
+            } else {
+                receipient = receipient + elt.id;
+            }
+            
+        })
+        console.log("receipient",receipient);
+        return receipient;
+    }
+
     function saveMsg(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
         console.log('avant:',CURRENT_COMM);
@@ -213,17 +255,67 @@ function InternMsg(props) {
         }
     }
 
+
     function getFormData(){
         CURRENT_COMM = {};
-
+        CURRENT_COMM.id_sousetab         = currentAppContext.currentEtab;
+        CURRENT_COMM.sujet               = msgTitle;
+        CURRENT_COMM.message             = msgDesciption;
+        CURRENT_COMM.date                = getTodayDate(); 
+        CURRENT_COMM.emetteur            = currentAppContext.idUser;
+        CURRENT_COMM.date_debut_validite = getTodayDate();
+        CURRENT_COMM.date_fin_validite   = msgJour+'/'+msgMois+'/'+msgAnnee;
+        CURRENT_COMM.id_destinataires    = listReceipient;
+        CURRENT_COMM.msgType             = msgType;
     }
+
 
     function formDataCheck1(){
+        var errorMsg='';
+       
+        if(CURRENT_COMM.sujet.length == 0) {
+            errorMsg=t("enter_msg_subject");
+            return errorMsg;
+        } 
 
+        if(CURRENT_COMM.message.length == 0) {
+            errorMsg=t("enter_correct_msg");
+            return errorMsg;
+        } 
+
+        if(!((isNaN(changeDateIntoMMJJAAAA(CURRENT_COMM.date_fin_validite)) && (!isNaN(Date.parse(changeDateIntoMMJJAAAA(CURRENT_COMM.date_fin_validite))))))){
+            errorMsg=t("enter_good_validity_date");
+            return errorMsg;
+        }
+
+        //Test de posteriorite a la date d'aujourd'hui
+        if(new Date(changeDateIntoMMJJAAAA(CURRENT_COMM.date_fin_validite)+' 23:59:59') < new Date()) {
+            errorMsg = t("validity_date_lower_than_today_error");
+            return errorMsg;
+        }
+       
+        return errorMsg;
     }
 
-    function recepientChangeHandler(){
+    function recepientChangeHandler(e){
+        CURRENT_QUALITE = e.target.value;
+        getListPersonnel(currentAppContext.currentEtab,CURRENT_QUALITE);
+    }
 
+    function getMsgTitle(e){
+        msgTitle = e.target.value;
+    }
+
+    function getValiditeJour(e){
+        msgJour = e.target.value;
+    }
+
+    function getValiditeMois(e){
+        msgMois = e.target.value;
+    }
+    
+    function getValiditeAnnee(e){
+        msgAnnee = e.target.value;
     }
 
     /************************************ JSX Code ************************************/
@@ -239,6 +331,8 @@ function InternMsg(props) {
                     {t("nouv_communique_M")}
                 </div>                
             </div>
+
+            <div id='errMsgPlaceHolder'/> 
 
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop style={{height:'47vh'}}/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
@@ -263,7 +357,7 @@ function InternMsg(props) {
                         {t("destinataire")}:
                     </div>
 
-                    <div id='errMsgPlaceHolder'/> 
+                    
                         
                     <div style={{display:'flex', flexDirection:"row", justifyContent:"flex-start", marginLeft:"-5.7vw", width:"13vw"}}> 
                         <select id='selectRecepient' onChange={recepientChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
@@ -309,7 +403,7 @@ function InternMsg(props) {
                     </div>
                         
                     <div> 
-                        <input id="msgObject" type="text"  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        <input id="msgObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
                         <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
                     </div>
                 </div>
@@ -324,45 +418,49 @@ function InternMsg(props) {
                 <div style={{marginLeft:"-3vw", marginTop:"0.9vh"}}> 
                     {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
                     <CKEditor
+                        id ="editor1"
                         editor  = {ClassicEditor}
                         data    = ""
                         style   = {{with:"40vw", height:"17vh"}}
                         onReady = {editor => {
-                            console.log("Editor is ready to use")
+                            console.log("Editor is ready to use", editor)
                         }}
+
+                        //onChange={(event,editor) => {console.log(editor.getData().replace(/(<([^>]+)>)/ig, ''))}}
+                        onChange={(event,editor) => {msgDesciption = editor.getData();}}
                     
                     />
                 </div>
 
             </div>
 
-            <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", position:"absolute",  bottom:"6.3vh", left:"1.7vw", height:'4.7vh'}}> 
+            <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", position:"absolute",  bottom:"6.3vh", left:"1.7vw", height:'4.7vh', color:"#084481"}}> 
                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                     {t("msg_deadline")}:
                 </div>
                     
-                <div style ={{display:'flex', flexDirection:'row'}}> 
-                    <input id="jour"  type="text"   Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} />/
-                    <input id="mois"  type="text"   Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />/
-                    <input id="anne" type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />
+                <div style ={{display:'flex', flexDirection:'row', marginTop:"-1vh", marginLeft:"-0.8vw"}}> 
+                    <input id="jour"  type="text"  onChange={getValiditeJour}  Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} /> <div style={{marginTop:"1vh"}}>/</div>
+                    <input id="mois"  type="text"  onChange={getValiditeMois}  Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  textAlign:"center", height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  /><div style={{marginTop:"1vh"}}>/</div>
+                    <input id="anne"  type="text"  onChange={getValiditeAnnee}  Placeholder='aaaa' onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />
                 </div>
             </div>
             
            
             <div className={classes.formButtonRowP}>
                 <CustomButton
-                    btnText={t('ok')}
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={saveMsg}
-                    // disable={(isDownload) ? !isDownload :!fileSelected}
-                />
-
-                <CustomButton
                     btnText={t('cancel')}
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
+                />
+
+                <CustomButton
+                    btnText={t('send')}
+                    buttonStyle={getGridButtonStyle()}
+                    btnTextStyle = {classes.btnTextStyle}
+                    btnClickHandler={saveMsg}
+                    // disable={(isDownload) ? !isDownload :!fileSelected}
                 />
                 
             </div>

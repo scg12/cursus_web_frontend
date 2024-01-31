@@ -63,13 +63,13 @@ function NewComIntern(props) {
     ]
 
    
-    const  getListMessages=(classId)=>{
+    const  getListCommInternes=()=>{
         var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
+        axiosInstance.post(`list-msg-interne/`, {
+            
         }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data)]
+            console.log("commInternes",res.data.comms);
+            listEleves = [...formatList(res.data.comms)]
             console.log(listEleves);
             setGridRows(listEleves);
             console.log(gridRows);
@@ -83,30 +83,15 @@ function NewComIntern(props) {
         list.map((elt)=>{
             listElt={};
             listElt.id = elt.id;
+            listElt.id_emetteur    = elt.id_emetteur;
             listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
-            listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
-
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
-
-            
+            listElt.nom            = elt.nom;
+            listElt.prenom         = elt.prenom;
+            listElt.destinataires  = elt.destinataires;
+            listElt.titreMsg       = elt.titreMsg;
+            listElt.message        = elt.message;
+            listElt.validite       = elt.validite;
+            listElt.rang           = rang; 
             formattedList.push(listElt);
             rang ++;
         })
@@ -117,7 +102,7 @@ function NewComIntern(props) {
     function dropDownHandler(e){  
         CURRENT_DESTINATAIRE_ID = e.target.value; 
         CURRENT_DESTINATAIRE_LABEL = optDestinataire[optDestinataire.findIndex((classe)=>(classe.value == CURRENT_DESTINATAIRE_ID))].label;
-        getListMessages(CURRENT_DESTINATAIRE_ID);   
+        getListCommInternes(CURRENT_DESTINATAIRE_ID);   
         console.log(CURRENT_DESTINATAIRE_LABEL) 
     }
  
@@ -132,30 +117,40 @@ function NewComIntern(props) {
         },
         
         {
-            field: 'matricule',
+            field: 'id_emetteur',
             headerName: "EMETTEUR",
             width: 100,
             editable: false,
+            hide : true,
             headerClassName:classes.GridColumnStyle
         },
+
         {
-            field: 'DESTINATAIRE',
-            headerName: "DESTINATAIRE",
+            field: 'displayedName',
+            headerName: "EMETTEUR",
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'destinataires',
+            headerName: "DESTINATAIRE(S)",
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },    
         {
-            field: 'date_naissance',
+            field: 'titreMsg',
             headerName: "TITRE MESSAGE",
             width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'lieu_naissance',
+            field: 'validite',
             headerName:"VALIDE JUSQU'AU",
-            width: 120,
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
@@ -172,30 +167,40 @@ function NewComIntern(props) {
         },
        
         {
-            field: 'matricule',
+            field: 'id_emetteur',
             headerName: "MSG SENDER",
             width: 100,
             editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
+
         {
-            field: 'MSG RECEIVER',
-            headerName: "MSG RECEIVER",
+            field: 'displayedName',
+            headerName: "MSG SENDER",
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'destinataires',
+            headerName: "MSG RECEIVER(S)",
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },    
         {
-            field: 'date_naissance',
+            field: 'titreMsg',
             headerName: "MSG TITLE",
             width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
         {
-            field: 'lieu_naissance',
+            field: 'validite',
             headerName:"VALID UNTIL",
-            width: 120,
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
@@ -304,45 +309,30 @@ function NewComIntern(props) {
 
     }
 
-    function saveMsg(msg) {       
-        console.log('Ajout',msg);
+    function saveMsg(CURRENT_COMM) {       
+        console.log('Ajout',CURRENT_COMM);
            
-        // axiosInstance.post(`create-eleve/`, {
-        //     id_classe : CURRENT_DESTINATAIRE_ID,
-        //     id_sousetab:currentAppContext.currentEtab,
-        //     matricule : eleve.matricule, 
-        //     nom : eleve.nom,
-        //     adresse : eleve.adresse,
-        //     prenom : eleve.prenom, 
-        //     sexe : eleve.sexe,
-        //     date_naissance : eleve.date_naissance,
-        //     lieu_naissance : eleve.lieu_naissance,
-        //     date_entree : eleve.date_entree,
-        //     nom_pere : eleve.nom_pere,
-        //     prenom_pere : eleve.prenom_pere, 
-        //     nom_mere : eleve.nom_mere,
-        //     prenom_mere : eleve.prenom_mere, 
-        //     tel_pere : eleve.tel_pere,    
-        //     tel_mere : eleve.tel_mere,    
-        //     email_pere : eleve.email_pere,
-        //     email_mere : eleve.email_mere,
-        //     photo_url : eleve.photo_url, 
-        //     redouble : (eleve.redouble == "O") ? true : false,
-        //     age :  eleve.age,
-        //     est_en_regle : eleve.est_en_regle,
-        //     etab_provenance : eleve.etab_provenance,            
-        // }).then((res)=>{
-        //     console.log(res.data);
+        axiosInstance.post(`save-msg-interne/`, {
+            id_sousetab          : CURRENT_COMM.id_sousetab,
+            sujet                : CURRENT_COMM.sujet,
+            message              : CURRENT_COMM.message,
+            date                 : CURRENT_COMM.date, 
+            emetteur             : CURRENT_COMM.emetteur,
+            date_debut_validite  : CURRENT_COMM.date_debut_validite,
+            date_fin_validite    : CURRENT_COMM.date_fin_validite,
+            id_destinataires     : CURRENT_COMM.id_destinataires,
+            msgType              : CURRENT_COMM.msgType,            
+        }).then((res)=>{
+            console.log(res.data);
 
-        //     //setModalOpen(0);
-        //     chosenMsgBox = MSG_SUCCESS;
-        //     currentUiContext.showMsgBox({
-        //         visible:true, 
-        //         msgType:"info", 
-        //         msgTitle:t("success_add_M"), 
-        //         message:t("success_add")
-        //     })
-        // })      
+            chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"info", 
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")
+            })
+        })      
     }
     
     function modifyStudent(eleve) {
@@ -434,7 +424,7 @@ function NewComIntern(props) {
                     msgTitle:"", 
                     message:""
                 }) 
-                getListMessages(CURRENT_DESTINATAIRE_ID); 
+                getListCommInternes(CURRENT_DESTINATAIRE_ID); 
                 return 1;
             }
 

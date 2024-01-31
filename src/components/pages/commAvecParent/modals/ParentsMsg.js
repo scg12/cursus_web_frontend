@@ -3,6 +3,7 @@ import { useFilePicker } from 'use-file-picker';
 import classes from "../subPages/SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import { useContext, useState, useEffect } from "react";
+import {isMobile} from 'react-device-detect';
 import axiosInstance from '../../../../axios';
 import axios from 'axios';
 import AppContext from '../../../../store/AppContext';
@@ -297,6 +298,18 @@ function ParentsMsg(props) {
         }
 
     }
+
+    function moveOnMax(e,currentField, nextField){
+        if(nextField!=null){
+            e = e || window.event;
+            if(e.keyCode != 9){
+                if(currentField.value.length >= currentField.maxLength){
+                    nextField.focus();
+                }
+            }
+        }
+     
+    }
     
 
     
@@ -484,31 +497,33 @@ function ParentsMsg(props) {
 
             </div>
 
-            <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", position:"absolute",  bottom:"6.3vh", left:"1.7vw", height:'4.7vh'}}> 
+            <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", position:"absolute",  bottom:"6.3vh", left:"1.7vw", height:'4.7vh', color:"#084481"}}> 
                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                     {t("msg_deadline")}:
                 </div>
-                    
-                <div> 
-                    <input id="msgDeadlineLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3vw', height:'1rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+
+                <div style ={{display:'flex', flexDirection:'row', marginTop:"-1vh", marginLeft:"-0.8vw"}}> 
+                    <input id="jour"  type="text"   Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} /><div style={{marginTop:"1vh"}}>/</div>
+                    <input id="mois"  type="text"   Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  textAlign:"center", height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}} /> <div style={{marginTop:"1vh"}}>/</div>
+                    <input id="anne" type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />
                 </div>
             </div>
             
            
             <div className={classes.formButtonRowP}>
                 <CustomButton
+                    btnText={t('cancel')}
+                    buttonStyle={getGridButtonStyle()}
+                    btnTextStyle = {classes.btnTextStyle}
+                    btnClickHandler={props.cancelHandler}
+                />
+
+                <CustomButton
                     btnText={t('send')}
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={saveOrUploadFP}
                     disable={(isDownload) ? !isDownload :!fileSelected}
-                />
-
-                <CustomButton
-                    btnText={t('cancel')}
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={props.cancelHandler}
                 />
                 
             </div>

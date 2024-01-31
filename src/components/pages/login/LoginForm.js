@@ -73,17 +73,17 @@ var msgText3={
 }
 
 var listNotifs=[
-    {   msg: msgText1, 
-        isVisible: true,  
-    },
+    // {   msg: msgText1, 
+    //     isVisible: true,  
+    // },
 
-    {   msg: msgText2, 
-        isVisible: true,  
-    },
+    // {   msg: msgText2, 
+    //     isVisible: true,  
+    // },
 
-    {   msg: msgText3, 
-        isVisible: true,  
-    },
+    // {   msg: msgText3, 
+    //     isVisible: true,  
+    // },
 ];
 
 
@@ -535,6 +535,56 @@ function LoginForm(props){
         
     }
 
+    function getUserCommnicationsInternes(userId){
+        var msgText = {};
+        listNotifs  = [];
+        axiosInstance.post(`get-user-comm-interne/`, {
+            id_user : userId
+        }).then((res)=>{
+            console.log("comm internes", res.data.comms);
+            res.data.comms.map((com)=>{
+                msgText ={
+                    type                : com.msgType,
+                    libelle             : com.titreMsg,
+                    Description         : com.message,
+                    date_debut_validite : com.validite_deb,
+                    date_fin_validite   : com.validite_fin,
+                    hasAction : true,
+                    btnText:"voir",
+                    
+                    btnStyle :{
+                        display:"flex",
+                        justifyContent:"center",
+                        alignItems : "center",
+                        backgroundColor : "blue",
+                        borderRadius : "3px",
+                        width: "3vw",
+                        height:"3vh", 
+                        fontSize :"0.8vw",
+                        marginBottom:"1vh",
+                        alignSelf:"flex-end",
+                        marginRight:"1vh"
+                    },
+                
+                    btnTextStyle:{
+                        fontSize :"0.8vw"
+                    },
+                
+                    btnClickHandler:{
+                
+                    }
+                }
+               
+
+                listNotifs.push({msg:msgText,isVisible:true}); 
+                msgText = {} ;             
+            })
+
+            currentAppContext.setTabNotifs(listNotifs);             
+        })
+    }
+
+
     function connectHandler()
     {    
         setPassWordError(false);
@@ -586,8 +636,9 @@ function LoginForm(props){
             setIsLoading(false);
 
             //Ici, on va aller chercher toutes les notifs non lu du user
+            getUserCommnicationsInternes(currentAppContext.idUser);
             console.log("notifs",listNotifs);
-            currentAppContext.setTabNotifs(listNotifs); 
+            //currentAppContext.setTabNotifs(listNotifs); 
 
 
             currentUiContext.updateTheme(res.data.theme);

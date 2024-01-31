@@ -1,4 +1,7 @@
-{   
+{   "validity_date_lower_than_today_error":"Validity date of the message is lower than today's date!",
+    "enter_good_validity_date":"Enter correct validity date !",
+    "enter_correct_msg" : "Enter correct message !",
+    "enter_msg_subject" : "Enter message object!",
     "accept_paiement"   : "Accept Payment",
     "msg_type"          : "Msg Type",
     "and"               : "&",

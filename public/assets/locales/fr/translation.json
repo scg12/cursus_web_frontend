@@ -1,4 +1,9 @@
-{   "accept_paiement"   : "Accepter Paiement",
+{   
+    "validity_date_lower_than_today_error":"La date de validité du message est antérieure à la date du jour!",
+    "enter_good_validity_date":"Entrer un e date de validité correcte !",
+    "enter_correct_msg" : "Entrer un message correct !",
+    "enter_msg_subject" : "Entrer l'objet de la communication!",
+    "accept_paiement"   : "Accepter Paiement",
     "msg_object"        : "Objet",
     "msg_type"          : "Type Msg",
     "and"               : "&",
