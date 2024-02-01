@@ -544,6 +544,7 @@ function LoginForm(props){
             console.log("comm internes", res.data.comms);
             res.data.comms.map((com)=>{
                 msgText ={
+                    id                  : com.id,
                     type                : com.msgType,
                     libelle             : com.titreMsg,
                     Description         : com.message,

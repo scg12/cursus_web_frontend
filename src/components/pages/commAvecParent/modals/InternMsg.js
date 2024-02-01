@@ -433,8 +433,8 @@ function InternMsg(props) {
                             console.log("Editor is ready to use", editor)
                         }}
 
-                        onChange={(event,editor) => {msgDesciption = editor.getData().replace(/(<([^>]+)>)/ig, '')}}
-                        // onChange={(event,editor) => {msgDesciption = editor.getData().replace();}}                    
+                        //onChange={(event,editor) => {msgDesciption = editor.getData().replace(/(<([^>]+)>)/ig, '')}}
+                        onChange={(event,editor) => {msgDesciption = editor.getData();}}                    
                     />
                 </div>
 

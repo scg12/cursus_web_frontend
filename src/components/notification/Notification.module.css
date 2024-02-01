@@ -20,7 +20,7 @@
 
 .notifContainerStyle{
     color:white;
-    max-height: 27vh;
+    /* max-height: 27vh; */
     height: fit-content;
     width : 20vw;
     border-radius: 7px;

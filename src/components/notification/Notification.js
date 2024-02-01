@@ -13,6 +13,9 @@ function Notification(props) {
     const currentAppContext = useContext(AppContext)
     const selectedTheme     = currentUiContext.theme;
     
+    useEffect(()=> {
+       document.getElementById("notif"+props.msg.id).innerHTML= props.msg.Description;
+    },[]);
 
     function getNotifBackgrd()
     {  // Choix du theme courant
@@ -29,6 +32,11 @@ function Notification(props) {
             case 'urgent' : return classes.urgentBg  +' '+ classes.notifContainerStyle;
             default       : return classes.infoBg    +' '+ classes.notifContainerStyle;
         }
+    }
+
+    function createDomOfSting(HtmlstringToDomize) {
+        var doc = new DOMParser().parseFromString(HtmlstringToDomize, "text/xml");
+        return doc
     }
  
 
@@ -51,8 +59,8 @@ function Notification(props) {
                 </div>                
             </div> 
 
-            <div style={{display:"flex", marginLeft:"1.3vw", flexDirection:"column", fontSize:"0.97vw",  justifyContent:"center",}}>                           
-                {props.msg.Description}                  
+            <div id={"notif"+props.msg.id} style={{display:"flex", marginLeft:"1.3vw", flexDirection:"column", fontSize:"0.97vw",  justifyContent:"center",}}>                           
+                {/* {props.msg.Description}  */}
             </div>
                 
             
