@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,formatCurrency} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../../scolarite/reports/PDFTemplate';
@@ -152,7 +152,7 @@ function FraisScolarite(props) {
             listElt.prenom = elt.prenom;
             listElt.rang = rang; 
             listElt.presence = 1; 
-            listElt.montant = elt.montant;
+            listElt.montant = formatCurrency(elt.montant);
             listElt.matricule = elt.matricule;
             listElt.montants = elt.montants;
             listElt.dates_payements = convertDateToUsualDate(elt.dates_payements);

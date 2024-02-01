@@ -50,6 +50,7 @@ function NewComIntern(props) {
         if(gridRows.length==0){
             CURRENT_DESTINATAIRE_ID = undefined;
         }
+        currentUiContext.setIsParentMsgBox(false);
 
         setOpDestinataire(tabDestinataires);
         CURRENT_DESTINATAIRE_ID    = tabDestinataires[0].value; 
@@ -529,7 +530,7 @@ function NewComIntern(props) {
   
     return (
         <div className={classes.formStyleP}>
-            {(modalOpen!=0) && <BackDrop/>}
+            {(modalOpen!=0) && <BackDrop style={{height:"100vh"}}/>}
             {(modalOpen >0 && modalOpen<3) && 
                 <InternMsg 
                     formMode      = {(modalOpen==1) ? 'creation': 'consult'}  
@@ -538,9 +539,9 @@ function NewComIntern(props) {
                 />
             }
             
-            {(modalOpen!=0) && <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true)&&
+            {(modalOpen!=0) && <BackDrop style={{height:"100vh"}}/>}
+            {(currentUiContext.msgBox.visible == true)&& <BackDrop style={{height:"100vh"}}/>}
+            {(currentUiContext.msgBox.visible == true && currentUiContext.isParentMsgBox)&&
                 <MsgBox 
                     msgTitle = {currentUiContext.msgBox.msgTitle} 
                     msgType  = {currentUiContext.msgBox.msgType} 

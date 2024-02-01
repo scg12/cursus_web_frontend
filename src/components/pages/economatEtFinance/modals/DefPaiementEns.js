@@ -7,7 +7,7 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -201,33 +201,18 @@ function DefPaiementEns(props) {
                         </div>
                         
                        
-                            <div className={classes.inputRowLeft}> 
-                                    
-                                <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                    {(typeContrat == "permanent") ? t("salaire"): t("montant_quota")}:
-                                </div>
-                                 
-                                <div> 
-                                    <input id="salaire_prof" type="number" defaultValue={currentUiContext.formInputs[2]}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
-                                    <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
-                                </div>
+                        <div className={classes.inputRowLeft}> 
+                                
+                            <div className={classes.inputRowLabel} style={{fontWeight:570}}>
+                                {(typeContrat == "permanent") ? t("salaire"): t("montant_quota")}:
                             </div>
-                            {/* :
-                            <div className={classes.inputRowLeft}> 
-                                <div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                    {t("montant_quota")}:
-                                </div>
-                                    
-                                <div> 
-                                    <input id="quota" type="number" defaultValue={currentUiContext.formInputs[3]}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
-                                    <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
-                                </div>
+                                
+                            <div> 
+                                <input id="salaire_prof" type="number" defaultValue={formatCurrency(currentUiContext.formInputs[2])}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
+                                <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
                             </div>
-                        } */}
-                       
-
-
-                        
+                        </div>
+                          
  
                     </div>
 

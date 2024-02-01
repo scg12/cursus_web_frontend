@@ -204,16 +204,22 @@ function InternMsg(props) {
             id_sousetab: sousEtabId,
         }).then((res)=>{
             console.log(res.data);
-            
-            if(qualiteId == 1){
-                listReceipient = formatListEns(res.data.enseignants)
-            } else {
-                if(qualiteId == 2){            
-                    listReceipient = formatListEns(res.data.adminstaffs)
-                } else {
-                    listReceipient = formatListEns(res.data.enseignants)+'_'+formatListEns(res.data.adminstaffs);
-                }
+
+            switch(parseInt(qualiteId)){
+                case 0: {listReceipient = formatListEns(res.data.enseignants)+'_'+formatListEns(res.data.adminstaffs); return;}
+                case 1: {listReceipient = formatListEns(res.data.enseignants); return;}
+                case 2: {listReceipient = formatListEns(res.data.adminstaffs); return;}
             }
+            
+            // if(qualiteId == 1){
+            //     listReceipient = formatListEns(res.data.enseignants)
+            // } else {
+            //     if(qualiteId == 2){            
+            //         listReceipient = formatListEns(res.data.adminstaffs)
+            //     } else {
+            //         listReceipient = formatListEns(res.data.enseignants)+'_'+formatListEns(res.data.adminstaffs);
+            //     }
+            // }
         })  
     }
 
@@ -299,6 +305,7 @@ function InternMsg(props) {
 
     function recepientChangeHandler(e){
         CURRENT_QUALITE = e.target.value;
+        console.log("qualite",CURRENT_QUALITE);
         getListPersonnel(currentAppContext.currentEtab,CURRENT_QUALITE);
     }
 
@@ -334,7 +341,7 @@ function InternMsg(props) {
 
             <div id='errMsgPlaceHolder'/> 
 
-            {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop style={{height:'47vh'}}/>}
+            {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop style={{height:'100vh'}}/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
                 <MsgBox 
                     msgTitle = {currentUiContext.msgBox.msgTitle} 
@@ -426,9 +433,8 @@ function InternMsg(props) {
                             console.log("Editor is ready to use", editor)
                         }}
 
-                        //onChange={(event,editor) => {console.log(editor.getData().replace(/(<([^>]+)>)/ig, ''))}}
-                        onChange={(event,editor) => {msgDesciption = editor.getData();}}
-                    
+                        onChange={(event,editor) => {msgDesciption = editor.getData().replace(/(<([^>]+)>)/ig, '')}}
+                        // onChange={(event,editor) => {msgDesciption = editor.getData().replace();}}                    
                     />
                 </div>
 

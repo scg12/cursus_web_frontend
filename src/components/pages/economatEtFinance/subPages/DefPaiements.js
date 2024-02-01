@@ -13,7 +13,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,formatCurrency} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 //import {createPrintingPages} from '../reports/PrintingModule';
@@ -98,8 +98,8 @@ function DefPaiements(props) {
             listElt.rang           = rang; 
             listElt.type_salaire   = elt.type_salaire==""? t("to_define"):elt.type_salaire; 
             listElt.type_salaire_libelle = elt.type_salaire==""? t("to_define"):t(elt.type_salaire);
-            listElt.salaire        = listElt.type_salaire=="permanent"? elt.salaire:0;
-            listElt.quota_horaire  = listElt.type_salaire=="permanent"? 0:elt.salaire;
+            listElt.salaire        = listElt.type_salaire=="permanent"? formatCurrency(elt.salaire):0;
+            listElt.quota_horaire  = listElt.type_salaire=="permanent"? 0:formatCurrency(elt.salaire);
             listElt.portee_salaire = elt.portee_salaire;
             formattedList.push(listElt);
             rang ++;
@@ -140,9 +140,9 @@ function DefPaiements(props) {
             console.log("fonctions", adm_fonctions);
             
             listElt.list_salaire_fonction = list_salaire_fonction;
-            listElt.salaire_fonctions     = salaire_fonctions;
-            listElt.salaire_prof          = listElt.is_prof ? elt.salaire_prof : 0;
-            listElt.salaire               = listElt.salaire_fonctions +  listElt.salaire_prof;
+            listElt.salaire_fonctions     = formatCurrency(salaire_fonctions);
+            listElt.salaire_prof          = listElt.is_prof ? formatCurrency(elt.salaire_prof) : 0;
+            listElt.salaire               = formatCurrency(salaire_fonctions +  elt.salaire_prof);
 
             listElt.fonctions             = adm_fonctions; 
             listElt.fonctions_Gen         = listElt.is_prof ? adm_fonctions + ", " + t("teacher") : adm_fonctions ; 

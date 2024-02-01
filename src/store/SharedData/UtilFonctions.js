@@ -1,4 +1,9 @@
 
+export function formatCurrency(number){
+    var formattedValue = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    return formattedValue;
+}
+
 export const convertDateToUsualDate=(date)=>{
     if (isNaN(Date.parse(date))) return date;
 

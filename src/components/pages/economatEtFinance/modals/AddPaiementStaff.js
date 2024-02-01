@@ -6,7 +6,7 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
 import { fontSize } from '@mui/system';
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +16,7 @@ let CURRENT_QUALITE_LABEL;
 let CURRENT_PAIEMENT;
 let USER_TO_PAY_ID;
 let SALAIRE_TO_PAY;
+
 
 var listElt = {}
 
@@ -239,7 +240,8 @@ function AddPaiementStaff(props) {
             var user_to_pay = optUser.find((user)=>user.value == e.target.value);
             USER_TO_PAY_ID  = user_to_pay.value;
             SALAIRE_TO_PAY  = user_to_pay.salaire;
-            document.getElementById("montant_a_paye").value = SALAIRE_TO_PAY; 
+            var salaireFormatted = formatCurrency(SALAIRE_TO_PAY);
+            document.getElementById("montant_a_paye").value =  salaireFormatted;
             getListingPaiementUser(user_to_pay.value);         
             setIsValid(true);
         } else {
@@ -333,7 +335,6 @@ function AddPaiementStaff(props) {
                 <div style={{width:'12vw', fontSize:"0.83vw", fontWeight:'bold', marginLeft:"1.3vw"}}>         
                     {props.montant}                     
                 </div>
-
                
             </div>
         );
@@ -401,8 +402,8 @@ function AddPaiementStaff(props) {
                 </div>
                     
                 <div> 
-                    <input id="montant_a_paye" type="number" min="0"  disabled={true} className={classes.inputRowControl + ' formInput medium'} style={{textAlign:"center", color:'#494646'}}/>
-                    <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
+                    <input id="montant_a_paye" type="number" min="0"  disabled={true} className={classes.inputRowControl + ' formInput medium'} style={{textAlign:"center", color:'black', fontWeight:"bold",}}/>
+                    <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'black', fontWeight:"bold", border:"none"}} />
                 </div>
             </div>
 
