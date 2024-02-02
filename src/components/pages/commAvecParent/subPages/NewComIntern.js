@@ -67,7 +67,7 @@ function NewComIntern(props) {
     const  getListCommInternes=()=>{
         var listEleves = []
         axiosInstance.post(`list-msg-interne/`, {
-            
+            id_sousetab:currentAppContext.currentEtab
         }).then((res)=>{
             console.log("commInternes",res.data.comms);
             listEleves = [...formatList(res.data.comms)]
@@ -312,7 +312,7 @@ function NewComIntern(props) {
 
     function saveMsg(CURRENT_COMM) {       
         console.log('Ajout',CURRENT_COMM);
-           
+        var listEleves = [];
         axiosInstance.post(`save-msg-interne/`, {
             id_sousetab          : CURRENT_COMM.id_sousetab,
             sujet                : CURRENT_COMM.sujet,
@@ -333,6 +333,8 @@ function NewComIntern(props) {
                 msgTitle:t("success_add_M"), 
                 message:t("success_add")
             })
+            listEleves = [...formatList(res.data.comms)]
+            setGridRows(listEleves);
         })      
     }
     
