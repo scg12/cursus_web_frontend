@@ -4,6 +4,13 @@ export function formatCurrency(number){
     return formattedValue;
 }
 
+export function formatCurrencyInverse(number){
+    var formattedValue = number.toString().replace('.','');
+    return formattedValue;
+}
+
+
+
 export const convertDateToUsualDate=(date)=>{
     if (isNaN(Date.parse(date))) return date;
 

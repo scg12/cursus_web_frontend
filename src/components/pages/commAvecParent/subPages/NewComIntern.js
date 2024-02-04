@@ -67,7 +67,7 @@ function NewComIntern(props) {
     const  getListCommInternes=()=>{
         var listEleves = []
         axiosInstance.post(`list-msg-interne/`, {
-            
+            id_sousetab : currentAppContext.currentEtab
         }).then((res)=>{
             console.log("commInternes",res.data.comms);
             listEleves = [...formatList(res.data.comms)]

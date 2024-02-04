@@ -535,54 +535,52 @@ function LoginForm(props){
         
     }
 
-    function getUserCommnicationsInternes(userId){
+    function initUserNotifs(foundedNotifs){
         var msgText = {};
         listNotifs  = [];
-        axiosInstance.post(`get-user-comm-interne/`, {
-            id_user : userId
-        }).then((res)=>{
-            console.log("comm internes", res.data.comms);
-            res.data.comms.map((com)=>{
-                msgText ={
-                    id                  : com.id,
-                    type                : com.msgType,
-                    libelle             : com.titreMsg,
-                    Description         : com.message,
-                    date_debut_validite : com.validite_deb,
-                    date_fin_validite   : com.validite_fin,
-                    hasAction : true,
-                    btnText:"voir",
-                    
-                    btnStyle :{
-                        display:"flex",
-                        justifyContent:"center",
-                        alignItems : "center",
-                        backgroundColor : "blue",
-                        borderRadius : "3px",
-                        width: "3vw",
-                        height:"3vh", 
-                        fontSize :"0.8vw",
-                        marginBottom:"1vh",
-                        alignSelf:"flex-end",
-                        marginRight:"1vh"
-                    },
+     
+        console.log("comm internes", foundedNotifs);
+        foundedNotifs.map((com)=>{
+            msgText ={
+                id                  : com.id,
+                type                : com.msgType,
+                libelle             : com.titreMsg,
+                Description         : com.message,
+                date_debut_validite : com.validite_deb,
+                date_fin_validite   : com.validite_fin,
+                hasAction : true,
+                btnText:"voir",
                 
-                    btnTextStyle:{
-                        fontSize :"0.8vw"
-                    },
-                
-                    btnClickHandler:{
-                
-                    }
+                btnStyle :{
+                    display:"flex",
+                    justifyContent:"center",
+                    alignItems : "center",
+                    backgroundColor : "blue",
+                    borderRadius : "3px",
+                    width: "3vw",
+                    height:"3vh", 
+                    fontSize :"0.8vw",
+                    marginBottom:"1vh",
+                    alignSelf:"flex-end",
+                    marginRight:"1vh"
+                },
+            
+                btnTextStyle:{
+                    fontSize :"0.8vw"
+                },
+            
+                btnClickHandler:{
+            
                 }
-               
+            }
+            
 
-                listNotifs.push({msg:msgText,isVisible:true}); 
-                msgText = {} ;             
-            })
-
-            currentAppContext.setTabNotifs(listNotifs);             
+            listNotifs.push({msg:msgText}); 
+            msgText = {} ;             
         })
+
+        currentAppContext.setTabNotifs(listNotifs);             
+        
     }
 
 
@@ -625,6 +623,11 @@ function LoginForm(props){
             currentAppContext.setInfoMatieres(res.data.info_matieres);
             currentAppContext.setInfoCours(res.data.info_cours);
             currentUiContext.updateFirstLoad(true);
+
+            // Added 04/02/2024
+            //Ici, on va aller chercher toutes les notifs non lu du user
+
+            initUserNotifs(res.data.info_user.user_comms);
             
             
             //Pour les MsgBoxes
@@ -636,10 +639,10 @@ function LoginForm(props){
             loadEmploiDetemps(res.data.id_etab_init);
             setIsLoading(false);
 
-            //Ici, on va aller chercher toutes les notifs non lu du user
-            getUserCommnicationsInternes(currentAppContext.idUser);
-            console.log("notifs",listNotifs);
-            //currentAppContext.setTabNotifs(listNotifs); 
+           
+            // getUserCommnicationsInternes(currentAppContext.idUser);
+            // console.log("notifs",listNotifs);
+            
 
 
             currentUiContext.updateTheme(res.data.theme);
