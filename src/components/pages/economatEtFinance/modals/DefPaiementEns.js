@@ -218,8 +218,8 @@ function DefPaiementEns(props) {
                             </div>
                                 
                             <div> 
-                                <input id="salaire_prof" type="number" onBlur={(e)=>{document.getElementById("salaire_prof").value = displayedSalaireProf}} onChange={changeSalaireHandler} defaultValue={currentUiContext.formInputs[2]}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
-                                <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
+                                <input id="salaire_prof" type="number" onBlur={(e)=>{document.getElementById("salaire_prof").value = displayedSalaireProf}} onChange={changeSalaireHandler} defaultValue={currentUiContext.formInputs[2]}   style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw',  fontWeight:"bold", color: "black"}}/>
+                                <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', fontWeight:"bold", color:"black", border:"none"}} />
                             </div>
                         </div>
                           

@@ -215,7 +215,7 @@ function AddPaiementStaff(props) {
     function getListingPaiementUser(userId){
         var tabPaiements = [];
         
-        axiosInstance.post(`list-payements-acceptes-for-a-user/`, {
+        axiosInstance.post(`list-payements-effectues-for-a-user/`, {
             type_personnel : CURRENT_QUALITE_ID,
             id_user        : userId
         }).then((res)=>{
@@ -314,8 +314,8 @@ function AddPaiementStaff(props) {
         return(
             <div style={{display:'flex', color:'white', backgroundColor:'grey', flexDirection:'row', alignSelf:"center", height:'3.7vh', width:'89%', fontSize:'0.93vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black', marginTop:"-2vh"}}>
                 <div style={{width:'7vw',marginLeft:"1vw"}}>    {t("N°")}        </div>
-                <div style={{width:'7vw'}}>      {t("date")}      </div> 
-                <div style={{width:'12vw'}}>{t("paid_amount")}   </div>   
+                <div style={{width:'7vw', marginLeft:"-3vw"}}>  {t("date_versement")}      </div> 
+                <div style={{width:'12vw', marginLeft:"3vw"}}>{t("paid_amount")}   </div>   
             </div>
         );
     }

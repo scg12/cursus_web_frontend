@@ -891,7 +891,22 @@
     max-height: 5vh !important;
     font-weight: 700;
     font-size: 0.9vw;
+}
 
+.gridAcceptedRowStyle{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-weight: 700;
+    font-size: 0.9vw;
+    color:#0e840e;
+}
+
+.gridPaidRowStyle{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-weight: 700;
+    font-size: 0.9vw;
+    color:#8e908e;
 }
 
 .GridColumnStyle{
