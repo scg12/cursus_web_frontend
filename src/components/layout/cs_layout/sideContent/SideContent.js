@@ -359,8 +359,16 @@ function SideContent(props) {
         //Ici je vais en BD marquer que la notif est lue
         //Et, je cache la notif et je l'enleve du tableau des notifs
         setNotifAsReaded(notif.msg.id, currentAppContext.idUser).then((result)=>{
-            document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+            notifs.map((ntf, ind)=>{
+                if(ind == index){
+                    document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+                } else {
+                    document.getElementById("notifMsg"+notif.msg.id).style.display = 'block';
+                }                
+            })
+           
             notifs.splice(index,1);
+            console.log("reste",notifs);
             currentAppContext.setTabNotifs((notifs));
         });        
     }

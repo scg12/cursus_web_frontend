@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 
 let CURRENT_DESTINATAIRE_ID;
 let CURRENT_DESTINATAIRE_LABEL;
+var LIST_COMMS_INTERNES;
 
 var listElt ={}
 
@@ -51,10 +52,7 @@ function NewComIntern(props) {
             CURRENT_DESTINATAIRE_ID = undefined;
         }
         currentUiContext.setIsParentMsgBox(false);
-
-        setOpDestinataire(tabDestinataires);
-        CURRENT_DESTINATAIRE_ID    = tabDestinataires[0].value; 
-        CURRENT_DESTINATAIRE_LABEL = tabDestinataires[0].label;        
+        getListPersonnel();
     },[]);
 
     var tabDestinataires =[
@@ -63,19 +61,61 @@ function NewComIntern(props) {
         {value:2, label:i18n.language=='fr'? "Administration" : "Administration"}
     ]
 
-   
+    const  getListPersonnel=()=>{
+        var listAdm;
+        var listEns;
+        var listRecepient =  [{value:-1 , label: i18n.language =='fr' ? "Tous":"All"}];
+        
+        axiosInstance.post(`list-personnel/`, {
+            id_sousetab: currentAppContext.currentEtab,
+        }).then((res)=>{
+            console.log(res.data);
+
+            listAdm = formatListEns(res.data.enseignants);
+            listEns = formatListEns(res.data.adminstaffs);
+            
+            listAdm.map((elt)=>{
+                listRecepient.push(elt);
+            });
+
+            listEns.map((elt)=>{
+                listRecepient.push(elt);
+            });
+
+            CURRENT_DESTINATAIRE_ID    = listRecepient[0].value; 
+            CURRENT_DESTINATAIRE_LABEL = listRecepient[0].label;
+
+            setOpDestinataire(listRecepient);
+            getListCommInternes();
+        })  
+    }
+
+    const formatListEns=(list) =>{
+        var formattedList = [];
+        list.map((elt)=>{
+            listElt={};
+            listElt.value    = elt.id;
+            listElt.label    = elt.nom +' '+elt.prenom;
+            listElt.nom      = elt.nom;
+            listElt.prenom   = elt.prenom;
+            formattedList.push(listElt);            
+        });
+       return formattedList;
+    }
+
+
     const  getListCommInternes=()=>{
-        var listEleves = []
+       
         axiosInstance.post(`list-msg-interne/`, {
             id_sousetab : currentAppContext.currentEtab
         }).then((res)=>{
             console.log("commInternes",res.data.comms);
-            listEleves = [...formatList(res.data.comms)]
-            console.log(listEleves);
-            setGridRows(listEleves);
+            LIST_COMMS_INTERNES = [...formatList(res.data.comms)]
+            console.log(LIST_COMMS_INTERNES);
+            setGridRows(LIST_COMMS_INTERNES);
             console.log(gridRows);
         })  
-        return listEleves;     
+         
     }
 
     const formatList=(list) =>{
@@ -83,7 +123,7 @@ function NewComIntern(props) {
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
+            listElt.id             = elt.id;
             listElt.id_emetteur    = elt.id_emetteur;
             listElt.displayedName  = elt.nom +' '+elt.prenom;
             listElt.nom            = elt.nom;
@@ -102,9 +142,16 @@ function NewComIntern(props) {
 
     function dropDownHandler(e){  
         CURRENT_DESTINATAIRE_ID = e.target.value; 
-        CURRENT_DESTINATAIRE_LABEL = optDestinataire[optDestinataire.findIndex((classe)=>(classe.value == CURRENT_DESTINATAIRE_ID))].label;
-        getListCommInternes(CURRENT_DESTINATAIRE_ID);   
-        console.log(CURRENT_DESTINATAIRE_LABEL) 
+        if(CURRENT_DESTINATAIRE_ID>0){
+            CURRENT_DESTINATAIRE_LABEL = optDestinataire[optDestinataire.findIndex((classe)=>(classe.value == CURRENT_DESTINATAIRE_ID))].label;
+            var commDest = LIST_COMMS_INTERNES.filter((comm)=>comm.destinataires.split(",").find((elt)=>elt==CURRENT_DESTINATAIRE_LABEL)!=undefined);
+            setGridRows(commDest);
+            console.log(CURRENT_DESTINATAIRE_LABEL)
+        } else {
+            CURRENT_DESTINATAIRE_LABEL = optDestinataire[optDestinataire.findIndex((classe)=>(classe.value == CURRENT_DESTINATAIRE_ID))].label;
+            getListCommInternes();
+        }
+         
     }
  
 /*************************** DataGrid Declaration ***************************/    
