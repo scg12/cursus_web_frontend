@@ -351,7 +351,7 @@ function DefPaiementAdm(props) {
                                 </div>
                                  
                                 <div> 
-                                    <input id="salaire_prof" type="number" onBlur={(e)=>{document.getElementById("salaire_prof").value = displayedSalaireProf }} onChange={salaireProfChangeHandler} defaultValue={salaireProf== undefined ? 0 : displayedSalaireProf} disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
+                                    <input id="salaire_prof" type="number" onBlur={(e)=>{document.getElementById("salaire_prof").value = displayedSalaireProf }} onChange={salaireProfChangeHandler} defaultValue={currentUiContext.formInputs[2]== undefined ? 0 : currentUiContext.formInputs[2]} disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
                                     <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
                                 </div>
                             </div>
