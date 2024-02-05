@@ -215,7 +215,7 @@ function EvolutionEffectifs(props){
                 id_cycle    : selected_cycle,
                 id_niveau   : selected_niveau,
                 id_classe   : selected_classe,
-                option      : 'niveau'
+                option      : 'cycle'
 
             }).then((res)=>{
                 console.log(res.data);
@@ -233,7 +233,7 @@ function EvolutionEffectifs(props){
                 id_cycle    : selected_cycle,
                 id_niveau   : selected_niveau,
                 id_classe   : selected_classe,
-                option      : 'niveau'
+                option      : 'cycle'
 
             }).then((res)=>{
                 console.log(res.data);
@@ -264,7 +264,7 @@ function EvolutionEffectifs(props){
 
 
 
-    function getNiveauProgressionsParSexe(selected_classe){
+    function getNiveauProgressionsParSexe(selected_niveau){
         return new Promise(function(resolve, reject){
             axiosInstance.post(`evolution-effectifs/`, {
                 id_sousetab : currentAppContext.currentEtab,

@@ -340,7 +340,9 @@ function AcceptPaiement(props) {
         axiosInstance.post(`initier-payement-personnel/`, {
             type_personnel : paiement.type_personnel,
             id_user        : paiement.id_user,
-            montant        : paiement.montant        
+            montant        : paiement.montant,
+            id_sousetab    : currentAppContext.currentEtab      
+
         }).then((res)=>{
             console.log(res.data);
 
