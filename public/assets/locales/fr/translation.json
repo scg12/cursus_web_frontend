@@ -1,4 +1,5 @@
 {   
+    "close_paiement"          : "Clôturer le Paiement",
     "date_versement"          :"Date Paiement",
     "confirm_accept_paiement" :"Voulez-vous vraiment accpeter le paiement",
     "confirm_paiement_close"  : "Confirmer la fermeture du paiement",

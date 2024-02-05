@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 let CURRENT_DESTINATAIRE_ID;
 let CURRENT_DESTINATAIRE_LABEL;
 var PAIEMENT_TO_CONFIRM_ID;
+var CURRENT_QUALITE;
 
 var listElt ={}
 
@@ -53,6 +54,16 @@ function AcceptPaiement(props) {
         getUserPaiements();       
     },[]);
 
+
+    const  getUserQualite=(userId)=>{
+        axiosInstance.post(`list-payement-en-cours/`, {
+            id_sousetab : currentAppContext.currentEtab,
+            user_id     : userId
+        }).then((res)=>{
+            console.log(res.data);
+            CURRENT_QUALITE = res.data.res[0].qualite;
+        })
+    }
    
     const  getUserPaiements=()=>{
         var listEleves = []
@@ -73,7 +84,7 @@ function AcceptPaiement(props) {
     const  acceptUserPaiement=(IdPaiement)=>{
         var listEleves = []
         axiosInstance.post(`accepter-payement/`, {
-            type_personnel     : "enseignant",
+            type_personnel     : "pas_utile_ici",
             id_payement_initie : IdPaiement
            
         }).then((res)=>{
@@ -152,7 +163,7 @@ function AcceptPaiement(props) {
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    <div className={classes.inputRow}>
+                    <div className={classes.inputRow} style={{cursor:"pointer"}}>
                         {(params.row.status==t("initiated")) &&
                            <div onClick={(e)=>acceptPaiementHandler(e,params.row.id)} style={{color:'blue'}}>{t("accept_paiement")}</div>
                         }
@@ -204,7 +215,7 @@ function AcceptPaiement(props) {
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    <div className={classes.inputRow}>
+                    <div className={classes.inputRow} style={{cursor:"pointer"}}>
                         {(params.row.status==t("initiated")) &&
                             <div onClick={(e)=>acceptPaiementHandler(e,params.row.id)} style={{color:'blue'}}>{t("accept_paiement")}</div>
                         }

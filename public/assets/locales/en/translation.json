@@ -1,5 +1,6 @@
-{   "date_versement"          :"Payment Date",
-    "confirm_accept_paiement" :"Do you really accept payment",
+{   "close_paiement"          : "Close Payment",
+    "date_versement"          : "Payment Date",
+    "confirm_accept_paiement" : "Do you really accept payment",
     "confirm_paiement_close"  : "Do you confirm payment closure",
     "payed"                   : "Paid",
     "validity_date_lower_than_today_error":"Validity date of the message is lower than today's date!",

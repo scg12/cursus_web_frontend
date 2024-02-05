@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 let CURRENT_DESTINATAIRE_ID;
 let CURRENT_DESTINATAIRE_LABEL;
 var PAIEMENT_TO_CLOSE_ID;
+var CURRENT_QUALITE;
 
 var listElt ={}
 
@@ -50,7 +51,18 @@ function PaiementStaff(props) {
         getNonClosedPaiement();       
     },[]);
 
-
+   
+    const  getUserQualite=(userId)=>{
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`get-user-qualite/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                user_id     : userId
+            }).then((res)=>{
+                console.log("qualite",res.data.res[0].qualite);
+                resolve(res.data.res[0].qualite);
+            })
+        })
+    }
    
     const  getNonClosedPaiement=()=>{
         var listEleves = []
@@ -86,15 +98,20 @@ function PaiementStaff(props) {
         return formattedList;
     }
 
-    function closePaiementHandler(e,idPaiement){
+    function closePaiementHandler(e, userId, idPaiement){
         PAIEMENT_TO_CLOSE_ID = idPaiement
-        chosenMsgBox = MSG_CONFIRM;
-        currentUiContext.showMsgBox({
-            visible:true, 
-            msgType:"question", 
-            msgTitle:t("confirm_M"), 
-            message:t("confirm_paiement_close")
-        });
+        getUserQualite(userId).then((qualite)=>{
+            CURRENT_QUALITE = qualite
+            chosenMsgBox = MSG_CONFIRM;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("confirm_M"), 
+                message:t("confirm_paiement_close")
+            });
+
+        })
+       
     }
  
 /*************************** DataGrid Declaration ***************************/    
@@ -136,18 +153,27 @@ function PaiementStaff(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'userId',
+            headerName: "UserID",
+            width: 100,
+            editable: false,
+            hide    : true,
+            headerClassName:classes.GridColumnStyle
+        },
         
         {
             field          : '',
             headerName: 'ACTION',
-            width: 100,
+            width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    <div className={classes.inputRow}>
+                    <div className={classes.inputRow} style={{cursor:"pointer"}}>
                         {(params.row.status==t("accepted")) &&
-                           <div onClick={(e)=>closePaiementHandler(e,params.row.id)} style={{color:'blue'}}>{t("close_paiement")}</div>
+                           <div onClick={(e)=>closePaiementHandler(e,params.row.userId,params.row.id)} style={{color:'blue'}}>{t("close_paiement")}</div>
                         }
                     </div>
                 )}           
@@ -197,16 +223,25 @@ function PaiementStaff(props) {
         },
         
         {
+            field: 'userId',
+            headerName: "UserID",
+            width: 100,
+            editable: false,
+            hide    : true,
+            headerClassName:classes.GridColumnStyle
+        },
+        
+        {
             field          : '',
             headerName: 'ACTION',
-            width: 100,
+            width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    <div className={classes.inputRow}>
+                    <div className={classes.inputRow} style={{cursor:"pointer"}}>
                         {(params.row.status==t("accepted")) &&
-                            <div onClick={(e)=>closePaiementHandler(e,params.row.id)} style={{color:'blue'}}>{t("close_paiement")}</div>
+                            <div onClick={(e)=>closePaiementHandler(e,params.row.userId,params.row.id)} style={{color:'blue'}}>{t("close_paiement")}</div>
                         }
                     </div>
                 )}           
@@ -334,9 +369,10 @@ function PaiementStaff(props) {
 
     
     const  closeUserPaiement=(IdPaiement)=>{
+        console.log("qualite",CURRENT_QUALITE, CURRENT_QUALITE.length)
         var listEleves = []
         axiosInstance.post(`cloturer-payement/`, {
-            type_personnel     : "enseignant",
+            type_personnel     : CURRENT_QUALITE.trim(),
             id_payement_initie : IdPaiement
            
         }).then((res)=>{
