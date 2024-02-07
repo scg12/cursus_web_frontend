@@ -7,15 +7,14 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, formatCurrency, formatCurrencyInverse} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
-var CURRENT_ELEVE = {};
-var CURRENT_ANNEE_SCOLAIRE;
+
 var CURRENT_PAIEMENT;
-var TABCLASSE     = [];
-var tabSalaireFonctions;
+var SalaireFonctions;
+var displayedSalaireFonctions = [];
 
 
 function DefPaiementAdm(props) {
@@ -28,7 +27,12 @@ function DefPaiementAdm(props) {
     const [typeContrat, setTypeContrat]     = useState("permanent");
     const [isAdmOnly, setIsAdmOnly]         = useState(!currentUiContext.formInputs[6]);
     const [montantTotal, setMontantTotal]   = useState(currentUiContext.formInputs[3]);
-    const [fonctions, setFonctions]         = useState([])
+    const [fonctions, setFonctions]         = useState([]);
+    const [tabSalaireFonctions, setTabSalaireFonction] = useState([]);
+    const [salaireProf, setSalaireProf] = useState([]);
+    const [displayedSalairesFonctions, setDisplayedSalaireFonctions] = useState([]);
+    const [displayedSalaireProf, setDisplayedSalaireProf] = useState(0);
+
     
     var tabContrat =[
         {value:"permanent", label:t("permanent")},
@@ -37,9 +41,21 @@ function DefPaiementAdm(props) {
 
 
     useEffect(()=> {        
-        CURRENT_ANNEE_SCOLAIRE  = document.getElementById("activated_annee").options[0].label;
         var tabFonctions        = currentUiContext.formInputs[8].split(",");
-        tabSalaireFonctions     = currentUiContext.formInputs[9].split("_");
+        SalaireFonctions        = currentUiContext.formInputs[9].split("_");
+
+        displayedSalaireFonctions = [];
+        SalaireFonctions.map((elt, index)=>{
+
+            SalaireFonctions[index]   = formatCurrencyInverse(SalaireFonctions[index]);
+            displayedSalaireFonctions.push(formatCurrency(SalaireFonctions[index]));
+        });
+
+        setTabSalaireFonction(SalaireFonctions);
+        setDisplayedSalaireFonctions(displayedSalaireFonctions);
+        
+        setDisplayedSalaireProf(currentUiContext.formInputs[2]);
+        setSalaireProf(formatCurrencyInverse(currentUiContext.formInputs[2]));
         
         setFonctions(tabFonctions);
       
@@ -89,9 +105,9 @@ function DefPaiementAdm(props) {
             console.log("trove",adm_data,admElt,fct);
 
             if(index < fonctionsAdm.length-1){
-                idHier_sal = idHier_sal + admElt.id_adminstaff+"²²"+document.getElementById("adm_salaire_"+index).value + '_';
+                idHier_sal = idHier_sal + admElt.id_adminstaff+"²²"+tabSalaireFonctions[index] + '_';
             } else {
-                idHier_sal = idHier_sal + admElt.id_adminstaff+"²²"+document.getElementById("adm_salaire_"+index).value;
+                idHier_sal = idHier_sal + admElt.id_adminstaff+"²²"+tabSalaireFonctions[index];
             }
         })
         console.log("list Salaires", idHier_sal);
@@ -115,7 +131,7 @@ function DefPaiementAdm(props) {
         CURRENT_PAIEMENT.is_enseignant                      = !isAdmOnly;
         CURRENT_PAIEMENT.id_adminstaff_enseignant           = currentUiContext.formInputs[0].split('_')[1];
         CURRENT_PAIEMENT.type_salaire_adminstaff_enseignant = typeContrat;
-        CURRENT_PAIEMENT.salaire_adminstaff_enseignant      = !isAdmOnly ? parseInt(document.getElementById("salaire_prof").value) : 0;  
+        CURRENT_PAIEMENT.salaire_adminstaff_enseignant      = !isAdmOnly ? salaireProf : 0;  
     }
 
     function formDataCheck1(manuel){       
@@ -168,40 +184,71 @@ function DefPaiementAdm(props) {
     /************************************ Handlers ************************************/   
     function contratChangeHandler(e){
         setTypeContrat(e.target.value);
+        document.getElementById("salaire_prof").value = 0;
         
         var sommeTotale = 0; 
         fonctions.map((elt,index)=>{
-            sommeTotale = sommeTotale + parseInt(document.getElementById("adm_salaire_"+index).value);
+            sommeTotale = sommeTotale + parseInt(SalaireFonctions[index]); //parseInt(document.getElementById("adm_salaire_"+index).value);
         })
         setMontantTotal(sommeTotale);
+        setSalaireProf(0);
+        setDisplayedSalaireProf(0);
         
     }
 
-    function calculSalaireTotal(isAdmOnly, typeContrat){
+    function calculSalaireTotal(e,isAdmOnly,ind){
         var sommeTotale = 0;
-        
 
-        fonctions.map((elt,index)=>{
-            sommeTotale = sommeTotale + parseInt(document.getElementById("adm_salaire_"+index).value);
-        })
+        if(ind >=0){
+            console.log("on est ici", SalaireFonctions, formatCurrencyInverse(e.target.value));
+            document.getElementById("adm_salaire_"+ind).value = formatCurrencyInverse(e.target.value);
+            
+            SalaireFonctions[ind]          = formatCurrencyInverse(e.target.value);
+            displayedSalaireFonctions[ind] = formatCurrency(formatCurrencyInverse(e.target.value));
+            
+            setTabSalaireFonction(SalaireFonctions);
+            setDisplayedSalaireFonctions(displayedSalaireFonctions);
+           
+            fonctions.map((elt,index)=>{
+                sommeTotale = sommeTotale + parseInt(SalaireFonctions[index]);
+            })
+
+        }
+        
 
         if(isAdmOnly == false){
             console.log("hdhdhhdh");
             sommeTotale = 0; 
             fonctions.map((elt,index)=>{
-                sommeTotale = sommeTotale + parseInt(document.getElementById("adm_salaire_"+index).value);
-            })
-        
-            if(typeContrat=="permanent"){ 
-                sommeTotale = sommeTotale + parseInt(document.getElementById("salaire_prof").value);
-            } else {
-                sommeTotale = sommeTotale + parseInt(document.getElementById("quota").value);
-            }
+                sommeTotale = sommeTotale + parseInt(SalaireFonctions[index]);
+            });
+
+            sommeTotale = sommeTotale + parseInt(salaireProf);
+         
         }
 
        setMontantTotal(sommeTotale);
        console.log("icic",sommeTotale )
 
+    }
+
+
+    function salaireProfChangeHandler(e){
+        var sommeTotale  = 0;
+        var typedSalaire = formatCurrencyInverse(e.target.value);
+        document.getElementById("salaire_prof").value = typedSalaire;
+
+       
+        fonctions.map((elt,index)=>{
+            sommeTotale = sommeTotale + parseInt(tabSalaireFonctions[index]);
+        });
+
+        sommeTotale = sommeTotale + parseInt(typedSalaire);
+        setMontantTotal(sommeTotale);
+      
+        setSalaireProf(typedSalaire);
+        setDisplayedSalaireProf(formatCurrency(typedSalaire));
+            
     }
 
    
@@ -265,7 +312,7 @@ function DefPaiementAdm(props) {
                                         </div>
 
                                         <div style={{marginBottom:'0.7vh', marginLeft:'0vw'}}>  
-                                            <input id={"adm_salaire_"+index} type="number"  onChange={(e)=> calculSalaireTotal(isAdmOnly,typeContrat)} defaultValue={tabSalaireFonctions[index]}   className={classes.inputRowControl }   style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1vw', marginLeft:'1vw', color:'#494646'}} />
+                                            <input id={"adm_salaire_"+index} type="number" onBlur={(e)=>{document.getElementById("adm_salaire_"+index).value = displayedSalairesFonctions[index] }}  onChange={(e)=> calculSalaireTotal(e,isAdmOnly,index)} defaultValue={displayedSalairesFonctions[index]}   className={classes.inputRowControl }   style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1vw', marginLeft:'1vw', color:'#494646'}} />
                                             <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
                                         </div>
      
@@ -304,7 +351,7 @@ function DefPaiementAdm(props) {
                                 </div>
                                  
                                 <div> 
-                                    <input id="salaire_prof" type="number" onChange={(e)=> calculSalaireTotal(isAdmOnly,typeContrat)} defaultValue={currentUiContext.formInputs[2]== undefined ? 0 : currentUiContext.formInputs[2]} disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
+                                    <input id="salaire_prof" type="number" onBlur={(e)=>{document.getElementById("salaire_prof").value = displayedSalaireProf }} onChange={salaireProfChangeHandler} defaultValue={currentUiContext.formInputs[2]== undefined ? 0 : currentUiContext.formInputs[2]} disabled={(props.formMode == 'consult')? true:false}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
                                     <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
                                 </div>
                             </div>
@@ -331,7 +378,7 @@ function DefPaiementAdm(props) {
                                 {t("salaire_globale")}: 
                             </div>                    
                             <div style={{marginBottom:'1.3vh', marginLeft:'-5vw', display:"flex", flexDirection:"row"}}>  
-                                <input id="salaire_total" type="number" value={montantTotal}   disabled={true} className={classes.inputRowControl }  style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw',  fontWeight:"bold", color: "black"}} />
+                                <input id="salaire_total" type="number" value={formatCurrency(montantTotal)}   disabled={true} className={classes.inputRowControl }  style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw',  fontWeight:"bold", color: "black"}} />
                                 <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', fontWeight:"bold", color:"black", border:"none"}} />
                             </div>
                         </div>

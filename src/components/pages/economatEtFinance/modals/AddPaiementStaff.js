@@ -36,6 +36,7 @@ function AddPaiementStaff(props) {
     const [optQualite, setOptQualite]       = useState([]);
     const [optUser, setOptUser]             = useState([]);
     const [listPaiements, setListPaiements] = useState([]);
+    const [listPaiementsInities, setListPaiementsInities] = useState([]);
     const selectedTheme = currentUiContext.theme;
     
     useEffect(()=> {
@@ -215,7 +216,7 @@ function AddPaiementStaff(props) {
     function getListingPaiementUser(userId){
         var tabPaiements = [];
         
-        axiosInstance.post(`list-payements-acceptes-for-a-user/`, {
+        axiosInstance.post(`list-payements-effectues-for-a-user/`, {
             type_personnel : CURRENT_QUALITE_ID,
             id_user        : userId
         }).then((res)=>{
@@ -228,6 +229,22 @@ function AddPaiementStaff(props) {
         })
     }
 
+    function getNonAcceptedPaiement(userId){
+        var tabPaiements = [];
+        
+        axiosInstance.post(`list-payements-initie-for-a-user/`, {
+            id_user        : userId
+        }).then((res)=>{
+            console.log("listing_inities",res.data.res);
+            var listingPaiements = res.data.res;
+            listingPaiements.map((elt, index)=>{
+                tabPaiements.push({rang:index+1, montant:elt.montant, date:elt.date})
+            })
+            setListPaiementsInities(tabPaiements);
+        })
+    }
+
+
     function qualiteChangeHandler(e){
         CURRENT_QUALITE_ID = e.target.value; 
         CURRENT_QUALITE_LABEL = optQualite[optQualite.findIndex((classe)=>(classe.value == CURRENT_QUALITE_ID))].label;
@@ -236,19 +253,33 @@ function AddPaiementStaff(props) {
     }
 
     function userChangeHandler(e){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
         if(e.target.value.length>0){
+
+            errorDiv.className   = null;
+            errorDiv.textContent = "";
+
             var user_to_pay = optUser.find((user)=>user.value == e.target.value);
             USER_TO_PAY_ID  = user_to_pay.value;
             SALAIRE_TO_PAY  = user_to_pay.salaire;
+
             var salaireFormatted = formatCurrency(SALAIRE_TO_PAY);
             document.getElementById("montant_a_paye").value =  salaireFormatted;
-            getListingPaiementUser(user_to_pay.value);         
+            
+            getListingPaiementUser(user_to_pay.value);  
+            getNonAcceptedPaiement(user_to_pay.value);       
             setIsValid(true);
         } else {
+
             USER_TO_PAY_ID = undefined;
             SALAIRE_TO_PAY = 0;
             document.getElementById("montant_a_paye").value = 0;
+
             setListPaiements([]);
+            setListPaiementsInities([]);
+           
+            errorDiv.className   = null;
+            errorDiv.textContent = "";
             setIsValid(false);
         }
             
@@ -285,6 +316,13 @@ function AddPaiementStaff(props) {
 
     function formDataCheck1(){
         var errorMsg='';
+
+        if(listPaiementsInities.length>0){
+            errorMsg= t('exist_non_accepted_paiement'); 
+            setIsValid(false);
+            return errorMsg;
+        }
+
         // if(manuel.nomLivre.length == 0){
         //     errorMsg= t('enter_manuel_name'); 
         //     return errorMsg;
@@ -314,8 +352,8 @@ function AddPaiementStaff(props) {
         return(
             <div style={{display:'flex', color:'white', backgroundColor:'grey', flexDirection:'row', alignSelf:"center", height:'3.7vh', width:'89%', fontSize:'0.93vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black', marginTop:"-2vh"}}>
                 <div style={{width:'7vw',marginLeft:"1vw"}}>    {t("N°")}        </div>
-                <div style={{width:'7vw'}}>      {t("date")}      </div> 
-                <div style={{width:'12vw'}}>{t("paid_amount")}   </div>   
+                <div style={{width:'7vw', marginLeft:"-3vw"}}>  {t("date_versement")}      </div> 
+                <div style={{width:'12vw', marginLeft:"3vw"}}>{t("paid_amount")}   </div>   
             </div>
         );
     }

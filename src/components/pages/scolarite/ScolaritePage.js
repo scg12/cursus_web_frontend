@@ -37,6 +37,7 @@ import ListingNotes from "./subPages/ListingNotes";
 import SuiviFicheProgress from "./subPages/SuiviFicheProgress";
 import ConsultEmploiDeTemps from "./subPages/ConsultEmploiDeTemps";
 import CertificatScolarite from "./subPages/CertificatScolarite";
+import WebcamCapture from "./subPages/WebcamCapture";
 
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import AppContext from "../../../store/AppContext";
@@ -290,6 +291,7 @@ function ScolaritePage(){
             {(currentAppContext.enableProfiles["SCOLARITE_B4"]=='1') ? <MenuItemP menuItemId ='109' imgSource='images/FicheProgession.png'                     libelle={t("suivi_fiche_p")}       itemSelected={showSideMenu}  customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP}>                                                  </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_B5"]=='1') ? <MenuItemP menuItemId ='110' imgSource='images/ProgramClasse.png'                       libelle={t("programmes_classes")}  itemSelected={showSideMenu}  style={isMobile?{ marginLeft:'-0.089vw'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP}>   </MenuItemP> : null}
             {(currentAppContext.enableProfiles["SCOLARITE_B6"]=='1') ? <MenuItemP menuItemId ='111' imgSource='images/CahierTexte.png'                         libelle={t("cahier_textes")}       itemSelected={showSideMenu}  style={isMobile?{ marginLeft:'-0.089vw'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP} >  </MenuItemP> : null}
+            {(currentAppContext.enableProfiles["SCOLARITE_B6"]=='1') ? <MenuItemP menuItemId ='187' imgSource='images/CahierTexte.png'                         libelle={t("cahier_textes")}       itemSelected={showSideMenu}  style={isMobile?{ marginLeft:'-0.089vw'}:null} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle1P : classes.imgStyleP} >  </MenuItemP> : null}
           </MenuItemListP>
           :
           null
@@ -354,6 +356,7 @@ function ScolaritePage(){
           {curentMenuItemPId== 109  && <SuiviFicheProgress/>                   }
           {curentMenuItemPId== 110  && <ListManuelsScolaires/>                        } 
           {curentMenuItemPId== 111  && <CahierDeTexte currentClasse={null} currentMatiere={null}/> }
+          {curentMenuItemPId== 187  && <WebcamCapture/>                        } 
 
           {/*------SCOLARITE-3 : Suivi scolaire - examen de classe et Notes-----*/}
           {curentMenuItemPId== 120 && <SaveNotes noteMax={20}/>                   }

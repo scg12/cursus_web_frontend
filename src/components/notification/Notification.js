@@ -48,7 +48,7 @@ function Notification(props) {
 
     return (
             
-        <div className={'card '+ getNotifBackgrd()} style={isMobile?{left:'35%',...props.mobNotifStyle}:props.notifStyle}>
+        <div id={"notifMsg"+props.msg.id} className={'card '+ getNotifBackgrd()} style={isMobile?{left:'35%',...props.mobNotifStyle}:props.notifStyle}>
             <div style={{display:"flex", flexDirection:"column", justifyContent:"center", width:"100%", marginBottom:"1vh"}} >
                 <div  style={{alignSelf:"center", fontSize:"2.3vh", fontWeight:"bold"}}>
                     {props.msg.libelle}

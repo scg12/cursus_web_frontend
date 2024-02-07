@@ -337,10 +337,40 @@ function SideContent(props) {
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_cycle == e.value),'id_cycle','libelle')[0]);
     }
 
-    function closeNotifHandler(index){
+    function setNotifAsReaded(idNotif,userId){
+        return new Promise(function(resolve, reject){
+          
+            axiosInstance.post(`set-message-as-read/`, {
+                id_sousetab     : currentAppContext.currentEtab,
+                user_id         : userId,
+                msg_id          : idNotif
+    
+            }).then((res)=>{
+                console.log("resultat du remove",res.data);
+                resolve(res.data);
+            })
+            
+        });
+    }
+
+    function closeNotifHandler(e,notif,index){
         var notifs = [...currentAppContext.tabNotifs];
-        notifs[index].isVisible = false;
-        currentAppContext.setTabNotifs((notifs));
+        console.log("notif",  notif);
+        //Ici je vais en BD marquer que la notif est lue
+        //Et, je cache la notif et je l'enleve du tableau des notifs
+        setNotifAsReaded(notif.msg.id, currentAppContext.idUser).then((result)=>{
+            notifs.map((ntf, ind)=>{
+                if(ind == index){
+                    document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+                } else {
+                    document.getElementById("notifMsg"+notif.msg.id).style.display = 'block';
+                }                
+            })
+           
+            notifs.splice(index,1);
+            console.log("reste",notifs);
+            currentAppContext.setTabNotifs((notifs));
+        });        
     }
           
     return (
@@ -352,13 +382,10 @@ function SideContent(props) {
                 <div id="notifZone" className={classes.notifZone + " notifFrom"}>
                     {currentAppContext.tabNotifs.map((notif, index)=>{
                         return(
-                            (notif.isVisible) && <Notification msg={notif.msg} notifStyle={{marginBottom:"0.3vh"}} closeNotif={()=>{closeNotifHandler(index)}}/>
+                            <Notification msg={notif.msg} notifStyle={{marginBottom:"0.3vh"}} closeNotif={(e)=>{closeNotifHandler(e,notif,index)}}/>
                         )
                        
                     })}
-                    {/* <Notification msg={msgText1} notifStyle={{marginBottom:"0.3vh"}}/>
-                    <Notification msg={msgText2} notifStyle={{marginBottom:"0.3vh"}}/>
-                    <Notification msg={msgText3} notifStyle={{marginBottom:"0.3vh"}}/> */}
                 </div>
                 
 

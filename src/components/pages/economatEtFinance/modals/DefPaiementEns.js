@@ -7,14 +7,11 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, formatCurrency, formatCurrencyInverse} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
 var CURRENT_PAIEMENT = {};
-var CURRENT_ANNEE_SCOLAIRE;
-
-
 
 
 function DefPaiementEns(props) {
@@ -25,6 +22,8 @@ function DefPaiementEns(props) {
     const selectedTheme      = currentUiContext.theme;
     const [optContrat,  setOptContrat]      = useState(tabContrat);
     const [typeContrat, setTypeContrat]     = useState("permanent");
+    const [salaireProf, setSalaireProf] = useState(0);
+    const [displayedSalaireProf, setDisplayedSalaireProf] = useState(0);
     
     var tabContrat =[
         {value:"permanent", label:t("permanent")},
@@ -33,8 +32,12 @@ function DefPaiementEns(props) {
 
 
     useEffect(()=> {        
-        CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
-        console.log("les inputs",currentUiContext.formInputs)
+        
+        console.log("les inputs",currentUiContext.formInputs);
+
+        setDisplayedSalaireProf(currentUiContext.formInputs[2]);
+        setSalaireProf(formatCurrencyInverse(currentUiContext.formInputs[2]));
+
         
         var currrentContrat =  currentUiContext.formInputs[4];  
         var indexContrat    = tabContrat.findIndex((elt)=>elt.value==currrentContrat);
@@ -53,7 +56,7 @@ function DefPaiementEns(props) {
     },[]);
 
 
-    function updatePaiementAdm(){
+    function updatePaiementEns(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
         console.log('avant:',CURRENT_PAIEMENT);
         getFormData();
@@ -87,7 +90,7 @@ function DefPaiementEns(props) {
         CURRENT_PAIEMENT.portee_salaire = "locale";
         CURRENT_PAIEMENT.id_user        = currentUiContext.formInputs[0].split('_')[0];
         CURRENT_PAIEMENT.id_ens         = currentUiContext.formInputs[0].split('_')[1];
-        CURRENT_PAIEMENT.salaire        =  parseInt(document.getElementById("salaire_prof").value);
+        CURRENT_PAIEMENT.salaire        =  parseInt(salaireProf);
    
         CURRENT_PAIEMENT.is_salaire_total                   = true
         CURRENT_PAIEMENT.tab_salaire                        = ""
@@ -150,6 +153,13 @@ function DefPaiementEns(props) {
         setTypeContrat(e.target.value);
     }
 
+    function changeSalaireHandler(e){
+        var typedSalaire = formatCurrencyInverse(e.target.value);
+        document.getElementById("salaire_prof").value = formatCurrencyInverse(e.target.value);
+        setSalaireProf(typedSalaire);
+        setDisplayedSalaireProf(formatCurrency(typedSalaire));
+    }
+
    
     /************************************ JSX Code ************************************/
 
@@ -208,8 +218,8 @@ function DefPaiementEns(props) {
                             </div>
                                 
                             <div> 
-                                <input id="salaire_prof" type="number" defaultValue={formatCurrency(currentUiContext.formInputs[2])}   style={{marginLeft:'-2vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', width:'10vw'}}/>
-                                <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', color:'#494646', border:"none"}} />
+                                <input id="salaire_prof" type="number" onBlur={(e)=>{document.getElementById("salaire_prof").value = displayedSalaireProf}} onChange={changeSalaireHandler} defaultValue={currentUiContext.formInputs[2]}   style={{width:'10vw', textAlign:'left', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw',  fontWeight:"bold", color: "black"}}/>
+                                <input  type="label" value={"FCFA"} style={{ width:"3.7vw",fontSize:'1.23vw', fontWeight:"bold", color:"black", border:"none"}} />
                             </div>
                         </div>
                           
@@ -241,7 +251,7 @@ function DefPaiementEns(props) {
                         imgStyle = {classes.frmBtnImgStyle2} 
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={updatePaiementAdm}
+                        btnClickHandler={updatePaiementEns}
                         // disable={(isValid==false)}
                     />
                 }
@@ -254,7 +264,7 @@ function DefPaiementEns(props) {
                         imgStyle = {classes.frmBtnImgStyle2} 
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={updatePaiementAdm}
+                        btnClickHandler={updatePaiementEns}
                         // disable={(isValid==false)}
                     />  
                 }    

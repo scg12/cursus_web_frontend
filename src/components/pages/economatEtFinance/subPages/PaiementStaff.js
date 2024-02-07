@@ -21,28 +21,25 @@ import { useTranslation } from "react-i18next";
 
 let CURRENT_DESTINATAIRE_ID;
 let CURRENT_DESTINATAIRE_LABEL;
+var PAIEMENT_TO_CLOSE_ID;
+var CURRENT_QUALITE;
 
 var listElt ={}
 
 
 
 var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
-const ROWS_PER_PAGE= 40;
-var ElevePageSet=[];
-var printedETFileName ='';
+const MSG_SUCCESS  = 1;
+const MSG_WARNING  = 2;
+const MSG_CONFIRM  = 3;
 
 
 function PaiementStaff(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-
-    const [isValid, setIsValid] = useState(false);
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optDestinataire, setOpDestinataire] = useState([]);
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -51,20 +48,26 @@ function PaiementStaff(props) {
             CURRENT_DESTINATAIRE_ID = undefined;
         }
 
-        getNonClosedPaiement(currentAppContext.currentEtab);       
+        getNonClosedPaiement();       
     },[]);
 
-    var tabDestinataires =[
-        {value:0, label:i18n.language=='fr'? "Tous" : "All"},
-        {value:1, label:i18n.language=='fr'? "Enseignants" : "Teachers"},
-        {value:2, label:i18n.language=='fr'? "Administration" : "Administration"}
-    ]
-
    
-    const  getNonClosedPaiement=(sousetabId)=>{
+    const  getUserQualite=(userId)=>{
+        return new Promise(function(resolve, reject){
+            axiosInstance.post(`get-user-qualite/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                user_id     : userId
+            }).then((res)=>{
+                console.log("qualite",res.data.res[0].qualite);
+                resolve(res.data.res[0].qualite);
+            })
+        })
+    }
+   
+    const  getNonClosedPaiement=()=>{
         var listEleves = []
-        axiosInstance.post(`list-payements-initie/`, {
-            id_sousetab: sousetabId,
+        axiosInstance.post(`list-payement-en-cours/`, {
+            id_sousetab: currentAppContext.currentEtab,
         }).then((res)=>{
             console.log(res.data);
             listEleves = [...formatList(res.data.res)]
@@ -87,11 +90,28 @@ function PaiementStaff(props) {
             listElt.userId         = elt.userId;
             listElt.montant        = elt.montant;
             listElt.date           = elt.date;
+            listElt.status         = elt.status == 'accepted' ? t("accepted") :t("initiated") ;
             listElt.rang           = rang; 
             formattedList.push(listElt);
             rang ++;
         })
         return formattedList;
+    }
+
+    function closePaiementHandler(e, userId, idPaiement){
+        PAIEMENT_TO_CLOSE_ID = idPaiement
+        getUserQualite(userId).then((qualite)=>{
+            CURRENT_QUALITE = qualite
+            chosenMsgBox = MSG_CONFIRM;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("confirm_M"), 
+                message:t("confirm_paiement_close")
+            });
+
+        })
+       
     }
  
 /*************************** DataGrid Declaration ***************************/    
@@ -125,36 +145,36 @@ function PaiementStaff(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'status',
+            headerName: "ETAT",
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'userId',
+            headerName: "UserID",
+            width: 100,
+            editable: false,
+            hide    : true,
+            headerClassName:classes.GridColumnStyle
+        },
         
         {
             field          : '',
             headerName: 'ACTION',
-            width: 15,
+            width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        /> 
-    
-                        {/* <img src="icons/baseline_delete.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                rollBackPaiementConfirm(params.row.id);
-                             }}
-                            alt=''
-                        />   */}
-    
+                    <div className={classes.inputRow} style={{cursor:"pointer"}}>
+                        {(params.row.status==t("accepted")) &&
+                           <div onClick={(e)=>closePaiementHandler(e,params.row.userId,params.row.id)} style={{color:'blue'}}>{t("close_paiement")}</div>
+                        }
                     </div>
                 )}           
                 
@@ -193,36 +213,36 @@ function PaiementStaff(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'status',
+            headerName: "STATUS",
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+        
+        {
+            field: 'userId',
+            headerName: "UserID",
+            width: 100,
+            editable: false,
+            hide    : true,
+            headerClassName:classes.GridColumnStyle
+        },
         
         {
             field          : '',
             headerName: 'ACTION',
-            width: 15,
+            width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        /> 
-    
-                        {/* <img src="icons/baseline_delete.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                rollBackPaiementConfirm(params.row.id);
-                             }}
-                            alt=''
-                        />   */}
-    
+                    <div className={classes.inputRow} style={{cursor:"pointer"}}>
+                        {(params.row.status==t("accepted")) &&
+                            <div onClick={(e)=>closePaiementHandler(e,params.row.userId,params.row.id)} style={{color:'blue'}}>{t("close_paiement")}</div>
+                        }
                     </div>
                 )}           
                 
@@ -245,15 +265,7 @@ function PaiementStaff(props) {
     }
     
 /*************************** Handler functions ***************************/
-    
-
-    function handleDeleteRow(params){
-        if(params.field=='id'){
-            //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
-        }
-    }
-
+ 
     function initFormInputs(){
         var inputs=[];
         inputs[0] = '';
@@ -341,11 +353,10 @@ function PaiementStaff(props) {
             type_personnel : paiement.type_personnel,
             id_user        : paiement.id_user,
             montant        : paiement.montant,
-            id_sousetab    : currentAppContext.currentEtab      
+            id_sousetab    : currentAppContext.currentEtab
         }).then((res)=>{
             console.log(res.data);
-
-            //setModalOpen(0);
+   
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -355,49 +366,24 @@ function PaiementStaff(props) {
             })
         })      
     }
-    
-    function modifyStudent(eleve) {
-        console.log('Modif',eleve);
-     
-        axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_DESTINATAIRE_ID,
-            id : eleve.id, 
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance, 
 
+    
+    const  closeUserPaiement=(IdPaiement)=>{
+        console.log("qualite",CURRENT_QUALITE, CURRENT_QUALITE.length)
+        var listEleves = []
+        axiosInstance.post(`cloturer-payement/`, {
+            type_personnel     : CURRENT_QUALITE.trim(),
+            id_payement_initie : IdPaiement,
+            id_sousetab        : currentAppContext.currentEtab
+           
         }).then((res)=>{
             console.log(res.data);
-            //setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_modif_M"), 
-                message:t("success_modif")
-            })
-            
-        })
+            getNonClosedPaiement();
+        })  
+        return listEleves;     
     }
-
+    
+   
     function deleteRow(rowId) {
        // alert(rowId);
         //Message de confirmation
@@ -435,7 +421,19 @@ function PaiementStaff(props) {
                     msgTitle:"", 
                     message:""
                 }) 
-                getNonClosedPaiement(currentAppContext.currentEtab);   
+                getNonClosedPaiement();   
+                return 1;
+            }
+
+
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                closeUserPaiement(PAIEMENT_TO_CLOSE_ID);   
                 return 1;
             }
 
@@ -462,6 +460,53 @@ function PaiementStaff(props) {
     }
 
     const rejectHandler=()=>{
+        
+        switch(chosenMsgBox){
+
+            case MSG_SUCCESS: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                getNonClosedPaiement();   
+                return 1;
+            }
+
+
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                  
+                return 1;
+            }
+
+            case MSG_WARNING: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+                
+               
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+            }
+        }        
+        
         
     }
 
@@ -640,7 +685,7 @@ function PaiementStaff(props) {
                         
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : (params.field==='status'&& params.value== t('initiated'))? classes.gridMainRowStyle : (params.field==='status'&& params.value==t('accepted'))? classes.gridAcceptedRowStyle : classes.gridRowStyle }
                         // onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {
