@@ -55,7 +55,8 @@
     /*padding-bottom: 1vw;*/
     border:solid 1px gray;  
     border-radius: 7px; 
-    background-color: beige; 
+    /* background-color: beige;  */
+    background-color: whitesmoke;
 
 }
 
@@ -1030,13 +1031,13 @@ margin-left: 0.3vw;
 
 
 .searchImgStyle{
-position: relative;
-z-index: 100;
-width: 1.3vw;
-height: 1.7vw;
-margin-right: 0.5vw;
-transform: rotate(-45deg);
-margin-left:0.3vw;
+    position: relative;
+    z-index: 100;
+    width: 1.3vw;
+    height: 1.7vw;
+    margin-right: 0.5vw;
+    transform: rotate(-45deg);
+    margin-left:0.3vw;
 }
 
 .frmBtnImgStyle1{
@@ -1302,69 +1303,69 @@ background-color: transparent;
 
 /************************ THEME 1 ***********************/
 .Theme1_notifButtonStyle {
-display: flex;
-flex-direction: row;
-justify-content: flex-start;
-align-items: center;
-border-radius: 4.3px;
-width: auto;
-height: 4.7vh;
-padding-left: 0.3vw;
-padding-right: 0.3vw;
-min-width: 10.7vw;
--moz-box-shadow: -2px -2px 2px #aaa; 
--webkit-box-shadow: -2px -2px 2px  #aaa; 
-box-shadow: -2px -2px 2px rgb(216, 213, 213);  
-background-color: rgb(60, 160, 21);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 4.3px;
+    width: auto;
+    height: 4.7vh;
+    padding-left: 0.3vw;
+    padding-right: 0.3vw;
+    min-width: 10.7vw;
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);  
+    background-color: rgb(60, 160, 21);
 }
 
 .Theme1_notifButtonStyle:hover {
-display: flex;
-flex-direction: row;
-justify-content: flex-start;
-align-items: center;
-border-radius: 4.3px;
-width: auto;
-height: 4.7vh;
-min-width: 10.7vw;
--moz-box-shadow: -2px -2px 2px #aaa; 
--webkit-box-shadow: -2px -2px 2px  #aaa; 
-box-shadow: -2px -2px 2px rgb(216, 213, 213);  
-background-color: rgb(14, 94, 199);  
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 4.3px;
+    width: auto;
+    height: 4.7vh;
+    min-width: 10.7vw;
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);  
+    background-color: rgb(14, 94, 199);  
 }
 
 
 .Theme1_BtnstyleSmall{
-display:flex;
-flex-direction: row;
-justify-content:center;
-align-self: center;
-border-radius: 3.3px;
-width:auto;
-height:3.3vh;
--moz-box-shadow: -2px -2px 2px #aaa; 
--webkit-box-shadow: -2px -2px 2px  #aaa; 
-box-shadow: -2px -2px 2px rgb(216, 213, 213);
-margin-bottom: 7px;
-margin-top: 7px;
-background-color: rgb(60, 160, 21);
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:auto;
+    height:3.3vh;
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+    background-color: rgb(60, 160, 21);
 
 }
 
 .Theme1_BtnstyleSmall:hover {
-display:flex;
-flex-direction: row;
-justify-content:center;
-align-self: center;
-border-radius: 3.3px;
-width:auto;
-height:3.3vh;
--moz-box-shadow: -2px -2px 2px #aaa; 
--webkit-box-shadow: -2px -2px 2px  #aaa; 
-box-shadow: -2px -2px 2px rgb(216, 213, 213);
-margin-bottom: 7px;
-margin-top: 7px;
-background-color: rgb(14, 94, 199);
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-self: center;
+    border-radius: 3.3px;
+    width:auto;
+    height:3.3vh;
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213);
+    margin-bottom: 7px;
+    margin-top: 7px;
+    background-color: rgb(14, 94, 199);
 
 }
 

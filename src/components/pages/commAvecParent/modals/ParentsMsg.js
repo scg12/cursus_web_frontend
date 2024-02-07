@@ -1,7 +1,8 @@
 import React from 'react';
-import { useFilePicker } from 'use-file-picker';
+
 import classes from "../subPages/SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
+import MultiSelect from '../../../multiSelect/MultiSelect';
 import { useContext, useState, useEffect } from "react";
 import {isMobile} from 'react-device-detect';
 import axiosInstance from '../../../../axios';
@@ -14,128 +15,154 @@ import MsgBox from '../../../msgBox/MsgBox';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-var cur_fileToUpload = undefined;
-var cur_classeId = undefined;
-var cur_coursId = undefined;
-var selected_file_name='';
-var filename = '';
 
 
 var chosenMsgBox;
-const MSG_SUCCESS_FP =11;
-const MSG_WARNING_FP =12;
-const MSG_ERROR_FP   =13;
+const MSG_SUCCESS_FP = 1;
+const MSG_WARNING_FP = 2;
+const MSG_ERROR_FP   = 3;
 
 function ParentsMsg(props) {
-    const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
+    const { t, i18n }       = useTranslation();
+    const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
-    const selectedTheme = currentUiContext.theme;
-    const [fileSelected, setFileSelected] = useState(false)
-    const [fileUploaded, setFileUploaded] = useState(false);
+    const selectedTheme     = currentUiContext.theme;
+    const [multiSelectVisible, setMultiSelectVisible] = useState(false);
+    const [optClasses, setOptClasses] = useState(false);
+    const [listEleves, setListEleves] = useState([]);
+    const [tabSelections, setTabSelections] = useState([]);
+
     
-   
-    const [isDownload,setIsDownload]= useState(false);
-    
-    //const [formMode,setFormMode] = useState("creation") //creation, modif, consult
-
-
-    const [optClasse, setOptClasse] = useState([]);
-    const [optCours, setOptCours] = useState([]);
-    const [inputDataCorrect, setInputDataCorrect] = useState(false);
-
+ 
     useEffect(()=> {
-        selected_file_name='';
-        // getEtabListClasses();
-        // getCoursClasse(currentAppContext.currentEtab, 0);
-        currentUiContext.setIsParentMsgBox(false);
+        currentUiContext.setIsParentMsgBox(false);   
+        getEtabListClasses(); 
     },[]);
 
 
     const getEtabListClasses=()=>{
-        var tempTable=[{value: 0,      label: (i18n.language=='fr') ? '  -- Choisir une classe --  ' : '  --Select Class --  '  }]
-        
-        if(props.formMode=="special"){
-            tempTable=[];
-            tempTable.push({value:props.selectedClasse.id, label:props.selectedClasse.label});
-            setOptClasse(tempTable);
-        }else{
+        var tempTable=[{value: -1,      label: (i18n.language=='fr') ? ' --- Choisir --- ' : '--- Select ---'  }]
+        let classes_user;
+        let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
 
-            let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
-            console.log(classes)
-            let classes_user;
-            if(currentAppContext.infoUser.is_prof_only) 
-                classes_user = currentAppContext.infoUser.prof_classes;
-            else{
-                classes_user = currentAppContext.infoUser.censeur_classes;
-                let prof_classes = currentAppContext.infoUser.prof_classes;
-                // console.log(pp_classes)
-                prof_classes.forEach(classe => {
-                    if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
-                        classes_user.push({"id":classe.id,"libelle":classe.libelle})
+        if(currentAppContext.infoUser.is_prof_only) 
+            classes_user = currentAppContext.infoUser.prof_classes;
+        else {
+            classes_user = currentAppContext.infoUser.admin_classes;
+            let prof_classes = currentAppContext.infoUser.prof_classes;
+            // console.log(pp_classes)
+            prof_classes.forEach(classe => {
+                if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
+                    classes_user.push({"id":classe.id,"libelle":classe.libelle})
 
-                });
-            }
+            });
+        }
 
-            let n = classes_user.length;
-            let m = classes.length;
-            let i = 0;
-            let j = 0;
-            while(i<n){
-                j = 0;
-                while(j<m){
-                    if(classes_user[i].id==classes[j].id_classe){
-                        tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
-                        break;
-                    }
-                    j++;
+        let n = classes_user.length;
+        let m = classes.length;
+        let i = 0;
+        let j = 0;
+
+        while(i<n){
+            j = 0;
+            while(j<m){
+                if(classes_user[i].id==classes[j].id_classe){
+                    tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+                    break;
                 }
-                i++;
+                j++;
             }
+            i++;
+        }
 
-            // axiosInstance.post(`list-classes/`, {
-            //     id_sousetab: currentAppContext.currentEtab,
-            // }).then((res)=>{                
-            //     res.data.map((classe)=>{
-            //         tempTable.push({value:classe.id, label:classe.libelle})              
-            //     })   
-            //     setOptClasse(tempTable);                
-            // })
-        setOptClasse(tempTable);                
-
-        }       
+        setOptClasses(tempTable);
     }
 
-    function getCoursClasse(sousEtabId, classeId){
-        var tempTable=[{value: 0,      label: (i18n.language=='fr') ? '  ----- Choisir un cours ----- ' : ' ------ Select course ------ '  }]
-        var tabCours;
-        
-        if(props.formMode=="special"){
-            tempTable=[];
-            cur_coursId = props.selectedCours.id;
-            tempTable.push({value:props.selectedCours.id, label:props.selectedCours.label});
-            setOptCours(tempTable);
-            setInputDataCorrect(true);
-        }else{
-            if(classeId!=0){
-                if(currentAppContext.infoUser.is_censeur)
-                    tabCours = currentAppContext.infoCours.filter((cours)=>cours.id_setab==sousEtabId && cours.id_classe == classeId)
-                    
-                else
-                    tabCours = currentAppContext.infoUser.prof_cours.filter(cours=>cours.id_classe ==classeId)
-        
-                tabCours.map((cours)=>{
-                tempTable.push({value:cours.id_cours, label:cours.libelle_cours});
-                })    
-            }       
-            console.log('cours',tabCours,tempTable);
-            setOptCours(tempTable);
-            if(document.getElementById('optCours').options[0]!= undefined)
-            document.getElementById('optCours').options[0].selected=true;
-        }     
+    
+    function getSmallButtonStyle()
+    { // Choix du theme courant
+      switch(selectedTheme){
+        case 'Theme1': return classes.Theme1_BtnstyleSmall ;
+        case 'Theme2': return classes.Theme2_BtnstyleSmall ;
+        case 'Theme3': return classes.Theme3_BtnstyleSmall ;
+        default: return classes.Theme1_BtnstyleSmall ;
+      }
+    }
+
+    
+    function getGridButtonStyle()
+    { // Choix du theme courant
+        switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_gridBtnstyle + ' '+ classes.margRight5P ;
+            case 'Theme2': return classes.Theme2_gridBtnstyle + ' '+ classes.margRight5P;
+            case 'Theme3': return classes.Theme3_gridBtnstyle + ' '+ classes.margRight5P;
+            default: return classes.Theme1_gridBtnstyle + ' '+ classes.margRight5P;
+        }
+    }
+
+
+    function getButtonStyle()
+    { // Choix du theme courant
+      switch(selectedTheme){
+        case 'Theme1': return classes.Theme1_Btnstyle ;
+        case 'Theme2': return classes.Theme2_Btnstyle ;
+        case 'Theme3': return classes.Theme3_Btnstyle ;
+        default: return classes.Theme1_Btnstyle ;
+      }
+    }
+
+    function getSmallButtonStyle()
+    { // Choix du theme courant
+      switch(selectedTheme){
+        case 'Theme1': return classes.Theme1_BtnstyleSmall ;
+        case 'Theme2': return classes.Theme2_BtnstyleSmall ;
+        case 'Theme3': return classes.Theme3_BtnstyleSmall ;
+        default: return classes.Theme1_BtnstyleSmall ;
+      }
+    }
+
+    function getCurrentHeaderTheme()
+    {  // Choix du theme courant
+       switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_formHeader+ ' ' + classes.formHeader;
+            case 'Theme2': return classes.Theme2_formHeader + ' ' + classes.formHeader;
+            case 'Theme3': return classes.Theme3_formHeader + ' ' +classes.formHeader;
+            default: return classes.Theme1_formHeader + ' ' +classes.formHeader;
+        }
+    }
+
+    function getNotifButtonStyle()
+    { // Choix du theme courant
+        switch(selectedTheme){
+            case 'Theme1': return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P ;
+            case 'Theme2': return classes.Theme2_notifButtonStyle + ' '+ classes.margRight5P;
+            case 'Theme3': return classes.Theme3_notifButtonStyle + ' '+ classes.margRight5P;
+            default: return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P;
+        }
+    }
+
+   
+    /************************************ Handlers ************************************/    
+    function moveOnMax(e,currentField, nextField){
+        if(nextField!=null){
+            e = e || window.event;
+            if(e.keyCode != 9){
+                if(currentField.value.length >= currentField.maxLength){
+                    nextField.focus();
+                }
+            }
+        }
      
     }
     
+    function addDestinataire(e){
+        setMultiSelectVisible(true);
+    }
+
+
+    function sendMsg(e){
+
+    }
 
     const acceptHandler=()=>{
         
@@ -216,224 +243,63 @@ function ParentsMsg(props) {
         }
         
     }
-    
-    
 
-    
-    function getGridButtonStyle()
-    { // Choix du theme courant
-        switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_gridBtnstyle + ' '+ classes.margRight5P ;
-            case 'Theme2': return classes.Theme2_gridBtnstyle + ' '+ classes.margRight5P;
-            case 'Theme3': return classes.Theme3_gridBtnstyle + ' '+ classes.margRight5P;
-            default: return classes.Theme1_gridBtnstyle + ' '+ classes.margRight5P;
-        }
-    }
-
-
-    function getButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_Btnstyle ;
-        case 'Theme2': return classes.Theme2_Btnstyle ;
-        case 'Theme3': return classes.Theme3_Btnstyle ;
-        default: return classes.Theme1_Btnstyle ;
-      }
-    }
-
-    function getSmallButtonStyle()
-    { // Choix du theme courant
-      switch(selectedTheme){
-        case 'Theme1': return classes.Theme1_BtnstyleSmall ;
-        case 'Theme2': return classes.Theme2_BtnstyleSmall ;
-        case 'Theme3': return classes.Theme3_BtnstyleSmall ;
-        default: return classes.Theme1_BtnstyleSmall ;
-      }
-    }
-
-    function getCurrentHeaderTheme()
-    {  // Choix du theme courant
-       switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_formHeader+ ' ' + classes.formHeader;
-            case 'Theme2': return classes.Theme2_formHeader + ' ' + classes.formHeader;
-            case 'Theme3': return classes.Theme3_formHeader + ' ' +classes.formHeader;
-            default: return classes.Theme1_formHeader + ' ' +classes.formHeader;
-        }
-    }
-
-    function getNotifButtonStyle()
-    { // Choix du theme courant
-        switch(selectedTheme){
-            case 'Theme1': return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P ;
-            case 'Theme2': return classes.Theme2_notifButtonStyle + ' '+ classes.margRight5P;
-            case 'Theme3': return classes.Theme3_notifButtonStyle + ' '+ classes.margRight5P;
-            default: return classes.Theme1_notifButtonStyle + ' '+ classes.margRight5P;
-        }
-    }
-
-   
-    /************************************ Handlers ************************************/    
-    
-    function classeChangeHandler(e){
-       
-        if(e.target.value != optClasse[0].value){
-            cur_classeId = e.target.value;
-            getCoursClasse(currentAppContext.currentEtab, cur_classeId);
-        }else{
-            cur_classeId = undefined;
-            getCoursClasse(currentAppContext.currentEtab, 0);
-        }
-        setInputDataCorrect(false);
-    }
-
-
-    function coursChangeHandler(e){
-        if(e.target.value != optCours[0].value){
-            cur_coursId = e.target.value;
-            setInputDataCorrect(true);
-            
-        } else {
-            cur_coursId = undefined;
-            setInputDataCorrect(false);
-        }
-
-    }
-
-    function moveOnMax(e,currentField, nextField){
-        if(nextField!=null){
-            e = e || window.event;
-            if(e.keyCode != 9){
-                if(currentField.value.length >= currentField.maxLength){
-                    nextField.focus();
-                }
-            }
-        }
-     
-    }
-    
-
-    
-
-    function downloadHandler(e){
-        if(window.location.hostname==="localhost" || window.location.hostname==="127.0.0.1"){
-            var downloadUrl = 'http://localhost:3000/fiches/FicheProgression.xlsx';
-        } else var downloadUrl = 'http://192.168.43.99:3000/fiches/FicheProgression.xlsx';
-
-
-        fetch(downloadUrl,{
-            method: 'GET',
-            headers:{
-                'Content-Type':'blob'
-            },
-            responseType:'arraybuffer'
-        })
-        .then(response =>{
-            response.blob().then(blob=> {
-                let url = window.URL.createObjectURL(blob);
-                let a = document.createElement('a');
-                a.href = url;
-                a.download ='FicheProgression.xls';
-                a.click();
-            })
-            //window.location.href=response.url;
-        })
-
-        /*axios.post('http://localhost:3000/fiches', {
-            method: 'GET',
-            responseType: 'blob', // important
-        }).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${Date.now()}.xlsx`);
-            document.body.appendChild(link);
-            link.click();
-        });*/
-        
-
-    }
-
-    function fileChangeHandler(e){
-        cur_fileToUpload = e.target.files[0];
-        if(cur_fileToUpload!=undefined){
-            selected_file_name = cur_fileToUpload.name;
-            setFileSelected(true);
-        }else{
-            selected_file_name = '';
-            setFileSelected(false); 
-        }
-        console.log('file data',cur_fileToUpload);
-        console.log("msgParents:", currentUiContext.isParentMsgBox);
-        
-    }
-
-
-    function storeFicheProgress(coursId){
-        //currentUiContext.setIsParentMsgBox(false);
-        axiosInstance.post(`sauvegarder-fiche-progression/`, {
-            id_cours : coursId,
-            id_sousetab : currentAppContext.idEtabInit,
-            filename : filename,
-           
-        }).then((res)=>{
-            console.log("cours, sous etab:", coursId, currentAppContext.idEtabInit);
-            console.log("fiche cree:",res.data);
-            
-           //ici il faut ajouter un if si l'operation se passe bien afficher ceci
-           
-            chosenMsgBox = MSG_SUCCESS_FP;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_operation_M"), 
-                message:t("success_operation")
-            })
-           
-            //sinon afficher ceci
-            /*chosenMsgBox = MSG_ERROR;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_operation_M"), 
-                message:t("success_operation")
-            })*/
-                
-        })
-
-    }
-
-    function saveFicheProgressChanges(e){
-        uploadFile(cur_fileToUpload);
-    }
-
-    function uploadFile(){
-        var form_data= new FormData();
-
-        form_data.append('desciption','Fiche de progression par classe' );
-        form_data.append('file_type','fiche-progression' );
-        form_data.append('timestamp','' );
-        form_data.append('file',cur_fileToUpload);
-
-        axios.post(`http://127.0.0.1:8000/api/upload-fiche-progression/`,form_data, {
-            header:{
-                'Content-type': 'multipart/form-data'
-            }
-                 
+    const  getClassStudentList=(classId)=>{
+        var listEleves = []
+        axiosInstance.post(`list-eleves/`, {
+            id_classe: classId,
         }).then((res)=>{
             console.log(res.data);
-            filename = res.data.filename;
-            storeFicheProgress(cur_coursId);  
-           // setFileUploaded(true);           
-        })
+            listEleves = [...formatList(res.data)]
+            console.log(listEleves);
+            setListEleves(listEleves);
+        }) 
+          
+    }
 
+    const formatList=(list) =>{
+        var listElt;
+        var tabelt=[];
+        var formattedList =[]
+        list.map((elt)=>{
+            listElt={};
+            listElt.id     = elt.id;
+            listElt.label  = elt.nom +' '+elt.prenom;
+            listElt.nom    = elt.nom;
+            listElt.prenom = elt.prenom; 
+            tabelt.push(false);              
+            formattedList.push(listElt);            
+        });  
+
+        setTabSelections(tabelt);     
+        return formattedList;
     }
 
 
-    function saveOrUploadFP(e){       
-        if(isDownload) props.cancelHandler();
-        else  uploadFile(cur_fileToUpload);
+
+    function classChangeHandler(e){
+        if(e.target.value > 0){
+            getClassStudentList(e.target.value);
+        }else{
+            setListEleves([]);
+        }
     }
 
+    function searchTextChangeHandler(e){
+        var name = e.target.value;
+        var tabEleves     = [...listEleves];
+        var matchedEleves =  tabEleves.filter((elt)=>elt.label.toLowerCase().includes(name.toLowerCase()));
+        setListEleves(matchedEleves);
+    }
+
+    function manageSelection(){
+
+    }
+
+    function getMsgTitle(){
+
+    }
+    
     /************************************ JSX Code ************************************/
 
     return (
@@ -472,7 +338,50 @@ function ParentsMsg(props) {
                     </div>
                         
                     <div> 
-                        <input id="destinataireLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        <input id="destinataireLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1rem', width:'14.3vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                    </div>
+                    
+                    <div>
+                        <CustomButton
+                            btnText={t("add")} 
+                            buttonStyle={getSmallButtonStyle()}
+                            style={{marginBottom:'-0.3vh', marginLeft:'0.7vw', marginRight:'0.8vw'}}
+                            btnTextStyle = {classes.btnSmallTextStyle}
+                            btnClickHandler={addDestinataire}
+                        /> 
+
+                    </div>
+                    {multiSelectVisible &&
+                        <div>
+                            <MultiSelect
+                                id                  = {"ms_1"}
+                                //-----Fields-----
+                                optData             = {optClasses}
+                                fetchedData         = {listEleves}
+                                selectionMode       = {"multiple"}
+                            
+                                //-----Handler-----
+                                optionChangeHandler     = {classChangeHandler}
+                                searchTextChangeHandler = {searchTextChangeHandler}
+                            
+                                //-----Styles-----
+                                searchInputStyle    = {{fontSize:"0.8vw"}}
+                                comboBoxStyle       = {{width:"7vw", height:"3.7vh", border:"solid 1px #8eb1ec", fontSize:"0.8vw", borderRadius:"3px"}}
+                                dataFieldStyle      = {{minHeight:"5vh", borderRadius:"1vh", height:"fit-content", border:"solid 1px gray", fontSize:"0.8vw", backgroundColor:"whitesmoke"}}
+                                MSContainerStyle    = {{/*border:"solid 1px grey",*/ padding:"1vh", marginRight:"1vh"}}
+                            />
+                        </div>
+                    }
+                </div>
+
+                <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"1vh", marginLeft:"-3vw", height:'2.7vh'}}> 
+                    <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                        {t("msg_object")}:
+                    </div>
+                        
+                    <div> 
+                        <input id="msgObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'14.3vw', fontSize:'1.13vw', color:'#898585'}}/>
                         <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
                     </div>
                 </div>
@@ -483,17 +392,17 @@ function ParentsMsg(props) {
                     </div>
                 </div> 
                 <div style={{marginLeft:"-3vw", marginTop:"0.7vh"}}> 
-                        {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
-                        <CKEditor
-                            editor  = {ClassicEditor}
-                            data    = "<p>Hello </p>"
-                            style   = {{with:"50vw", minHeight:"33vh"}}
-                            onReady = {editor => {
-                                console.log("Editor is ready to use")
-                            }}
-                        
-                        />
-                    </div>
+                    {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
+                    <CKEditor
+                        editor  = {ClassicEditor}
+                        data    = "<p>Hello </p>"
+                        style   = {{with:"50vw", minHeight:"33vh"}}
+                        onReady = {editor => {
+                            console.log("Editor is ready to use")
+                        }}
+                    
+                    />
+                </div>
 
             </div>
 
@@ -522,8 +431,8 @@ function ParentsMsg(props) {
                     btnText={t('send')}
                     buttonStyle={getGridButtonStyle()}
                     btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={saveOrUploadFP}
-                    disable={(isDownload) ? !isDownload :!fileSelected}
+                    btnClickHandler={sendMsg}
+                    //disable={(isDownload) ? !isDownload :!fileSelected}
                 />
                 
             </div>

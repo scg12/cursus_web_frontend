@@ -1,4 +1,4 @@
-{   "exist_non_accepted_paiement": "Il existe un paiements non encore accepté, Un paiement supplémentaire ne peut etre initié!",
+{   "exist_non_accepted_paiement": "Il existe un paiements non encore accepté, Un paiement supplémentaire ne peut être initié!",
     "close_paiement"             : "Clôturer le Paiement",
     "date_versement"             : "Date Paiement",
     "confirm_accept_paiement"    : "Voulez-vous vraiment accpeter le paiement",
