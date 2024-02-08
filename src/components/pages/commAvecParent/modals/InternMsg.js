@@ -363,18 +363,27 @@ function InternMsg(props) {
                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                         {t("destinataire")}:
                     </div>
+                    {(props.formMode=="consult")&&
+                        <div> 
+                            <input id="msgDestinataire" title={currentUiContext.formInputs[0]} type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[0]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1vw', color:'#898585',textOverflow:"ellipsis"}}/>
+                            <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                        </div>
+                    }
 
                     
-                        
-                    <div style={{display:'flex', flexDirection:"row", justifyContent:"flex-start", marginLeft:"-5.7vw", width:"13vw"}}> 
-                        <select id='selectRecepient' onChange={recepientChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
-                            {(optDestinataire||[]).map((option)=> {
-                                return(
-                                    <option  style={{textAlign:"left"}}  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select>                              
-                    </div>
+                     {!(props.formMode=="consult")&&
+                        <div style={{display:'flex', flexDirection:"row", justifyContent:"flex-start", marginLeft:"-5.7vw", width:"13vw"}}> 
+                            <select id='selectRecepient' onChange={recepientChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2.3vw', height:'1.87vw',width:'23vw'}}>
+                                {(optDestinataire||[]).map((option)=> {
+                                    return(
+                                        <option  style={{textAlign:"left"}}  value={option.value}>{option.label}</option>
+                                    );
+                                })}
+                            </select>                              
+                        </div>
+                     
+                    }   
+                   
                 </div>
 
                 
@@ -408,11 +417,20 @@ function InternMsg(props) {
                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                         {t("msg_object")}:
                     </div>
-                        
-                    <div> 
-                        <input id="msgObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
-                        <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
-                    </div>
+
+                    {!(props.formMode=="consult")&&
+                        <div> 
+                            <input id="msgObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                            <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                        </div>
+                    }
+
+                    {(props.formMode=="consult")&&   
+                        <div> 
+                            <input id="msgObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                            <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                        </div>
+                    }
                 </div>
 
                 <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"2vh", marginLeft:"-3vw", height:'2.7vh'}}> 
@@ -427,7 +445,7 @@ function InternMsg(props) {
                     <CKEditor
                         id ="editor1"
                         editor  = {ClassicEditor}
-                        data    = ""
+                        data    = {props.formMode=="consult"? currentUiContext.formInputs[2]:""}
                         style   = {{with:"40vw", height:"17vh"}}
                         onReady = {editor => {
                             console.log("Editor is ready to use", editor)
@@ -444,12 +462,26 @@ function InternMsg(props) {
                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                     {t("msg_deadline")}:
                 </div>
+
+                {!(props.formMode=="consult")&&
+                    <div style ={{display:'flex', flexDirection:'row', marginTop:"-1vh", marginLeft:"-0.8vw"}}> 
+                        <input id="jour"  type="text"  onChange={getValiditeJour}  Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} /> <div style={{marginTop:"1vh"}}>/</div>
+                        <input id="mois"  type="text"  onChange={getValiditeMois}  Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  textAlign:"center", height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  /><div style={{marginTop:"1vh"}}>/</div>
+                        <input id="anne"  type="text"  onChange={getValiditeAnnee}  Placeholder='aaaa' onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />
+                    </div>
+                }
+                
+                
+                {(props.formMode=="consult")&&
+                    <div style ={{display:'flex', flexDirection:'row', marginTop:"-1vh", marginLeft:"-0.8vw"}}> 
+                        <input id="jour"  type="text" disabled={true} onChange={getValiditeJour}  Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} defaultValue={currentUiContext.formInputs[3].split("/")[0]}/> <div style={{marginTop:"1vh"}}>/</div>
+                        <input id="mois"  type="text" disabled={true} onChange={getValiditeMois}  Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  textAlign:"center", height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}} defaultValue={currentUiContext.formInputs[3].split("/")[1]} /><div style={{marginTop:"1vh"}}>/</div>
+                        <input id="anne"  type="text" disabled={true} onChange={getValiditeAnnee}  Placeholder='aaaa' onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  defaultValue={currentUiContext.formInputs[3].split("/")[2]}/>
+                    </div>
+                }
+
                     
-                <div style ={{display:'flex', flexDirection:'row', marginTop:"-1vh", marginLeft:"-0.8vw"}}> 
-                    <input id="jour"  type="text"  onChange={getValiditeJour}  Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} /> <div style={{marginTop:"1vh"}}>/</div>
-                    <input id="mois"  type="text"  onChange={getValiditeMois}  Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  textAlign:"center", height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  /><div style={{marginTop:"1vh"}}>/</div>
-                    <input id="anne"  type="text"  onChange={getValiditeAnnee}  Placeholder='aaaa' onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />
-                </div>
+                
             </div>
             
            
@@ -460,14 +492,15 @@ function InternMsg(props) {
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
                 />
-
-                <CustomButton
-                    btnText={t('send')}
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={saveMsg}
-                    // disable={(isDownload) ? !isDownload :!fileSelected}
-                />
+               {(props.formMode == "consult")&&
+                    <CustomButton
+                        btnText={t('send')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={saveMsg}
+                        // disable={(isDownload) ? !isDownload :!fileSelected}
+                    />
+                }
                 
             </div>
 

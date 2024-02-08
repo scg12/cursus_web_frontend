@@ -300,26 +300,11 @@ function NewComIntern(props) {
     function handleEditRow(row){       
         var inputs=[];
         
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
+        inputs[0]= row.destinataires;
+        inputs[1]= row.titreMsg;
+        inputs[2]= row.message;
+        inputs[3]= row.validite;
+       
 
         console.log("laligne",row);
         currentUiContext.setFormInputs(inputs)
@@ -330,30 +315,14 @@ function NewComIntern(props) {
     function consultRowData(row){
         var inputs=[];
        
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
+        inputs[0]= row.destinataires;
+        inputs[1]= row.titreMsg;
+        inputs[2]= row.message;
+        inputs[3]= row.validite;
+        inputs[3]= row.validite;
      
         currentUiContext.setFormInputs(inputs)
-        setModalOpen(3);
+        setModalOpen(2);
 
     }
 
