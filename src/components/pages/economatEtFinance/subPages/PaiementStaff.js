@@ -353,7 +353,7 @@ function PaiementStaff(props) {
             type_personnel : paiement.type_personnel,
             id_user        : paiement.id_user,
             montant        : paiement.montant,
-            id_sousetab    : currentAppContext.currentEtab        
+            id_sousetab    : currentAppContext.currentEtab
         }).then((res)=>{
             console.log(res.data);
    
@@ -373,7 +373,8 @@ function PaiementStaff(props) {
         var listEleves = []
         axiosInstance.post(`cloturer-payement/`, {
             type_personnel     : CURRENT_QUALITE.trim(),
-            id_payement_initie : IdPaiement
+            id_payement_initie : IdPaiement,
+            id_sousetab        : currentAppContext.currentEtab
            
         }).then((res)=>{
             console.log(res.data);
