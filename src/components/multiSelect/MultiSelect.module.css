@@ -8,12 +8,40 @@
     margin-left:0.3vw;
 }
 
+.btnAdd {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+    border-radius: 2vw;
+    /*border-color: rgb(111, 112, 111);
+    border-width: 1.7px;
+    border-style: solid;*/
+    width:3vw;
+    height:1.47vw;
+    padding-left: 3px;
+    padding-right: 3px;
+    background-color: rgb(44, 60, 97);
+
+    -moz-box-shadow: -2px -2px 2px #aaa; 
+    -webkit-box-shadow: -2px -2px 2px  #aaa; 
+    box-shadow: -2px -2px 2px rgb(216, 213, 213); 
+}
+
+.btnTextStyle {
+    font-size: 0.73vw;
+    font-weight: 400;
+    color:white
+}
+
 /*--------------------- Theme1 ----------------------- */
 .Theme1_singleSelect{
 
 }
 
 .Theme1_singleSelect:hover{
+    background-color: rgb(24, 81, 225);
+    color:white
 
 }
 

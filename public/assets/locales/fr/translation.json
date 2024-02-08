@@ -1,4 +1,5 @@
-{   "exist_non_accepted_paiement": "Il existe un paiements non encore accepté, Un paiement supplémentaire ne peut être initié!",
+{   "enter_msg_recipient"        : "Aucun destinataire n'a été fourni! SVP entrez des destinataires à l'aide du button Ajouter!",
+    "exist_non_accepted_paiement": "Il existe un paiements non encore accepté, Un paiement supplémentaire ne peut être initié!",
     "close_paiement"             : "Clôturer le Paiement",
     "date_versement"             : "Date Paiement",
     "confirm_accept_paiement"    : "Voulez-vous vraiment accpeter le paiement",

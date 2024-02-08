@@ -10,6 +10,7 @@ import axiosInstance from '../../../../axios';
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import ParentsMsg from "../modals/ParentsMsg";
+import MultiSelect from '../../../multiSelect/MultiSelect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
@@ -23,6 +24,13 @@ let CURRENT_DESTINATAIRE_ID;
 let CURRENT_DESTINATAIRE_LABEL;
 
 var listElt ={}
+var tempTable;
+var list_initiale_eleves;
+var MultiSelectId = "searchRecipient"
+
+
+var list_destinataire    = "";
+var list_destinataires_ids = "";
 
 
 
@@ -43,6 +51,11 @@ function RelationAvcParents(props) {
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optDestinataire, setOpDestinataire] = useState([]);
+    const [multiSelectVisible, setMultiSelectVisible] = useState(false);
+    const [optClasses, setOptClasses] = useState(false);
+    const [listEleves, setListEleves] = useState([]);
+    //const [tabSelections, setTabSelections] = useState([]);
+
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -50,17 +63,113 @@ function RelationAvcParents(props) {
         if(gridRows.length==0){
             CURRENT_DESTINATAIRE_ID = undefined;
         }
-
-        setOpDestinataire(tabDestinataires);
-        CURRENT_DESTINATAIRE_ID    = tabDestinataires[0].value; 
-        CURRENT_DESTINATAIRE_LABEL = tabDestinataires[0].label;        
+        getEtabListClasses(); 
+        // setOpDestinataire(tabDestinataires);
+        // CURRENT_DESTINATAIRE_ID    = tabDestinataires[0].value; 
+        // CURRENT_DESTINATAIRE_LABEL = tabDestinataires[0].label;        
     },[]);
 
-    var tabDestinataires =[
-        {value:0, label:i18n.language=='fr'? "Tous" : "All"},
-        {value:1, label:i18n.language=='fr'? "Enseignants" : "Teachers"},
-        {value:2, label:i18n.language=='fr'? "Administration" : "Administration"}
-    ]
+    // var tabDestinataires =[
+    //     {value:0, label:i18n.language=='fr'? "Tous" : "All"},
+    //     {value:1, label:i18n.language=='fr'? "Enseignants" : "Teachers"},
+    //     {value:2, label:i18n.language=='fr'? "Administration" : "Administration"}
+    // ]
+
+    const getEtabListClasses=()=>{
+        tempTable=[{value: -1,      label: (i18n.language=='fr') ? ' -- Choisir Classe -- ' : '-- Select Classe --'  }]
+        let classes_user;
+        let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
+
+        if(currentAppContext.infoUser.is_prof_only) 
+            classes_user = currentAppContext.infoUser.prof_classes;
+        else {
+            classes_user = currentAppContext.infoUser.admin_classes;
+            let prof_classes = currentAppContext.infoUser.prof_classes;
+            // console.log(pp_classes)
+            prof_classes.forEach(classe => {
+                if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
+                    classes_user.push({"id":classe.id,"libelle":classe.libelle})
+
+            });
+        }
+
+        let n = classes_user.length;
+        let m = classes.length;
+        let i = 0;
+        let j = 0;
+
+        while(i<n){
+            j = 0;
+            while(j<m){
+                if(classes_user[i].id==classes[j].id_classe){
+                    tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
+                    break;
+                }
+                j++;
+            }
+            i++;
+        }
+
+        setOptClasses(tempTable);
+    }
+
+    function classChangeHandler(e){
+        if(e.target.value > 0){
+            getClassStudentList(e.target.value);
+        }else{
+            setListEleves([]);
+            document.getElementById("searchText").value ="";
+        }
+    }
+
+    const  getClassStudentList=(classId)=>{
+        var listEleves = []
+        axiosInstance.post(`list-eleves/`, {
+            id_classe: classId,
+        }).then((res)=>{
+            console.log(res.data);
+            listEleves = [...formatListEleves(res.data)]
+            list_initiale_eleves = [...listEleves];
+            console.log(listEleves);
+            setListEleves(listEleves);
+        }) 
+          
+    }
+
+    const formatListEleves=(list) =>{
+        var listElt;
+        var tabelt=[];
+        var formattedList =[]
+        list.map((elt)=>{
+            listElt={};
+            listElt.id     = elt.id;
+            listElt.label  = elt.nom +' '+elt.prenom;
+            listElt.nom    = elt.nom;
+            listElt.prenom = elt.prenom; 
+            tabelt.push(false);              
+            formattedList.push(listElt);            
+        });  
+
+        //setTabSelections(tabelt);     
+        return formattedList;
+    }
+
+    function searchTextChangeHandler(e){
+        var name = e.target.value;
+        var tabEleves     = [...listEleves];
+        var matchedEleves =  list_initiale_eleves.filter((elt)=>elt.label.toLowerCase().includes(name.toLowerCase()));
+        setListEleves(matchedEleves);
+    }
+
+    function validateSelectionHandler(e){
+        list_destinataire      = document.getElementById("hidden2_"+MultiSelectId).value;
+        list_destinataires_ids = document.getElementById("hidden1_"+MultiSelectId).value;
+        
+        setListEleves([]);
+        setOptClasses(tempTable);
+        setMultiSelectVisible(false);
+    }
+
 
    
     const  getListMessages=(classId)=>{
@@ -304,89 +413,33 @@ function RelationAvcParents(props) {
 
     }
 
-    function saveMsg(msg) {       
-        console.log('Ajout',msg);
-           
-        // axiosInstance.post(`create-eleve/`, {
-        //     id_classe : CURRENT_DESTINATAIRE_ID,
-        //     id_sousetab:currentAppContext.currentEtab,
-        //     matricule : eleve.matricule, 
-        //     nom : eleve.nom,
-        //     adresse : eleve.adresse,
-        //     prenom : eleve.prenom, 
-        //     sexe : eleve.sexe,
-        //     date_naissance : eleve.date_naissance,
-        //     lieu_naissance : eleve.lieu_naissance,
-        //     date_entree : eleve.date_entree,
-        //     nom_pere : eleve.nom_pere,
-        //     prenom_pere : eleve.prenom_pere, 
-        //     nom_mere : eleve.nom_mere,
-        //     prenom_mere : eleve.prenom_mere, 
-        //     tel_pere : eleve.tel_pere,    
-        //     tel_mere : eleve.tel_mere,    
-        //     email_pere : eleve.email_pere,
-        //     email_mere : eleve.email_mere,
-        //     photo_url : eleve.photo_url, 
-        //     redouble : (eleve.redouble == "O") ? true : false,
-        //     age :  eleve.age,
-        //     est_en_regle : eleve.est_en_regle,
-        //     etab_provenance : eleve.etab_provenance,            
-        // }).then((res)=>{
-        //     console.log(res.data);
-
-        //     //setModalOpen(0);
-        //     chosenMsgBox = MSG_SUCCESS;
-        //     currentUiContext.showMsgBox({
-        //         visible:true, 
-        //         msgType:"info", 
-        //         msgTitle:t("success_add_M"), 
-        //         message:t("success_add")
-        //     })
-        // })      
-    }
-    
-    function modifyStudent(eleve) {
-        console.log('Modif',eleve);
-     
-        axiosInstance.post(`update-eleve/`, {
-            id_classe : CURRENT_DESTINATAIRE_ID,
-            id : eleve.id, 
-            matricule : eleve.matricule, 
-            nom : eleve.nom,
-            adresse : eleve.adresse,
-            prenom : eleve.prenom, 
-            sexe : eleve.sexe,
-            date_naissance : eleve.date_naissance,
-            lieu_naissance : eleve.lieu_naissance,
-            date_entree : eleve.date_entree,
-            nom_pere : eleve.nom_pere,
-            prenom_pere : eleve.prenom_pere, 
-            nom_mere : eleve.nom_mere,
-            prenom_mere : eleve.prenom_mere, 
-            tel_pere : eleve.tel_pere,    
-            tel_mere : eleve.tel_mere,    
-            email_pere : eleve.email_pere,
-            email_mere : eleve.email_mere,
-            photo_url : eleve.photo_url, 
-            redouble : (eleve.redouble == "O") ? true : false,
-            age :  eleve.age,
-            est_en_regle : eleve.est_en_regle,
-            etab_provenance : eleve.etab_provenance, 
-
+    function saveMsg(CURRENT_COMM) {       
+        console.log('Ajout',CURRENT_COMM);
+        var listEleves = [];
+        axiosInstance.post(`save-msg-parent/`, {
+            id_sousetab : CURRENT_COMM.id_sousetab,
+            sujet       : CURRENT_COMM.sujet,
+            message     : CURRENT_COMM.message,
+            date        : CURRENT_COMM.date, 
+            emetteur    : CURRENT_COMM.emetteur,
+            id_eleves   : CURRENT_COMM.id_eleves,
+                 
         }).then((res)=>{
             console.log(res.data);
-            //setModalOpen(0);
+
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"info", 
-                msgTitle:t("success_modif_M"), 
-                message:t("success_modif")
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")
             })
-            
-        })
+            listEleves = [...formatList(res.data.comms)]
+            setGridRows(listEleves);
+        })      
     }
-
+    
+    
     function deleteRow(rowId) {
        // alert(rowId);
         //Message de confirmation
@@ -409,18 +462,8 @@ function RelationAvcParents(props) {
     }
    
     function sendParentMsgHandler(e){
-        if(CURRENT_DESTINATAIRE_ID != undefined){
-            setModalOpen(1); 
-            initFormInputs();
-        } else{
-            chosenMsgBox = MSG_WARNING;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("ATTENTION!"), 
-                message  : t("must_select_class")
-            })            
-        }
+        setModalOpen(1); 
+        initFormInputs();
     }
 
     const acceptHandler=()=>{
@@ -464,43 +507,6 @@ function RelationAvcParents(props) {
         
     }
 
-    const printStudentList=()=>{
-        
-         if(CURRENT_DESTINATAIRE_ID != undefined){
-        //     var PRINTING_DATA ={
-        //         dateText:'Yaounde, le 14/03/2023',
-        //         leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-        //         centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-        //         rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-        //         pageImages:["images/collegeVogt.png"],
-        //         pageTitle: "Liste des eleves de la classe de " + CURRENT_DESTINATAIRE_LABEL,
-        //         tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-        //         tableData :[...gridRows],
-        //         numberEltPerPage:ROWS_PER_PAGE  
-        //     };
-        //     printedETFileName = 'Liste_eleves('+CURRENT_DESTINATAIRE_LABEL+').pdf';
-        //     setModalOpen(4);
-        //     ElevePageSet=[];
-        //     //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_DESTINATAIRE_LABEL, ROWS_PER_PAGE)];          
-        //     ElevePageSet = createPrintingPages(PRINTING_DATA);
-        //     console.log("ici la",ElevePageSet,gridRows);                    
-        } else{
-            chosenMsgBox = MSG_WARNING;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("warning_M"), 
-                message  : t("must_select_class")
-            })            
-        }      
-    }
-
-    
-    const closePreview =()=>{
-        setModalOpen(0);
-    }
-    
-
     /********************************** JSX Code **********************************/ 
     const ODD_OPACITY = 0.2;
     
@@ -539,7 +545,7 @@ function RelationAvcParents(props) {
   
     return (
         <div className={classes.formStyleP}>
-            {(modalOpen!=0) && <BackDrop/>}
+            {(modalOpen!=0) && <BackDrop style={{height:"100vh"}}/>}
             {(modalOpen >0 && modalOpen<3) && 
                 <ParentsMsg 
                     formMode      = {(modalOpen==1) ? 'creation': 'consult'}  
@@ -548,9 +554,9 @@ function RelationAvcParents(props) {
                 />
             }
             
-            {(modalOpen!=0) && <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true)&&
+            {(modalOpen!=0) && <BackDrop style={{height:"100vh"}}/>}
+            {(currentUiContext.msgBox.visible == true)&& <BackDrop style={{height:"100vh"}}/>}
+            {(currentUiContext.msgBox.visible == true && currentUiContext.isParentMsgBox)&&
                 <MsgBox 
                     msgTitle = {currentUiContext.msgBox.msgTitle} 
                     msgType  = {currentUiContext.msgBox.msgType} 
@@ -579,13 +585,32 @@ function RelationAvcParents(props) {
                         </div>
                       
                         <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
-                            <select id='selectClass1' onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
+                        <MultiSelect
+                                id                  = {MultiSelectId}
+                                //-----Fields-----
+                                optData             = {optClasses}
+                                fetchedData         = {listEleves}
+                                selectionMode       = {"single"}
+                            
+                                //-----Handler-----
+                                optionChangeHandler     = {classChangeHandler}
+                                searchTextChangeHandler = {searchTextChangeHandler}
+                                selectValidatedHandler  = {validateSelectionHandler}
+                            
+                                //-----Styles-----
+                                searchInputStyle    = {{fontSize:"0.87vw", height:"4.7vh"}}
+                                searchInputStyleP   = {{height:"4vh"}}
+                                comboBoxStyle       = {{width:"13vw", height:"4vh", border:"solid 2px #8eb1ec", fontSize:"1vw", borderRadius:"3px"}}
+                                dataFieldStyle      = {{minHeight:"5vh", borderRadius:"1vh", height:"fit-content", maxHeight:"53vw", overflowY:"scroll", border:"solid 1px gray", fontSize:"0.8vw", fontWeight:100, backgroundColor:"whitesmoke", position:"absolute", top:"22.3vh", width:"13vw"}}
+                                MSContainerStyle    = {{/*border:"solid 1px grey",*/ padding:"1vh", marginRight:"1vh", marginBottom:"-1vh"}}
+                            />
+                            {/* <select id='selectClass1' onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                                 {(optDestinataire||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>
                                     );
                                 })}
-                            </select>                          
+                            </select>                           */}
                         </div>
                     </div>
                     

@@ -14,6 +14,7 @@ import BackDrop from '../../../backDrop/BackDrop';
 import MsgBox from '../../../msgBox/MsgBox';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import {getTodayDate, changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
 
 
 
@@ -21,6 +22,17 @@ var chosenMsgBox;
 const MSG_SUCCESS_FP = 1;
 const MSG_WARNING_FP = 2;
 const MSG_ERROR_FP   = 3;
+
+var CURRENT_COMM;
+const MultiSelectId        = "MS_1";
+var list_destinataire      = "";
+var list_destinataires_ids = "";
+var precDest_ids           = ""
+var msgTitle               = "";
+var msgDesciption          = "";
+
+var tempTable;
+var list_initiale_eleves;
 
 function ParentsMsg(props) {
     const { t, i18n }       = useTranslation();
@@ -30,7 +42,9 @@ function ParentsMsg(props) {
     const [multiSelectVisible, setMultiSelectVisible] = useState(false);
     const [optClasses, setOptClasses] = useState(false);
     const [listEleves, setListEleves] = useState([]);
-    const [tabSelections, setTabSelections] = useState([]);
+    const [listDestinataires, setListDestinataires] = useState("");
+    
+    
 
     
  
@@ -41,7 +55,7 @@ function ParentsMsg(props) {
 
 
     const getEtabListClasses=()=>{
-        var tempTable=[{value: -1,      label: (i18n.language=='fr') ? ' --- Choisir --- ' : '--- Select ---'  }]
+        tempTable=[{value: -1,      label: (i18n.language=='fr') ? ' --- Choisir --- ' : '--- Select ---'  }]
         let classes_user;
         let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
 
@@ -161,8 +175,88 @@ function ParentsMsg(props) {
 
 
     function sendMsg(e){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        console.log('avant:',CURRENT_COMM);
+        getFormData();
+        console.log('apres:',CURRENT_COMM);
 
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_COMM);
+        
+        if(fomCheckErrorStr.length == 0){
+           
+            if(errorDiv.textContent.length!=0){
+                errorDiv.className = null;
+                errorDiv.textContent = '';
+            }
+           props.actionHandler(CURRENT_COMM);  
+    
+        } else {
+            errorDiv.textContent = fomCheckErrorStr;
+            errorDiv.className   = classes.formErrorMsg;            
+        }
     }
+
+    function getFormData(){
+        CURRENT_COMM = {};
+        CURRENT_COMM.id_sousetab  = currentAppContext.currentEtab;
+        CURRENT_COMM.sujet        = msgTitle;
+        CURRENT_COMM.message      = msgDesciption;
+        CURRENT_COMM.date         = getTodayDate(); 
+        CURRENT_COMM.emetteur     = currentAppContext.infoUser.user_name;
+        CURRENT_COMM.id_eleves    = getIdDestinataires(listDestinataires,list_destinataires_ids);
+        precDest_ids ="";
+    }
+
+    function getIdDestinataires(destinataires, destinatairesId){
+        var tabDestinataires   = destinataires.split(',');
+        var tabDestinatairesId = destinatairesId.split('_');
+
+        console.log("destinataires", tabDestinatairesId, tabDestinataires);
+        var ids_destinataires  = "";
+
+        tabDestinataires.map((elt1, index)=>{
+            var dest = tabDestinatairesId.find((elt2)=>elt2.split('*')[1] == elt1)
+
+            if(index <tabDestinataires.length-1){
+                ids_destinataires = ids_destinataires + dest.split('*')[0]+'_';
+            } else {
+                ids_destinataires = ids_destinataires + dest.split('*')[0];
+            }
+
+        });
+
+        console.log("destinataires", ids_destinataires);
+        return ids_destinataires;
+    }
+
+
+    function formDataCheck1(){
+        var errorMsg='';
+
+        if(CURRENT_COMM.id_eleves.length == 0) {
+            errorMsg=t("enter_msg_recipient");
+            return errorMsg;
+        } 
+       
+        if(CURRENT_COMM.sujet.length == 0) {
+            errorMsg=t("enter_msg_subject");
+            return errorMsg;
+        } 
+
+        if(CURRENT_COMM.message.length == 0) {
+            errorMsg=t("enter_correct_msg");
+            return errorMsg;
+        } 
+
+       
+        return errorMsg;
+    }
+
+    function getMsgTitle(e){
+        msgTitle = e.target.value;
+    }
+
+   
 
     const acceptHandler=()=>{
         
@@ -251,6 +345,7 @@ function ParentsMsg(props) {
         }).then((res)=>{
             console.log(res.data);
             listEleves = [...formatList(res.data)]
+            list_initiale_eleves = [...listEleves];
             console.log(listEleves);
             setListEleves(listEleves);
         }) 
@@ -260,7 +355,7 @@ function ParentsMsg(props) {
     const formatList=(list) =>{
         var listElt;
         var tabelt=[];
-        var formattedList =[]
+        var formattedList =[{id:-1, label:t('all'), nom:"", prenom:""}]
         list.map((elt)=>{
             listElt={};
             listElt.id     = elt.id;
@@ -271,7 +366,6 @@ function ParentsMsg(props) {
             formattedList.push(listElt);            
         });  
 
-        setTabSelections(tabelt);     
         return formattedList;
     }
 
@@ -288,16 +382,38 @@ function ParentsMsg(props) {
     function searchTextChangeHandler(e){
         var name = e.target.value;
         var tabEleves     = [...listEleves];
-        var matchedEleves =  tabEleves.filter((elt)=>elt.label.toLowerCase().includes(name.toLowerCase()));
+        var matchedEleves =  list_initiale_eleves.filter((elt)=>elt.label.toLowerCase().includes(name.toLowerCase()));
         setListEleves(matchedEleves);
     }
 
-    function manageSelection(){
+    function validateSelectionHandler(e){
+        precDest_ids           = precDest_ids.length == 0 ? document.getElementById("hidden1_"+MultiSelectId).value: precDest_ids +'_'+document.getElementById("hidden1_"+MultiSelectId).value;
+        list_destinataire      = (document.getElementById("destinataireLabel").value.length == 0)  ? document.getElementById("hidden2_"+MultiSelectId).value : document.getElementById("destinataireLabel").value +','+ document.getElementById("hidden2_"+MultiSelectId).value;
+        list_destinataires_ids = precDest_ids;
+        
+        console.log("destinataireIds",  precDest_ids);
 
+        document.getElementById("destinataireId").value    = list_destinataires_ids;
+        document.getElementById("destinataireLabel").value = list_destinataire;
+        
+
+        setListDestinataires(list_destinataire);
+        setListEleves([]);
+        setOptClasses(tempTable);
+        setMultiSelectVisible(false);
     }
 
-    function getMsgTitle(){
+    function checkCharacters(e){       
+        var regx = /^[A-Za-z0-9]+$/;
+        e = e || window.event;
+        if(regx.test(e.key)||e.keyCode==32){
+            e.preventDefault();
+            return false
+        } 
+    }
 
+    function recipientChangeHandler(e){
+        setListDestinataires(e.target.value);
     }
     
     /************************************ JSX Code ************************************/
@@ -314,7 +430,9 @@ function ParentsMsg(props) {
                 </div>                
             </div>
 
-            {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop style={{height:'47vh'}}/>}
+            <div id='errMsgPlaceHolder'/>
+
+            {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop style={{height:'100vh'}}/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
                 <MsgBox 
                     msgTitle = {currentUiContext.msgBox.msgTitle} 
@@ -338,7 +456,7 @@ function ParentsMsg(props) {
                     </div>
                         
                     <div> 
-                        <input id="destinataireLabel" type="text" disabled={true} className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1rem', width:'14.3vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        <input id="destinataireLabel" onKeyPress={checkCharacters}  onChange={recipientChangeHandler} title={listDestinataires} type="text"  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1rem', width:'14.3vw', fontSize:'0.83vw', color:'#898585', textOverflow:"ellipsis"}}/>
                         <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
                     </div>
                     
@@ -355,7 +473,7 @@ function ParentsMsg(props) {
                     {multiSelectVisible &&
                         <div>
                             <MultiSelect
-                                id                  = {"ms_1"}
+                                id                  = {MultiSelectId}
                                 //-----Fields-----
                                 optData             = {optClasses}
                                 fetchedData         = {listEleves}
@@ -364,11 +482,12 @@ function ParentsMsg(props) {
                                 //-----Handler-----
                                 optionChangeHandler     = {classChangeHandler}
                                 searchTextChangeHandler = {searchTextChangeHandler}
+                                selectValidatedHandler  = {validateSelectionHandler}
                             
                                 //-----Styles-----
                                 searchInputStyle    = {{fontSize:"0.8vw"}}
                                 comboBoxStyle       = {{width:"7vw", height:"3.7vh", border:"solid 1px #8eb1ec", fontSize:"0.8vw", borderRadius:"3px"}}
-                                dataFieldStyle      = {{minHeight:"5vh", borderRadius:"1vh", height:"fit-content", border:"solid 1px gray", fontSize:"0.8vw", backgroundColor:"whitesmoke"}}
+                                dataFieldStyle      = {{minHeight:"5vh", borderRadius:"1vh", height:"fit-content", maxHeight:"63vh", overflowY:"scroll", border:"solid 1px gray", fontSize:"0.8vw", backgroundColor:"whitesmoke"}}
                                 MSContainerStyle    = {{/*border:"solid 1px grey",*/ padding:"1vh", marginRight:"1vh"}}
                             />
                         </div>
@@ -381,7 +500,7 @@ function ParentsMsg(props) {
                     </div>
                         
                     <div> 
-                        <input id="msgObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'14.3vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        <input id="msgObject" type="text"  onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'14.3vw', fontSize:'0.83vw', color:'#898585'}}/>
                         <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
                     </div>
                 </div>
@@ -395,28 +514,30 @@ function ParentsMsg(props) {
                     {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
                     <CKEditor
                         editor  = {ClassicEditor}
-                        data    = "<p>Hello </p>"
+                        data    = ""
                         style   = {{with:"50vw", minHeight:"33vh"}}
                         onReady = {editor => {
                             console.log("Editor is ready to use")
                         }}
+
+                        onChange={(event,editor) => {msgDesciption = editor.getData();}}
                     
                     />
                 </div>
 
             </div>
 
-            <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", position:"absolute",  bottom:"6.3vh", left:"1.7vw", height:'4.7vh', color:"#084481"}}> 
+            {/* <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", position:"absolute",  bottom:"6.3vh", left:"1.7vw", height:'4.7vh', color:"#084481"}}> 
                 <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                     {t("msg_deadline")}:
                 </div>
 
                 <div style ={{display:'flex', flexDirection:'row', marginTop:"-1vh", marginLeft:"-0.8vw"}}> 
-                    <input id="jour"  type="text"   Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} /><div style={{marginTop:"1vh"}}>/</div>
-                    <input id="mois"  type="text"   Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  textAlign:"center", height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}} /> <div style={{marginTop:"1vh"}}>/</div>
-                    <input id="anne" type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />
+                    <input id="jour"  type="text"  onChange={getValiditeJour}  Placeholder=' jj'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw',  height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'-2vw'}} /> <div style={{marginTop:"1vh"}}>/</div>
+                    <input id="mois"  type="text"  onChange={getValiditeMois}  Placeholder='mm'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}            maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw',  textAlign:"center", height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  /><div style={{marginTop:"1vh"}}>/</div>
+                    <input id="anne"  type="text"  onChange={getValiditeAnnee}  Placeholder='aaaa' onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), document.getElementById("lieu_naissance"))}}  maxLength={4}   className={classes.inputRowControl }  style={{width:'2.7vw', height:isMobile ? '1.3vw':'1.7vw', fontSize:'1vw', marginLeft:'0vw'}}  />
                 </div>
-            </div>
+            </div> */}
             
            
             <div className={classes.formButtonRowP}>
