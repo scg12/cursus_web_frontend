@@ -82,19 +82,33 @@ function MultiSelect(props) {
             console.log("ici",tabSelection);
             props.selectValidatedHandler();
         } else {
-            console.log("ici");
+            console.log("select", tabSelect, tabSelection);
             if(eltText == t('all')){
-                tabSelection = [];
-                tabSelect    = [];
-                props.fetchedData.map((elt,index)=>{
-                    if(index > 0){
-                        tabSelection.push({id:elt.id, value:elt.label});
-                        tabSelect.push(true);
-                    }                    
-                })
+                if(tabSelect[index]==false){
+                    tabSelection = [];
+                    tabSelect    = [];
+                    props.fetchedData.map((elt,index)=>{
+                        if(index > 0){
+                            tabSelection.push({id:elt.id, value:elt.label});}
+                            tabSelect.push(true);
+                                           
+                    })
+                } else {
+                    tabSelection = [];
+                    tabSelect    = [];
+                    props.fetchedData.map((elt,index)=>{
+                        // if(index > 0){
+                        //     tabSelection.push({id:elt.id, value:elt.label});}
+                            tabSelect.push(false);
+                                           
+                    })
+
+                }
 
             } else{
                 if(tabSelect[index]==false){
+                    tabSelection.push({id:idElt, value:eltText});
+                    tabSelect[index] = true;
                                    
                 } else {
                     var searchIndex = tabSelection.findIndex((elt)=>elt.id == idElt)

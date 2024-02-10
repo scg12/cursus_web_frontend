@@ -49,6 +49,7 @@ function ParentsMsg(props) {
     
  
     useEffect(()=> {
+        precDest_ids = "";
         currentUiContext.setIsParentMsgBox(false);   
         getEtabListClasses(); 
     },[]);
