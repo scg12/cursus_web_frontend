@@ -1,4 +1,5 @@
-{   "total_restant_M"            : "AMOUNT REMAINING",
+{   "prise_de_photo_par_lot"     : "Batch 4x4 Photos",
+    "total_restant_M"            : "AMOUNT REMAINING",
     "total_attendu_M"            : "TOTAL AMOUNT TO PAY",
     "etats_frais_scolarite_M"    : "SCHOOL FEES PAYMENT SUMMARY",
     "etats_frais_scolarite"      : "School Fees payment sammary",

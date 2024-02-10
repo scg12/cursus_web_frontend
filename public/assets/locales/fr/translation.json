@@ -1,4 +1,5 @@
-{   "total_restant_M"            : "TOTAL RESTANT",
+{   "prise_de_photo_par_lot"     : "Photos 4x4 en lots",
+    "total_restant_M"            : "TOTAL RESTANT",
     "total_attendu_M"            : "TOTAL ATTENDU",
     "etats_frais_scolarite_M"    : "ETAT DES PAIEMENTS DES FRAIS DE SCOLARITES",
     "etats_frais_scolarite"      : "Etats Des Paiments Des Frais de Scolarité",

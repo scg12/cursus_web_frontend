@@ -8,7 +8,7 @@ import M_classes from './M_ExtrasPages.module.css';
 import FormLayout from "../../layout/cs_layout/formLayout/FormLayout";
 import MenuItemListP from '../../layout/cs_layout/menuItemList/MenuItemListP';
 import MenuItemP from '../../layout/cs_layout/menuItem/MenuItemP';
-import ChangementClasse from './subPages/ChangementClasse';
+import WebcamCapture from "./subPages/WebcamCapture";
 import DistanceLearning from './subPages/DistanceLearning';
 import GestBibliotheque from './subPages/GestBibliotheque';
 import GestCantine from './subPages/GestCantine';
@@ -85,25 +85,26 @@ function ExtrasPages() {
   
         <div className= {getCurrentContaintTheme()}>
           <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= 'Fonctionnalités supplémentaires liés à la scolarité' theme={selectedTheme}>
-            <MenuItemP menuItemId ='500'  imgSource='images/ChangemtClass.png'         libelle={t('changemnt_class')}               itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.customimgStyle7P}></MenuItemP>
-            <MenuItemP menuItemId ='501'  imgSource='images/StageAcad.png'             libelle={t('gest_stageAcad')}     itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyleP : classes.customimgStyle7} ></MenuItemP>
-            <MenuItemP menuItemId ='502'  imgSource='images/distanceLearning.png'      libelle={t('distance_learning')}                   itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
+            <MenuItemP menuItemId ='500'  imgSource='images/photo4f4.png'         libelle={t('prise_de_photo_par_lot')}     itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.customimgStyle7P}></MenuItemP>
+            <MenuItemP menuItemId ='501'  imgSource='images/StageAcad.png'             libelle={t('gest_stageAcad')}             itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyleP : classes.customimgStyle7} ></MenuItemP>
+            <MenuItemP menuItemId ='502'  imgSource='images/distanceLearning.png'      libelle={t('distance_learning')}          itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
           </MenuItemListP>
 
           <MenuItemListP minWtdhStyle={classes.size72Vw}  libelle= 'Fonctionnalités supplémentaires liés à la Logistique scolaire' theme={selectedTheme}>
-            <MenuItemP menuItemId ='503'  imgSource='images/resto.png'           libelle= {t('gest_cantine')}                      itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
-            <MenuItemP menuItemId ='504'  imgSource='images/transport2.png'      libelle= {t('gest_transfort')}                    itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
-            <MenuItemP menuItemId ='505'  imgSource='images/Bibliotheque.png'    libelle= {t('gest_biblio')}                       itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
-            <MenuItemP menuItemId ='506'  imgSource='images/dortoir.png'         libelle= {t('gest_dortoir')}                      itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
+            <MenuItemP menuItemId ='503'  imgSource='images/resto.png'           libelle= {t('gest_cantine')}                    itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
+            <MenuItemP menuItemId ='504'  imgSource='images/transport2.png'      libelle= {t('gest_transfort')}                  itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
+            <MenuItemP menuItemId ='505'  imgSource='images/Bibliotheque.png'    libelle= {t('gest_biblio')}                     itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
+            <MenuItemP menuItemId ='506'  imgSource='images/dortoir.png'         libelle= {t('gest_dortoir')}                    itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
           </MenuItemListP>
         
         </div>
               
         <div id="side-menu" class="sidenav side-menu">
           <FormLayout formCode={curentMenuItemPId}>
-            {curentMenuItemPId== 500 ? <ChangementClasse/> : null}
+            {curentMenuItemPId== 500 ? <WebcamCapture/>    : null}
             {curentMenuItemPId== 501 ? <StageAcademic/>    : null}
             {curentMenuItemPId== 502 ? <DistanceLearning/> : null}
+            
 
             {curentMenuItemPId== 503 ? <GestCantine/>       : null}
             {curentMenuItemPId== 504 ? <GestTransport/>     : null}
