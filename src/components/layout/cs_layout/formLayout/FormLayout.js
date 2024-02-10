@@ -150,6 +150,7 @@ function FormLayout(props){
             case '405':  return  t('synchro_data')
 
             //----EXTRAS ----
+            case '500':  return  t('prise_de_photo_par_lot');
             case '501':  return  t('gest_stageAcad');
             case '502':  return  t('distance_learning');
             case '503':  return  t('gest_cantine');
@@ -242,7 +243,7 @@ function FormLayout(props){
 
            
             //----EXTRAS ----
-            case '500':  return  'images/ChangemtClass.png';
+            case '500':  return  'images/photo4f4.png';
             case '501':  return  'images/StageAcad.png';
             case '502':  return  'images/distanceLearning.png';
 

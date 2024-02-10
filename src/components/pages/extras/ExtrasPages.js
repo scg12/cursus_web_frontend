@@ -85,9 +85,9 @@ function ExtrasPages() {
   
         <div className= {getCurrentContaintTheme()}>
           <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= 'Fonctionnalités supplémentaires liés à la scolarité' theme={selectedTheme}>
-            <MenuItemP menuItemId ='500'  imgSource='images/photo4f4.png'         libelle={t('prise_de_photo_par_lot')}     itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.customimgStyle7P}></MenuItemP>
+            <MenuItemP menuItemId ='500'  imgSource='images/photo4f4.png'              libelle={t('prise_de_photo_par_lot')}     itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.customimgStyle7PP}></MenuItemP>
             <MenuItemP menuItemId ='501'  imgSource='images/StageAcad.png'             libelle={t('gest_stageAcad')}             itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyleP : classes.customimgStyle7} ></MenuItemP>
-            <MenuItemP menuItemId ='502'  imgSource='images/distanceLearning.png'      libelle={t('distance_learning')}          itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle : classes.customimgStyle6}></MenuItemP>
+            <MenuItemP menuItemId ='502'  imgSource='images/distanceLearning.png'      libelle={t('distance_learning')}          itemSelected={showSideMenu}    customImg={true} customImgStyle={isMobile ? M_classes.iconStyle  : classes.customimgStyle6}></MenuItemP>
           </MenuItemListP>
 
           <MenuItemListP minWtdhStyle={classes.size72Vw}  libelle= 'Fonctionnalités supplémentaires liés à la Logistique scolaire' theme={selectedTheme}>
