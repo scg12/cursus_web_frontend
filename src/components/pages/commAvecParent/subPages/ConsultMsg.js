@@ -17,20 +17,16 @@ import {isMobile} from 'react-device-detect';
 //import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 
-
+let CURRENT_CLASSE_ID;
 let CURRENT_DESTINATAIRE_ID;
 let CURRENT_DESTINATAIRE_LABEL;
 
 var listElt ={}
 
-
-
 var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
-const ROWS_PER_PAGE= 40;
-var ElevePageSet=[];
-var printedETFileName ='';
+const MSG_SUCCESS = 11;
+const MSG_WARNING = 12;
+const MSG_ERROR   = 13;
 
 
 function ConsultMsg(props) {
@@ -469,46 +465,44 @@ function ConsultMsg(props) {
     }
 
     const rejectHandler=()=>{
+
+        switch(chosenMsgBox){
+
+            case MSG_SUCCESS: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+                getListMessages(CURRENT_DESTINATAIRE_ID); 
+                return 1;
+            }
+
+            case MSG_WARNING: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }
+            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+            }
+        }
         
     }
 
-    const printStudentList=()=>{
-        
-         if(CURRENT_DESTINATAIRE_ID != undefined){
-        //     var PRINTING_DATA ={
-        //         dateText:'Yaounde, le 14/03/2023',
-        //         leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-        //         centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-        //         rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-        //         pageImages:["images/collegeVogt.png"],
-        //         pageTitle: "Liste des eleves de la classe de " + CURRENT_DESTINATAIRE_LABEL,
-        //         tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-        //         tableData :[...gridRows],
-        //         numberEltPerPage:ROWS_PER_PAGE  
-        //     };
-        //     printedETFileName = 'Liste_eleves('+CURRENT_DESTINATAIRE_LABEL+').pdf';
-        //     setModalOpen(4);
-        //     ElevePageSet=[];
-        //     //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_DESTINATAIRE_LABEL, ROWS_PER_PAGE)];          
-        //     ElevePageSet = createPrintingPages(PRINTING_DATA);
-        //     console.log("ici la",ElevePageSet,gridRows);                    
-        } else{
-            chosenMsgBox = MSG_WARNING;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("warning_M"), 
-                message  : t("must_select_class")
-            })            
-        }      
-    }
-
     
-    const closePreview =()=>{
-        setModalOpen(0);
-    }
-    
-
     /********************************** JSX Code **********************************/ 
     const ODD_OPACITY = 0.2;
     

@@ -381,7 +381,6 @@ function ParentsMsg(props) {
 
     function searchTextChangeHandler(e){
         var name = e.target.value;
-        var tabEleves     = [...listEleves];
         var matchedEleves =  list_initiale_eleves.filter((elt)=>elt.label.toLowerCase().includes(name.toLowerCase()));
         setListEleves(matchedEleves);
     }
@@ -454,22 +453,35 @@ function ParentsMsg(props) {
                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                         {t("destinataire")}:
                     </div>
-                        
-                    <div> 
-                        <input id="destinataireLabel" onKeyPress={checkCharacters}  onChange={recipientChangeHandler} title={listDestinataires} type="text"  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1rem', width:'14.3vw', fontSize:'0.83vw', color:'#898585', textOverflow:"ellipsis"}}/>
-                        <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
-                    </div>
-                    
-                    <div>
-                        <CustomButton
-                            btnText={t("add")} 
-                            buttonStyle={getSmallButtonStyle()}
-                            style={{marginBottom:'-0.3vh', marginLeft:'0.7vw', marginRight:'0.8vw'}}
-                            btnTextStyle = {classes.btnSmallTextStyle}
-                            btnClickHandler={addDestinataire}
-                        /> 
 
-                    </div>
+                    {(props.formMode=="consult")&&
+                        <div> 
+                            <input id="msgDestinataire"  type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[2]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1vw', color:'#898585',textOverflow:"ellipsis"}}/>
+                            <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                        </div>
+                    }
+
+                    {!(props.formMode=="consult")&&   
+                        <div> 
+                            <input id="destinataireLabel" onKeyPress={checkCharacters}  onChange={recipientChangeHandler} title={listDestinataires} type="text"  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1rem', width:'14.3vw', fontSize:'0.83vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                            <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                        </div>
+                    }
+                    
+                    {!(props.formMode=="consult")&&
+                        <div>
+                            <CustomButton
+                                btnText={t("add")} 
+                                buttonStyle={getSmallButtonStyle()}
+                                style={{marginBottom:'-0.3vh', marginLeft:'0.7vw', marginRight:'0.8vw'}}
+                                btnTextStyle = {classes.btnSmallTextStyle}
+                                btnClickHandler={addDestinataire}
+                            /> 
+
+                        </div>
+                    }
+
+                    
                     {multiSelectVisible &&
                         <div>
                             <MultiSelect
@@ -494,15 +506,40 @@ function ParentsMsg(props) {
                     }
                 </div>
 
+                {(props.formMode=="consult")&&
+                    <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"2vh", marginLeft:"-3vw", height:'4.7vh'}}> 
+                        <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                            {t("sender")}:
+                        </div>
+
+                        {(props.formMode=="consult")&&
+                            <div> 
+                                <input id="msgSender"  type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1vw', color:'#898585',textOverflow:"ellipsis"}}/>
+                            </div>
+                        }
+                    
+                    </div>
+                }
+
                 <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"1vh", marginLeft:"-3vw", height:'2.7vh'}}> 
                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                         {t("msg_object")}:
                     </div>
-                        
-                    <div> 
-                        <input id="msgObject" type="text"  onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'14.3vw', fontSize:'0.83vw', color:'#898585'}}/>
-                        <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
-                    </div>
+
+                    {(props.formMode=="consult")&&   
+                        <div> 
+                            <input id="msgObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[3]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                            <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                        </div>
+                    }
+
+
+                    {!(props.formMode=="consult")&&    
+                        <div> 
+                            <input id="msgObject" type="text"  onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'14.3vw', fontSize:'0.83vw', color:'#898585'}}/>
+                            <input id="destinataireId"    type="hidden"  defaultValue={props.currentPpId}/>
+                        </div>
+                    }
                 </div>
 
                 <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"2vh", marginLeft:"-3vw", height:'4.7vh'}}> 
@@ -514,7 +551,7 @@ function ParentsMsg(props) {
                     {/* <textarea style={{width:"40vw",height:"auto", minHeight:"33vh"}}/> */}
                     <CKEditor
                         editor  = {ClassicEditor}
-                        data    = ""
+                        data    = {props.formMode=="consult"? currentUiContext.formInputs[4]:""}
                         style   = {{with:"50vw", minHeight:"33vh"}}
                         onReady = {editor => {
                             console.log("Editor is ready to use")

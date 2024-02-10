@@ -107,7 +107,7 @@ function FormLayout(props){
 
             //----FINANCES ----
             case '200':  return   t('frais_scolariteP');
-            case '201':  return   'Etats Des Paiments Des Frais de Scolarité';
+            case '201':  return   t('etats_frais_scolarite');
             
             case '202':  return   t("def_paiement_personnel");
             case '203':  return   t('paiement_personnel');

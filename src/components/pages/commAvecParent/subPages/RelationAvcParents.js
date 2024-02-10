@@ -20,10 +20,11 @@ import {isMobile} from 'react-device-detect';
 import { useTranslation } from "react-i18next";
 
 
-let CURRENT_DESTINATAIRE_ID;
-let CURRENT_DESTINATAIRE_LABEL;
+let CURRENT_CLASSE_ID;
+let CURRENT_CLASSE_LABEL;
+var LIST_GENERALE_ELEVES;
 
-var listElt ={}
+var listElt = {}
 var tempTable;
 var list_initiale_eleves;
 var MultiSelectId = "searchRecipient"
@@ -37,9 +38,7 @@ var list_destinataires_ids = "";
 var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
-const ROWS_PER_PAGE= 40;
-var ElevePageSet=[];
-var printedETFileName ='';
+
 
 
 function RelationAvcParents(props) {
@@ -47,33 +46,22 @@ function RelationAvcParents(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
-    const [gridRows, setGridRows] = useState([]);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optDestinataire, setOpDestinataire] = useState([]);
-    const [multiSelectVisible, setMultiSelectVisible] = useState(false);
+    const [isValid, setIsValid]       = useState(false);
+    const [gridRows, setGridRows]     = useState([]);
+    const [modalOpen, setModalOpen]   = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasses, setOptClasses] = useState(false);
     const [listEleves, setListEleves] = useState([]);
-    //const [tabSelections, setTabSelections] = useState([]);
-
+    const [multiSelectVisible, setMultiSelectVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
-    useEffect(()=> {
-        
+    useEffect(()=> {        
         if(gridRows.length==0){
-            CURRENT_DESTINATAIRE_ID = undefined;
+            CURRENT_CLASSE_ID = undefined;
         }
         getEtabListClasses(); 
-        // setOpDestinataire(tabDestinataires);
-        // CURRENT_DESTINATAIRE_ID    = tabDestinataires[0].value; 
-        // CURRENT_DESTINATAIRE_LABEL = tabDestinataires[0].label;        
     },[]);
 
-    // var tabDestinataires =[
-    //     {value:0, label:i18n.language=='fr'? "Tous" : "All"},
-    //     {value:1, label:i18n.language=='fr'? "Enseignants" : "Teachers"},
-    //     {value:2, label:i18n.language=='fr'? "Administration" : "Administration"}
-    // ]
+   
 
     const getEtabListClasses=()=>{
         tempTable=[{value: -1,      label: (i18n.language=='fr') ? ' -- Choisir Classe -- ' : '-- Select Classe --'  }]
@@ -85,7 +73,7 @@ function RelationAvcParents(props) {
         else {
             classes_user = currentAppContext.infoUser.admin_classes;
             let prof_classes = currentAppContext.infoUser.prof_classes;
-            // console.log(pp_classes)
+          
             prof_classes.forEach(classe => {
                 if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
                     classes_user.push({"id":classe.id,"libelle":classe.libelle})
@@ -109,7 +97,6 @@ function RelationAvcParents(props) {
             }
             i++;
         }
-
         setOptClasses(tempTable);
     }
 
@@ -118,48 +105,73 @@ function RelationAvcParents(props) {
             getClassStudentList(e.target.value);
         }else{
             setListEleves([]);
+            setGridRows([]);
             document.getElementById("searchText").value ="";
         }
     }
 
+
     const  getClassStudentList=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
+        var listEleves       = [];
+        LIST_GENERALE_ELEVES = [];
+        axiosInstance.post(`get-message-parent/`, {
             id_classe: classId,
         }).then((res)=>{
             console.log(res.data);
-            listEleves = [...formatListEleves(res.data)]
+            listEleves           = [...formatListEleves(res.data.res)];
+            LIST_GENERALE_ELEVES = [...formatListEleves(res.data.res)];
+
             list_initiale_eleves = [...listEleves];
             console.log(listEleves);
-            setListEleves(listEleves);
-        }) 
-          
+            setListEleves([]);
+            setGridRows(listEleves);
+        })
     }
 
-    const formatListEleves=(list) =>{
-        var listElt;
-        var tabelt=[];
-        var formattedList =[]
-        list.map((elt)=>{
-            listElt={};
-            listElt.id     = elt.id;
-            listElt.label  = elt.nom +' '+elt.prenom;
-            listElt.nom    = elt.nom;
-            listElt.prenom = elt.prenom; 
-            tabelt.push(false);              
-            formattedList.push(listElt);            
-        });  
+    function getListMessages(classeId){
+        var listEleves = []
+        axiosInstance.post(`get-message-parent/`, {
+            id_classe: classeId,
+        }).then((res)=>{
+            console.log(res.data);
+            listEleves = [...formatListEleves(res.data.res)]         
+            console.log(listEleves);
+            setGridRows(listEleves);
+        }) 
+    }
 
-        //setTabSelections(tabelt);     
+
+    const formatListEleves=(list) =>{
+        var listElt;       
+        var formattedList =[]
+        var rang = 1;
+        list.map((elt)=>{
+            listElt = {};
+            listElt.rang          = elt.rang;
+            listElt.id            = elt.id;
+            listElt.label         = elt.nom +' '+elt.prenom;
+            listElt.displayedName = elt.nom +' '+elt.prenom;
+            listElt.nom           = elt.nom;
+            listElt.prenom        = elt.prenom;
+            // listElt.matricule     = elt.matricule;
+            // listElt.date          = (elt.msg.length==0) ? "":elt.msg.split('&&')[1];
+            // listElt.emetteur      = (elt.msg.length==0) ? "":elt.msg.split('&&')[1];
+            // listElt.titre_message = (elt.msg.length==0) ? "":elt.msg.split('&&')[2];
+            // listElt.message       = (elt.msg.length==0) ? "":elt.msg.split('&&')[3];
+            formattedList.push(listElt); 
+            rang++;                       
+        });
         return formattedList;
     }
 
     function searchTextChangeHandler(e){
         var name = e.target.value;
-        var tabEleves     = [...listEleves];
-        var matchedEleves =  list_initiale_eleves.filter((elt)=>elt.label.toLowerCase().includes(name.toLowerCase()));
-        setListEleves(matchedEleves);
+        console.log("fffff",name,LIST_GENERALE_ELEVES)
+        //var tabEleves     = [...listEleves];
+        var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
+        setGridRows(matchedEleves);
     }
+
 
     function validateSelectionHandler(e){
         list_destinataire      = document.getElementById("hidden2_"+MultiSelectId).value;
@@ -170,67 +182,7 @@ function RelationAvcParents(props) {
         setMultiSelectVisible(false);
     }
 
-
-   
-    const  getListMessages=(classId)=>{
-        var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
-            id_classe: classId,
-        }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data)]
-            console.log(listEleves);
-            setGridRows(listEleves);
-            console.log(gridRows);
-        })  
-        return listEleves;     
-    }
-
-    const formatList=(list) =>{
-        var rang = 1;
-        var formattedList =[]
-        list.map((elt)=>{
-            listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
-            listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
-
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
-
-            
-            formattedList.push(listElt);
-            rang ++;
-        })
-        return formattedList;
-    }
-
-
-    function dropDownHandler(e){  
-        CURRENT_DESTINATAIRE_ID = e.target.value; 
-        CURRENT_DESTINATAIRE_LABEL = optDestinataire[optDestinataire.findIndex((classe)=>(classe.value == CURRENT_DESTINATAIRE_ID))].label;
-        getListMessages(CURRENT_DESTINATAIRE_ID);   
-        console.log(CURRENT_DESTINATAIRE_LABEL) 
-    }
- 
-/*************************** DataGrid Declaration ***************************/    
+    /*************************** DataGrid Declaration ***************************/    
     const columnsFr = [
         {
             field: 'rang',
@@ -239,77 +191,80 @@ function RelationAvcParents(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-        
+
         {
-            field: 'matricule',
-            headerName: "EMETTEUR",
+            field: 'date',
+            headerName: "DATE",
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-        {
-            field: 'DESTINATAIRE',
-            headerName: "DESTINATAIRE",
-            width: 200,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },    
-        {
-            field: 'date_naissance',
-            headerName: "TITRE MESSAGE",
-            width: 110,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-        {
-            field: 'lieu_naissance',
-            headerName:"VALIDE JUSQU'AU",
-            width: 120,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-    ];
 
-    const columnsEn = [
         {
-            field: 'rang',
-            headerName: 'N°',
-            width: 50,
+            field: 'emetteur',
+            headerName: "EMETTEUR",
+            width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
        
         {
-            field: 'matricule',
-            headerName: "MSG SENDER",
+            field: 'displayedName',
+            headerName: "DESTINATAIRE",
+            width: 200,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },  
+
+        {
+            field: 'titre_message',
+            headerName: "TITRE MESSAGE",
+            width: 110,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        }
+    ];
+
+    const columnsEn = [
+        {
+            field: 'rang',
+            headerName: "N°",
+            width: 50,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'date',
+            headerName: "DATE",
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
         {
-            field: 'MSG RECEIVER',
-            headerName: "MSG RECEIVER",
+            field: 'emetteur',
+            headerName: "SENDER",
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
-        },    
+        },
+       
         {
-            field: 'date_naissance',
-            headerName: "MSG TITLE",
+            field: 'displayedName',
+            headerName: "RECIPIENT",
+            width: 200,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },  
+
+        {
+            field: 'titre_message',
+            headerName: "MESSAGE TITLE",
             width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle
-        },
-        {
-            field: 'lieu_naissance',
-            headerName:"VALID UNTIL",
-            width: 120,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },
-                
-         
+        }
     ];
      
 /*************************** Theme Functions ***************************/
@@ -352,66 +307,19 @@ function RelationAvcParents(props) {
        
         currentUiContext.setFormInputs(inputs)
     }
+   
+    function consultRowData(row){
+        var inputs=[];       
+        inputs[0]= row.date;
+        inputs[1]= row.emetteur;
+        inputs[2]= row.displayedName;
+        inputs[3]= row.titre_message;
+        inputs[4]= row.message;
 
-    function handleEditRow(row){       
-        var inputs=[];
-        
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
-        console.log("laligne",row);
         currentUiContext.setFormInputs(inputs)
         setModalOpen(2);
-
     }
 
-    function consultRowData(row){
-        var inputs=[];
-       
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
-
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
-
-        inputs[8] = row.nom_mere;
-        inputs[9] = row.email_mere;
-        inputs[10]= row.tel_mere;
-
-        inputs[11]= row.id;
-
-        inputs[12]=(row.sexe=='masculin'||row.sexe=='M')?'M':'F';
-        inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
-
-        inputs[14]= row.date_entree;
-
-     
-        currentUiContext.setFormInputs(inputs)
-        setModalOpen(3);
-
-    }
 
     function saveMsg(CURRENT_COMM) {       
         console.log('Ajout',CURRENT_COMM);
@@ -434,8 +342,8 @@ function RelationAvcParents(props) {
                 msgTitle:t("success_add_M"), 
                 message:t("success_add")
             })
-            listEleves = [...formatList(res.data.comms)]
-            setGridRows(listEleves);
+            // listEleves = [...formatList(res.data.comms)]
+            // setGridRows(listEleves);
         })      
     }
     
@@ -477,7 +385,7 @@ function RelationAvcParents(props) {
                     msgTitle:"", 
                     message:""
                 }) 
-                getListMessages(CURRENT_DESTINATAIRE_ID); 
+                getListMessages(CURRENT_CLASSE_ID); 
                 return 1;
             }
 
@@ -604,20 +512,13 @@ function RelationAvcParents(props) {
                                 dataFieldStyle      = {{minHeight:"5vh", borderRadius:"1vh", height:"fit-content", maxHeight:"53vw", overflowY:"scroll", border:"solid 1px gray", fontSize:"0.8vw", fontWeight:100, backgroundColor:"whitesmoke", position:"absolute", top:"22.3vh", width:"13vw"}}
                                 MSContainerStyle    = {{/*border:"solid 1px grey",*/ padding:"1vh", marginRight:"1vh", marginBottom:"-1vh"}}
                             />
-                            {/* <select id='selectClass1' onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
-                                {(optDestinataire||[]).map((option)=> {
-                                    return(
-                                        <option  value={option.value}>{option.label}</option>
-                                    );
-                                })}
-                            </select>                           */}
+                           
                         </div>
                     </div>
                     
                                 
-                    <div className={classes.gridAction}> 
-                     
-                        <CustomButton
+                    <div className={classes.gridAction}>
+                       <CustomButton
                             btnText={t('envoi_msg')}
                             hasIconImg= {true}
                             imgSrc='images/Sms.png'
@@ -627,31 +528,7 @@ function RelationAvcParents(props) {
                             style={{width:"12.3vw", height:"4.3vh"}}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={sendParentMsgHandler}
-                            // disable={(isValid==false)}   
                         />
-                         
-
-                        {/* <CustomButton
-                            btnText={t('imprimer')}
-                            hasIconImg= {true}
-                            imgSrc='images/printing1.png'
-                            imgStyle = {classes.grdBtnImgStyle}  
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printStudentList}
-                            disable={(isValid==false)}   
-                        /> */}
-
-                        {/* <CustomButton
-                            btnText={t('importer')}
-                            hasIconImg= {true}
-                            imgSrc='images/import.png'
-                            imgStyle = {classes.grdBtnImgStyle} 
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(isValid==false)}    
-                        /> */}
                     </div>
                         
                 </div>
@@ -669,7 +546,7 @@ function RelationAvcParents(props) {
                         onRowClick={(params,event)=>{
                             if(event.ignore) {
                                 //console.log(params.row);
-                                handleEditRow(params.row)
+                                //handleEditRow(params.row)
                             }
                         }}  
                         

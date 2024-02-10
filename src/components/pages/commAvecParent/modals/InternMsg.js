@@ -26,9 +26,9 @@ var listReceipient = "";
 
 
 var chosenMsgBox;
-const MSG_SUCCESS_FP =11;
-const MSG_WARNING_FP =12;
-const MSG_ERROR_FP   =13;
+const MSG_SUCCESS = 1;
+const MSG_WARNING = 2;
+const MSG_ERROR   = 3;
 
 function InternMsg(props) {
     const { t, i18n } = useTranslation();
@@ -56,7 +56,7 @@ function InternMsg(props) {
         
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS_FP: {
+            case MSG_SUCCESS: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -68,7 +68,7 @@ function InternMsg(props) {
                 
             }
 
-            case MSG_WARNING_FP: {
+            case MSG_WARNING: {
                     currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -96,7 +96,7 @@ function InternMsg(props) {
         
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS_FP: {
+            case MSG_SUCCESS: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -107,7 +107,7 @@ function InternMsg(props) {
                 return 1;
             }
 
-            case MSG_WARNING_FP: {
+            case MSG_WARNING: {
                     currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
