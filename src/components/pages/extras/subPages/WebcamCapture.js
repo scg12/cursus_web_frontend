@@ -59,7 +59,14 @@ function WebcamCapture(props) {
             CURRENT_CLASSE_ID = undefined;
         }
         getEtabListClasses(); 
+        setGridRows(tabPlanif);
     },[]);
+
+    var tabPlanif = [
+        {id: 1, rang:1, libelle:"Photo Identite", description:"ggggggggg", date_creation:"12/05/2024", etat:0, etatLabel:"En cours" },
+        {id:2,  rang:2, libelle:"Photo Identite", description:"ggggggggg", date_creation:"12/05/2024", etat:0, etatLabel:"En cours" },
+        {id:3,  rang:3, libelle:"Photo Identite", description:"ggggggggg", date_creation:"12/05/2024", etat:1, etatLabel:"Cloture " },
+    ]
 
    
 
@@ -193,6 +200,15 @@ function WebcamCapture(props) {
         },
 
         {
+            field: 'id',
+            headerName: "ID",
+            width: 50,
+            hide:true,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: 'libelle',
             headerName: "LIBELLE",
             width: 120,
@@ -222,10 +238,17 @@ function WebcamCapture(props) {
             headerName: "ETAT",
             width: 100,
             editable: false,
+            hide: true,
             headerClassName:classes.GridColumnStyle
         },
 
-
+        {
+            field: 'etatLabel',
+            headerName: "ETAT",
+            width: 100,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
 
         {
             field: '',
@@ -236,25 +259,61 @@ function WebcamCapture(props) {
             renderCell: (params)=>{
                 return(
                     <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
+                        {params.row.etat==0?
+                            <div style={{width:"5.7vw"}}>
+                                <img src="images/ApPhoto.png"  
+                                    width={23} 
+                                    height={23}
+                                    title={t('start_photo')} 
+                                    className={classes.cellPointer} 
+                                    onClick={(event)=> {
+                                        event.ignore = true;
+                                    }}
+                                    alt=''
+                                />
+                            </div>
+                            :
+                            <div style={{width:"5.7vw"}}>
+                                <img src="images/lookPhoto4x4.png"  
+                                    width={18} 
+                                    height={18} 
+                                    title={t('look_photo')}
+                                    className={classes.cellPointer} 
+                                    onClick={(event)=> {
+                                        event.ignore = true;
+                                    }}
+                                    alt=''
+                                />
+                            </div>
+                        }
 
-                        <img src="icons/baseline_delete.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                               //deleteRowConfirm(params.row.id);
-                            }}
-                            alt=''
-                        />
+                        <div style={{width:"5.7vw"}}>
+                            <img src="icons/baseline_edit.png"  
+                                width={17} 
+                                height={17} 
+                                title={t('modify')}
+                                className={classes.cellPointer} 
+                                onClick={(event)=> {
+                                    event.ignore = true;
+                                }}
+                                alt=''
+                            />
+
+                        </div>
+                        
+                        <div style={{width:"5.7vw"}}>
+                            <img src="icons/baseline_delete.png"  
+                                width={17} 
+                                height={17} 
+                                title={t('delete')}
+                                className={classes.cellPointer} 
+                                onClick={(event)=> {
+                                //deleteRowConfirm(params.row.id);
+                                }}
+                                alt=''
+                            />
+                        </div>
+                        
                     </div>
                 ) 
             }          
@@ -273,6 +332,16 @@ function WebcamCapture(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'id',
+            headerName: "ID",
+            width: 50,
+            hide:true,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
 
         {
             field: 'libelle',
@@ -304,6 +373,15 @@ function WebcamCapture(props) {
             headerName: "STATUS",
             width: 100,
             editable: false,
+            hide : true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'etatLabel',
+            headerName: "STATUS",
+            width: 100,
+            editable: false,
             headerClassName:classes.GridColumnStyle
         },
 
@@ -316,11 +394,11 @@ function WebcamCapture(props) {
             renderCell: (params)=>{
                 return(
                     <div className={classes.inputRow}>
-                        {params.row.etat=='encours'?
-                            <div style={{}}>
-                                <img src="icons/ApPhoto.png"  
-                                    width={17} 
-                                    height={17}
+                        {params.row.etat==0?
+                            <div style={{width:"5.7vw"}}>
+                                <img src="images/ApPhoto.png"  
+                                    width={18} 
+                                    height={18}
                                     title={t('start_photo')} 
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
@@ -330,10 +408,10 @@ function WebcamCapture(props) {
                                 />
                             </div>
                             :
-                            <div style={{}}>
-                                <img src="icons/lookPhoto4x4.png"  
-                                    width={17} 
-                                    height={17} 
+                            <div style={{width:"5.7vw"}}>
+                                <img src="images/lookPhoto4x4.png"  
+                                    width={23} 
+                                    height={23} 
                                     title={t('look_photo')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
@@ -344,10 +422,11 @@ function WebcamCapture(props) {
                             </div>
                         }
 
-                        <div style={{}}>
+                        <div style={{width:"5.7vw"}}>
                             <img src="icons/baseline_edit.png"  
                                 width={17} 
                                 height={17} 
+                                title={t('modify')}
                                 className={classes.cellPointer} 
                                 onClick={(event)=> {
                                     event.ignore = true;
@@ -357,10 +436,11 @@ function WebcamCapture(props) {
 
                         </div>
                         
-                        <div style={{}}>
+                        <div style={{width:"5.7vw"}}>
                             <img src="icons/baseline_delete.png"  
                                 width={17} 
                                 height={17} 
+                                title={t('delete')}
                                 className={classes.cellPointer} 
                                 onClick={(event)=> {
                                 //deleteRowConfirm(params.row.id);
