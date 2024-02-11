@@ -262,8 +262,8 @@ function WebcamCapture(props) {
                         {params.row.etat==0?
                             <div style={{width:"5.7vw"}}>
                                 <img src="images/ApPhoto.png"  
-                                    width={23} 
-                                    height={23}
+                                    width={18} 
+                                    height={18}
                                     title={t('start_photo')} 
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
@@ -275,8 +275,8 @@ function WebcamCapture(props) {
                             :
                             <div style={{width:"5.7vw"}}>
                                 <img src="images/lookPhoto4x4.png"  
-                                    width={18} 
-                                    height={18} 
+                                    width={23} 
+                                    height={23} 
                                     title={t('look_photo')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
