@@ -248,7 +248,7 @@ function RecapSorties(props) {
             hide : true,
             headerClassName:classes.GridColumnStyle
         },
-        
+
         {
             field: 'date',
             headerName: 'PAYMENT DATE',
@@ -373,6 +373,10 @@ function RecapSorties(props) {
     }
 
     function validateSelectionHandler(e){
+        var name = document.getElementById("searchText").value;
+        LISTE_FILTRE = LIST_GENERALE_PAIEMENTS.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
+        setGridRows(LISTE_FILTRE);
+        setTotalPaye(calculTotal(LISTE_FILTRE));
         setListProfs([]);
     }
 
