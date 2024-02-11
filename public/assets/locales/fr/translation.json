@@ -1,4 +1,6 @@
-{   "student_to_take_photo_M"    : "ELEVES SELECTIONNES POUR PHOTO",
+{   "photo_desc"                 : "But Photo en Lot",
+    "photo_object"               : "Libelle Photo En Lot",
+    "student_to_take_photo_M"    : "ELEVES SELECTIONNES POUR PHOTO",
     "new_prog_photo"             : "Nvlle liste d'elves",
     "new_prog_photo_M"           : "NOUVELLE LISTE D'ELEVES POUR PHOTO EN LOT",
     "planification_list_M"       : "LISTE DES PLANIFICATIONS ",

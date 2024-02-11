@@ -646,13 +646,48 @@ function ParentsMsg(props) {
                     buttonRejectHandler = {rejectHandler}            
                 />                 
             }
+            
 
-            <div className={classes.inputRow} >
-                <div className={classes.formTitle}>
-                    {t('creation_planification_M')} 
-                </div>
-            </div>
+          
             <div className={classes.formGridContent}>
+
+            <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"7vh", marginLeft:"0vw", height:'2.7vh'}}> 
+                    <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                        {t("photo_object")}:
+                    </div>
+
+                    {!(props.formMode=="consult")&&
+                        <div> 
+                            <input id="photoObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        </div>
+                    }
+
+                    {(props.formMode=="consult")&&   
+                        <div> 
+                            <input id="photoObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                        </div>
+                    }
+                </div>
+
+                <div style={{ display:"flex", flexDirection:"row", justifyContent:"flex-start", marginTop:"3vh", marginBottom:"3vh",  marginLeft:"0vw", height:'2.7vh'}}> 
+                    <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
+                        {t("photo_desc")}:
+                    </div>
+
+                    {!(props.formMode=="consult")&&
+                        <div> 
+                            <input id="photoDesc" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                        </div>
+                    }
+
+                    {(props.formMode=="consult")&&   
+                        <div> 
+                            <input id="photoDesc" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                        </div>
+                    }
+                </div>
+
+
               
                 <div className={classes.gridTitleRow}> 
                     <div className={classes.gridTitle} style={{width:"70vw"}}>                  

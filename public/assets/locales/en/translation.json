@@ -1,4 +1,6 @@
-{   "student_to_take_photo_M"    : "STUDENT SELECTED TO TAKE PHOTO",
+{   "photo_desc"                 : "Batch Photo Purpose",
+    "photo_object"               : "Batch Photo Label",
+    "student_to_take_photo_M"    : "STUDENT SELECTED TO TAKE PHOTO",
     "new_prog_photo"             : "New Batch Photo List",
     "new_prog_photo_M"           : "NEW STUDENT BATCH PHOTO  LIST CREATION",
     "planification_list_M"       : "BATCH PHOTO PLANIFICATION LIST",
