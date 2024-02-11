@@ -68,7 +68,7 @@ function RecapSorties(props) {
             CURRENT_QUALITE = undefined;
         }  
         setOpDestinataire(tabDestinataires);
-        CURRENT_QUALITE = 0  ;
+        CURRENT_QUALITE = "all"  ;
         getListPersonnel(CURRENT_QUALITE);    
     },[]);
 
@@ -88,22 +88,22 @@ function RecapSorties(props) {
         }).then((res)=>{
             console.log(res.data);
 
+            res.data.adminstaffs.map((elt)=>{
+                listAll.push(elt);
+            });
+
+            res.data.enseignants.map((elt)=>{
+                listAll.push(elt);
+            });
+
             listEns = formatListEns(res.data.enseignants);
             listAdm = formatListEns(res.data.adminstaffs);
-            listAll = [];
+            listAll = formatListEns(listAll);
             
-            listAdm.map((elt)=>{
-                listAll.push(elt);
-            });
-
-            listEns.map((elt)=>{
-                listAll.push(elt);
-            });
-
-            switch(parseInt(qualiteId)){
-                case 0: { console.log("val",listAll); LIST_GENERALE = [...listAll]; /*setListProfs(listAll);*/ break;}
-                case 1: { console.log("val",listEns); LIST_GENERALE = [...listEns]; /*setListProfs(listEns);*/ break;}
-                case 2: { console.log("val",listAdm); LIST_GENERALE = [...listAdm]; /*setListProfs(listAdm);*/ break;}
+            switch(qualiteId){
+                case "all": { console.log("val 1",listAll); LIST_GENERALE = [...listAll]; /*setListProfs(listAll);*/ break;}
+                case "enseignant": { console.log("val 2",listEns); LIST_GENERALE = [...listEns]; /*setListProfs(listEns);*/ break;}
+                case "adminStaff": { console.log("val 3",listAdm); LIST_GENERALE = [...listAdm]; /*setListProfs(listAdm);*/ break;}
             }  
             getListPaiement(0);         
         })  
@@ -111,13 +111,16 @@ function RecapSorties(props) {
 
     const formatListEns=(list) =>{
         var formattedList = [];
+        var rang = 1;
         list.map((elt)=>{
             listElt={};
             listElt.id       = elt.id;
+            listElt.rang     = rang;
             listElt.label    = elt.nom +' '+elt.prenom;
             listElt.nom      = elt.nom;
             listElt.prenom   = elt.prenom;
-            formattedList.push(listElt);            
+            formattedList.push(listElt); 
+            rang++;           
         });
        return formattedList;
     }

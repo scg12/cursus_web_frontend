@@ -135,7 +135,7 @@ function RelationAvcParents(props) {
         }).then((res)=>{
             console.log(res.data);
             listEleves = [...formatListEleves(res.data.res)]         
-            console.log(listEleves);
+            console.log("toto ",listEleves);
             setGridRows(listEleves);
         }) 
     }
@@ -147,17 +147,17 @@ function RelationAvcParents(props) {
         var rang = 1;
         list.map((elt)=>{
             listElt = {};
-            listElt.rang          = elt.rang;
-            listElt.id            = elt.id;
+            listElt.rang          = rang;
+            listElt.id            = elt.id+"_"+rang;
             listElt.label         = elt.nom +' '+elt.prenom;
             listElt.displayedName = elt.nom +' '+elt.prenom;
             listElt.nom           = elt.nom;
             listElt.prenom        = elt.prenom;
-            // listElt.matricule     = elt.matricule;
-            // listElt.date          = (elt.msg.length==0) ? "":elt.msg.split('&&')[1];
-            // listElt.emetteur      = (elt.msg.length==0) ? "":elt.msg.split('&&')[1];
-            // listElt.titre_message = (elt.msg.length==0) ? "":elt.msg.split('&&')[2];
-            // listElt.message       = (elt.msg.length==0) ? "":elt.msg.split('&&')[3];
+            listElt.matricule     = elt.matricule;
+            listElt.date          = (elt.msg.length==0) ? "":elt.msg.split('&&')[4];
+            listElt.emetteur      = (elt.msg.length==0) ? "":elt.msg.split('&&')[1];
+            listElt.titre_message = (elt.msg.length==0) ? "":elt.msg.split('&&')[2];
+            listElt.message       = (elt.msg.length==0) ? "":elt.msg.split('&&')[3];
             formattedList.push(listElt); 
             rang++;                       
         });

@@ -63,8 +63,8 @@ function SaveExamNotes(props) {
         axiosInstance
         .post(`list-appreciations-notes-exam/`,{id_sousetab: currentAppContext.currentEtab}).then((res)=>{
                 res.data.map((appreciation)=>{ appreciations.push({
-                    value:appreciation.code, 
-                    //value:appreciation.libelle, 
+                    // value:appreciation.code, 
+                    value:appreciation.libelle, 
                     label:appreciation.libelle, 
                     minNote:appreciation.min_note, 
                     maxNote:appreciation.max_note
@@ -561,114 +561,114 @@ function SaveExamNotes(props) {
     // const WebcamComponent = () => <Webcam />;
 
     return (
-        // <div className={classes.formStyleP}>
-        //     {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
-        //     {(currentUiContext.msgBox.visible == true)&&
-        //         <MsgBox 
-        //             msgTitle = {currentUiContext.msgBox.msgTitle} 
-        //             msgType  = {currentUiContext.msgBox.msgType} 
-        //             message  = {currentUiContext.msgBox.message} 
-        //             customImg ={true}
-        //             customStyle={true}
-        //             contentStyle={classes.msgContent}
-        //             imgStyle={classes.msgBoxImgStyleP}
-        //             buttonAcceptText = {t("ok")}
-        //             buttonRejectText = {t("non")}  
-        //             buttonAcceptHandler = {acceptHandler}  
-        //             buttonRejectHandler = {rejectHandler}            
-        //         />                 
-        //     }
+        <div className={classes.formStyleP}>
+            {(currentUiContext.msgBox.visible == true)&& <BackDrop/>}
+            {(currentUiContext.msgBox.visible == true)&&
+                <MsgBox 
+                    msgTitle = {currentUiContext.msgBox.msgTitle} 
+                    msgType  = {currentUiContext.msgBox.msgType} 
+                    message  = {currentUiContext.msgBox.message} 
+                    customImg ={true}
+                    customStyle={true}
+                    contentStyle={classes.msgContent}
+                    imgStyle={classes.msgBoxImgStyleP}
+                    buttonAcceptText = {t("ok")}
+                    buttonRejectText = {t("non")}  
+                    buttonAcceptHandler = {acceptHandler}  
+                    buttonRejectHandler = {rejectHandler}            
+                />                 
+            }
 
           
-        //     <div className={classes.inputRow}>               
-        //         <div className={classes.formTitle}>
-        //             {t('save_exam_results_M')}  
-        //         </div>                
-        //     </div>
-        //     <div className={classes.formGridContent}>
+            <div className={classes.inputRow}>               
+                <div className={classes.formTitle}>
+                    {t('save_exam_results_M')}  
+                </div>                
+            </div>
+            <div className={classes.formGridContent}>
               
-        //         <div className={classes.gridTitleRow}> 
-        //             <div className={classes.gridTitle}>                  
-        //                 <div className={classes.gridTitleText}>
-        //                     {t('select_exam_M')} :
-        //                 </div>
+                <div className={classes.gridTitleRow}> 
+                    <div className={classes.gridTitle}>                  
+                        <div className={classes.gridTitleText}>
+                            {t('select_exam_M')} :
+                        </div>
                       
-        //                 <div className={classes.selectZone}>
-        //                     <select id='optExam' onChange={examChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
-        //                         {(optExam||[]).map((option)=> {
-        //                             return(
-        //                                 <option value={option.value}>{option.label}</option>
-        //                             );
-        //                         })}
-        //                     </select>               
-        //                 </div>
-        //             </div>
+                        <div className={classes.selectZone}>
+                            <select id='optExam' onChange={examChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1,marginLeft:'1vw'}}>
+                                {(optExam||[]).map((option)=> {
+                                    return(
+                                        <option value={option.value}>{option.label}</option>
+                                    );
+                                })}
+                            </select>               
+                        </div>
+                    </div>
                    
                                 
-        //             <div className={classes.gridAction}>                       
-        //                 <CustomButton
-        //                     btnText={t('save')}
-        //                     hasIconImg= {true}
-        //                     imgSrc='images/saveToDisk_trans.png'
-        //                     imgStyle = {classes.grdBtnImgStyle}  
-        //                     buttonStyle={getGridButtonStyle()}
-        //                     btnTextStyle = {classes.gridBtnTextStyle}
-        //                     btnClickHandler={saveExamResultsHandler}
-        //                     disable={(modalOpen==1||modalOpen==2)}   
-        //                 />
-        //             </div>
+                    <div className={classes.gridAction}>                       
+                        <CustomButton
+                            btnText={t('save')}
+                            hasIconImg= {true}
+                            imgSrc='images/saveToDisk_trans.png'
+                            imgStyle = {classes.grdBtnImgStyle}  
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.gridBtnTextStyle}
+                            btnClickHandler={saveExamResultsHandler}
+                            disable={(modalOpen==1||modalOpen==2)}   
+                        />
+                    </div>
                         
-        //         </div>
+                </div>
                     
                 
 
-        //         {(modalOpen==0) ?
-        //             <div className={classes.gridDisplay} >
-        //                 <StripedDataGrid
-        //                     rows={gridRows}
-        //                     columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-        //                     getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                {(modalOpen==0) ?
+                    <div className={classes.gridDisplay} >
+                        <StripedDataGrid
+                            rows={gridRows}
+                            columns={(i18n.language =='fr') ? columnsFr : columnsEn}
+                            getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
                             
-        //                     onCellClick={(params,event)=>{
-        //                         if(event.ignore) {
-        //                             //console.log(params.row);
-        //                             //handlePresence(params.row)
-        //                         }
-        //                     }}  
+                            onCellClick={(params,event)=>{
+                                if(event.ignore) {
+                                    //console.log(params.row);
+                                    //handlePresence(params.row)
+                                }
+                            }}  
                             
-        //                 //    onRowDoubleClick ={(params, event) => {
-        //                 //        if(!event.ignore){
-        //                 //             event.defaultMuiPrevented = true;
-        //                 //             consultRowData(params.row);
-        //                 //         }
-        //                 //     }}
+                        //    onRowDoubleClick ={(params, event) => {
+                        //        if(!event.ignore){
+                        //             event.defaultMuiPrevented = true;
+                        //             consultRowData(params.row);
+                        //         }
+                        //     }}
                             
-        //                     //loading={loading}
-        //                     //{...data}
-        //                     sx={{
-        //                         //boxShadow: 2,
-        //                         //border: 2,
-        //                         //borderColor: 'primary.light',
-        //                         '& .MuiDataGrid-cell:hover': {
-        //                           color: 'primary.main',
-        //                           border:0,
-        //                           borderColor:'none'
-        //                         },
+                            //loading={loading}
+                            //{...data}
+                            sx={{
+                                //boxShadow: 2,
+                                //border: 2,
+                                //borderColor: 'primary.light',
+                                '& .MuiDataGrid-cell:hover': {
+                                  color: 'primary.main',
+                                  border:0,
+                                  borderColor:'none'
+                                },
                               
-        //                     }}
-        //                     getRowClassName={(params) =>
-        //                         params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
-        //                     }
-        //                 />
-        //             </div>
-        //             :
-        //             null
-        //         }
+                            }}
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+                            }
+                        />
+                    </div>
+                    :
+                    null
+                }
             
-        //     </div>
+            </div>
            
-        // </div>
-        <Webcam />
+        </div>
+        // <Webcam />
         
     );
 } 
