@@ -585,15 +585,15 @@ function ParentsMsg(props) {
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
                 />
-
-                <CustomButton
-                    btnText={t('send')}
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={sendMsg}
-                    //disable={(isDownload) ? !isDownload :!fileSelected}
-                />
-                
+                {!(props.formMode=="consult")&&
+                    <CustomButton
+                        btnText={t('send')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={sendMsg}
+                        //disable={(isDownload) ? !isDownload :!fileSelected}
+                    />
+                }
             </div>
 
         </div>

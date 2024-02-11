@@ -492,7 +492,7 @@ function InternMsg(props) {
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
                 />
-               {(props.formMode == "consult")&&
+               {!(props.formMode == "consult")&&
                     <CustomButton
                         btnText={t('send')}
                         buttonStyle={getGridButtonStyle()}
