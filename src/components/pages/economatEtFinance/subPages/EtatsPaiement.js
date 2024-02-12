@@ -10,7 +10,7 @@ import MultiSelect from '../../../multiSelect/MultiSelect';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
+import {changeDateIntoMMJJAAAA, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -18,21 +18,11 @@ let CURRENT_CLASSE_ID;
 let CURRRENT_COURS_ID;
 let SELECTED_DATE;
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"", 
-    nom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    redouble: '',  
-    id:1,
-}
+var listElt ={}
 
-var JOUR, MOIS, YEAR, DATE_VERIF;
-var tabAbsenceCours;
+var JOUR_DEB="", MOIS_DEB="", YEAR_DEB="", DATEDEB_VERIF='';
+var JOUR_FIN="", MOIS_FIN="", YEAR_FIN="", DATEFIN_VERIF='';
+
 var listEleves;
 
 
@@ -43,7 +33,10 @@ const MSG_ERROR_RECAP   =13;
 const MultiSelectId     ='MS-2';
 
 
-var LIST_GENERALE_ELEVES;
+var LIST_GEN_PAIEMENTS;
+var LIST_GEN_ELEVES;
+var LISTE_FILTRE;
+
 var tempTable;
 var list_initiale_eleves;
 var list_destinataire    = "";
@@ -59,16 +52,18 @@ function EtatsPaiement(props) {
     const currentAppContext= useContext(AppContext);
 
     const selectedTheme = currentUiContext.theme;
-    const [isValid, setIsValid] = useState(false);
+   
     const [gridRows, setGridRows] = useState([]);
-    const [total_paye, setTotalPaye]= useState(0);
     const [absent, setAbsent]= useState(0);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
-    const [optClasses, setOpClasses] = useState([]);
-    const [optCours, setOpCours] = useState([]);
-    const [optDate, setOpDate] = useState([]);
-    const [isDateFull, setIsDateFull]=useState(false);
-    const[courseSelected, setCourseSelected] = useState(false);
+    const [modalOpen, setModalOpen  ]      = useState(0); //0 = close, 1=creation, 2=modif
+    const [optClasses, setOpClasses ]      = useState([]);
+    const [isDateFull, setIsDateFull]      = useState(false);
+    const [totalPaye,  setTotalPaye ]      = useState(0);
+    const [totalAttendu, setTotalAttendu]  = useState(0);
+    const [totalRestant, setTotalRestant]  = useState(0);
+    const [listEleves,   setListEleves  ]  = useState([]);
+   
+   
     
 
     useEffect(()=> {
@@ -82,7 +77,7 @@ function EtatsPaiement(props) {
 
 
     const getEtabListClasses=()=>{
-        var tempTable=[{value: '0',      label:(i18n.language=='fr')? "Toutes":"All"}];
+        var tempTable=[{value: -1 ,      label:(i18n.language=='fr')? "------- Choisir ------":"------- Select ------"}];
 
         let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
         console.log(classes)
@@ -122,101 +117,195 @@ function EtatsPaiement(props) {
 
     function classChangeHandler(e){
         if(e.target.value > 0){
-            getClassStudentList(e.target.value);
+            setListEleves([]);
+            getClassListPaiements(e.target.value);
         }else{
             
             setGridRows([]);
+            setListEleves([]);
             document.getElementById("searchText").value ="";
         }
     }
 
+   
     function searchTextChangeHandler(e){
         var name = e.target.value;
-        console.log("fffff",name,LIST_GENERALE_ELEVES)
-        //var tabEleves     = [...listEleves];
-        var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
-        setGridRows(matchedEleves);
+        setListEleves(LIST_GEN_ELEVES);
+        console.log("fffff",name,listEleves);
+        
+        var matchedEleves =  LIST_GEN_ELEVES.filter((elt)=>elt.label.toLowerCase().includes(name.toLowerCase()));
+        LISTE_FILTRE      =  LIST_GEN_PAIEMENTS.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
+        
+        setListEleves(matchedEleves);
+        setGridRows(LISTE_FILTRE);
+        calculTotaux(LISTE_FILTRE);
+        
     }
-
 
     function validateSelectionHandler(e){
-        list_destinataire      = document.getElementById("hidden2_"+MultiSelectId).value;
-        list_destinataires_ids = document.getElementById("hidden1_"+MultiSelectId).value;
-        
-        //setListEleves([]);
-        setOpClasses(tempTable);
-        //setMultiSelectVisible(false);
+        var name = document.getElementById("searchText").value;
+        LISTE_FILTRE = LIST_GEN_PAIEMENTS.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
+        setGridRows(LISTE_FILTRE);
+        calculTotaux(LISTE_FILTRE);
+        setListEleves([]);
     }
 
 
-    const  getClassStudentList=(classeId)=>{
+
+    const  getClassListPaiements=(classeId)=>{
         var listEleves = []
-        axiosInstance.post(`list-eleves/`, {
+        axiosInstance.post(`bilan-paiement-frais-scolarite/`, {
             id_classe: classeId,
+            date_deb : "",
+            date_fin : ""
         }).then((res)=>{
             console.log(res.data);
-            listEleves           = [...formatList(res.data)];
-            LIST_GENERALE_ELEVES = [...formatList(res.data)];
+            listEleves           = [...formatListEleves(res.data.res)];
+            LIST_GEN_PAIEMENTS   = [...formatListPaie(res.data.res)];
+            LIST_GEN_ELEVES      = [...listEleves];
+            
+            calculTotaux(LIST_GEN_PAIEMENTS);
             console.log(listEleves);
-            setGridRows(listEleves);
-            setTotalPaye(listEleves.length)
+
+            //setListEleves(listEleves);
+            setGridRows(LIST_GEN_PAIEMENTS);
             console.log(gridRows);
         })  
         return listEleves;     
     }
 
-    function getStudentWithAbsence(coursId, classeId){
-        listEleves = []; tabAbsenceCours=[];
-        axiosInstance.post(`list-eleves-absences/`, {
-            id_classe: classeId,
-            id_cours: coursId,
-        }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatList(res.data.eleves)]
-            tabAbsenceCours = [...res.data.absences_eleves]
-            console.log(listEleves);
-            // setGridRows(listEleves);
-            // setPresent(listEleves.length)
-            console.log(gridRows);
-        })  
-
-    }
-
-    function getAbsenceCours(coursId, classeId){     
-        if(coursId==0){
-            setGridRows([]);
-            setTotalPaye(0);
-            setAbsent(0); 
-
-        } else{
-            getStudentWithAbsence(coursId, classeId);            
-        }
-    
-    }
-
-    
-
-
-    const formatList=(list) =>{
+    const formatListPaie=(list) =>{
+        var formattedList = [];
         var rang = 1;
-        var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = convertDateToUsualDate(elt.date_entree);
-            listElt.nom_pere = elt.nom_pere;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant"; 
-            formattedList.push(listElt);
-            rang ++;
-        })
-        return formattedList;
+            listElt.id                        = elt.id;
+            listElt.matricule                 = elt.matricule;
+            listElt.displayedName             = elt.nom +' '+elt.prenom;           
+            listElt.nom                       = elt.nom;
+            listElt.prenom                    = elt.prenom;
+            listElt.displayedMontant          = formatCurrency(elt.montant)+' FCFA';
+
+            listElt.montantToPay              = elt.total_tranches;
+            listElt.montantPaye               = elt.montant;
+            listElt.montantRestant            = elt.total_tranches - elt.montant;
+
+            listElt.displayedMontantToPay     = formatCurrency( listElt.montantToPay) +' FCFA';
+            listElt.displayedMontantPaye      = formatCurrency(listElt.montantPaye)   +' FCFA';
+            listElt.displayedMontantRestant   = formatCurrency(listElt.montantRestant)+' FCFA';
+            listElt.rang                      = rang;
+            formattedList.push(listElt);  
+            rang++;          
+        });
+
+       return formattedList;
     }
+
+    function formatListEleves(list){
+        var formattedList = [];       
+        list.map((elt)=>{
+            listElt = {};
+            listElt.id         = elt.id;
+            listElt.matricule  = elt.matricule;
+            listElt.label      = elt.nom +' '+elt.prenom;           
+            formattedList.push(listElt);                     
+        });
+
+       return formattedList;
+    }
+
+
+    function calculTotaux(list){
+        var sommPaye    = 0;
+        var sommAPayer  = 0;
+        var sommRestant = 0;
+
+        list.map((elt)=>{
+            sommPaye   = sommPaye    + elt.montantPaye;
+            sommAPayer = sommAPayer  + elt.montantToPay;
+            sommRestant= sommRestant + elt.montantRestant;
+        });
+        setTotalPaye(sommPaye);
+        setTotalAttendu(sommAPayer);
+        setTotalRestant(sommRestant);
+    }
+
+    // function getJourDebAndFilter(e){
+    //     setGridRows([]);
+    //     JOUR_DEB = e.target.value;
+    //     DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+    //     console.log("date verif",gridRows);
+    //     if(DATEDEB_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
+    //     else filterPaiement(LISTE_FILTRE,'',DATEFIN_VERIF);
+    // }
+
+    // function getJourFinAndFilter(e){
+    //     setGridRows([]);
+    //     JOUR_FIN = e.target.value;
+    //     DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+    //     if(DATEFIN_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
+    //     else filterPaiement(LISTE_FILTRE, '', DATEDEB_VERIF);
+    // }
+
+    // function getMoisDebAndFilter(e, dateFin){
+    //     setGridRows([]);
+    //     MOIS_DEB = e.target.value;
+    //     DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+    //     console.log("date verif",DATEDEB_VERIF);
+    //     if(DATEDEB_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
+    //     else filterPaiement(LISTE_FILTRE, '', DATEFIN_VERIF);
+    // }
+
+    // function getMoisFinAndFilter(e){
+    //     setGridRows([]);
+    //     MOIS_FIN = e.target.value;
+    //     DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+    //     if(DATEFIN_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
+    //     else filterPaiement(LISTE_FILTRE, DATEDEB_VERIF, '');
+    // }
+
+
+    // function getYearDebAndFilter(e){
+    //     setGridRows([]);
+    //     YEAR_DEB = e.target.value;
+    //     DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
+    //     console.log("date verif",DATEDEB_VERIF);
+    //     if(DATEDEB_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
+    //     else filterPaiement(LISTE_FILTRE, '', DATEFIN_VERIF);
+    // }
+
+    // function getYearFinAndFilter(e){
+    //     setGridRows([]);
+    //     YEAR_FIN = e.target.value;
+    //     DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
+    //     if(DATEFIN_VERIF.length==10) filterPaiement(LISTE_FILTRE,'',DATEFIN_VERIF);
+    //     else filterPaiement(LISTE_FILTRE, '', '');
+    // }
+
+    // function filterPaiement(list, dateDeb, dateFin){
+    //     var resultList = [...list];
+    //     console.log('filtre ici',list, dateDeb, dateFin);
+       
+
+    //     if(dateDeb != '' && dateFin == ''){
+    //         resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)));
+    //     }
+
+    //     if(dateDeb == '' && dateFin != ''){
+    //         resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin)));
+    //     }
+
+    //     if(dateDeb != '' && dateFin != ''){
+    //         resultList = list.filter((elt)=>(new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)) && new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin))));
+    //     }
+
+    //     setGridRows(resultList);
+    //     calculTotaux(resultList);       
+    //     return resultList;
+
+    // }
+
+
     
 /*************************** DataGrid Declaration ***************************/    
     const columnsFr = [
@@ -254,7 +343,7 @@ function EtatsPaiement(props) {
         },
 
         {
-            field: 'date_naissance',
+            field: 'displayedMontantPaye',
             headerName: 'MONTANT PAYE',
             width: 110,
             editable: false,
@@ -262,15 +351,16 @@ function EtatsPaiement(props) {
         },
 
         {
-            field: 'date_naissae',
-            headerName: 'DATE PAIEMENT',
+            field: 'montantPaye',
+            headerName: 'MONTANT PAYE',
             width: 110,
             editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
 
         {
-            field: 'lieu_naissance',
+            field: 'displayedMontantRestant',
             headerName: 'MONTANT RESTANT',
             width: 120,
             editable: false,
@@ -278,10 +368,28 @@ function EtatsPaiement(props) {
         },
 
         {
-            field: 'lieu_naissan',
+            field: 'montantRestant',
+            headerName: 'MONTANT RESTANT',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'displayedMontantToPay',
             headerName: 'MONTANT A PAYER',
             width: 120,
             editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'montantToPay',
+            headerName: 'MONTANT A PAYER',
+            width: 120,
+            editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
       
@@ -322,7 +430,7 @@ function EtatsPaiement(props) {
         },
 
         {
-            field: 'date_naissance',
+            field: 'displayedMontantPaye',
             headerName: 'AMOUNT PAID',
             width: 110,
             editable: false,
@@ -330,15 +438,16 @@ function EtatsPaiement(props) {
         },
 
         {
-            field: 'date_naissae',
-            headerName: 'DATE PAIEMENT',
+            field: 'montantPaye',
+            headerName: 'AMOUNT PAID',
             width: 110,
             editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
 
         {
-            field: 'lieu_naissance',
+            field: 'displayedMontantRestant',
             headerName: 'AMOUNT REMAINING',
             width: 120,
             editable: false,
@@ -346,7 +455,25 @@ function EtatsPaiement(props) {
         },
 
         {
-            field: 'lieu_naissan',
+            field: 'montantRestant',
+            headerName: 'AMOUNT REMAINING',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'montantToPay',
+            headerName: 'AMOUNT TO PAY',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'displayedMontantToPay',
             headerName: 'AMOUNT TO PAY',
             width: 120,
             editable: false,
@@ -396,41 +523,6 @@ function EtatsPaiement(props) {
         setModalOpen(0)
     }
 
-    function savePresenceHandler(e){
-
-    }
-
-
-    function getPresentCount(tab){
-        var countPresent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 1) countPresent++;
-        }
-        return countPresent;
-    }
-
-    function getAbsentCount(tab){
-        var countAbsent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 0) countAbsent++;
-        }
-        return countAbsent;
-    } 
-   
-    function handlePresence(params){
-        console.log(params);
-        if(params.presence == 0) {
-            params.presence = 1;
-           // setTotalPaye(present+1);
-            setAbsent(absent-1);
-        }
-        else{
-            params.presence = 0;
-            //setTotalPaye(present-1);
-            setAbsent(absent+1);
-        } 
-    }
-
     function moveOnMax(e,currentField, nextField){
         if(nextField!=null){
             e = e || window.event;
@@ -443,69 +535,6 @@ function EtatsPaiement(props) {
      
     }
 
-    function getJourAndCheck(e){
-        setGridRows([]);
-        JOUR = e.target.value;
-        DATE_VERIF = YEAR+'-'+MOIS+'-'+JOUR;
-        if(DATE_VERIF.length==10) setIsDateFull(true);
-        else setIsDateFull(false);
-
-    }
-
-    function getMoisAndCheck(e){
-        setGridRows([]);
-        MOIS = e.target.value;
-        DATE_VERIF = YEAR+'-'+MOIS+'-'+JOUR;
-        if(DATE_VERIF.length==10) setIsDateFull(true);
-        else setIsDateFull(false);
-    }
-
-    function getYearAndCheck(e){
-        setGridRows([]);
-        YEAR = e.target.value;
-        DATE_VERIF = YEAR+'-'+MOIS+'-'+JOUR;
-        if(DATE_VERIF.length==10) setIsDateFull(true);
-        else setIsDateFull(false);
-    }
-
-    function getStudentCheckList(){
-        console.log("les dates",DATE_VERIF,tabAbsenceCours)
-        var index ;
-        
-        if(DATE_VERIF.length==0 ||!((isNaN(DATE_VERIF) && (!isNaN(Date.parse(DATE_VERIF)))))){
-           
-            chosenMsgBox = MSG_WARNING_RECAP;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"danger", 
-                msgTitle:t("error_M"),
-                message:t("enter_good_meeting_date")
-            }) 
-           
-        }else{
-            if(tabAbsenceCours.find((abs)=>abs.date==DATE_VERIF)==undefined){
-                chosenMsgBox = MSG_WARNING_RECAP;
-                currentUiContext.showMsgBox({
-                    visible:true, 
-                    msgType:"warning", 
-                    msgTitle:t("warning_M"), 
-                    message:t("la date fournie ne correspond pas a une date de cours!")
-                }) 
-
-            } else {
-                var absencesJour = [...tabAbsenceCours.filter((abs)=>abs.date == DATE_VERIF)];
-                absencesJour.map((elt1)=>{
-                    index = listEleves.findIndex((elt2)=>elt2.id == elt1.eleves[0]);
-                    console.log(index)
-                    if(index!=undefined && index!=-1) listEleves[index].presence = 0;
-                    
-                })
-                setGridRows(listEleves);
-                setTotalPaye(listEleves.length-absencesJour.length);
-                setAbsent(absencesJour.length);
-            }
-        }
-    }
 
     const acceptHandler=()=>{
         
@@ -663,7 +692,7 @@ function EtatsPaiement(props) {
                                 id                  = {MultiSelectId}
                                 //-----Fields-----
                                 optData             = {optClasses}
-                                fetchedData         = {[]}
+                                fetchedData         = {listEleves}
                                 selectionMode       = {"single"}
                             
                                 //-----Handler-----
@@ -682,74 +711,48 @@ function EtatsPaiement(props) {
                         </div>
                     </div>
                        
-                    <div className={classes.gridTitle} style={{marginLeft:"1vw"}}>                  
+                    {/* <div className={classes.gridTitle} style={{marginLeft:"1vw"}}>                  
                         <div className={classes.gridTitleText}>
                             {t('date_deb')} :
                         </div>
                     
                         <div className={classes.selectZone}>
-                            {/*<select id='optDate' onChange={dateChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1, marginLeft:'1vw'}}>
-                                {(optDate||[]).map((option)=> {
-                                    return(
-                                        <option value={option.value}>{option.label}</option>
-                                    );
-                                })}
-                            </select>*/} 
+                           
                             <div style ={{display:'flex', flexDirection:'row', marginLeft:'2.3vw', marginBottom:'-1vh'}}> 
-                                <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourAndCheck} style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw',   color:'#065386', fontWeight:'bold'}} />/
-                                <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisAndCheck} style={{width:'1.4vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw',    color:'#065386', fontWeight:'bold'}}/>/
-                                <input id="anne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), null)}}     maxLength={4}     className={classes.inputRowControl }  onChange={getYearAndCheck}                             style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginRight:'1.3vw', color:'#065386', fontWeight:'bold'}}  />
-                            </div>  
+                                <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourDebAndFilter} style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw', color:'#065386', fontWeight:'bold'}} />/
+                                <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisDebAndFilter} style={{width:'1.4vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw', color:'#065386', fontWeight:'bold'}}/>/
+                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}                                     maxLength={4}     className={classes.inputRowControl }  onChange={getYearDebAndFilter} style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginRight:'1.3vw', color:'#065386', fontWeight:'bold'}}  />
+                            </div> 
                             
                                     
                         </div>
-                        {isDateFull && <img src={(i18n.language=='fr')? "images/verifier1_trans.png":"images/verifier2_trans.png"} onClick={getStudentCheckList}  style={{width:'7.3vw', height:'6.7vh', marginTop:"-1.13vh", borderRadius:'1vw', marginBottom:(i18n.language=='fr')?'-0.87vh':'-1.3vh'}}/>}
-                    </div>
+                        
+                    </div> */}
 
-                    <div className={classes.gridTitle} style={{marginLeft:"-3.3vw"}}>                  
+                    {/* <div className={classes.gridTitle} style={{marginLeft:"-3.3vw"}}>                  
                         <div className={classes.gridTitleText}>
                             {t('date_fin')} :
                         </div>
                     
                         <div className={classes.selectZone}>
-                            {/*<select id='optDate' onChange={dateChangeHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1, marginLeft:'1vw'}}>
-                                {(optDate||[]).map((option)=> {
-                                    return(
-                                        <option value={option.value}>{option.label}</option>
-                                    );
-                                })}
-                            </select>*/} 
+                           
                             <div style ={{display:'flex', flexDirection:'row', marginLeft:'2.3vw', marginBottom:'-1vh'}}> 
-                                <input id="jour"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour"), document.getElementById("mois"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourAndCheck} style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw',   color:'#065386',   fontWeight:'bold'}} />/
-                                <input id="mois"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois"), document.getElementById("anne"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisAndCheck} style={{width:'1.4vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw',    color:'#065386',   fontWeight:'bold'}}/>/
-                                <input id="anne"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne"), null)}}     maxLength={4}     className={classes.inputRowControl }  onChange={getYearAndCheck}                             style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginRight:'1.3vw', color:'#065386',   fontWeight:'bold'}}  />
-                            </div>  
+                                <input id="jour_fin"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_fin"), document.getElementById("mois_fin"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourFinAndFilter} style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw', color:'#065386', fontWeight:'bold'}} />/
+                                <input id="mois_fin"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_fin"), document.getElementById("anne_fin"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisFinAndFilter} style={{width:'1.4vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw', color:'#065386', fontWeight:'bold'}}/>/
+                                <input id="anne_fin"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_fin"), null)}}                                     maxLength={4}     className={classes.inputRowControl }  onChange={getYearFinAndFilter} style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginRight:'1.3vw', color:'#065386', fontWeight:'bold'}}  />
+                            </div> 
                             
                                     
                         </div>
-                        {isDateFull && <img src={(i18n.language=='fr')? "images/verifier1_trans.png":"images/verifier2_trans.png"} onClick={getStudentCheckList}  style={{width:'7.3vw', height:'6.7vh', marginTop:"-1.13vh", borderRadius:'1vw', marginBottom:(i18n.language=='fr')?'-0.87vh':'-1.3vh'}}/>}
-                    </div>
+                       
+                    </div> */}
                     
 
 
                    
                                 
                     <div className={classes.gridAction}> 
-                        {(props.formMode=='appel')?
-                            <CustomButton
-                                btnText={t('save')}
-                                hasIconImg= {true}
-                                imgSrc='images/checkp_trans.png'
-                                imgStyle = {classes.grdBtnImgStyle}  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={savePresenceHandler}
-                                disable={(modalOpen==1||modalOpen==2)}   
-                            />
-                            :
-                            null
-                        }
-
+                        
                         <CustomButton
                             btnText={t('imprimer')}
                             hasIconImg= {true}
@@ -772,12 +775,12 @@ function EtatsPaiement(props) {
                         <StripedDataGrid
                             rows={gridRows}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                            getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
                             
                             onCellClick={(params,event)=>{
                                 if(event.ignore) {
                                     //console.log(params.row);
-                                    handlePresence(params.row)
+                                    //handlePresence(params.row)
                                 }
                             }}  
                             
@@ -813,15 +816,15 @@ function EtatsPaiement(props) {
             </div>
             <div style={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", fontWeight:"800", fontSize:"0.97VW",marginRight:"3vw"}}>
                 <div style={{dislay:"flex", flexDirection:"row", color:"green", marginLeft:"3vw"}}>
-                    <div> {t('total_paye_M')} : {formatCurrency(total_paye)} FCFA</div>
+                    <div> {t('total_paye_M')} : {formatCurrency(totalPaye)} FCFA</div>
                 </div>
 
                 <div style={{dislay:"flex", flexDirection:"row", color:"red", marginLeft:"3vw"}}>
-                    <div> {t('total_restant_M')} : {formatCurrency(total_paye)} FCFA</div>
+                    <div> {t('total_restant_M')} : {formatCurrency(totalRestant)} FCFA</div>
                 </div>
 
                 <div style={{dislay:"flex", flexDirection:"row", color:"black", marginLeft:"3vw"}}>
-                    <div> {t('total_attendu_M')} : {formatCurrency(total_paye)} FCFA</div>
+                    <div> {t('total_attendu_M')} : {formatCurrency(totalAttendu)} FCFA</div>
                 </div>
                         
             </div>

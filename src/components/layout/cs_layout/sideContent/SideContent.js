@@ -385,8 +385,7 @@ function SideContent(props) {
             //     } else {
             //         document.getElementById("notifMsg"+ntf.msg.id).style.display = 'block';
             //     }                
-            // })
-           
+            // })          
            
             console.log("reste",notifs);
             //currentAppContext.setTabNotifs((notifs));
