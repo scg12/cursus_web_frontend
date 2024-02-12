@@ -63,8 +63,8 @@ function SaveExamNotes(props) {
         axiosInstance
         .post(`list-appreciations-notes-exam/`,{id_sousetab: currentAppContext.currentEtab}).then((res)=>{
                 res.data.map((appreciation)=>{ appreciations.push({
-                    // value:appreciation.code, 
-                    value:appreciation.libelle, 
+                    value:appreciation.code, 
+                    // value:appreciation.libelle, 
                     label:appreciation.libelle, 
                     minNote:appreciation.min_note, 
                     maxNote:appreciation.max_note
