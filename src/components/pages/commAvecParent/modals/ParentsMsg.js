@@ -424,10 +424,18 @@ function ParentsMsg(props) {
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg} src='images/Sms.png'/>
                 </div>
+
+                {!(props.formMode == 'consult')?          
+                    <div className={classes.formMainTitle} >
+                        {t("MSG_parent_M")}
+                    </div>  
+                    :
+                    <div className={classes.formMainTitle} >
+                        {t("consult_MSG_parent_M")}
+                    </div> 
+                }          
                            
-                <div className={classes.formMainTitle} >
-                    {t("MSG_parent_M")}
-                </div>                
+                               
             </div>
 
             <div id='errMsgPlaceHolder'/>

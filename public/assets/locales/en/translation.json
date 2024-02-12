@@ -1,4 +1,7 @@
-{   "photo_desc"                 : "Batch Photo Purpose",
+{   "set_as_read"                : "Seen",
+    "consult_intern_comm_M"      : "ADMINISTRATIVE COMMUNICATION CONSULTATION",
+    "consult_MSG_parent_M"       : "LOOK SENDED MESSAGE",
+    "photo_desc"                 : "Batch Photo Purpose",
     "photo_object"               : "Batch Photo Label",
     "student_to_take_photo_M"    : "STUDENT SELECTED TO TAKE PHOTO",
     "new_prog_photo"             : "New Batch Photo List",

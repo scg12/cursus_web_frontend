@@ -132,6 +132,7 @@ function NewComIntern(props) {
             listElt.titreMsg       = elt.titreMsg;
             listElt.message        = elt.message;
             listElt.validite       = elt.validite;
+            listElt.msgType        = elt.msgType;
             listElt.rang           = rang; 
             formattedList.push(listElt);
             rang ++;
@@ -202,6 +203,15 @@ function NewComIntern(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'msgType',
+            headerName:"TYPE",
+            width: 100,
+            editable: false,
+            hide : true,
+            headerClassName:classes.GridColumnStyle
+        },
     
     ];
 
@@ -252,7 +262,15 @@ function NewComIntern(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
-                
+            
+        {
+            field: 'msgType',
+            headerName:"TYPE",
+            width: 100,
+            editable: false,
+            hide : true,
+            headerClassName:classes.GridColumnStyle
+        },
          
     ];
      
@@ -304,6 +322,7 @@ function NewComIntern(props) {
         inputs[1]= row.titreMsg;
         inputs[2]= row.message;
         inputs[3]= row.validite;
+        inputs[4]= row.msgType;
        
 
         console.log("laligne",row);
@@ -320,6 +339,7 @@ function NewComIntern(props) {
         inputs[2]= row.message;
         inputs[3]= row.validite;
         inputs[3]= row.validite;
+        inputs[4]= row.msgType;
      
         currentUiContext.setFormInputs(inputs)
         setModalOpen(2);

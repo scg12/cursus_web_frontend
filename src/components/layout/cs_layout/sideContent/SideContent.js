@@ -355,21 +355,41 @@ function SideContent(props) {
 
     function closeNotifHandler(e,notif,index){
         var notifs = [...currentAppContext.tabNotifs];
+
+        console.log("notif",  notif);
+        notifs.splice(index,1);     
+        document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+        
+
+        // notifs.map((ntf, ind)=>{
+        //     if(ind != index){           
+        //         document.getElementById("notifMsg"+ntf.msg.id).style.display = 'block';
+        //     }                
+        // });      
+        
+        console.log("reste",notifs);
+       // currentAppContext.setTabNotifs((notifs));
+    }
+
+    function seNotifAsReadHandler(e,notif,index){
+        var notifs = [...currentAppContext.tabNotifs];
         console.log("notif",  notif);
         //Ici je vais en BD marquer que la notif est lue
         //Et, je cache la notif et je l'enleve du tableau des notifs
         setNotifAsReaded(notif.msg.id, currentAppContext.idUser).then((result)=>{
-            notifs.map((ntf, ind)=>{
-                if(ind == index){
-                    document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
-                } else {
-                    document.getElementById("notifMsg"+notif.msg.id).style.display = 'block';
-                }                
-            })
-           
             notifs.splice(index,1);
+            document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+            // notifs.map((ntf, ind)=>{
+            //     if(ind == index){
+            //         document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+            //     } else {
+            //         document.getElementById("notifMsg"+ntf.msg.id).style.display = 'block';
+            //     }                
+            // })
+           
+           
             console.log("reste",notifs);
-            currentAppContext.setTabNotifs((notifs));
+            //currentAppContext.setTabNotifs((notifs));
         });        
     }
           
@@ -382,7 +402,12 @@ function SideContent(props) {
                 <div id="notifZone" className={classes.notifZone + " notifFrom"}>
                     {currentAppContext.tabNotifs.map((notif, index)=>{
                         return(
-                            <Notification msg={notif.msg} notifStyle={{marginBottom:"0.3vh"}} closeNotif={(e)=>{closeNotifHandler(e,notif,index)}}/>
+                            <Notification 
+                                msg={notif.msg} 
+                                notifStyle      = {{marginBottom:"0.3vh"}} 
+                                closeNotif      = {(e)=>{closeNotifHandler(e,notif,index)}} 
+                                btnClickHandler = {(e)=>{seNotifAsReadHandler(e,notif,index)}}
+                            />
                         )
                        
                     })}

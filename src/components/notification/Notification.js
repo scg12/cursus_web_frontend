@@ -71,7 +71,7 @@ function Notification(props) {
                         hasIconImg     = {false}
                         buttonStyle    = {props.msg.btnStyle}
                         btnTextStyle   = {props.msg.btnTextStyle}
-                        btnClickHandler= {props.msg.btnClickHandler}
+                        btnClickHandler= {props.btnClickHandler}
                         style          = {props.msg.btnStyle}
                     />
                 </div>            

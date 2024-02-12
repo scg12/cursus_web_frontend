@@ -333,10 +333,16 @@ function InternMsg(props) {
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg} src='images/NewComInterne.png'/>
                 </div>
-                           
-                <div className={classes.formMainTitle} >
-                    {t("nouv_communique_M")}
-                </div>                
+
+                {!(props.formMode == 'consult')?          
+                    <div className={classes.formMainTitle} >
+                        {t("nouv_communique_M")}
+                    </div>   
+                    :
+                    <div className={classes.formMainTitle} >
+                        {t("consult_intern_comm_M")}
+                    </div> 
+                }             
             </div>
 
             <div id='errMsgPlaceHolder'/> 
@@ -392,24 +398,45 @@ function InternMsg(props) {
                     <div className={classes.inputRowLabelP} style={{fontWeight:570}}>
                         {t("msg_type")}:
                     </div>
+                    {!(props.formMode=="consult") ?
+                        <div style={{display:"flex", flexDirection:"row", marginLeft:"-8vw"}}>
+                            <div style={{display:"flex", flexDirection:"row"}}>
+                                <input type="radio"  name="msg_type" checked={msgType=="info"} onClick={()=>{setMsgType("info")}}/>
+                                <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('info')}</div>
+                            </div>
 
-                    <div style={{display:"flex", flexDirection:"row", marginLeft:"-8vw"}}>
-                        <div style={{display:"flex", flexDirection:"row"}}>
-                            <input type="radio"  name="msg_type" checked={msgType=="info"} onClick={()=>{setMsgType("info")}}/>
-                            <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('info')}</div>
+                            <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
+                                <input type="radio"  name="msg_type" checked={msgType=="release"}  onClick={()=>{setMsgType("release")}}/>
+                                <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('release')}</div>
+                            </div>
+
+                            <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
+                                <input type="radio"  name="msg_type" checked={msgType=="urgent"}  onClick={()=>{setMsgType("urgent")}}/>
+                                <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('urgent')}</div>
+                            </div>
+
+                        </div>
+                        :
+                        <div style={{display:"flex", flexDirection:"row", marginLeft:"-8vw"}}>
+                            <div style={{display:"flex", flexDirection:"row"}}>
+                                <input type="radio"  name="msg_type" checked={currentUiContext.formInputs[4]=="info"} />
+                                <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('info')}</div>
+                            </div>
+
+                            <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
+                                <input type="radio"  name="msg_type" checked={currentUiContext.formInputs[4]=="release"} />
+                                <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('release')}</div>
+                            </div>
+
+                            <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
+                                <input type="radio"  name="msg_type" checked={currentUiContext.formInputs[4]=="urgent"} />
+                                <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('urgent')}</div>
+                            </div>
+
                         </div>
 
-                        <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
-                            <input type="radio"  name="msg_type" checked={msgType=="release"}  onClick={()=>{setMsgType("release")}}/>
-                            <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('release')}</div>
-                        </div>
+                    }
 
-                        <div style={{display:"flex", flexDirection:"row", marginLeft:"3vw"}}>
-                            <input type="radio"  name="msg_type" checked={msgType=="urgent"}  onClick={()=>{setMsgType("urgent")}}/>
-                            <div style={{marginLeft:"0.7vw", marginTop:"0.5vh"}}>{t('urgent')}</div>
-                        </div>
-
-                    </div>
 
                 </div>
 

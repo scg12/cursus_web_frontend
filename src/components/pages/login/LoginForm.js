@@ -548,8 +548,8 @@ function LoginForm(props){
                 Description         : com.message,
                 date_debut_validite : com.validite_deb,
                 date_fin_validite   : com.validite_fin,
-                hasAction : true,
-                btnText:"voir",
+                hasAction           : true,
+                btnText             : t("set_as_read"),
                 
                 btnStyle :{
                     display:"flex",
