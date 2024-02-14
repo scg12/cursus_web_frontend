@@ -10,6 +10,7 @@ import axiosInstance from '../../../../axios';
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import BatchPhotoProg from "../modals/BatchPhotoProg";
+import BatchPhotoPic from "../modals/BatchPhotoPic";
 import MultiSelect from '../../../multiSelect/MultiSelect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
@@ -29,10 +30,7 @@ var tempTable;
 var list_initiale_eleves;
 var MultiSelectId = "searchRecipient"
 
-
-var list_destinataire    = "";
-var list_destinataires_ids = "";
-
+var SELECTED_BATCHPHOTO_ID;
 
 
 var chosenMsgBox;
@@ -171,22 +169,24 @@ function WebcamCapture(props) {
         return formattedList;
     }
 
-    function searchTextChangeHandler(e){
-        var name = e.target.value;
-        console.log("fffff",name,LIST_GENERALE_ELEVES)
-        //var tabEleves     = [...listEleves];
-        var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
-        setGridRows(matchedEleves);
+    function startBatchPhoto(rowId){
+        SELECTED_BATCHPHOTO_ID = rowId;
+        setModalOpen(3);
     }
 
+    function lookBatchPhoto(rowId){
+        SELECTED_BATCHPHOTO_ID = rowId;
+        setModalOpen(4);
+    }
 
-    function validateSelectionHandler(e){
-        list_destinataire      = document.getElementById("hidden2_"+MultiSelectId).value;
-        list_destinataires_ids = document.getElementById("hidden1_"+MultiSelectId).value;
-        
-        setListEleves([]);
-        setOptClasses(tempTable);
-        setMultiSelectVisible(false);
+    function editBatchPhoto(rowId){
+        SELECTED_BATCHPHOTO_ID = rowId;
+        setModalOpen(2);
+    }
+
+    function deleteBatchPhoto(rowId){
+        SELECTED_BATCHPHOTO_ID = rowId;
+        alert(rowId)
     }
 
     /*************************** DataGrid Declaration ***************************/    
@@ -266,53 +266,57 @@ function WebcamCapture(props) {
                                     height={18}
                                     title={t('start_photo')} 
                                     className={classes.cellPointer} 
-                                    onClick={(event)=> {
-                                        event.ignore = true;
+                                    onClick={(e)=> {
+                                        startBatchPhoto(params.row.id);
                                     }}
                                     alt=''
                                 />
                             </div>
                             :
-                            <div style={{width:"5.7vw"}}>
+                            <div style={{width:"fit-content", marginLeft:"-4.7vw"}}>
                                 <img src="images/lookPhoto4x4.png"  
                                     width={23} 
                                     height={23} 
                                     title={t('look_photo')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        event.ignore = true;
+                                        lookBatchPhoto(params.row.id);
                                     }}
                                     alt=''
                                 />
                             </div>
                         }
 
-                        <div style={{width:"5.7vw"}}>
-                            <img src="icons/baseline_edit.png"  
-                                width={17} 
-                                height={17} 
-                                title={t('modify')}
-                                className={classes.cellPointer} 
-                                onClick={(event)=> {
-                                    event.ignore = true;
-                                }}
-                                alt=''
-                            />
+                        {params.row.etat==0 &&
+                            <div style={{width:"5.7vw"}}>
+                                <img src="icons/baseline_edit.png"  
+                                    width={17} 
+                                    height={17} 
+                                    title={t('modify')}
+                                    className={classes.cellPointer} 
+                                    onClick={(event)=> {
+                                        editBatchPhoto(params.row.id);
+                                    }}
+                                    alt=''
+                                />
 
-                        </div>
-                        
-                        <div style={{width:"5.7vw"}}>
-                            <img src="icons/baseline_delete.png"  
-                                width={17} 
-                                height={17} 
-                                title={t('delete')}
-                                className={classes.cellPointer} 
-                                onClick={(event)=> {
-                                //deleteRowConfirm(params.row.id);
-                                }}
-                                alt=''
-                            />
-                        </div>
+                            </div>
+                        }
+
+                        {params.row.etat==0 &&
+                            <div style={{width:"5.7vw"}}>
+                                <img src="icons/baseline_delete.png"  
+                                    width={17} 
+                                    height={17} 
+                                    title={t('delete')}
+                                    className={classes.cellPointer} 
+                                    onClick={(e)=> {
+                                        deleteBatchPhoto(params.row.id)
+                                    }}
+                                    alt=''
+                                />
+                            </div>
+                        }
                         
                     </div>
                 ) 
@@ -402,52 +406,55 @@ function WebcamCapture(props) {
                                     title={t('start_photo')} 
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        event.ignore = true;
+                                        startBatchPhoto(params.row.id);
                                     }}
                                     alt=''
                                 />
                             </div>
                             :
-                            <div style={{width:"5.7vw"}}>
+                            <div style={{width:"fit-content", marginLeft:"-4.7vw"}}>
                                 <img src="images/lookPhoto4x4.png"  
-                                    width={23} 
-                                    height={23} 
+                                    width={25} 
+                                    height={25} 
                                     title={t('look_photo')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        event.ignore = true;
+                                        lookBatchPhoto(params.row.id);
                                     }}
                                     alt=''
                                 />
                             </div>
                         }
-
-                        <div style={{width:"5.7vw"}}>
-                            <img src="icons/baseline_edit.png"  
-                                width={17} 
-                                height={17} 
-                                title={t('modify')}
-                                className={classes.cellPointer} 
-                                onClick={(event)=> {
-                                    event.ignore = true;
-                                }}
-                                alt=''
-                            />
-
-                        </div>
                         
-                        <div style={{width:"5.7vw"}}>
-                            <img src="icons/baseline_delete.png"  
-                                width={17} 
-                                height={17} 
-                                title={t('delete')}
-                                className={classes.cellPointer} 
-                                onClick={(event)=> {
-                                //deleteRowConfirm(params.row.id);
-                                }}
-                                alt=''
-                            />
-                        </div>
+                        {params.row.etat==0 &&
+                            <div style={{width:"5.7vw"}}>
+                                <img src="icons/baseline_edit.png"  
+                                    width={17} 
+                                    height={17} 
+                                    title={t('modify')}
+                                    className={classes.cellPointer} 
+                                    onClick={(event)=> {
+                                        editBatchPhoto(params.row.id);
+                                    }}
+                                    alt=''
+                                />
+                            </div>
+                        }
+                        
+                        {params.row.etat==0 &&
+                            <div style={{width:"5.7vw"}}>
+                                <img src="icons/baseline_delete.png"  
+                                    width={17} 
+                                    height={17} 
+                                    title={t('delete')}
+                                    className={classes.cellPointer} 
+                                    onClick={(event)=> {
+                                        deleteBatchPhoto(params.row.id)
+                                    }}
+                                    alt=''
+                                />
+                            </div>
+                        }
                         
                     </div>
                 ) 
@@ -643,9 +650,36 @@ function WebcamCapture(props) {
     return (
         <div className={classes.formStyleP}>
             {(modalOpen!=0) && <BackDrop style={{height:"100vh"}}/>}
-            {(modalOpen >0 && modalOpen<3) && 
+            {(modalOpen == 1) && 
                 <BatchPhotoProg 
-                    formMode      = {(modalOpen==1) ? 'creation': 'consult'}  
+                    formMode      = 'creation'
+                    actionHandler = {saveMsg} 
+                    cancelHandler = {quitForm}
+                />
+            }
+
+            {(modalOpen == 2) && 
+                <BatchPhotoProg 
+                    batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
+                    formMode      = 'modif'  
+                    actionHandler = {saveMsg} 
+                    cancelHandler = {quitForm}
+                />
+            }
+
+            {(modalOpen == 3) && 
+                <BatchPhotoPic 
+                    batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
+                    formMode      = 'creation'  
+                    actionHandler = {saveMsg} 
+                    cancelHandler = {quitForm}
+                />
+            }
+
+            {(modalOpen == 4) && 
+                <BatchPhotoPic 
+                    batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
+                    formMode      = 'consult'  
                     actionHandler = {saveMsg} 
                     cancelHandler = {quitForm}
                 />

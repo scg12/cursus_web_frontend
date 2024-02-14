@@ -37,7 +37,7 @@ var msgDesciption          = "";
 var tempTable;
 var list_initiale_eleves;
 
-function ParentsMsg(props) {
+function BatchPhotoProg(props) {
     const { t, i18n }       = useTranslation();
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -786,5 +786,5 @@ function ParentsMsg(props) {
        
     );
  }
- export default ParentsMsg;
+ export default BatchPhotoProg;
  

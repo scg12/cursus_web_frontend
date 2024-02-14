@@ -1,4 +1,8 @@
-{   "set_as_read"                : "Seen",
+                        
+{   "list_of_children_M"         : "List Of Student To Take Photo",
+    "consult_batch_picture_M"    : "CONSULT BATCH PHOTO",
+    "take_batch_Picture_M"       : "TAKE BATCH PHOTO",
+    "set_as_read"                : "Seen",
     "consult_intern_comm_M"      : "ADMINISTRATIVE COMMUNICATION CONSULTATION",
     "consult_MSG_parent_M"       : "LOOK SENDED MESSAGE",
     "photo_desc"                 : "Batch Photo Purpose",
