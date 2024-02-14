@@ -597,60 +597,68 @@ function LoginForm(props){
             password: passwordText,
         },{headers:{}})
         .then((res) => {
-
-            localStorage.setItem('access', res.data.access);
-            localStorage.setItem('refresh', res.data.refresh);
-            axiosInstance.defaults.headers['Authorization'] =
-                'JWT ' + localStorage.getItem('access');
-            // history.push('/test');
-            console.log("login",res.data);
-            userProfile = 'admin';
-            profileAuthorisationString = getRightsStringFromProfile(userProfile)
-           
-            generateFeaturesCodeFromString(res.data.FeaturesCode)
-            currentAppContext.setInfoAnnees(res.data.info_annees);
-            currentAppContext.setUsrConnected(loginText,userProfile);
-            currentAppContext.setEnableProfiles(FeaturesCode);
-            currentAppContext.setIdUser(res.data.id_user);
-            currentAppContext.setIdEtabInit(res.data.id_etab_init);
-            currentAppContext.setCurrentEtab(res.data.id_etab_init);
-            currentAppContext.setActivatedYear(res.data.activated_year);
-            currentAppContext.setInfoSetabs(res.data.info_setabs);
-            currentAppContext.setInfoUser(res.data.info_user);
-            currentAppContext.setInfoCycles(res.data.info_cycles);
-            currentAppContext.setInfoNiveaux(res.data.info_niveaux);
-            currentAppContext.setInfoClasses(res.data.info_classes);
-            currentAppContext.setInfoMatieres(res.data.info_matieres);
-            currentAppContext.setInfoCours(res.data.info_cours);
-            currentUiContext.updateFirstLoad(true);
-
-            // Added 04/02/2024
-            //Ici, on va aller chercher toutes les notifs non lu du user
-
-            initUserNotifs(res.data.info_user.user_comms);
+            if (res.data.status=="ko")
+               {
+                // ERROR_CODE = res.response.status;
+                setPassWordError(true);
+                setIsLoading(false);
+                console.log(res.data.status=="ko")
+               }
+            else{
+                localStorage.setItem('access', res.data.access);
+                localStorage.setItem('refresh', res.data.refresh);
+                axiosInstance.defaults.headers['Authorization'] =
+                    'JWT ' + localStorage.getItem('access');
+                // history.push('/test');
+                console.log("login",res.data);
+                userProfile = 'admin';
+                profileAuthorisationString = getRightsStringFromProfile(userProfile)
             
+                generateFeaturesCodeFromString(res.data.FeaturesCode)
+                currentAppContext.setInfoAnnees(res.data.info_annees);
+                currentAppContext.setUsrConnected(loginText,userProfile);
+                currentAppContext.setEnableProfiles(FeaturesCode);
+                currentAppContext.setIdUser(res.data.id_user);
+                currentAppContext.setIdEtabInit(res.data.id_etab_init);
+                currentAppContext.setCurrentEtab(res.data.id_etab_init);
+                currentAppContext.setActivatedYear(res.data.activated_year);
+                currentAppContext.setInfoSetabs(res.data.info_setabs);
+                currentAppContext.setInfoUser(res.data.info_user);
+                currentAppContext.setInfoCycles(res.data.info_cycles);
+                currentAppContext.setInfoNiveaux(res.data.info_niveaux);
+                currentAppContext.setInfoClasses(res.data.info_classes);
+                currentAppContext.setInfoMatieres(res.data.info_matieres);
+                currentAppContext.setInfoCours(res.data.info_cours);
+                currentUiContext.updateFirstLoad(true);
+
+                // Added 04/02/2024
+                //Ici, on va aller chercher toutes les notifs non lu du user
+
+                initUserNotifs(res.data.info_user.user_comms);
+                
+                
+                //Pour les MsgBoxes
+                currentUiContext.setIsParentMsgBox(true);            
+                // profileAuthorisationString = getRightsStringFromProfile(userProfile);
+                //console.log(currentAppContext.infoCours);
+                currentUiContext.setIsDashboardNav(true);
+
+                loadEmploiDetemps(res.data.id_etab_init);
+                setIsLoading(false);
+
             
-            //Pour les MsgBoxes
-            currentUiContext.setIsParentMsgBox(true);            
-            // profileAuthorisationString = getRightsStringFromProfile(userProfile);
-            //console.log(currentAppContext.infoCours);
-            currentUiContext.setIsDashboardNav(true);
+                // getUserCommnicationsInternes(currentAppContext.idUser);
+                // console.log("notifs",listNotifs);
+                
 
-            loadEmploiDetemps(res.data.id_etab_init);
-            setIsLoading(false);
 
-           
-            // getUserCommnicationsInternes(currentAppContext.idUser);
-            // console.log("notifs",listNotifs);
+                currentUiContext.updateTheme(res.data.theme);
+                i18n.changeLanguage(res.data.langue);
+                updateCalendarTheme(res.data.theme);
+
             
-
-
-            currentUiContext.updateTheme(res.data.theme);
-            i18n.changeLanguage(res.data.langue);
-            updateCalendarTheme(res.data.theme);
-
-           
-            history.replace('/');
+                history.replace('/');
+            }
         },(res)=>{
             ERROR_CODE = res.response.status;
             setPassWordError(true);
