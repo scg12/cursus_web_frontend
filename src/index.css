@@ -75,6 +75,18 @@
   padding:0.1vh;
 }
 
+.rowActive{
+  width:100%;
+  height: 5.3vh;
+  padding-top: 0.5vh;
+  padding-bottom: 0.5vh;
+  /*background-color: #065386;*/
+  background-color: #797b79;
+  color:white;
+  border-radius: 3px;
+}
+
+
 
 
 /*-----------------------------------LE CKEDITOR ------------------------------------*/

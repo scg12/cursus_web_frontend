@@ -35,7 +35,7 @@ function DataListRow(props){
                 <input id={props.rowId} type="hidden" value={props.rowId}/>
                 <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-start", width:"100%"}} >
                     <div style={{fontSize:"1.7vw", marginTop:"-2.3vh", width:"10%"}}>.</div>           
-                    <div id={props.rowText}> {props.rowText} </div>
+                    <div style={{width:"100%", textOverflow:"ellipsis"}} id={props.rowId}> {props.rowText} </div>
                 </div>
             </div>
         :
@@ -44,7 +44,7 @@ function DataListRow(props){
                 
                 <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-start", width:"93%"}} >
                     <input type="checkbox" checked={props.selectChecked} onClick={props.selectionHandler}/>
-                    <div id={props.rowText}> {props.rowText}  </div>
+                    <div id={props.rowId} style={{width:"100%", textOverflow:"ellipsis"}}> {props.rowText}  </div>
                 </div>
             </div>
     );

@@ -24,43 +24,43 @@ const MSG_ERROR_FP   = 3;
 const MultiSelectId  = "MS-4"
 
 var CURRENT_COMM;
+var CURRENT_SELECTED_INDEX = 0;
+
 
 var msgTitle               = "";
 var msgDesciption          = "";
 
+var tabElevesPhoto =[
+    {id:1, nomEleve:"ABENA Luc Basile",    photoPath:null, photoValid:false},
+    {id:2, nomEleve:"ABE OWONA Simplice",  photoPath:null, photoValid:false},
+    {id:3, nomEleve:"BELIMGA OMGBA Marc",  photoPath:null, photoValid:true},
+    {id:4, nomEleve:"TALBA MALA Rodrigue", photoPath:null, photoValid:false}
+]
 
 function BatchPhotoPic(props) {
     const { t, i18n }       = useTranslation();
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const selectedTheme     = currentUiContext.theme;
-    const [picturesList, setPictureList] = useState([]);
-    const [photoInfo, setPhotoInfo]      = useState({});
-    const webcamRef = useRef(null); // create a webcam reference
-    const [imgSrc, setImgSrc] = useState(null); // initialize it
+    const [picturesList, setPictureList] = useState(tabElevesPhoto);
+    const [photoInfo,    setPhotoInfo]   = useState(tabElevesPhoto[0]);
+    const webcamRef = useRef(null);                        // create a webcam reference
+    const [imgSrc, setImgSrc]            = useState(tabElevesPhoto[0].photoPath); // initialize it
+    const [rowSelected, SetRowSelected]  = useState([])
     
     
     useEffect(()=> {        
-        currentUiContext.setIsParentMsgBox(false);   
+        currentUiContext.setIsParentMsgBox(false); 
+        CURRENT_SELECTED_INDEX = 0  
         getBatchPhotoInfos(props.batchPhotoId);
     },[]);
 
-
-   
-   
-  
-      // create a capture function
+    // create a capture function
       const capture = useCallback(() => {
           const imageSrc = webcamRef.current.getScreenshot();
           setImgSrc(imageSrc);
       }, [webcamRef]);
 
-    var tabElevesPhoto =[
-        {id:1, nomEleve:"ABENA Luc Basile",    photoPath:"", photoValid:false},
-        {id:2, nomEleve:"ABE OWONA Simplice",  photoPath:"", photoValid:false},
-        {id:3, nomEleve:"BELIMGA OMGBA Marc",  photoPath:"", photoValid:true},
-        {id:4, nomEleve:"TALBA MALA Rodrigue", photoPath:"", photoValid:false}
-    ]
     
     function getSmallButtonStyle()
     { // Choix du theme courant
@@ -293,41 +293,71 @@ function BatchPhotoPic(props) {
     }
 
     const  getBatchPhotoInfos=(batchPhotoId)=>{
-        var listEleves = []
+        var listEleves  = [];
+        var rowSelected = [];
+        var current_photo = {};
         // axiosInstance.post(`get-batch-photo-list/`, {
         //     batchPhotoId: batchPhotoId,
         // }).then((res)=>{
         //     //console.log(res.data);
         //     //setPictureList(res.data);
-            
+                //setPictureList(tabElevesPhoto);
+                tabElevesPhoto.map((elt, index)=>{
+                    if(index==0) {
+                        rowSelected.push(true);
+                        CURRENT_SELECTED_INDEX = 0;
+                    }
+                    rowSelected.push(false);
+                });
+                
+                SetRowSelected(rowSelected); 
+                //current_photo = {...tabElevesPhoto[0]}
+               // setPhotoInfo(current_photo);            
         // });
-        setPictureList(tabElevesPhoto);
     }
+       
 
     
 
-    function displayElevPhoto(e,photoElv){
-        setPhotoInfo(photoElv);
+    function displayElevPhoto(e,rowIndex){
+        var tabRowSelected =  [...rowSelected];
+        
+        tabRowSelected[CURRENT_SELECTED_INDEX] = false;
+        tabRowSelected[rowIndex] = true;
+        CURRENT_SELECTED_INDEX   = rowIndex;        
+       
+        setImgSrc(picturesList[CURRENT_SELECTED_INDEX].photoPath)
+        SetRowSelected(tabRowSelected);
     }
 
 
     const takePicture =  useCallback(() => {
        
-        console.log("gdgdgd", photoInfo);
-        // var tabElvPhoto = [...picturesList]
-        // const imageSrc = webcamRef.current.getScreenshot();
-       
-        // var index = tabElvPhoto.findIndex((elPhoto)=>elPhoto.id = photoInfo.id);
-        // tabElevesPhoto[index].id = photoInfo.id;
-        // tabElevesPhoto[index].nomEleve = photoInfo.nomEleve;
-        // tabElevesPhoto[index].photoPath = imageSrc;
-        // tabElevesPhoto[index].photoValid = true;
-        // setPictureList(tabElevesPhoto);
+        const imageSrc  = webcamRef.current.getScreenshot();         
+        console.log("ffff",imageSrc, photoInfo);
 
-
+        var tabElvPhoto = [...picturesList];      
         
-       // setImgSrc(imageSrc);
+        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoPath  = imageSrc;
+        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoValid = true;
+
+        var photoInf    = {...picturesList[CURRENT_SELECTED_INDEX]};
+        console.log("gdgdgd", photoInf, CURRENT_SELECTED_INDEX); 
+
+        setPictureList(tabElevesPhoto);
+        //setPhotoInfo(photoInf);
+        
+        setImgSrc(imageSrc);
     }, [webcamRef]);
+
+    const retake = () => {
+        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoPath  = "";
+        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoValid = false;
+        setPictureList(tabElevesPhoto);
+        //setPhotoInfo(tabElevesPhoto[CURRENT_SELECTED_INDEX]);
+        setImgSrc(null);
+    };
+
        
     
 
@@ -335,9 +365,6 @@ function BatchPhotoPic(props) {
 
     }
 
-    const retake = () => {
-        setImgSrc(null);
-    };
     
    
     
@@ -345,7 +372,7 @@ function BatchPhotoPic(props) {
 
     const LignePhotoEleve=(props)=>{
         return(
-            <div class={"lignePhoto"} style={{display:"flex", flexDirection:"row", height:"5.3vh", paddingTop:"0.4vh", marginBottom:"1vh", paddingLeft:"1vh", border:"1px solid gainsboro"}}   onClick={(e)=>{displayElevPhoto(e,props.photoEleve)}}>
+            <div class={rowSelected[props.rowIndex]?"lignePhoto rowActive":"lignePhoto"} style={{display:"flex", flexDirection:"row", height:"5.3vh", paddingTop:"0.4vh", marginBottom:"1vh", paddingLeft:"1vh", border:"1px solid gainsboro"}}   onClick={(e)=>{displayElevPhoto(e,props.rowIndex)}}>
                <img id="profile"  src={'images/photo4Fois4P.png'} alt='dossierIcon' style={{width:'1.63vw', height:'1.63vw', marginRight:'1vw',borderRadius:"3px", border:"solid 1px #4a4646",padding:"0.1vh"}}/>
                <div style={{fontSize:'0.9vw',  fontWeight:'bold', width:"100%"}}>{props.photoEleve.nomEleve}</div>
                 {props.photoEleve.photoValid && <img src={'images/check.png'} alt='dossierIcon' style={{width:'1.67vw', height:'1.67vw', borderRadius:"0.84vw", marginRight:"1vh", paddingTop:"0.3vh",borderColor:"green"}} />}
@@ -398,9 +425,9 @@ function BatchPhotoPic(props) {
                     </div>
 
                     <div style={{ width:"100%", height:"100%", overflowY:"scroll"}}>
-                        {picturesList.map((pictureElv)=>{
+                        {picturesList.map((pictureElv, index)=>{
                             return(
-                                <LignePhotoEleve photoEleve={pictureElv}/>
+                                <LignePhotoEleve rowIndex={index} photoEleve={pictureElv}/>
                             ); 
                         })}
                     </div>
@@ -410,23 +437,37 @@ function BatchPhotoPic(props) {
                 <div style={{display:"flex", flexDirection:"column", width:"60vw", justifyContent:"center", alignItems:"center"}}>
                     
                     <div style={{color:"black", fontSize:"0.9vw", fontWeight:"800"}}>
-                        {photoInfo.nomEleve}
+                        {picturesList[CURRENT_SELECTED_INDEX].nomEleve}
                     </div>
 
                     <div style={{width:"15vw", height:"15vw",border:"1px solid black"}}>
-                        <Webcam height={80} width={200} screenshotFormat="image/jpeg" ref={webcamRef} />
-                        <img src={photoInfo.photoPath}/>
+                        {!imgSrc?
+                            <Webcam height={80} width={200} screenshotFormat="image/jpeg" ref={webcamRef} />
+                            :
+                            <img src={imgSrc}/>                        
+                        }                        
+                       
                     </div>
 
-                    <div style={{display:"flex", flexDirection:"row",justifyContent:"space-between", width:"13%"}}>
+                    <div style={{display:"flex", flexDirection:"row",justifyContent:"space-between", width:"17%"}}>
                       
-
+                    {!imgSrc?
                         <CustomButton
                             btnText={t("filmer")}
                             buttonStyle={getSmallButtonStyle()}
                             btnTextStyle = {classes.btnSmallTextStyle}
                             btnClickHandler = {takePicture}
                         />
+
+                        :
+                        
+                        <CustomButton
+                            btnText={t("re-filmer")}
+                            buttonStyle={getSmallButtonStyle()}
+                            btnTextStyle = {classes.btnSmallTextStyle}
+                            btnClickHandler = {retake}
+                        />
+                    }
 
                         <CustomButton
                             btnText={t("valider")}
