@@ -7,10 +7,18 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import MsgBox from '../../../msgBox/MsgBox';
 import MultiSelect from '../../../multiSelect/MultiSelect'
+import {isMobile} from 'react-device-detect';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, formatCurrency, changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
+
+import {createPrintingPages} from '../reports/PrintingModule';
+import PDFTemplate from '../reports/PDFTemplate';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
+import EtatPaiementStaff from '../reports/EtatPaiementStaff';
+
+import {getTodayDate,convertDateToUsualDate, formatCurrency, changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -34,7 +42,11 @@ var listElt = {}
 var JOUR_DEB="", MOIS_DEB="", YEAR_DEB="", DATEDEB_VERIF='';
 var JOUR_FIN="", MOIS_FIN="", YEAR_FIN="", DATEFIN_VERIF='';
 
-var listEleves;
+const ROWS_PER_PAGE   = 40;
+var ElevePageSet      = [];
+var printedETFileName ='';
+
+;
 
 var chosenMsgBox;
 const MSG_SUCCESS_RECAP =11;
@@ -50,16 +62,12 @@ function RecapSorties(props) {
     const currentAppContext= useContext(AppContext);
 
     const selectedTheme = currentUiContext.theme;
-    const [isValid, setIsValid] = useState(false);
     const [gridRows, setGridRows] = useState([]);
     const [total_paye, setTotalPaye]= useState(0);
     const [absent, setAbsent]= useState(0);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const [optDestinataire, setOpDestinataire] = useState([]);
     const [listProfs, setListProfs] = useState([]);
-    
-    const [isDateFull, setIsDateFull]=useState(false);
-  
     
 
     useEffect(()=> {
@@ -631,6 +639,43 @@ function RecapSorties(props) {
         else filterPaiement(LISTE_FILTRE, '', '');
     }
 
+    
+    const closePreview =()=>{
+        setModalOpen(0);
+    }
+
+    const printStudentList=()=>{
+        
+        if(CURRENT_QUALITE != undefined){
+            var PRINTING_DATA ={
+                dateText     : 'Yaounde,'+ getTodayDate(),
+                leftHeaders  : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders: ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+                pageImages   : ["images/collegeVogt.png"],
+                pageTitle    : "Bilan des paiements du personnel ",
+                tableHeaderModel :["N°",t("poste"), t("nom et prenom(s)"), t("montant paye"), t("date paiement")],
+                tableData        :[...gridRows],
+                numberEltPerPage :ROWS_PER_PAGE  
+            };
+            printedETFileName = 'Bilan_paiements.pdf';
+            setModalOpen(1);
+            ElevePageSet=[];
+            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            console.log("ici la",ElevePageSet,gridRows);                    
+        } else{
+            chosenMsgBox = MSG_WARNING_RECAP;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "warning", 
+                msgTitle : t("warning_M"), 
+                message  : t("must_select_class")
+            })            
+        }      
+    }
+
+
+
 
     /********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
@@ -670,7 +715,25 @@ function RecapSorties(props) {
 
     return (
         <div className={classes.formStyleP}>
-            {(modalOpen==3) && <BackDrop/>}
+            {(modalOpen==1) && <BackDrop/>}
+            {(modalOpen==1) && 
+                <PDFTemplate previewCloseHandler={closePreview} >
+                    { isMobile?
+                        <PDFDownloadLink fileName={printedETFileName}   
+                            document = { 
+                                <EtatPaiementStaff pageSet={ElevePageSet}/>
+                            }
+                        >
+                            {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                             <EtatPaiementStaff pageSet={ElevePageSet}/>
+                        </PDFViewer>  
+                    }               
+                </PDFTemplate>
+            }
+
             {(currentUiContext.msgBox.visible == true) && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
                 <MsgBox 
@@ -772,26 +835,8 @@ function RecapSorties(props) {
                         
                     </div>
                     
-
-
-                   
                                 
-                    <div className={classes.gridAction}> 
-                        {(props.formMode=='appel')?
-                            <CustomButton
-                                btnText={t('save')}
-                                hasIconImg= {true}
-                                imgSrc='images/checkp_trans.png'
-                                imgStyle = {classes.grdBtnImgStyle}  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={savePresenceHandler}
-                                disable={(modalOpen==1||modalOpen==2)}   
-                            />
-                            :
-                            null
-                        }
-
+                    <div className={classes.gridAction}>                       
                         <CustomButton
                             btnText={t('imprimer')}
                             hasIconImg= {true}
@@ -799,8 +844,8 @@ function RecapSorties(props) {
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            btnClickHandler={printStudentList}
+                               
                         />
 
                     </div>

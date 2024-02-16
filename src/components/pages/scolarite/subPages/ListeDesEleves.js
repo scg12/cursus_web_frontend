@@ -26,32 +26,7 @@ import { useTranslation } from "react-i18next";
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"",
-    displayedName:'',
-    nom: '',
-    prenom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    nom_mere : '',
-    tel_pere : '',
-    tel_mere : '',
-    email_pere : '',
-    email_mere : '',
-    etab_provenance:'',
-    id:1,
-    redouble: '',
-    sexe:'M', 
-    
-    nom_parent      : '', 
-    tel_parent      : '', 
-    email_parent    : '',
-   
-}
+var listElt ={}
 
 
 var pageSet = [];
@@ -65,6 +40,7 @@ var page = {
 var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
+
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var printedETFileName ='';

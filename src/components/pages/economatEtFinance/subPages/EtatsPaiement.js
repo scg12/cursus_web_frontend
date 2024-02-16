@@ -8,22 +8,29 @@ import axiosInstance from '../../../../axios';
 import MsgBox from '../../../msgBox/MsgBox';
 import MultiSelect from '../../../multiSelect/MultiSelect';
 import BackDrop from "../../../backDrop/BackDrop";
+import {isMobile} from 'react-device-detect';
+import PDFTemplate from '../reports/PDFTemplate';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {changeDateIntoMMJJAAAA, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
+import EtatPaiementFrais from '../reports/EtatPaiementFrais';
+import {createPrintingPages} from '../reports/PrintingModule';
+import {getTodayDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
 let CURRENT_CLASSE_ID;
+let CURRENT_CLASSE_LABEL;
 let CURRRENT_COURS_ID;
 let SELECTED_DATE;
 
+const ROWS_PER_PAGE   = 40;
+var ElevePageSet      = [];
+var printedETFileName ='';
+
+
 var listElt ={}
-
-var JOUR_DEB="", MOIS_DEB="", YEAR_DEB="", DATEDEB_VERIF='';
-var JOUR_FIN="", MOIS_FIN="", YEAR_FIN="", DATEFIN_VERIF='';
-
-var listEleves;
 
 
 var chosenMsgBox;
@@ -37,13 +44,6 @@ var LIST_GEN_PAIEMENTS;
 var LIST_GEN_ELEVES;
 var LISTE_FILTRE;
 
-var tempTable;
-var list_initiale_eleves;
-var list_destinataire    = "";
-var list_destinataires_ids = "";
-
-
-
 
 function EtatsPaiement(props) {
 
@@ -52,20 +52,15 @@ function EtatsPaiement(props) {
     const currentAppContext= useContext(AppContext);
 
     const selectedTheme = currentUiContext.theme;
-   
     const [gridRows, setGridRows] = useState([]);
-    const [absent, setAbsent]= useState(0);
     const [modalOpen, setModalOpen  ]      = useState(0); //0 = close, 1=creation, 2=modif
     const [optClasses, setOpClasses ]      = useState([]);
-    const [isDateFull, setIsDateFull]      = useState(false);
     const [totalPaye,  setTotalPaye ]      = useState(0);
     const [totalAttendu, setTotalAttendu]  = useState(0);
     const [totalRestant, setTotalRestant]  = useState(0);
     const [listEleves,   setListEleves  ]  = useState([]);
+    const [isValid, setIsValid]            = useState(false);
    
-   
-    
-
     useEffect(()=> {
         currentUiContext.setIsParentMsgBox(false);
         if(gridRows.length ==0){
@@ -73,7 +68,6 @@ function EtatsPaiement(props) {
         }    
         getEtabListClasses();    
     },[]);
-
 
 
     const getEtabListClasses=()=>{
@@ -115,15 +109,24 @@ function EtatsPaiement(props) {
     }
 
 
-    function classChangeHandler(e){
+    function classChangeHandler(e){       
         if(e.target.value > 0){
+            CURRENT_CLASSE_ID    = e.target.value;
+            CURRENT_CLASSE_LABEL = optClasses.find((elt)=>elt.value == CURRENT_CLASSE_ID).label
+            
+            setIsValid(true);
             setListEleves([]);
             getClassListPaiements(e.target.value);
+
         }else{
-            
+
+            CURRENT_CLASSE_ID    = undefined
+            CURRENT_CLASSE_LABEL = "";
+           
+            setIsValid(false);
             setGridRows([]);
             setListEleves([]);
-            document.getElementById("searchText").value ="";
+            document.getElementById("searchText").value = "";
         }
     }
 
@@ -230,83 +233,6 @@ function EtatsPaiement(props) {
         setTotalRestant(sommRestant);
     }
 
-    // function getJourDebAndFilter(e){
-    //     setGridRows([]);
-    //     JOUR_DEB = e.target.value;
-    //     DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
-    //     console.log("date verif",gridRows);
-    //     if(DATEDEB_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
-    //     else filterPaiement(LISTE_FILTRE,'',DATEFIN_VERIF);
-    // }
-
-    // function getJourFinAndFilter(e){
-    //     setGridRows([]);
-    //     JOUR_FIN = e.target.value;
-    //     DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
-    //     if(DATEFIN_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
-    //     else filterPaiement(LISTE_FILTRE, '', DATEDEB_VERIF);
-    // }
-
-    // function getMoisDebAndFilter(e, dateFin){
-    //     setGridRows([]);
-    //     MOIS_DEB = e.target.value;
-    //     DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
-    //     console.log("date verif",DATEDEB_VERIF);
-    //     if(DATEDEB_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
-    //     else filterPaiement(LISTE_FILTRE, '', DATEFIN_VERIF);
-    // }
-
-    // function getMoisFinAndFilter(e){
-    //     setGridRows([]);
-    //     MOIS_FIN = e.target.value;
-    //     DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
-    //     if(DATEFIN_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
-    //     else filterPaiement(LISTE_FILTRE, DATEDEB_VERIF, '');
-    // }
-
-
-    // function getYearDebAndFilter(e){
-    //     setGridRows([]);
-    //     YEAR_DEB = e.target.value;
-    //     DATEDEB_VERIF = JOUR_DEB+'/'+MOIS_DEB+'/'+YEAR_DEB;
-    //     console.log("date verif",DATEDEB_VERIF);
-    //     if(DATEDEB_VERIF.length==10) filterPaiement(LISTE_FILTRE,DATEDEB_VERIF,DATEFIN_VERIF);
-    //     else filterPaiement(LISTE_FILTRE, '', DATEFIN_VERIF);
-    // }
-
-    // function getYearFinAndFilter(e){
-    //     setGridRows([]);
-    //     YEAR_FIN = e.target.value;
-    //     DATEFIN_VERIF = JOUR_FIN+'/'+MOIS_FIN+'/'+YEAR_FIN;
-    //     if(DATEFIN_VERIF.length==10) filterPaiement(LISTE_FILTRE,'',DATEFIN_VERIF);
-    //     else filterPaiement(LISTE_FILTRE, '', '');
-    // }
-
-    // function filterPaiement(list, dateDeb, dateFin){
-    //     var resultList = [...list];
-    //     console.log('filtre ici',list, dateDeb, dateFin);
-       
-
-    //     if(dateDeb != '' && dateFin == ''){
-    //         resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)));
-    //     }
-
-    //     if(dateDeb == '' && dateFin != ''){
-    //         resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin)));
-    //     }
-
-    //     if(dateDeb != '' && dateFin != ''){
-    //         resultList = list.filter((elt)=>(new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)) && new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin))));
-    //     }
-
-    //     setGridRows(resultList);
-    //     calculTotaux(resultList);       
-    //     return resultList;
-
-    // }
-
-
-    
 /*************************** DataGrid Declaration ***************************/    
     const columnsFr = [
         {
@@ -562,7 +488,8 @@ function EtatsPaiement(props) {
                 //currentUiContext.setIsParentMsgBox(true);
                 setGridRows([]);
                 setTotalPaye(0);
-                setAbsent(0);
+                setTotalAttendu(0);
+                setTotalRestant(0);
                 return 1;
             }
             
@@ -619,6 +546,40 @@ function EtatsPaiement(props) {
         
     }
 
+    const closePreview =()=>{
+        setModalOpen(0);
+    }
+
+    const printStudentList=()=>{
+        
+        if(CURRENT_CLASSE_ID != undefined){
+            var PRINTING_DATA ={
+                dateText     : 'Yaounde,'+ getTodayDate(),
+                leftHeaders  : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders: ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+                pageImages   : ["images/collegeVogt.png"],
+                pageTitle    : "Etats des paiements des frais de scolarite " + CURRENT_CLASSE_LABEL,
+                tableHeaderModel:["N°",t("matricule"), t("nom et prenom(s)"), t("montant paye"), t("montant restant"), t("montant a payer")],
+                tableData        :[...gridRows],
+                numberEltPerPage:ROWS_PER_PAGE  
+            };
+            printedETFileName = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(1);
+            ElevePageSet=[];
+            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            console.log("ici la",ElevePageSet,gridRows);                    
+        } else{
+            chosenMsgBox = MSG_WARNING_RECAP;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "warning", 
+                msgTitle : t("warning_M"), 
+                message  : t("must_select_class")
+            })            
+        }      
+    }
+
 
     /********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
@@ -658,7 +619,24 @@ function EtatsPaiement(props) {
 
     return (
         <div className={classes.formStyleP}>
-            {(modalOpen==3) && <BackDrop/>}
+            {(modalOpen==1) && <BackDrop/>}
+            {(modalOpen==1) && 
+                <PDFTemplate previewCloseHandler={closePreview} >
+                    { isMobile?
+                        <PDFDownloadLink fileName={printedETFileName}   
+                            document = { 
+                                <EtatPaiementFrais pageSet={ElevePageSet}/>
+                            }
+                        >
+                            {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                             <EtatPaiementFrais pageSet={ElevePageSet}/>
+                        </PDFViewer>  
+                    }               
+                </PDFTemplate>
+            }
             {(currentUiContext.msgBox.visible == true) && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
                 <MsgBox 
@@ -710,46 +688,6 @@ function EtatsPaiement(props) {
                     
                         </div>
                     </div>
-                       
-                    {/* <div className={classes.gridTitle} style={{marginLeft:"1vw"}}>                  
-                        <div className={classes.gridTitleText}>
-                            {t('date_deb')} :
-                        </div>
-                    
-                        <div className={classes.selectZone}>
-                           
-                            <div style ={{display:'flex', flexDirection:'row', marginLeft:'2.3vw', marginBottom:'-1vh'}}> 
-                                <input id="jour_deb"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_deb"), document.getElementById("mois_deb"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourDebAndFilter} style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw', color:'#065386', fontWeight:'bold'}} />/
-                                <input id="mois_deb"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_deb"), document.getElementById("anne_deb"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisDebAndFilter} style={{width:'1.4vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw', color:'#065386', fontWeight:'bold'}}/>/
-                                <input id="anne_deb"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_deb"), document.getElementById("jour_fin"))}}                                     maxLength={4}     className={classes.inputRowControl }  onChange={getYearDebAndFilter} style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginRight:'1.3vw', color:'#065386', fontWeight:'bold'}}  />
-                            </div> 
-                            
-                                    
-                        </div>
-                        
-                    </div> */}
-
-                    {/* <div className={classes.gridTitle} style={{marginLeft:"-3.3vw"}}>                  
-                        <div className={classes.gridTitleText}>
-                            {t('date_fin')} :
-                        </div>
-                    
-                        <div className={classes.selectZone}>
-                           
-                            <div style ={{display:'flex', flexDirection:'row', marginLeft:'2.3vw', marginBottom:'-1vh'}}> 
-                                <input id="jour_fin"   type="text"    Placeholder=' jj'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("jour_fin"), document.getElementById("mois_fin"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getJourFinAndFilter} style={{width:'1.3vw', fontSize:'1vw', height:'1.3vw', marginLeft:'-2vw', color:'#065386', fontWeight:'bold'}} />/
-                                <input id="mois_fin"   type="text"    Placeholder='mm'    onKeyUp={(e)=>{moveOnMax(e,document.getElementById("mois_fin"), document.getElementById("anne_fin"))}}      maxLength={2}     className={classes.inputRowControl }  onChange={getMoisFinAndFilter} style={{width:'1.4vw', fontSize:'1vw', height:'1.3vw', marginLeft:'0vw', color:'#065386', fontWeight:'bold'}}/>/
-                                <input id="anne_fin"   type="text"    Placeholder='aaaa'  onKeyUp={(e)=>{moveOnMax(e,document.getElementById("anne_fin"), null)}}                                     maxLength={4}     className={classes.inputRowControl }  onChange={getYearFinAndFilter} style={{width:'2.7vw', fontSize:'1vw', height:'1.3vw', marginRight:'1.3vw', color:'#065386', fontWeight:'bold'}}  />
-                            </div> 
-                            
-                                    
-                        </div>
-                       
-                    </div> */}
-                    
-
-
-                   
                                 
                     <div className={classes.gridAction}> 
                         
@@ -760,8 +698,8 @@ function EtatsPaiement(props) {
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            btnClickHandler={printStudentList}
+                            disable={!isValid}   
                         />
 
                     </div>
