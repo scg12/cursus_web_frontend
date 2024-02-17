@@ -1,5 +1,7 @@
                         
-{   "list_of_children_M"         : "List Of Student To Take Photo",
+{   "summary_for"                 : "Summary For",
+    "position"                   : "Position",
+    "list_of_children_M"         : "List Of Student To Take Photo",
     "consult_batch_picture_M"    : "CONSULT BATCH PHOTO",
     "take_batch_Picture_M"       : "TAKE BATCH PHOTO",
     "set_as_read"                : "Seen",
@@ -15,6 +17,7 @@
     "prise_de_photo_par_lot"     : "Batch 4x4 Photos",
     "total_restant_M"            : "AMOUNT REMAINING",
     "total_attendu_M"            : "TOTAL AMOUNT TO PAY",
+    "date_paement_M"             : "PAYMENT DATE",
     "etats_frais_scolarite_M"    : "SCHOOL FEES PAYMENT SUMMARY",
     "etats_frais_scolarite"      : "School Fees payment sammary",
     "total_paye_M"               : "TOTAL AMOUNT PAID",

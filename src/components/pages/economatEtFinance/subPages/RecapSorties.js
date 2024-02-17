@@ -32,6 +32,7 @@ var listReceipient;
 var LIST_GENERALE;
 var LIST_GENERALE_PAIEMENTS;
 var LISTE_FILTRE;
+var filterString ="";
 
 
 var listEns = [];
@@ -77,6 +78,7 @@ function RecapSorties(props) {
         }  
         setOpDestinataire(tabDestinataires);
         CURRENT_QUALITE = "all"  ;
+        CURRENT_QUALITE_LABEL = tabDestinataires[0].label;
         getListPersonnel(CURRENT_QUALITE);    
     },[]);
 
@@ -273,7 +275,8 @@ function RecapSorties(props) {
 /*************************** Handler functions ***************************/
     function recepientChangeHandler(e){
         CURRENT_QUALITE  = e.target.value;
-       
+        CURRENT_QUALITE_LABEL = tabDestinataires.find((elt)=>elt.value == CURRENT_QUALITE).label;
+        
         document.getElementById("searchText").value = "";
         setListProfs([]);
         console.log("qualite",CURRENT_QUALITE);
@@ -486,14 +489,17 @@ function RecapSorties(props) {
        
 
         if(dateDeb != '' && dateFin == ''){
+            filterString =  t('from') +':'+ dateDeb+' '+t('to')+ ':'+getTodayDate();
             resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)));
         }
 
         if(dateDeb == '' && dateFin != ''){
+            filterString = t('from') +':'+ getTodayDate()+' '+t('to')+ ':'+dateFin;
             resultList = list.filter((elt)=>new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin)));
         }
 
         if(dateDeb != '' && dateFin != ''){
+            filterString = t('from') +':'+ dateDeb+' '+t('to')+ ':'+dateFin;
             resultList = list.filter((elt)=>(new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) >= new Date(changeDateIntoMMJJAAAA(dateDeb)) && new Date(changeDateIntoMMJJAAAA(elt.date.split(' ')[0])) <= new Date(changeDateIntoMMJJAAAA(dateFin))));
         }
 
@@ -648,20 +654,23 @@ function RecapSorties(props) {
         
         if(CURRENT_QUALITE != undefined){
             var PRINTING_DATA ={
-                dateText     : 'Yaounde,'+ getTodayDate(),
-                leftHeaders  : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders: ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages   : ["images/collegeVogt.png"],
-                pageTitle    : "Bilan des paiements du personnel ",
-                tableHeaderModel :["N°",t("poste"), t("nom et prenom(s)"), t("montant paye"), t("date paiement")],
-                tableData        :[...gridRows],
-                numberEltPerPage :ROWS_PER_PAGE  
+                dateText         : 'Yaounde,'+ getTodayDate(),
+                leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders    : ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                rightHeaders     : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+                pageImages       : ["images/collegeVogt.png"],
+                pageTitle        : "Bilan des paiements du personnel ",
+                tableHeaderModel : ["N°",t("poste"), t("displayedName_M"), t("total_paye_M"), t("date_paement_M")],
+                tableData        : [...gridRows],
+                total_paye       : total_paye,
+                numberEltPerPage : ROWS_PER_PAGE  
             };
             printedETFileName = 'Bilan_paiements.pdf';
             setModalOpen(1);
             ElevePageSet=[];
             ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet[0].filterString = filterString +'  '+ t('position') +':'+CURRENT_QUALITE_LABEL ;
+            ElevePageSet[ElevePageSet.length-1].total_paye = total_paye;
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING_RECAP;
@@ -717,7 +726,7 @@ function RecapSorties(props) {
         <div className={classes.formStyleP}>
             {(modalOpen==1) && <BackDrop/>}
             {(modalOpen==1) && 
-                <PDFTemplate previewCloseHandler={closePreview} >
+                <PDFTemplate previewCloseHandler={closePreview} style={{height:"85.7vh"}}>
                     { isMobile?
                         <PDFDownloadLink fileName={printedETFileName}   
                             document = { 

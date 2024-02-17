@@ -78,13 +78,13 @@ function StudentListTemplate(props){
     const TableHeader = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'8vw',  justifyContent:'center',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[0]}</Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[1]}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[2]}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[3]}</Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.headercell}}>       <Text>{props.page.tableHeaderModel[4]}</Text></View>
-                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.headercell}}> <Text>{props.page.tableHeaderModel[5]}</Text></View>
-                <View style={{width:'7vw',  justifyContent:'center',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[6]}</Text></View>
+                <View style={{width:'5vw',   marginLeft:"-0.7vh",justifyContent:'center',...styles.headercell}}><Text>{props.page.tableHeaderModel[0]}</Text></View>
+                <View style={{width:'10vw', marginLeft:"-2vh", justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[1]}</Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[2]}</Text></View>
+                <View style={{width:'12vw',  marginLeft:"-4vh", justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[3]}</Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[4]}</Text></View>
+                <View style={{width:'12vw', marginLeft:"-2vh", justifyContent:'flex-start', ...styles.headercell}}><Text>{props.page.tableHeaderModel[5]}</Text></View>
+                {/* <View style={{width:'12vw',  justifyContent:'center',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[6]}</Text></View> */}
             </View>
         );
     }
@@ -92,13 +92,34 @@ function StudentListTemplate(props){
     const TableRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.rang}               </Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.matricule}               </Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.nom}           </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.date_naissance} </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.displayedMontantPaye} </Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.displayedMontantRestant}    </Text></View>
-                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.cell}}> <Text>{props.eleve.displayedMontantToPay}       </Text></View>
+                <View style={{width:'5vw', justifyContent:'center',...styles.cell}}><Text>{props.eleve.rang}</Text></View>
+                <View style={{width:'7vw', marginLeft:"-2vw", justifyContent:'center',...styles.cell}}><Text>{props.eleve.matricule}</Text></View>
+                <View style={{marginLeft:"2vw",width:'23vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.eleve.displayedName}</Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.eleve.displayedMontantPaye} </Text></View>
+                <View style={{width:'12vw', justifyContent:'center',...styles.cell}}><Text>{props.eleve.displayedMontantRestant}</Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start', ...styles.cell}}> <Text>{props.eleve.displayedMontantToPay}</Text></View>
+           </View>
+        );        
+
+    }
+
+    const Resumer = (props) =>{
+        return(
+            <View style={{display:"flex", flexDirection:"row", fontFamily:"Times-Roman", justifyContent:"center", alignItems:"center", width:"100%", height:"2.3vh",fontSize:10, fontWeight:"bold", marginTop:"3vh", color:"white", backgroundColor:"black"}}>
+                <View style={{display:"flex", flexDirection:"row",}}>
+                    <Text>{t("total_paye_M")}: </Text>       
+                    <Text>{props.bilan.totalPaye+" FCFA"} </Text>     
+                </View>
+
+                <View style={{display:"flex", flexDirection:"row",marginLeft:"3vh"}}>
+                    <Text>{t("total_restant_M")}: </Text>       
+                    <Text>{props.bilan.totalRestant+" FCFA"} </Text>     
+                </View>
+
+                <View style={{display:"flex", flexDirection:"row",marginLeft:"3vh"}}>
+                    <Text>{t("total_attendu_M")}: </Text>       
+                    <Text>{props.bilan.totalAttendu+" FCFA"} </Text>     
+                </View>
                
            </View>
         );        
@@ -127,14 +148,23 @@ function StudentListTemplate(props){
                     <Text style={styles.titleStyle}>{el.pageTitle}</Text>
                 </View>
 
+                {(index==0 && el.filterString.length> 0) &&     
+                    <View style={{display:"flex", flexDirection:"row", marginTop:"-1vh", }}>                           
+                        <Text style={{fontSize:12, fontFamily:"MyBold"}}>{el.filterString}</Text> 
+                    </View>
+                }
+
                 <TableHeader style={styles.headerColumnStyle} page={el}/>
                
                 <View style={styles.main}>
                    { Array.from(el.pageRows,
-                        (row, index) => (
-                            <TableRow style={styles.row} eleve={row}/>
+                        (row) => (
+                            <TableRow style={styles.row} eleve={row}/>                           
                         ))
                    } 
+                   {(index == props.pageSet.length-1) &&
+                     <Resumer bilan={el.bilans}  />
+                   }
                 </View>
               
                 <View style={styles.footer}> 
@@ -259,10 +289,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         alignItems:'center',
         width:'97%',
-        height:'2.7vh',
-        backgroundColor:'rgb(6, 83, 134)',
+        height:'2.3vh',
+        backgroundColor:'#414244',
         textTransform:'uppercase',
-        fontSize:8,
+        fontSize:9,
         fontWeight:'heavy',
         color:'white'
     },
@@ -299,7 +329,8 @@ const styles = StyleSheet.create({
         fontSize:9,
         color:'black',
         justifyContent:'space-evenly',
-        alignItems:"center"
+        alignItems:"center",
+        width:"97%"
     }, 
 
     main: {

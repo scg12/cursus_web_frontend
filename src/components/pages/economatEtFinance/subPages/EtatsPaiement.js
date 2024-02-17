@@ -28,6 +28,7 @@ let SELECTED_DATE;
 const ROWS_PER_PAGE   = 40;
 var ElevePageSet      = [];
 var printedETFileName ='';
+var filterString      ='';
 
 
 var listElt ={}
@@ -147,6 +148,7 @@ function EtatsPaiement(props) {
 
     function validateSelectionHandler(e){
         var name = document.getElementById("searchText").value;
+        filterString = t("summary_for")+': '+ name;
         LISTE_FILTRE = LIST_GEN_PAIEMENTS.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
         setGridRows(LISTE_FILTRE);
         calculTotaux(LISTE_FILTRE);
@@ -560,14 +562,17 @@ function EtatsPaiement(props) {
                 rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
                 pageImages   : ["images/collegeVogt.png"],
                 pageTitle    : "Etats des paiements des frais de scolarite " + CURRENT_CLASSE_LABEL,
-                tableHeaderModel:["N°",t("matricule"), t("nom et prenom(s)"), t("montant paye"), t("montant restant"), t("montant a payer")],
-                tableData        :[...gridRows],
+                tableHeaderModel:["N°",t("matricule"), t("displayedName_M"), t("total_paye_M"), t("total_restant_M"), t("total_attendu_M")],
+                // bilans          : {},
+                tableData       : [...gridRows],
                 numberEltPerPage:ROWS_PER_PAGE  
             };
             printedETFileName = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(1);
             ElevePageSet=[];
             ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet[0].filterString = filterString ;
+            ElevePageSet[ElevePageSet.length-1].bilans = {...{totalPaye : formatCurrency(totalPaye), totalAttendu : formatCurrency(totalAttendu), totalRestant : formatCurrency(totalRestant)}};
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING_RECAP;
@@ -621,7 +626,7 @@ function EtatsPaiement(props) {
         <div className={classes.formStyleP}>
             {(modalOpen==1) && <BackDrop/>}
             {(modalOpen==1) && 
-                <PDFTemplate previewCloseHandler={closePreview} >
+                <PDFTemplate previewCloseHandler={closePreview} style={{height:"85.7vh"}} >
                     { isMobile?
                         <PDFDownloadLink fileName={printedETFileName}   
                             document = { 
