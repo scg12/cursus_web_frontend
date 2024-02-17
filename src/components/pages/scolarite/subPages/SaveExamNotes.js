@@ -492,6 +492,7 @@ function SaveExamNotes(props) {
             moyennes_eleves.push(elt.moyenne)
         });
 
+        setModalOpen(5);
         console.log("resultats", id_eleves, mention_eleves, moyennes_eleves)
 
         axiosInstance
@@ -503,6 +504,7 @@ function SaveExamNotes(props) {
             moyennes  : moyennes_eleves.join("_")
         
         }).then((res)=>{
+            setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -516,10 +518,10 @@ function SaveExamNotes(props) {
     function saveExamResultsHandler(){
         chosenMsgBox = MSG_CONFIRM;
         currentUiContext.showMsgBox({
-            visible:true, 
-            msgType:"question", 
-            msgTitle:t("confirm_M"), 
-            message:t("save_changes")
+            visible  : true, 
+            msgType  : "question", 
+            msgTitle : t("confirm_M"), 
+            message  : t("save_changes")
         })   
     }
 
@@ -579,6 +581,33 @@ function SaveExamNotes(props) {
                     buttonRejectHandler = {rejectHandler}            
                 />                 
             }
+
+            {(modalOpen==5) && <BackDrop/>}
+            {(modalOpen==5) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                    {t('traitement')}...
+                </div>                    
+            }
+            {(modalOpen==5) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'50%',
+                    zIndex: '1200',
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
+            }
+
 
           
             <div className={classes.inputRow}>               

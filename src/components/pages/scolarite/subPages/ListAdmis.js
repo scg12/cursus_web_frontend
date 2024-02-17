@@ -82,9 +82,11 @@ function ListAdmis(props) {
 
       const  getExamStudentResultList=(examId)=>{
         var listEleves;
+        setModalOpen(5);
         axiosInstance.post(`list-resultat-examen-officiel/`, {
             id_exam : examId,
         }).then((res)=>{
+            setModalOpen(0);
             console.log("resultats",res.data);
             listEleves = [...formatList(res.data.res)];
             console.log("examen",listEleves);
@@ -304,8 +306,34 @@ function ListAdmis(props) {
 
     return (
         <div className={classes.formStyleP}>
-             {(modalOpen==3) && <BackDrop/>}
-             {(modalOpen==3) && <AddStudent formMode='consult' cancelHandler={quitForm} />}
+            {(modalOpen==3) && <BackDrop/>}
+            {(modalOpen==3) && <AddStudent formMode='consult' cancelHandler={quitForm} />}
+
+            {(modalOpen==5) && <BackDrop/>}
+            {(modalOpen==5) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                    {t('traitement')}...
+                </div>                    
+            }
+            {(modalOpen==5) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'50%',
+                    zIndex: '1200',
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
+            }
             <div className={classes.inputRow}>               
                 <div className={classes.formTitle}>
                     {t('exam_results_M')}  
