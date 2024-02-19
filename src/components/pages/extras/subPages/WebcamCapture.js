@@ -85,7 +85,7 @@ function WebcamCapture(props) {
         var rang = 1;
         list.map((elt)=>{
             listElt = {};
-            listElt.rang          = elt.rang;
+            listElt.rang          = rang;
             listElt.id            = elt.id;
             listElt.libelle       = elt.libelle;
             listElt.description   = elt.but;
@@ -463,13 +463,15 @@ function WebcamCapture(props) {
     function saveBatchPhoto(CURRENT_BATCH_PHOTO) { 
 
         console.log('Ajout',CURRENT_BATCH_PHOTO);
-        //var listEleves = [];
+        
         axiosInstance.post(`liste-eleves-pour-photo/`, {
-            libelle     : CURRENT_BATCH_PHOTO.libelle,
-            but         : CURRENT_BATCH_PHOTO.but,
-            id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
-            id_classe   : CURRENT_BATCH_PHOTO.id_classe,
-            id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
+            libelle       : CURRENT_BATCH_PHOTO.libelle,
+            but           : CURRENT_BATCH_PHOTO.but,
+            date          : CURRENT_BATCH_PHOTO.date,
+            id_sousetab   : CURRENT_BATCH_PHOTO.id_sousetab,
+            id_classe     : CURRENT_BATCH_PHOTO.id_classe,
+            id_eleves     : CURRENT_BATCH_PHOTO.id_eleves,
+            etat          : CURRENT_BATCH_PHOTO.etat,
         }).then((res)=>{
             console.log(res.data);
 
@@ -485,28 +487,28 @@ function WebcamCapture(props) {
 
 
     
-    function saveBatchPhoto(CURRENT_BATCH_PHOTO) { 
+    // function saveBatchPhoto(CURRENT_BATCH_PHOTO) { 
 
-        console.log('Ajout',CURRENT_BATCH_PHOTO);
-        //var listEleves = [];
-        axiosInstance.post(`liste-eleves-pour-photo/`, {
-            libelle     : CURRENT_BATCH_PHOTO.libelle,
-            but         : CURRENT_BATCH_PHOTO.but,
-            id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
-            id_classe   : CURRENT_BATCH_PHOTO.id_classe,
-            id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
-        }).then((res)=>{
-            console.log(res.data);
+    //     console.log('Ajout',CURRENT_BATCH_PHOTO);
+    //     //var listEleves = [];
+    //     axiosInstance.post(`liste-eleves-pour-photo/`, {
+    //         libelle     : CURRENT_BATCH_PHOTO.libelle,
+    //         but         : CURRENT_BATCH_PHOTO.but,
+    //         id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
+    //         id_classe   : CURRENT_BATCH_PHOTO.id_classe,
+    //         id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
+    //     }).then((res)=>{
+    //         console.log(res.data);
 
-            chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_add_M"), 
-                message:t("success_add")
-            });
-        })      
-    }
+    //         chosenMsgBox = MSG_SUCCESS;
+    //         currentUiContext.showMsgBox({
+    //             visible:true, 
+    //             msgType:"info", 
+    //             msgTitle:t("success_add_M"), 
+    //             message:t("success_add")
+    //         });
+    //     })      
+    // }
 
     
     function updateBatchPhoto(CURRENT_BATCH_PHOTO) { 
@@ -650,7 +652,7 @@ function WebcamCapture(props) {
             {(modalOpen == 2) && 
                 <BatchPhotoProg 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
-                    photoList     = {SELECTED_BATCHPHOTO_ID}
+                    photoList     = {CURRENT_PHOTO_LIST}
                     formMode      = 'modif'  
                     actionHandler = {updateBatchPhoto} 
                     cancelHandler = {quitForm}
@@ -660,7 +662,7 @@ function WebcamCapture(props) {
             {(modalOpen == 3) && 
                 <BatchPhotoPic 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
-                    photoList     = {SELECTED_BATCHPHOTO_ID}
+                    photoList     = {CURRENT_PHOTO_LIST}
                     formMode      = 'creation'  
                     actionHandler = {updateBatchPhoto} 
                     cancelHandler = {quitForm}
@@ -670,7 +672,7 @@ function WebcamCapture(props) {
             {(modalOpen == 4) && 
                 <BatchPhotoPic 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
-                    photoList     = {SELECTED_BATCHPHOTO_ID}
+                    photoList     = {CURRENT_PHOTO_LIST}
                     formMode      = 'consult'  
                     actionHandler = {deleteBatchPhoto} 
                     cancelHandler = {quitForm}

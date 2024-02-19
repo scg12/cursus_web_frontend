@@ -32,7 +32,7 @@ var list_destinataire      = "";
 var list_destinataires_ids = "";
 var precDest_ids           = ""
 var photoLibelle           = "";
-var photoDesc          = "";
+var photoDesc              = "";
 
 var tempTable;
 var list_initiale_eleves;
@@ -228,14 +228,16 @@ function BatchPhotoProg(props) {
 
     function getFormData(){
         CURRENT_BATCH_PHOTO = {};
-        CURRENT_BATCH_PHOTO.id_sousetab  = currentAppContext.currentEtab;
-        CURRENT_BATCH_PHOTO.id_classe    = CURRENT_CLASSE_ID;
-        CURRENT_BATCH_PHOTO.libelle      = photoLibelle;
-        CURRENT_BATCH_PHOTO.but          = photoDesc;
-        CURRENT_BATCH_PHOTO.date         = getTodayDate(); 
-        CURRENT_BATCH_PHOTO.id_eleves    = getIdEleves();
-        CURRENT_BATCH_PHOTO.id_liste     = (props.formMode!='creation') ? props.batchPhotoId:"" ;
+        CURRENT_BATCH_PHOTO.id_sousetab   = parseInt(currentAppContext.currentEtab);
+        CURRENT_BATCH_PHOTO.id_classe     = parseInt(CURRENT_CLASSE_ID);
+        CURRENT_BATCH_PHOTO.libelle       = photoLibelle;
+        CURRENT_BATCH_PHOTO.but           = photoDesc;
+        CURRENT_BATCH_PHOTO.date          = getTodayDate(); 
+        CURRENT_BATCH_PHOTO.id_eleves     = getIdEleves();
+        CURRENT_BATCH_PHOTO.etat          = (props.formMode =='creation') ? 0:1;
+        CURRENT_BATCH_PHOTO.id_liste      = (props.formMode!='creation') ? props.batchPhotoId:"" ;
     }
+
 
     function getIdEleves(){
         var id_elvs = "";

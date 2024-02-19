@@ -30,24 +30,20 @@ var CURRENT_SELECTED_INDEX = 0;
 var msgTitle               = "";
 var msgDesciption          = "";
 
-var tabElevesPhoto =[
-    {id:1, nomEleve:"ABENA Luc Basile",    photoPath:null, photoValid:false},
-    {id:2, nomEleve:"ABE OWONA Simplice",  photoPath:null, photoValid:false},
-    {id:3, nomEleve:"BELIMGA OMGBA Marc",  photoPath:null, photoValid:true},
-    {id:4, nomEleve:"TALBA MALA Rodrigue", photoPath:null, photoValid:false}
-]
+
 
 function BatchPhotoPic(props) {
     const { t, i18n }       = useTranslation();
     const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const selectedTheme     = currentUiContext.theme;
-    const [picturesList, setPictureList] = useState(tabElevesPhoto);
-    const [photoInfo,    setPhotoInfo]   = useState(tabElevesPhoto[0]);
+    const [picturesList, setPictureList] = useState([]);
+    // const [photoInfo,    setPhotoInfo]   = useState(tabElevesPhoto[0]);
     const webcamRef = useRef(null);                        // create a webcam reference
-    const [imgSrc, setImgSrc]            = useState(tabElevesPhoto[0].photoPath); // initialize it
+    const [imgSrc, setImgSrc]            = useState(""); // initialize it
     const [rowSelected, SetRowSelected]  = useState([])
     
+    var tabElevesPhoto = initPhotoList(props.photoList);
     
     useEffect(()=> {        
         currentUiContext.setIsParentMsgBox(false); 
@@ -55,11 +51,6 @@ function BatchPhotoPic(props) {
         getBatchPhotoInfos(props.batchPhotoId);
     },[]);
 
-    // create a capture function
-      const capture = useCallback(() => {
-          const imageSrc = webcamRef.current.getScreenshot();
-          setImgSrc(imageSrc);
-      }, [webcamRef]);
 
     
     function getSmallButtonStyle()
@@ -126,7 +117,39 @@ function BatchPhotoPic(props) {
 
    
     /************************************ Handlers ************************************/    
-   
+    function initPhotoList(listElvPhoto){
+        var tabElt   = [];
+        var photoElv = {};
+        listElvPhoto.map((elt)=>{
+            photoElv        = {};
+            photoElv.id          = elt.id
+            photoElv.nomEleve    = elt.nom+' '+elt.prenom;
+            photoElv.photoPath   = elt.photo_url;
+            photoElv.photoValid  = elt.has_picture==null||elt.has_picture==false? false : true;
+            tabElt.push(photoElv);
+        });
+        return tabElt;        
+    }
+
+    const  getBatchPhotoInfos=(batchPhotoId)=>{
+        var listEleves  = [];
+        var rowSelected = [];
+        var current_photo = {};
+       
+        tabElevesPhoto.map((elt, index)=>{
+            if(index==0) {
+                rowSelected.push(true);
+                CURRENT_SELECTED_INDEX = 0;
+            }
+            rowSelected.push(false);
+        });
+        
+        SetRowSelected(rowSelected); 
+        setPictureList(tabElevesPhoto);
+        setImgSrc(tabElevesPhoto[0].photoPath);
+               
+    }
+      
    
 
     function sendMsg(e){
@@ -152,7 +175,7 @@ function BatchPhotoPic(props) {
     }
 
     function closeBatchPhoto(){
-        
+
     }
 
     function getFormData(){
@@ -296,32 +319,6 @@ function BatchPhotoPic(props) {
         
     }
 
-    const  getBatchPhotoInfos=(batchPhotoId)=>{
-        var listEleves  = [];
-        var rowSelected = [];
-        var current_photo = {};
-        // axiosInstance.post(`get-batch-photo-list/`, {
-        //     batchPhotoId: batchPhotoId,
-        // }).then((res)=>{
-        //     //console.log(res.data);
-        //     //setPictureList(res.data);
-                //setPictureList(tabElevesPhoto);
-                tabElevesPhoto.map((elt, index)=>{
-                    if(index==0) {
-                        rowSelected.push(true);
-                        CURRENT_SELECTED_INDEX = 0;
-                    }
-                    rowSelected.push(false);
-                });
-                
-                SetRowSelected(rowSelected); 
-                //current_photo = {...tabElevesPhoto[0]}
-               // setPhotoInfo(current_photo);            
-        // });
-    }
-       
-
-    
 
     function displayElevPhoto(e,rowIndex){
         var tabRowSelected =  [...rowSelected];
@@ -338,7 +335,7 @@ function BatchPhotoPic(props) {
     const takePicture =  useCallback(() => {
        
         const imageSrc  = webcamRef.current.getScreenshot();         
-        console.log("ffff",imageSrc, photoInfo);
+        console.log("ffff",imageSrc);
 
         var tabElvPhoto = [...picturesList];      
         
@@ -439,10 +436,11 @@ function BatchPhotoPic(props) {
                 </div>
 
                 <div style={{display:"flex", flexDirection:"column", width:"60vw", justifyContent:"center", alignItems:"center"}}>
-                    
+                {picturesList[CURRENT_SELECTED_INDEX]!=undefined&&
                     <div style={{color:"black", fontSize:"0.9vw", fontWeight:"800"}}>
                         {picturesList[CURRENT_SELECTED_INDEX].nomEleve}
                     </div>
+                }
 
                     <div style={{width:"15vw", height:"15vw",border:"1px solid black"}}>
                         {!imgSrc?
