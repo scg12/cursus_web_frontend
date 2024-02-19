@@ -106,7 +106,6 @@ function TauxDeReussite(props){
 
         getExamResults(currentAppContext.currentEtab).then((dd)=>{
        
-
             console.log("data", listResults,listResultLabels, listResultData, listResultLabelsSexe,listResultDataSexe);
             createChartStates(listResultLabels,listResultData);
             createComparativeGenderChart(listResultLabelsSexe,listResultDataSexe);
@@ -167,6 +166,8 @@ function TauxDeReussite(props){
                 var examPasses   = [...res.data.exam_passes];
                 var listExam     = [];
                 var sessions     = [];
+
+                console.log("courants et passses", examCourants,examPasses);
 
                 if(examCourants.length>0){
                     examCourants.map((exam, index)=>{
@@ -305,8 +306,8 @@ function TauxDeReussite(props){
                         }
                     });
 
-                    sessionSex.map((sess, index2)=>{
-                        if(index2 < sessionSex.length-1){
+                    sessionSex.map((sess, index3)=>{
+                        if(index3 < sessionSex.length-1){
                             resultSex =  resultSex + "0" + "_";
                         }else{
                             resultSex =  resultSex + "0";
@@ -317,18 +318,18 @@ function TauxDeReussite(props){
 
                     listExam.map((exam, index1)=>{
                         if(index1 < listExam.length-1){
-                            resultSur5Ans = result + "*";
-                            resultParSex3Ans = resultSex + "+" + resultSex + "*";
+                            resultSur5Ans    = resultSur5Ans + result + "*";
+                            resultParSex3Ans = resultParSex3Ans + resultSex + "+" + resultSex + "*";
                         } else {
-                            resultSur5Ans = result;
-                            resultParSex3Ans = resultSex + "+" + resultSex;
+                            resultSur5Ans    = resultSur5Ans + result;
+                            resultParSex3Ans = resultParSex3Ans + resultSex + "+" + resultSex;
                         }
                     });
                    
                     examAnne5Ans  = listExam.join("_")+'*'+sessions.join("_");
                     examAnne3Ans  = listExam.join("_")+'*'+sessions.join("_");
 
-                    console.log("resultats", resultSur5Ans, resultParSex3Ans);
+                    console.log("resultats", examAnne3Ans,examAnne5Ans,resultSur5Ans, resultParSex3Ans,sessionSex);
                 }
 
                 listResultData      = resultSur5Ans;
@@ -629,7 +630,7 @@ function TauxDeReussite(props){
                 
                 </div>
                  <FormPuce menuItemId ='3' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle="Evolution Du Taux De Reussite Sur les 5 Dernieres Annees "  itemSelected={null}> </FormPuce>
-                <div className={classes.inputRowLeft+' '+classes.margLeft5}> 
+                    <div className={classes.inputRowLeft+' '+classes.margLeft5}> 
                     {(examResultTab||[]).map((examResult) => {                   
                         return(
                             <div className={classes.inputRow +' '+ classes.margLeft2} style={{width:progressBarWidth, height: 'fit-content'}}> 
@@ -717,74 +718,74 @@ function TauxDeReussite(props){
                             </div>                       
                         );                  
                     })}                       
-                </div>
+                </div> 
                 
                 <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle="Evolution Du Taux De Reussite Par Sexe Sur les 3 Dernieres Annees"  itemSelected={null}> </FormPuce>
-                <div className={classes.inputRowLeft+' '+classes.margLeft5}> 
-                    {(examResultTab||[]).map((examResult) => {                   
-                        return(
-                            <div className={classes.inputRow +' '+ classes.margLeft2} style={{width:progressBarWidth, height: 'fit-content'}}> 
-                                {(genderChartCode[examResultTab.findIndex((exam)=>(exam==examResult))]==1)?
-                                    <Bar
-                                        data={genderBarChartStateArray[examResultTab.findIndex((exam)=>(exam==examResult))]}
-                                        options={{
-                                            title:{
-                                                display:true,
-                                                text:'Evolution comparative du taux de reussite au '+getStringAtPosition(examResult,0),
-                                                fontSize:20
-                                            },
-                                            legend:{
-                                                display:true,
-                                                position:'right'
-                                            }
-                                        }}
-                                    />
-                                    :
-                                    <Line
-                                        data={genderLineChartStateArray[examResultTab.findIndex((exam)=>(exam==examResult))]}
-                                        options={{
-                                            title:{
-                                                display:true,
-                                                text:'Evolution du taux de reussite au '+getStringAtPosition(examResult,0),
-                                                fontSize:20
-                                            },
-                                            legend:{
-                                                display:true,
-                                                position:'right'
-                                            }
-                                        }}
-                                    />
-                                                                
-                                    
-                                }
-                                
-                                <div className={classes.inputRowRight}>
-                                    <div className={classes.buttonList}>
-                                        <CustomButton
-                                            btnText='' 
-                                            buttonStyle={getSmallButtonStyle()}
-                                            btnTextStyle = {classes.btnTextStyle}
-                                            btnClickHandler={()=>{changedIndex = examResultTab.findIndex((exam)=>(exam==examResult)); genderChartCd = [...genderChartCode]; genderChartCd[changedIndex]=1; setgenderChartCode(genderChartCd);}}
-                                            hasIconImg= {true}
-                                            imgSrc='images/barChart.png'
-                                            imgStyle = {classes.imgStyle}
+                    <div className={classes.inputRowLeft+' '+classes.margLeft5}> 
+                        {(examResultTab||[]).map((examResult) => {                   
+                            return(
+                                <div className={classes.inputRow +' '+ classes.margLeft2} style={{width:progressBarWidth, height: 'fit-content'}}> 
+                                    {(genderChartCode[examResultTab.findIndex((exam)=>(exam==examResult))]==1)?
+                                        <Bar
+                                            data={genderBarChartStateArray[examResultTab.findIndex((exam)=>(exam==examResult))]}
+                                            options={{
+                                                title:{
+                                                    display:true,
+                                                    text:'Evolution comparative du taux de reussite au '+getStringAtPosition(examResult,0),
+                                                    fontSize:20
+                                                },
+                                                legend:{
+                                                    display:true,
+                                                    position:'right'
+                                                }
+                                            }}
                                         />
-                                        <CustomButton
-                                            btnText='' 
-                                            buttonStyle={getSmallButtonStyle()}
-                                            btnTextStyle = {classes.btnTextStyle}
-                                            btnClickHandler={()=>{changedIndex = examResultTab.findIndex((exam)=>(exam==examResult)); genderChartCd = [...genderChartCode]; genderChartCd[changedIndex]=2; setgenderChartCode(genderChartCd);}}
-                                            hasIconImg= {true}
-                                            imgSrc='images/linechart2.png'
-                                            imgStyle = {classes.imgStyle}
-                                        />                         
+                                        :
+                                        <Line
+                                            data={genderLineChartStateArray[examResultTab.findIndex((exam)=>(exam==examResult))]}
+                                            options={{
+                                                title:{
+                                                    display:true,
+                                                    text:'Evolution du taux de reussite au '+getStringAtPosition(examResult,0),
+                                                    fontSize:20
+                                                },
+                                                legend:{
+                                                    display:true,
+                                                    position:'right'
+                                                }
+                                            }}
+                                        />
+                                                                    
                                         
+                                    }
+                                    
+                                    <div className={classes.inputRowRight}>
+                                        <div className={classes.buttonList}>
+                                            <CustomButton
+                                                btnText='' 
+                                                buttonStyle={getSmallButtonStyle()}
+                                                btnTextStyle = {classes.btnTextStyle}
+                                                btnClickHandler={()=>{changedIndex = examResultTab.findIndex((exam)=>(exam==examResult)); genderChartCd = [...genderChartCode]; genderChartCd[changedIndex]=1; setgenderChartCode(genderChartCd);}}
+                                                hasIconImg= {true}
+                                                imgSrc='images/barChart.png'
+                                                imgStyle = {classes.imgStyle}
+                                            />
+                                            <CustomButton
+                                                btnText='' 
+                                                buttonStyle={getSmallButtonStyle()}
+                                                btnTextStyle = {classes.btnTextStyle}
+                                                btnClickHandler={()=>{changedIndex = examResultTab.findIndex((exam)=>(exam==examResult)); genderChartCd = [...genderChartCode]; genderChartCd[changedIndex]=2; setgenderChartCode(genderChartCd);}}
+                                                hasIconImg= {true}
+                                                imgSrc='images/linechart2.png'
+                                                imgStyle = {classes.imgStyle}
+                                            />                         
+                                            
+                                        </div>
                                     </div>
-                                </div>
-                            </div>                       
-                        );                  
-                    })}                       
-                </div> 
+                                </div>                       
+                            );                  
+                        })}                       
+                    </div>  
                     
                 
                 
