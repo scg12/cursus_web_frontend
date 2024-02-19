@@ -176,6 +176,17 @@ function MultiSelect(props) {
 
                 {(props.fetchedData.length>0)&& 
                     <div style={{zIndex:"9999", paddingTop:"1vh", paddingBottom:"1vh",...props.dataFieldStyle}} onMouseLeave={props.mouseLeave} onMouseEnter={props.mouseEnter} onMouseOutCapture={props.mouseOutCapture}>
+                         {(props.selectionMode=="multiple"&&props.fetchedData.length>20)&&
+                            <div style={{display:"flex", flexDirection:"column",alignItems:"flex-end", width:"93%"}}>
+                                <CustomButton
+                                    btnText= {t("ok")}  
+                                    buttonStyle={classes.btnAdd}
+                                    btnTextStyle = {classes.btnTextStyle}
+                                    hasIconImg= {false}
+                                    btnClickHandler={props.selectValidatedHandler}
+                                />
+                            </div>
+                        }
                         {props.fetchedData.map((dataElt, index)=>{
                             return(
                                 <DataListRow 
@@ -190,7 +201,7 @@ function MultiSelect(props) {
                         })}
                     
 
-                        {(props.selectionMode=="multiple")&&
+                        {(props.selectionMode=="multiple"&&props.fetchedData.length<=20)&&
                             <div style={{display:"flex", flexDirection:"column",alignItems:"flex-end", width:"93%"}}>
                                 <CustomButton
                                     btnText= {t("ok")}  

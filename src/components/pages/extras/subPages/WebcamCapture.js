@@ -14,7 +14,7 @@ import BatchPhotoPic from "../modals/BatchPhotoPic";
 import MultiSelect from '../../../multiSelect/MultiSelect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 //import {createPrintingPages} from '../reports/PrintingModule';
@@ -85,7 +85,7 @@ function WebcamCapture(props) {
         var rang = 1;
         list.map((elt)=>{
             listElt = {};
-            listElt.rang          = rang;
+            listElt.rang          = ajouteZeroAuCasOu(rang);
             listElt.id            = elt.id;
             listElt.libelle       = elt.libelle;
             listElt.description   = elt.but;

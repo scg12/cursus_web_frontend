@@ -16,7 +16,7 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import EtatPaiementFrais from '../reports/EtatPaiementFrais';
 import {createPrintingPages} from '../reports/PrintingModule';
-import {getTodayDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
+import {getTodayDate, formatCurrency, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -200,7 +200,7 @@ function EtatsPaiement(props) {
             listElt.displayedMontantToPay     = formatCurrency( listElt.montantToPay) +' FCFA';
             listElt.displayedMontantPaye      = formatCurrency(listElt.montantPaye)   +' FCFA';
             listElt.displayedMontantRestant   = formatCurrency(listElt.montantRestant)+' FCFA';
-            listElt.rang                      = rang;
+            listElt.rang                      = ajouteZeroAuCasOu(rang);
             formattedList.push(listElt);  
             rang++;          
         });

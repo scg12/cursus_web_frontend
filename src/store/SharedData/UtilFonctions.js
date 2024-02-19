@@ -48,6 +48,11 @@ export function getTodayDate(){
    return jour+'/'+ mois +'/'+ annee;
 }
 
+export function ajouteZeroAuCasOu(nombre){
+    if(parseInt(nombre).toString().trim().length==1) return '0'+nombre.toString().trim();
+    else return nombre.toString().trim();    
+}
+
 
 function getNomProf(matiereLabel, listMatieres){
     var MatieresClasse = listMatieres; 

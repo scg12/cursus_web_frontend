@@ -18,7 +18,7 @@ import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import EtatPaiementStaff from '../reports/EtatPaiementStaff';
 
-import {getTodayDate,convertDateToUsualDate, formatCurrency, changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
+import {getTodayDate,convertDateToUsualDate, formatCurrency, changeDateIntoMMJJAAAA, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -126,7 +126,7 @@ function RecapSorties(props) {
         list.map((elt)=>{
             listElt={};
             listElt.id       = elt.id;
-            listElt.rang     = rang;
+            listElt.rang     = ajouteZeroAuCasOu(rang);
             listElt.label    = elt.nom +' '+elt.prenom;
             listElt.nom      = elt.nom;
             listElt.prenom   = elt.prenom;
