@@ -39,6 +39,8 @@ var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
 
+var MOUSE_INSIDE_DROPDOWN = false;
+
 
 
 function RelationAvcParents(props) {
@@ -168,6 +170,7 @@ function RelationAvcParents(props) {
         var name = e.target.value;
         console.log("fffff",name,LIST_GENERALE_ELEVES)
         //var tabEleves     = [...listEleves];
+        setListEleves(LIST_GENERALE_ELEVES);
         var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
         setGridRows(matchedEleves);
     }
@@ -452,7 +455,7 @@ function RelationAvcParents(props) {
     }));
   
     return (
-        <div className={classes.formStyleP}>
+        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) setListEleves([]);}}>
             {(modalOpen!=0) && <BackDrop style={{height:"100vh"}}/>}
             {(modalOpen >0 && modalOpen<3) && 
                 <ParentsMsg 
@@ -501,9 +504,12 @@ function RelationAvcParents(props) {
                                 selectionMode       = {"single"}
                             
                                 //-----Handler-----
-                                optionChangeHandler     = {classChangeHandler}
-                                searchTextChangeHandler = {searchTextChangeHandler}
+                                optionChangeHandler     = {classChangeHandler      }
+                                searchTextChangeHandler = {searchTextChangeHandler }
                                 selectValidatedHandler  = {validateSelectionHandler}
+                                mouseLeave              = {()=>{MOUSE_INSIDE_DROPDOWN = false}}
+                                mouseEnter              = {()=>{MOUSE_INSIDE_DROPDOWN = true }}
+
                             
                                 //-----Styles-----
                                 searchInputStyle    = {{fontSize:"0.87vw", height:"4.7vh"}}

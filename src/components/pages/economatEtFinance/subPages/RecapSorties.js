@@ -47,12 +47,13 @@ const ROWS_PER_PAGE   = 40;
 var ElevePageSet      = [];
 var printedETFileName ='';
 
-;
-
 var chosenMsgBox;
 const MSG_SUCCESS_RECAP =11;
 const MSG_WARNING_RECAP =12;
 const MSG_ERROR_RECAP   =13;
+
+
+var MOUSE_INSIDE_DROPDOWN = false;
 
 
 
@@ -394,39 +395,27 @@ function RecapSorties(props) {
         setListProfs([]);
     }
 
-   
-
-
-    // function validateSelectionHandler(e){
-    //     list_destinataire      = document.getElementById("hidden2_"+MultiSelectId).value;
-    //     list_destinataires_ids = document.getElementById("hidden1_"+MultiSelectId).value;
-        
-    //     setListEleves([]);
-    //     setOptClasses(tempTable);
-    //     setMultiSelectVisible(false);
-    // }
-
     function consultRowData(row){
         var inputs=[];
 
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_origine;
+        // inputs[0]= row.nom;
+        // inputs[1]= row.prenom;
+        // inputs[2]= row.date_naissance;
+        // inputs[3]= row.lieu_naissance;
+        // inputs[4]= row.etab_origine;
 
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
+        // inputs[5]= row.nom_pere;
+        // inputs[6]= row.email_pere;
+        // inputs[7]= row.tel_pere;
 
-        inputs[8]= row.nom_mere;
-        inputs[9]= row.email_mere;
-        inputs[10]= row.tel_mere;
+        // inputs[8]= row.nom_mere;
+        // inputs[9]= row.email_mere;
+        // inputs[10]= row.tel_mere;
 
-        inputs[11]= row.matricule;
+        // inputs[11]= row.matricule;
      
-        currentUiContext.setFormInputs(inputs)
-        setModalOpen(3);
+        // currentUiContext.setFormInputs(inputs)
+        // setModalOpen(3);
 
     }   
     
@@ -434,26 +423,6 @@ function RecapSorties(props) {
         setModalOpen(0)
     }
 
-    function savePresenceHandler(e){
-
-    }
-
-
-    function getPresentCount(tab){
-        var countPresent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 1) countPresent++;
-        }
-        return countPresent;
-    }
-
-    function getAbsentCount(tab){
-        var countAbsent = 0;
-        for(var i=0; i<tab.length;i++){
-            if(tab[i].presence == 0) countAbsent++;
-        }
-        return countAbsent;
-    } 
    
     function handlePresence(params){
         console.log(params);
@@ -723,7 +692,7 @@ function RecapSorties(props) {
     }));
 
     return (
-        <div className={classes.formStyleP}>
+        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listProfs.length>0) setListProfs([]);}}>
             {(modalOpen==1) && <BackDrop/>}
             {(modalOpen==1) && 
                 <PDFTemplate previewCloseHandler={closePreview} style={{height:"85.7vh"}}>
@@ -781,9 +750,11 @@ function RecapSorties(props) {
                                 selectionMode       = {"single"}
                             
                                 //-----Handler-----
-                                optionChangeHandler     = {recepientChangeHandler}
-                                searchTextChangeHandler = {searchTextChangeHandler}
+                                optionChangeHandler     = {recepientChangeHandler  }
+                                searchTextChangeHandler = {searchTextChangeHandler }
                                 selectValidatedHandler  = {validateSelectionHandler}
+                                mouseLeave              = {()=>{MOUSE_INSIDE_DROPDOWN = false}}
+                                mouseEnter              = {()=>{MOUSE_INSIDE_DROPDOWN = true }}
                             
                                 //-----Styles-----
                                 searchInputStyle    = {{fontSize:"0.87vw", height:"4.7vh"}}
@@ -877,12 +848,12 @@ function RecapSorties(props) {
                                 }
                             }}  
                             
-                           onRowDoubleClick ={(params, event) => {
-                               if(!event.ignore){
-                                    event.defaultMuiPrevented = true;
-                                    consultRowData(params.row);
-                                }
-                            }}
+                        //    onRowDoubleClick ={(params, event) => {
+                        //        if(!event.ignore){
+                        //             event.defaultMuiPrevented = true;
+                        //             consultRowData(params.row);
+                        //         }
+                        //     }}
                             
                             //loading={loading}
                             //{...data}

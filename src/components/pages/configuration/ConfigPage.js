@@ -258,8 +258,6 @@ function ConfigPage(props) {
                 {(currentAppContext.enableProfiles["CONFIG_B"]=='1') ? 
                     <MenuItemList id="conf_2" minWtdhStyle={classes.size72Vw} libelle= {t("conf_etab_struct")} theme={selectedTheme}>
                         <div  className={classes.MenuGroup}>
-                        
-                           
                             <div className={classes.MenuItemsection} > 
                                 {(currentAppContext.enableProfiles["CONFIG_B1"]=='1') ?   <MenuItem menuItemId ='5'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle ={t("modif_etab_gen_info")}             itemSelected={()=>{toggleActiveMenu('5');   (sectionSelectedItem == 0) ? setSectionSelectedItem(5):  (sectionSelectedItem == 5)  ? setSectionSelectedItem(0):setSectionSelectedItem(5)}}>   </MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B2"]=='1') ?   <MenuItem menuItemId ='6'  isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle ={t("gest_cycle")}                      itemSelected={()=>{toggleActiveMenu('6');   (sectionSelectedItem == 0) ? setSectionSelectedItem(6):  (sectionSelectedItem == 6)  ? setSectionSelectedItem(0):setSectionSelectedItem(6)}}>   </MenuItem> : null}
@@ -272,8 +270,8 @@ function ConfigPage(props) {
                                 {(currentAppContext.enableProfiles["CONFIG_B9"]=='1') ?   <MenuItem menuItemId ='13' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}   libelle ={t('conf_leson_group')}                itemSelected={()=>{toggleActiveMenu('13');  (sectionSelectedItem == 0) ? setSectionSelectedItem(13): (sectionSelectedItem == 13) ? setSectionSelectedItem(0):setSectionSelectedItem(13)}}>  </MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B10"]=='1') ?  <MenuItem menuItemId ='14' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t('gest_matricule')}                   itemSelected={()=>{toggleActiveMenu('14');  (sectionSelectedItem == 0) ? setSectionSelectedItem(14): (sectionSelectedItem == 14) ? setSectionSelectedItem(0):setSectionSelectedItem(14)}}>  </MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B11"]=='1') ?  <MenuItem menuItemId ='15' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("modif_etab_conf")}                  itemSelected={()=>{toggleActiveMenu('15');  (sectionSelectedItem == 0) ? setSectionSelectedItem(15): (sectionSelectedItem == 15) ? setSectionSelectedItem(0):setSectionSelectedItem(15)}}>  </MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B12"]=='1') ?  <MenuItem menuItemId ='16' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("etab_hierarchie")}                  itemSelected={()=>{toggleActiveMenu('16');  (sectionSelectedItem == 0) ? setSectionSelectedItem(15): (sectionSelectedItem == 16) ? setSectionSelectedItem(0):setSectionSelectedItem(16)}}>  </MenuItem> : null}
-                                {(currentAppContext.enableProfiles["CONFIG_B13"]=='1') ?  <MenuItem menuItemId ='17' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("conf_cursus_quota")}                itemSelected={()=>{toggleActiveMenu('17');  (sectionSelectedItem == 0) ? setSectionSelectedItem(16): (sectionSelectedItem == 17) ? setSectionSelectedItem(0):setSectionSelectedItem(17)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B12"]=='1') ?  <MenuItem menuItemId ='16' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("etab_hierarchie")}                  itemSelected={()=>{toggleActiveMenu('16');  (sectionSelectedItem == 0) ? setSectionSelectedItem(16): (sectionSelectedItem == 16) ? setSectionSelectedItem(0):setSectionSelectedItem(16)}}>  </MenuItem> : null}
+                                {(currentAppContext.enableProfiles["CONFIG_B13"]=='1') ?  <MenuItem menuItemId ='17' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("conf_cursus_quota")}                itemSelected={()=>{toggleActiveMenu('17');  (sectionSelectedItem == 0) ? setSectionSelectedItem(17): (sectionSelectedItem == 17) ? setSectionSelectedItem(0):setSectionSelectedItem(17)}}>  </MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B14"]=='1') ?  <MenuItem menuItemId ='18' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("conf_type_prof")}                   itemSelected={()=>{toggleActiveMenu('18');  (sectionSelectedItem == 0) ? setSectionSelectedItem(18): (sectionSelectedItem == 18) ? setSectionSelectedItem(0):setSectionSelectedItem(18)}}>  </MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B15"]=='1') ?  <MenuItem menuItemId ='19' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("gest_trimestre")}                   itemSelected={()=>{toggleActiveMenu('19');  (sectionSelectedItem == 0) ? setSectionSelectedItem(19): (sectionSelectedItem == 19) ? setSectionSelectedItem(0):setSectionSelectedItem(19)}}>  </MenuItem> : null}
                                 {(currentAppContext.enableProfiles["CONFIG_B16"]=='1') ?  <MenuItem menuItemId ='20' isSimple={true} imgSource={'images/' + getPuceByTheme()}  withCustomImage={true}  imageStyle={isMobile? M_classes.imageStyle_M : classes.imageStyle}  libelle ={t("gest_sequence")}                    itemSelected={()=>{toggleActiveMenu('20');  (sectionSelectedItem == 0) ? setSectionSelectedItem(20): (sectionSelectedItem == 20) ? setSectionSelectedItem(0):setSectionSelectedItem(20)}}>  </MenuItem> : null}
@@ -372,16 +370,21 @@ function ConfigPage(props) {
                                 </div>                                   
                                 : null
                             }
-                            {/*(sectionSelectedItem==17) ?
-                                <ConfigQuotasCursus/>
-                                : null*/
+                            
+                            {(sectionSelectedItem==17) ?
+                                <div className={getDetailSectionTheme()}>
+                                  <ConfigQuotasCursus/>
+                                </div>                                   
+                              : null
                             }
+
                             {(sectionSelectedItem==18) ?
                                 <div className={getDetailSectionTheme()}>
                                     <ConfigTypeEnseignant/>
                                 </div>                                    
                                 : null
                             }
+
                             {(sectionSelectedItem==19) ?
                                 <div className={getDetailSectionTheme()}>
                                     <ConfigTrimestre/>

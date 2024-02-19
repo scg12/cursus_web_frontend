@@ -34,6 +34,8 @@ var msgDesciption          = "";
 var tempTable;
 var list_initiale_eleves;
 
+var MOUSE_INSIDE_DROPDOWN;
+
 function ParentsMsg(props) {
     const { t, i18n }       = useTranslation();
     const currentUiContext  = useContext(UiContext);
@@ -377,6 +379,7 @@ function ParentsMsg(props) {
             getClassStudentList(e.target.value);
         }else{
             setListEleves([]);
+            document.getElementById("searchText").value = "";
         }
     }
 
@@ -419,7 +422,7 @@ function ParentsMsg(props) {
     /************************************ JSX Code ************************************/
 
     return (
-        <div className={'card '+ classes.formContainerP4}>
+        <div className={'card '+ classes.formContainerP4} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) setListEleves([]);}}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg} src='images/Sms.png'/>
@@ -433,9 +436,7 @@ function ParentsMsg(props) {
                     <div className={classes.formMainTitle} >
                         {t("consult_MSG_parent_M")}
                     </div> 
-                }          
-                           
-                               
+                }              
             </div>
 
             <div id='errMsgPlaceHolder'/>
@@ -501,9 +502,11 @@ function ParentsMsg(props) {
                                 selectionMode       = {"multiple"}
                             
                                 //-----Handler-----
-                                optionChangeHandler     = {classChangeHandler}
-                                searchTextChangeHandler = {searchTextChangeHandler}
+                                optionChangeHandler     = {classChangeHandler      }
+                                searchTextChangeHandler = {searchTextChangeHandler }
                                 selectValidatedHandler  = {validateSelectionHandler}
+                                mouseLeave              = {()=>{MOUSE_INSIDE_DROPDOWN = false}}
+                                mouseEnter              = {()=>{MOUSE_INSIDE_DROPDOWN = true }}
                             
                                 //-----Styles-----
                                 searchInputStyle    = {{fontSize:"0.8vw"}}

@@ -45,6 +45,8 @@ var LIST_GEN_PAIEMENTS;
 var LIST_GEN_ELEVES;
 var LISTE_FILTRE;
 
+var MOUSE_INSIDE_DROPDOWN;
+
 
 function EtatsPaiement(props) {
 
@@ -623,7 +625,7 @@ function EtatsPaiement(props) {
     }));
 
     return (
-        <div className={classes.formStyleP}>
+        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) setListEleves([]);}}>
             {(modalOpen==1) && <BackDrop/>}
             {(modalOpen==1) && 
                 <PDFTemplate previewCloseHandler={closePreview} style={{height:"85.7vh"}} >
@@ -679,9 +681,12 @@ function EtatsPaiement(props) {
                                 selectionMode       = {"single"}
                             
                                 //-----Handler-----
-                                optionChangeHandler     = {classChangeHandler}
-                                searchTextChangeHandler = {searchTextChangeHandler}
+                                optionChangeHandler     = {classChangeHandler      }
+                                searchTextChangeHandler = {searchTextChangeHandler }
                                 selectValidatedHandler  = {validateSelectionHandler}
+                                mouseLeave              = {()=>{MOUSE_INSIDE_DROPDOWN = false}}
+                                mouseEnter              = {()=>{MOUSE_INSIDE_DROPDOWN = true }}
+
                             
                                 //-----Styles-----
                                 searchInputStyle    = {{fontSize:"0.87vw", height:"4.7vh"}}
@@ -720,19 +725,19 @@ function EtatsPaiement(props) {
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
                             getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
                             
-                            onCellClick={(params,event)=>{
-                                if(event.ignore) {
-                                    //console.log(params.row);
-                                    //handlePresence(params.row)
-                                }
-                            }}  
+                            // onCellClick={(params,event)=>{
+                            //     if(event.ignore) {
+                            //         //console.log(params.row);
+                            //         //handlePresence(params.row)
+                            //     }
+                            // }}  
                             
-                           onRowDoubleClick ={(params, event) => {
-                               if(!event.ignore){
-                                    event.defaultMuiPrevented = true;
-                                    consultRowData(params.row);
-                                }
-                            }}
+                            // onRowDoubleClick ={(params, event) => {
+                            //  if(!event.ignore){
+                            //     event.defaultMuiPrevented = true;
+                            //     consultRowData(params.row);
+                            //    }
+                            // }}
                             
                             //loading={loading}
                             //{...data}

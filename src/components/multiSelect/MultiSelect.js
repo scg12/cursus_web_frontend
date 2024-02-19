@@ -69,8 +69,6 @@ function MultiSelect(props) {
         setSelectionTab(tab_selection);       
     },[props.fetchedData]);
 
-
-    
   
     function manageSelection(e, idElt, eltText, index){
         var tabSelect    = [...selectionTab];
@@ -177,7 +175,7 @@ function MultiSelect(props) {
                 </div>
 
                 {(props.fetchedData.length>0)&& 
-                    <div style={{zIndex:"9999", paddingTop:"1vh", paddingBottom:"1vh",...props.dataFieldStyle}}>
+                    <div style={{zIndex:"9999", paddingTop:"1vh", paddingBottom:"1vh",...props.dataFieldStyle}} onMouseLeave={props.mouseLeave} onMouseEnter={props.mouseEnter} onMouseOutCapture={props.mouseOutCapture}>
                         {props.fetchedData.map((dataElt, index)=>{
                             return(
                                 <DataListRow 
