@@ -151,6 +151,10 @@ function BatchPhotoPic(props) {
         }
     }
 
+    function closeBatchPhoto(){
+        
+    }
+
     function getFormData(){
         CURRENT_COMM = {};
         CURRENT_COMM.id_sousetab  = currentAppContext.currentEtab;
@@ -493,6 +497,16 @@ function BatchPhotoPic(props) {
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
                         btnClickHandler={sendMsg}
+                        //disable={(isDownload) ? !isDownload :!fileSelected}
+                    />
+                }
+
+                {!(props.formMode=="consult")&&
+                    <CustomButton
+                        btnText={t('close')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={closeBatchPhoto}
                         //disable={(isDownload) ? !isDownload :!fileSelected}
                     />
                 }

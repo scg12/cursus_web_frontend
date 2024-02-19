@@ -31,6 +31,7 @@ var list_initiale_eleves;
 var MultiSelectId = "searchRecipient"
 
 var SELECTED_BATCHPHOTO_ID;
+var CURRENT_PHOTO_LIST;
 
 
 var chosenMsgBox;
@@ -56,97 +57,29 @@ function WebcamCapture(props) {
         if(gridRows.length==0){
             CURRENT_CLASSE_ID = undefined;
         }
-        getEtabListClasses(); 
-        setGridRows(tabPlanif);
+        getListProgrammations(); 
     },[]);
 
     var tabPlanif = [
-        {id: 1, rang:1, libelle:"Photo Identite", description:"ggggggggg", date_creation:"12/05/2024", etat:0, etatLabel:"En cours" },
+        {id:1,  rang:1, libelle:"Photo Identite", description:"ggggggggg", date_creation:"12/05/2024", etat:0, etatLabel:"En cours" },
         {id:2,  rang:2, libelle:"Photo Identite", description:"ggggggggg", date_creation:"12/05/2024", etat:0, etatLabel:"En cours" },
         {id:3,  rang:3, libelle:"Photo Identite", description:"ggggggggg", date_creation:"12/05/2024", etat:1, etatLabel:"Cloture " },
     ]
 
-   
-
-    const getEtabListClasses=()=>{
-        tempTable=[{value: -1,      label: (i18n.language=='fr') ? ' -- Choisir Classe -- ' : '-- Select Classe --'  }]
-        let classes_user;
-        let classes = currentAppContext.infoClasses.filter(classe=>classe.id_setab == currentAppContext.currentEtab);
-
-        if(currentAppContext.infoUser.is_prof_only) 
-            classes_user = currentAppContext.infoUser.prof_classes;
-        else {
-            classes_user = currentAppContext.infoUser.admin_classes;
-            let prof_classes = currentAppContext.infoUser.prof_classes;
-          
-            prof_classes.forEach(classe => {
-                if((classes_user.filter( cl => cl.id === classe.id)).length<=0)
-                    classes_user.push({"id":classe.id,"libelle":classe.libelle})
-
-            });
-        }
-
-        let n = classes_user.length;
-        let m = classes.length;
-        let i = 0;
-        let j = 0;
-
-        while(i<n){
-            j = 0;
-            while(j<m){
-                if(classes_user[i].id==classes[j].id_classe){
-                    tempTable.push({value:classes_user[i].id, label:classes_user[i].libelle})
-                    break;
-                }
-                j++;
-            }
-            i++;
-        }
-        setOptClasses(tempTable);
-    }
-
-    function classChangeHandler(e){
-        if(e.target.value > 0){
-            getClassStudentList(e.target.value);
-        }else{
-            setListEleves([]);
-            setGridRows([]);
-            document.getElementById("searchText").value ="";
-        }
-    }
-
-
-    const  getClassStudentList=(classId)=>{
-        var listEleves       = [];
-        LIST_GENERALE_ELEVES = [];
-        axiosInstance.post(`get-message-parent/`, {
-            id_classe: classId,
+    const getListProgrammations=()=>{
+        var listProg;
+        axiosInstance.post(`get-liste-programmations-photo/`, {
+            id_setab: currentAppContext.currentEtab,
         }).then((res)=>{
             console.log(res.data);
-            listEleves           = [...formatListEleves(res.data.res)];
-            LIST_GENERALE_ELEVES = [...formatListEleves(res.data.res)];
-
-            list_initiale_eleves = [...listEleves];
-            console.log(listEleves);
-            setListEleves([]);
-            setGridRows(listEleves);
+            listProg = [...formatList(res.data.res)];         
+            console.log("programmations",listProg);
+            setGridRows(listProg);
         })
     }
 
-    function getListMessages(classeId){
-        var listEleves = []
-        axiosInstance.post(`get-message-parent/`, {
-            id_classe: classeId,
-        }).then((res)=>{
-            console.log(res.data);
-            listEleves = [...formatListEleves(res.data.res)]         
-            console.log(listEleves);
-            setGridRows(listEleves);
-        }) 
-    }
 
-
-    const formatListEleves=(list) =>{
+    const formatList=(list) =>{
         var listElt;       
         var formattedList =[]
         var rang = 1;
@@ -154,33 +87,33 @@ function WebcamCapture(props) {
             listElt = {};
             listElt.rang          = elt.rang;
             listElt.id            = elt.id;
-            listElt.label         = elt.nom +' '+elt.prenom;
-            listElt.displayedName = elt.nom +' '+elt.prenom;
-            listElt.nom           = elt.nom;
-            listElt.prenom        = elt.prenom;
-            // listElt.matricule     = elt.matricule;
-            // listElt.date          = (elt.msg.length==0) ? "":elt.msg.split('&&')[1];
-            // listElt.emetteur      = (elt.msg.length==0) ? "":elt.msg.split('&&')[1];
-            // listElt.titre_message = (elt.msg.length==0) ? "":elt.msg.split('&&')[2];
-            // listElt.message       = (elt.msg.length==0) ? "":elt.msg.split('&&')[3];
+            listElt.libelle       = elt.libelle;
+            listElt.description   = elt.but;
+            listElt.date_creation = elt.date_creation;
+            listElt.etat          = elt.etat;
+            listElt.etatLabel     = elt.etat==0? t('en_cours'):t('cloture');  
+            listElt.elvPhotos     = elt.elvPhotos;       
             formattedList.push(listElt); 
             rang++;                       
         });
         return formattedList;
     }
 
-    function startBatchPhoto(rowId){
+    function startBatchPhoto(rowId, tabPhotos){
         SELECTED_BATCHPHOTO_ID = rowId;
+        CURRENT_PHOTO_LIST     = [...tabPhotos];
         setModalOpen(3);
     }
 
-    function lookBatchPhoto(rowId){
+    function lookBatchPhoto(rowId, tabPhotos){
         SELECTED_BATCHPHOTO_ID = rowId;
+        CURRENT_PHOTO_LIST     = [...tabPhotos];
         setModalOpen(4);
     }
 
-    function editBatchPhoto(rowId){
+    function editBatchPhoto(rowId, tabPhotos){
         SELECTED_BATCHPHOTO_ID = rowId;
+        CURRENT_PHOTO_LIST     = [...tabPhotos];
         setModalOpen(2);
     }
 
@@ -251,6 +184,15 @@ function WebcamCapture(props) {
         },
 
         {
+            field: 'elvPhotos',
+            headerName: "PHOTOS_OBJ",
+            width: 100,
+            editable: false,
+            hide: true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: '',
             headerName: 'ACTION',
             width: 100,
@@ -267,7 +209,7 @@ function WebcamCapture(props) {
                                     title={t('start_photo')} 
                                     className={classes.cellPointer} 
                                     onClick={(e)=> {
-                                        startBatchPhoto(params.row.id);
+                                        startBatchPhoto(params.row.id,params.row.elvPhotos);
                                     }}
                                     alt=''
                                 />
@@ -280,7 +222,7 @@ function WebcamCapture(props) {
                                     title={t('look_photo')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        lookBatchPhoto(params.row.id);
+                                        lookBatchPhoto(params.row.id,params.row.elvPhotos);
                                     }}
                                     alt=''
                                 />
@@ -295,7 +237,7 @@ function WebcamCapture(props) {
                                     title={t('modify')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        editBatchPhoto(params.row.id);
+                                        editBatchPhoto(params.row.id,params.row.elvPhotos);
                                     }}
                                     alt=''
                                 />
@@ -390,6 +332,15 @@ function WebcamCapture(props) {
         },
 
         {
+            field: 'elvPhotos',
+            headerName: "PHOTOS_OBJ",
+            width: 100,
+            editable: false,
+            hide: true,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
             field: '',
             headerName: 'ACTION',
             width: 100,
@@ -476,14 +427,6 @@ function WebcamCapture(props) {
     
 /*************************** Handler functions ***************************/
     
-
-    function handleDeleteRow(params){
-        if(params.field=='id'){
-            //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
-        }
-    }
-
     function initFormInputs(){
         var inputs=[];
         inputs[0] = '';
@@ -517,17 +460,16 @@ function WebcamCapture(props) {
     }
 
 
-    function saveMsg(CURRENT_COMM) {       
-        console.log('Ajout',CURRENT_COMM);
-        var listEleves = [];
-        axiosInstance.post(`save-msg-parent/`, {
-            id_sousetab : CURRENT_COMM.id_sousetab,
-            sujet       : CURRENT_COMM.sujet,
-            message     : CURRENT_COMM.message,
-            date        : CURRENT_COMM.date, 
-            emetteur    : CURRENT_COMM.emetteur,
-            id_eleves   : CURRENT_COMM.id_eleves,
-                 
+    function saveBatchPhoto(CURRENT_BATCH_PHOTO) { 
+
+        console.log('Ajout',CURRENT_BATCH_PHOTO);
+        //var listEleves = [];
+        axiosInstance.post(`liste-eleves-pour-photo/`, {
+            libelle     : CURRENT_BATCH_PHOTO.libelle,
+            but         : CURRENT_BATCH_PHOTO.but,
+            id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
+            id_classe   : CURRENT_BATCH_PHOTO.id_classe,
+            id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
         }).then((res)=>{
             console.log(res.data);
 
@@ -537,14 +479,60 @@ function WebcamCapture(props) {
                 msgType:"info", 
                 msgTitle:t("success_add_M"), 
                 message:t("success_add")
-            })
-            // listEleves = [...formatList(res.data.comms)]
-            // setGridRows(listEleves);
+            });
+        })      
+    }
+
+
+    
+    function saveBatchPhoto(CURRENT_BATCH_PHOTO) { 
+
+        console.log('Ajout',CURRENT_BATCH_PHOTO);
+        //var listEleves = [];
+        axiosInstance.post(`liste-eleves-pour-photo/`, {
+            libelle     : CURRENT_BATCH_PHOTO.libelle,
+            but         : CURRENT_BATCH_PHOTO.but,
+            id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
+            id_classe   : CURRENT_BATCH_PHOTO.id_classe,
+            id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
+        }).then((res)=>{
+            console.log(res.data);
+
+            chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"info", 
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")
+            });
+        })      
+    }
+
+    
+    function updateBatchPhoto(CURRENT_BATCH_PHOTO) { 
+
+        console.log('update',CURRENT_BATCH_PHOTO);
+        //var listEleves = [];
+        axiosInstance.post(`update-liste-eleves-pour-photo/`, {
+            libelle     : CURRENT_BATCH_PHOTO.libelle,
+            but         : CURRENT_BATCH_PHOTO.but,
+            id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
+            id_classe   : CURRENT_BATCH_PHOTO.id_classe,
+            id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
+        }).then((res)=>{
+            console.log(res.data);
+
+            chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"info", 
+                msgTitle:t("success_add_M"), 
+                message:t("success_add")
+            });
         })      
     }
     
-    
-    function deleteRow(rowId) {
+    function deleteBatchPhoto(rowId) {
        // alert(rowId);
         //Message de confirmation
         /*if(window.confirm('Voulez-vous vraiment supprimer la section selectionnée?')){
@@ -581,7 +569,7 @@ function WebcamCapture(props) {
                     msgTitle:"", 
                     message:""
                 }) 
-                getListMessages(CURRENT_CLASSE_ID); 
+                getListProgrammations(); 
                 return 1;
             }
 
@@ -653,7 +641,8 @@ function WebcamCapture(props) {
             {(modalOpen == 1) && 
                 <BatchPhotoProg 
                     formMode      = 'creation'
-                    actionHandler = {saveMsg} 
+                    photoList     = {[]}
+                    actionHandler = {saveBatchPhoto} 
                     cancelHandler = {quitForm}
                 />
             }
@@ -661,8 +650,9 @@ function WebcamCapture(props) {
             {(modalOpen == 2) && 
                 <BatchPhotoProg 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
+                    photoList     = {SELECTED_BATCHPHOTO_ID}
                     formMode      = 'modif'  
-                    actionHandler = {saveMsg} 
+                    actionHandler = {updateBatchPhoto} 
                     cancelHandler = {quitForm}
                 />
             }
@@ -670,8 +660,9 @@ function WebcamCapture(props) {
             {(modalOpen == 3) && 
                 <BatchPhotoPic 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
+                    photoList     = {SELECTED_BATCHPHOTO_ID}
                     formMode      = 'creation'  
-                    actionHandler = {saveMsg} 
+                    actionHandler = {updateBatchPhoto} 
                     cancelHandler = {quitForm}
                 />
             }
@@ -679,8 +670,9 @@ function WebcamCapture(props) {
             {(modalOpen == 4) && 
                 <BatchPhotoPic 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
+                    photoList     = {SELECTED_BATCHPHOTO_ID}
                     formMode      = 'consult'  
-                    actionHandler = {saveMsg} 
+                    actionHandler = {deleteBatchPhoto} 
                     cancelHandler = {quitForm}
                 />
             }

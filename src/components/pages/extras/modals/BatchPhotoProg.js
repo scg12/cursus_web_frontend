@@ -24,18 +24,20 @@ const MSG_WARNING_FP = 2;
 const MSG_ERROR_FP   = 3;
 const MultiSelectId  = "MS-4"
 
-var CURRENT_COMM;
+var CURRENT_BATCH_PHOTO;
 var CURRENT_CLASSE_ID;
 var CURRENT_CLASSE_LABEL;
 
 var list_destinataire      = "";
 var list_destinataires_ids = "";
 var precDest_ids           = ""
-var msgTitle               = "";
-var msgDesciption          = "";
+var photoLibelle           = "";
+var photoDesc          = "";
 
 var tempTable;
 var list_initiale_eleves;
+
+var MOUSE_INSIDE_DROPDOWN;
 
 function BatchPhotoProg(props) {
     const { t, i18n }       = useTranslation();
@@ -179,13 +181,13 @@ function BatchPhotoProg(props) {
     }
 
 
-    function sendMsg(e){
+    function closeBatchPhoto(e){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        console.log('avant:',CURRENT_COMM);
+        console.log('avant:',CURRENT_BATCH_PHOTO);
         getFormData();
-        console.log('apres:',CURRENT_COMM);
+        console.log('apres:',CURRENT_BATCH_PHOTO);
 
-        var fomCheckErrorStr =  formDataCheck1(CURRENT_COMM);
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_BATCH_PHOTO);
         
         if(fomCheckErrorStr.length == 0){
            
@@ -193,7 +195,7 @@ function BatchPhotoProg(props) {
                 errorDiv.className = null;
                 errorDiv.textContent = '';
             }
-           props.actionHandler(CURRENT_COMM);  
+           props.actionHandler(CURRENT_BATCH_PHOTO);  
     
         } else {
             errorDiv.textContent = fomCheckErrorStr;
@@ -201,64 +203,87 @@ function BatchPhotoProg(props) {
         }
     }
 
-    function getFormData(){
-        CURRENT_COMM = {};
-        CURRENT_COMM.id_sousetab  = currentAppContext.currentEtab;
-        CURRENT_COMM.sujet        = msgTitle;
-        CURRENT_COMM.message      = msgDesciption;
-        CURRENT_COMM.date         = getTodayDate(); 
-        CURRENT_COMM.emetteur     = currentAppContext.infoUser.user_name;
-        CURRENT_COMM.id_eleves    = getIdDestinataires(listDestinataires,list_destinataires_ids);
-        precDest_ids ="";
+    function saveBatchPhoto(e){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        console.log('avant:',CURRENT_BATCH_PHOTO);
+        getFormData();
+        console.log('apres:',CURRENT_BATCH_PHOTO);
+
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_BATCH_PHOTO);
+        
+        if(fomCheckErrorStr.length == 0){
+           
+            if(errorDiv.textContent.length!=0){
+                errorDiv.className = null;
+                errorDiv.textContent = '';
+            }
+           props.actionHandler(CURRENT_BATCH_PHOTO);  
+    
+        } else {
+            errorDiv.textContent = fomCheckErrorStr;
+            errorDiv.className   = classes.formErrorMsg;            
+        }
     }
 
-    function getIdDestinataires(destinataires, destinatairesId){
-        var tabDestinataires   = destinataires.split(',');
-        var tabDestinatairesId = destinatairesId.split('_');
 
-        console.log("destinataires", tabDestinatairesId, tabDestinataires);
-        var ids_destinataires  = "";
+    function getFormData(){
+        CURRENT_BATCH_PHOTO = {};
+        CURRENT_BATCH_PHOTO.id_sousetab  = currentAppContext.currentEtab;
+        CURRENT_BATCH_PHOTO.id_classe    = CURRENT_CLASSE_ID;
+        CURRENT_BATCH_PHOTO.libelle      = photoLibelle;
+        CURRENT_BATCH_PHOTO.but          = photoDesc;
+        CURRENT_BATCH_PHOTO.date         = getTodayDate(); 
+        CURRENT_BATCH_PHOTO.id_eleves    = getIdEleves();
+        CURRENT_BATCH_PHOTO.id_liste     = (props.formMode!='creation') ? props.batchPhotoId:"" ;
+    }
 
-        tabDestinataires.map((elt1, index)=>{
-            var dest = tabDestinatairesId.find((elt2)=>elt2.split('*')[1] == elt1)
-
-            if(index <tabDestinataires.length-1){
-                ids_destinataires = ids_destinataires + dest.split('*')[0]+'_';
+    function getIdEleves(){
+        var id_elvs = "";
+        gridRows.map((elt, index)=>{
+            if(index < gridRows.length-1){
+                id_elvs = id_elvs + elt.id + '_';
             } else {
-                ids_destinataires = ids_destinataires + dest.split('*')[0];
-            }
-
+                id_elvs = id_elvs + elt.id;
+            }           
         });
 
-        console.log("destinataires", ids_destinataires);
-        return ids_destinataires;
+        return id_elvs;
     }
 
 
     function formDataCheck1(){
         var errorMsg='';
 
-        if(CURRENT_COMM.id_eleves.length == 0) {
-            errorMsg=t("enter_msg_recipient");
+        if(CURRENT_BATCH_PHOTO.libelle.length == 0) {
+            errorMsg=t("enter_batchPhoto_label");
             return errorMsg;
         } 
-       
-        if(CURRENT_COMM.sujet.length == 0) {
-            errorMsg=t("enter_msg_subject");
-            return errorMsg;
-        } 
-
-        if(CURRENT_COMM.message.length == 0) {
-            errorMsg=t("enter_correct_msg");
+        
+        if(CURRENT_BATCH_PHOTO.but.length == 0) {
+            errorMsg=t("enter_correct_batchPhoto_purpose");
             return errorMsg;
         } 
 
+        if(CURRENT_BATCH_PHOTO.id_eleves.length <= 0) {
+            errorMsg=t("select_student");
+            return errorMsg;
+        } 
        
         return errorMsg;
     }
 
-    function getMsgTitle(e){
-        msgTitle = e.target.value;
+    function getPhotoLibelle(e){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className = null;
+        errorDiv.textContent = '';
+        photoLibelle = e.target.value;
+    }
+
+    function getPhotoDesc(e){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className = null;
+        errorDiv.textContent = '';
+        photoDesc = e.target.value;
     }
 
    
@@ -410,14 +435,12 @@ function BatchPhotoProg(props) {
             var idElv = Elv.split('*')[0];
             var eleve = listEleves.find((elt)=>(elt.id == idElv));
             gridData.push(eleve);
-
         });        
 
         precDest_ids = "";
         setGridRows(gridData);       
         setListEleves([]);        
-        setMultiSelectVisible(false);
-        
+        setMultiSelectVisible(false);        
     }
 
     function checkCharacters(e){       
@@ -440,6 +463,15 @@ function BatchPhotoProg(props) {
             headerName: "N°",
             width: 50,
             editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id',
+            headerName: "ID",
+            width: 50,
+            editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
 
@@ -510,6 +542,15 @@ function BatchPhotoProg(props) {
             headerName: "N°",
             width: 50,
             editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+        {
+            field: 'id',
+            headerName: "ID",
+            width: 50,
+            editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
 
@@ -612,7 +653,7 @@ function BatchPhotoProg(props) {
     }));
 
     return (
-        <div className={'card '+ classes.formContainerP4P}>
+        <div className={'card '+ classes.formContainerP4P} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) setListEleves([]);}}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg} src='images/newBatchPhoto.png'/>
@@ -658,13 +699,13 @@ function BatchPhotoProg(props) {
 
                     {!(props.formMode=="consult")&&
                         <div> 
-                            <input id="photoObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                            <input id="photoObject" type="text" onChange = {getPhotoLibelle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
                         </div>
                     }
 
                     {(props.formMode=="consult")&&   
                         <div> 
-                            <input id="photoObject" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                            <input id="photoObject" type="text"  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
                         </div>
                     }
                 </div>
@@ -676,13 +717,13 @@ function BatchPhotoProg(props) {
 
                     {!(props.formMode=="consult")&&
                         <div> 
-                            <input id="photoDesc" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
+                            <input id="photoDesc" type="text" onChange = {getPhotoDesc}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
                         </div>
                     }
 
                     {(props.formMode=="consult")&&   
                         <div> 
-                            <input id="photoDesc" type="text" onChange = {getMsgTitle}  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                            <input id="photoDesc" type="text" className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
                         </div>
                     }
                 </div>
@@ -704,9 +745,11 @@ function BatchPhotoProg(props) {
                                 selectionMode       = {"multiple"}
                             
                                 //-----Handler-----
-                                optionChangeHandler     = {classChangeHandler}
-                                searchTextChangeHandler = {searchTextChangeHandler}
+                                optionChangeHandler     = {classChangeHandler      }
+                                searchTextChangeHandler = {searchTextChangeHandler }
                                 selectValidatedHandler  = {validateSelectionHandler}
+                                mouseLeave              = {()=>{MOUSE_INSIDE_DROPDOWN = false}}
+                                mouseEnter              = {()=>{MOUSE_INSIDE_DROPDOWN = true }}
                             
                                 //-----Styles-----
                                 searchInputStyleP    = {{width:"13vw",height:"3.7vh", fontSize:"0.8vw"}}
@@ -771,12 +814,22 @@ function BatchPhotoProg(props) {
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
                 />
-                {!(props.formMode=="consult")&&
+                {(props.formMode=="creation")&&
                     <CustomButton
                         btnText={t('save')}
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={sendMsg}
+                        btnClickHandler={saveBatchPhoto}
+                        //disable={(isDownload) ? !isDownload :!fileSelected}
+                    />
+                }
+
+                {(props.formMode=="modif")&&
+                    <CustomButton
+                        btnText={t('modify')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={closeBatchPhoto}
                         //disable={(isDownload) ? !isDownload :!fileSelected}
                     />
                 }
