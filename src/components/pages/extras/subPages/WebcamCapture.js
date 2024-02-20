@@ -126,14 +126,32 @@ function WebcamCapture(props) {
     }
 
     function startBatchPhoto(row){
+        var inputs=[]; 
         SELECTED_BATCHPHOTO_ID = row.id;
         CURRENT_PHOTO_LIST     = [...row.elvPhotos];
+
+        inputs[0]= row.id;
+        inputs[1]= row.libelle;
+        inputs[2]= row.description;
+        inputs[3]= row.date_creation;
+        inputs[4]= row.etat;
+
+        currentUiContext.setFormInputs(inputs)
         setModalOpen(3);
     }
 
     function lookBatchPhoto(row){
+        var inputs=[]; 
         SELECTED_BATCHPHOTO_ID = row.id;
         CURRENT_PHOTO_LIST     = [...row.elvPhotos];
+
+        inputs[0]= row.id;
+        inputs[1]= row.libelle;
+        inputs[2]= row.description;
+        inputs[3]= row.date_creation;
+        inputs[4]= row.etat;
+
+        currentUiContext.setFormInputs(inputs)
         setModalOpen(4);
     }
 
@@ -555,16 +573,15 @@ function WebcamCapture(props) {
 
     
     function updateBatchPhoto(CURRENT_BATCH_PHOTO) { 
-
         console.log('update',CURRENT_BATCH_PHOTO);
-        //var listEleves = [];
+      
         axiosInstance.post(`update-liste-eleves-pour-photo/`, {          
             id_liste    : CURRENT_BATCH_PHOTO.id_liste,
             libelle     : CURRENT_BATCH_PHOTO.libelle,
             but         : CURRENT_BATCH_PHOTO.but,
             id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
-            // id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
-            // id_classe   : CURRENT_BATCH_PHOTO.id_classe,
+            etat        : CURRENT_BATCH_PHOTO.etat
+            
         }).then((res)=>{
             console.log(res.data);
 
@@ -775,7 +792,7 @@ function WebcamCapture(props) {
                 <BatchPhotoPic 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
                     photoList     = {CURRENT_PHOTO_LIST}
-                    formMode      = 'creation'  
+                    formMode      = 'capture'  
                     actionHandler = {updateBatchPhoto} 
                     cancelHandler = {quitForm}
                 />
@@ -785,7 +802,7 @@ function WebcamCapture(props) {
                 <BatchPhotoPic 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
                     photoList     = {CURRENT_PHOTO_LIST}
-                    formMode      = 'none'  
+                    formMode      = 'look'  
                     actionHandler = {deleteBatchPhoto} 
                     cancelHandler = {quitForm}
                 />

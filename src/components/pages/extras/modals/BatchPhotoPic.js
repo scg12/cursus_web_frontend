@@ -18,18 +18,18 @@ import {getTodayDate, changeDateIntoMMJJAAAA} from '../../../../store/SharedData
 
 
 var chosenMsgBox;
-const MSG_SUCCESS_FP = 1;
-const MSG_WARNING_FP = 2;
-const MSG_ERROR_FP   = 3;
-const MultiSelectId  = "MS-4"
+const MSG_SUCCESS   = 1;
+const MSG_WARNING   = 2;
+const MSG_CONFIRM   = 3;
+const MSG_ERROR     = 4;
+const MultiSelectId = "MS-4"
 
-var CURRENT_COMM;
+var CURRENT_BATCH_PHOTO;
 var CURRENT_SELECTED_INDEX = 0;
 
-
-var msgTitle               = "";
-var msgDesciption          = "";
-
+var photoLibelle    = "";
+var photoDesc       = "";
+var comptSelected   = 0;
 
 
 function BatchPhotoPic(props) {
@@ -42,14 +42,18 @@ function BatchPhotoPic(props) {
     const webcamRef = useRef(null);                        // create a webcam reference
     const [imgSrc, setImgSrc]            = useState(""); // initialize it
     const [rowSelected, SetRowSelected]  = useState([]);
-    const [countChecked, setCounChecked] = useState(0)
+    const [countChecked, setCounChecked] = useState(props.photoList.filter((elt)=>elt.has_picture==true).length)
     
     var tabElevesPhoto = initPhotoList(props.photoList);
     
     useEffect(()=> {        
         currentUiContext.setIsParentMsgBox(false); 
-        CURRENT_SELECTED_INDEX = 0  
-        getBatchPhotoInfos(props.batchPhotoId);
+        CURRENT_SELECTED_INDEX = 0;  
+        photoLibelle =  currentUiContext.formInputs[1];
+        photoDesc    =  currentUiContext.formInputs[2];
+        getBatchPhotoInfos(props.batchPhotoId); 
+        console.log("les finished",countChecked)
+        // setCounChecked(comptSelected);
     },[]);
 
 
@@ -121,21 +125,23 @@ function BatchPhotoPic(props) {
     function initPhotoList(listElvPhoto){
         var tabElt   = [];
         var photoElv = {};
+        comptSelected = 0
         listElvPhoto.map((elt)=>{
             photoElv        = {};
             photoElv.id          = elt.id
             photoElv.nomEleve    = elt.nom+' '+elt.prenom;
             photoElv.photoPath   = elt.photo_url;
-            photoElv.photoValid  = elt.has_picture==null||elt.has_picture==false? false : true;
+            photoElv.photoValid  = elt.has_picture==null||elt.has_picture==false? -1 : 1;
+            if(photoElv.photoValid==1) comptSelected++;
             tabElt.push(photoElv);
         });
+       // setCounChecked(comptSelected);
         return tabElt;        
     }
 
     const  getBatchPhotoInfos=(batchPhotoId)=>{
-        var listEleves  = [];
+      
         var rowSelected = [];
-        var current_photo = {};
        
         tabElevesPhoto.map((elt, index)=>{
             if(index==0) {
@@ -153,13 +159,13 @@ function BatchPhotoPic(props) {
       
    
 
-    function sendMsg(e){
+    function updateBatchPhoto(e){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
-        console.log('avant:',CURRENT_COMM);
+        console.log('avant:',CURRENT_BATCH_PHOTO);
         getFormData();
-        console.log('apres:',CURRENT_COMM);
+        console.log('apres:',CURRENT_BATCH_PHOTO);
 
-        var fomCheckErrorStr =  formDataCheck1(CURRENT_COMM);
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_BATCH_PHOTO);
         
         if(fomCheckErrorStr.length == 0){
            
@@ -167,7 +173,7 @@ function BatchPhotoPic(props) {
                 errorDiv.className = null;
                 errorDiv.textContent = '';
             }
-           props.actionHandler(CURRENT_COMM);  
+           props.actionHandler(CURRENT_BATCH_PHOTO);  
     
         } else {
             errorDiv.textContent = fomCheckErrorStr;
@@ -176,75 +182,99 @@ function BatchPhotoPic(props) {
     }
 
     function closeBatchPhoto(){
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        console.log('avant:',CURRENT_BATCH_PHOTO);
+        getFormData();
+        console.log('apres:',CURRENT_BATCH_PHOTO);
+
+        var fomCheckErrorStr =  formDataCheck1(CURRENT_BATCH_PHOTO);
+        
+        if(fomCheckErrorStr.length == 0){
+           
+            if(errorDiv.textContent.length!=0){
+                errorDiv.className = null;
+                errorDiv.textContent = '';
+            }
+           props.actionHandler(CURRENT_BATCH_PHOTO);  
+    
+        } else {
+            errorDiv.textContent = fomCheckErrorStr;
+            errorDiv.className   = classes.formErrorMsg;            
+        }
 
     }
 
+    
     function getFormData(){
-        CURRENT_COMM = {};
-        CURRENT_COMM.id_sousetab  = currentAppContext.currentEtab;
-        CURRENT_COMM.sujet        = msgTitle;
-        CURRENT_COMM.message      = msgDesciption;
-        CURRENT_COMM.date         = getTodayDate(); 
-        CURRENT_COMM.emetteur     = currentAppContext.infoUser.user_name;
-       // CURRENT_COMM.id_eleves    = getIdDestinataires(listDestinataires,list_destinataires_ids);
+        CURRENT_BATCH_PHOTO = {};
+        CURRENT_BATCH_PHOTO.id_sousetab = parseInt(currentAppContext.currentEtab);
+        CURRENT_BATCH_PHOTO.libelle     = photoLibelle;
+        CURRENT_BATCH_PHOTO.but         = photoDesc;
+        CURRENT_BATCH_PHOTO.id_eleves   = getIdEleves();
+        CURRENT_BATCH_PHOTO.etat        = 1
+        CURRENT_BATCH_PHOTO.id_liste    = props.batchPhotoId;
     }
 
-    function getIdDestinataires(destinataires, destinatairesId){
-        // var tabDestinataires   = destinataires.split(',');
-        // var tabDestinatairesId = destinatairesId.split('_');
-
-        // console.log("destinataires", tabDestinatairesId, tabDestinataires);
-        // var ids_destinataires  = "";
-
-        // tabDestinataires.map((elt1, index)=>{
-        //     var dest = tabDestinatairesId.find((elt2)=>elt2.split('*')[1] == elt1)
-
-        //     if(index <tabDestinataires.length-1){
-        //         ids_destinataires = ids_destinataires + dest.split('*')[0]+'_';
-        //     } else {
-        //         ids_destinataires = ids_destinataires + dest.split('*')[0];
-        //     }
-
-        // });
-
-        // console.log("destinataires", ids_destinataires);
-        // return ids_destinataires;
+    function getIdEleves(){
+        var elevIds = "";
+        picturesList.map((elt, index)=>{
+            if(index < picturesList.length-1){
+                elevIds =  elevIds + elt.id +'_';
+            } else {
+                elevIds =  elevIds + elt.id;
+            }
+        });
+        return elevIds;
     }
 
 
     function formDataCheck1(){
         var errorMsg='';
 
-        if(CURRENT_COMM.id_eleves.length == 0) {
-            errorMsg=t("enter_msg_recipient");
-            return errorMsg;
-        } 
+        // if(CURRENT_BATCH_PHOTO.id_eleves.length == 0) {
+        //     errorMsg=t("enter_msg_recipient");
+        //     return errorMsg;
+        // } 
        
-        if(CURRENT_COMM.sujet.length == 0) {
-            errorMsg=t("enter_msg_subject");
-            return errorMsg;
-        } 
+        // if(CURRENT_BATCH_PHOTO.sujet.length == 0) {
+        //     errorMsg=t("enter_msg_subject");
+        //     return errorMsg;
+        // } 
 
-        if(CURRENT_COMM.message.length == 0) {
-            errorMsg=t("enter_correct_msg");
-            return errorMsg;
-        } 
+        // if(CURRENT_BATCH_PHOTO.message.length == 0) {
+        //     errorMsg=t("enter_correct_msg");
+        //     return errorMsg;
+        // } 
 
        
         return errorMsg;
     }
 
-    function getMsgTitle(e){
-        msgTitle = e.target.value;
-    }
-
+  
    
+
+    function upDateElevePhoto(eleveId, photoUrl){
+        return new Promise(function(resolve, reject){
+            axiosInstance
+            .post(`save-photo-eleve/`, {
+                id_eleve  : eleveId,
+                photo_url : photoUrl
+            }).then((res)=>{
+                console.log(res.data.status)
+                resolve(1);
+            },(res)=>{
+                console.log(res.data.status)
+                reject(0);
+            })     
+
+        })       
+    }
 
     const acceptHandler=()=>{
         
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS_FP: {
+            case MSG_SUCCESS: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -252,11 +282,32 @@ function BatchPhotoPic(props) {
                     message:""
                 }) 
                 //currentUiContext.setIsParentMsgBox(true);
-                return 1;
-                
+                return 1;                
             }
 
-            case MSG_WARNING_FP: {
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+                })  
+                upDateElevePhoto(picturesList[CURRENT_SELECTED_INDEX].id, picturesList[CURRENT_SELECTED_INDEX].photoPath).then(()=>{
+                    picturesList[CURRENT_SELECTED_INDEX].photoValid = 1;
+                    setCounChecked(countChecked+1);
+                    chosenMsgBox = MSG_SUCCESS;
+                    currentUiContext.showMsgBox({
+                        visible  : true, 
+                        msgType  : "info", 
+                        msgTitle : t("success_modif_M"), 
+                        message  : t("success_modif")
+                    });
+                    return 1;
+                });                
+               
+            }
+
+            case MSG_WARNING: {
                     currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
@@ -284,25 +335,37 @@ function BatchPhotoPic(props) {
         
         switch(chosenMsgBox){
 
-            case MSG_SUCCESS_FP: {
+            case MSG_SUCCESS: {
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 }) 
-               // currentUiContext.setIsParentMsgBox(true);
+               
                 return 1;
             }
 
-            case MSG_WARNING_FP: {
+            case MSG_WARNING: {
                     currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
                 })  
-               // currentUiContext.setIsParentMsgBox(true);
+               
+                return 1;
+            }
+
+
+            case MSG_CONFIRM: {
+                currentUiContext.showMsgBox({
+                visible:false, 
+                msgType:"", 
+                msgTitle:"", 
+                message:""
+                })  
+           
                 return 1;
             }
             
@@ -314,7 +377,7 @@ function BatchPhotoPic(props) {
                     msgTitle:"", 
                     message:""
                 })  
-               // currentUiContext.setIsParentMsgBox(true);
+               
             }
         }
         
@@ -341,7 +404,7 @@ function BatchPhotoPic(props) {
         var tabElvPhoto = [...picturesList];      
         
         tabElevesPhoto[CURRENT_SELECTED_INDEX].photoPath  = imageSrc;
-        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoValid = true;
+        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoValid = 0;
 
         var photoInf    = {...picturesList[CURRENT_SELECTED_INDEX]};
         console.log("gdgdgd", photoInf, CURRENT_SELECTED_INDEX); 
@@ -353,8 +416,9 @@ function BatchPhotoPic(props) {
     }, [webcamRef]);
 
     const retake = () => {
+        tabElevesPhoto = [...picturesList];
         tabElevesPhoto[CURRENT_SELECTED_INDEX].photoPath  = "";
-        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoValid = false;
+        tabElevesPhoto[CURRENT_SELECTED_INDEX].photoValid = -1;
         setPictureList(tabElevesPhoto);
         //setPhotoInfo(tabElevesPhoto[CURRENT_SELECTED_INDEX]);
         setImgSrc(null);
@@ -364,11 +428,15 @@ function BatchPhotoPic(props) {
     
 
     function validatePicture(e){
+        chosenMsgBox = MSG_CONFIRM;
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType  : "question", 
+            msgTitle : t("confirm_M"), 
+            message  : t("confirm_photo")
+        });
 
     }
-
-    
-   
     
     /************************************ JSX Code ************************************/
 
@@ -377,7 +445,8 @@ function BatchPhotoPic(props) {
             <div class={rowSelected[props.rowIndex]?"lignePhoto rowActive":"lignePhoto"} style={{display:"flex", flexDirection:"row", height:"5.3vh", paddingTop:"0.4vh", marginBottom:"1vh", paddingLeft:"1vh", border:"1px solid gainsboro"}}   onClick={(e)=>{displayElevPhoto(e,props.rowIndex)}}>
                <img id="profile"  src={'images/photo4Fois4P.png'} alt='dossierIcon' style={{width:'1.63vw', height:'1.63vw', marginRight:'1vw',borderRadius:"3px", border:"solid 1px #4a4646",padding:"0.1vh"}}/>
                <div style={{fontSize:'0.9vw',  fontWeight:'bold', width:"100%"}}>{props.photoEleve.nomEleve}</div>
-                {props.photoEleve.photoValid && <img src={'images/check.png'} alt='dossierIcon' style={{width:'1.67vw', height:'1.67vw', borderRadius:"0.84vw", marginRight:"1vh", paddingTop:"0.3vh",borderColor:"green"}} />}
+                {props.photoEleve.photoValid==0 && <img src={'images/not_finished1.jpeg'} alt='dossierIcon' style={{width:'1.67vw', height:'1.67vw', borderRadius:"0.84vw", marginRight:"1vh", paddingTop:"0.3vh",borderColor:"green"}} />}
+                {props.photoEleve.photoValid==1 && <img src={'images/check.png'} alt='dossierIcon' style={{width:'1.67vw', height:'1.67vw', borderRadius:"0.84vw", marginRight:"1vh", paddingTop:"0.3vh",borderColor:"green"}} />}
             </div>
         );
     }
@@ -388,7 +457,7 @@ function BatchPhotoPic(props) {
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg} src='images/photo4f4.png'/>
                 </div>
-                {props.formMode == "consult" ?         
+                {props.formMode == "look" ?         
                     <div className={classes.formMainTitle} >
                         {t("consult_batch_picture_M")}
                     </div>
@@ -437,7 +506,7 @@ function BatchPhotoPic(props) {
                 </div>
 
                 <div style={{display:"flex", flexDirection:"column", width:"60vw", justifyContent:"center", alignItems:"center"}}>
-                {picturesList[CURRENT_SELECTED_INDEX]!=undefined&&
+                {picturesList[CURRENT_SELECTED_INDEX]!=undefined &&
                     <div style={{color:"black", fontSize:"0.9vw", fontWeight:"800"}}>
                         {picturesList[CURRENT_SELECTED_INDEX].nomEleve}
                     </div>
@@ -454,15 +523,16 @@ function BatchPhotoPic(props) {
 
                     <div style={{display:"flex", flexDirection:"row",justifyContent:"space-between", width:"17%"}}>
                       
-                    {!imgSrc?
+                    {!imgSrc && picturesList[CURRENT_SELECTED_INDEX]!=undefined && picturesList[CURRENT_SELECTED_INDEX].photoValid <=0 &&
                         <CustomButton
                             btnText={t("filmer")}
                             buttonStyle={getSmallButtonStyle()}
                             btnTextStyle = {classes.btnSmallTextStyle}
                             btnClickHandler = {takePicture}
                         />
+                    }
 
-                        :
+                    {imgSrc && picturesList[CURRENT_SELECTED_INDEX]!=undefined && picturesList[CURRENT_SELECTED_INDEX].photoValid <=0 &&
                         
                         <CustomButton
                             btnText={t("re-filmer")}
@@ -472,12 +542,14 @@ function BatchPhotoPic(props) {
                         />
                     }
 
+                    {picturesList[CURRENT_SELECTED_INDEX]!=undefined && picturesList[CURRENT_SELECTED_INDEX].photoValid <=0 &&
                         <CustomButton
                             btnText={t("valider")}
                             buttonStyle={getSmallButtonStyle()}
                             btnTextStyle = {classes.btnSmallTextStyle}
                             btnClickHandler = {validatePicture}
                         />
+                    }
                     </div>
 
                 </div>        
@@ -490,17 +562,17 @@ function BatchPhotoPic(props) {
                     btnTextStyle = {classes.btnTextStyle}
                     btnClickHandler={props.cancelHandler}
                 />
-                {!(props.formMode=="consult")&&
+                {(props.formMode=="capture")&&
                     <CustomButton
-                        btnText={t('save')}
+                        btnText={t('ok')}
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={sendMsg}
+                        btnClickHandler={props.cancelHandler}
                         //disable={(isDownload) ? !isDownload :!fileSelected}
                     />
                 }
 
-                {(!props.formMode=="consult" && countChecked==picturesList.length)&&
+                {(props.formMode=="capture" && countChecked==picturesList.length)&&
                     <CustomButton
                         btnText={t('close')}
                         buttonStyle={getGridButtonStyle()}
