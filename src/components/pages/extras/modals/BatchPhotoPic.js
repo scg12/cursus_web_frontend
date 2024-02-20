@@ -41,7 +41,8 @@ function BatchPhotoPic(props) {
     // const [photoInfo,    setPhotoInfo]   = useState(tabElevesPhoto[0]);
     const webcamRef = useRef(null);                        // create a webcam reference
     const [imgSrc, setImgSrc]            = useState(""); // initialize it
-    const [rowSelected, SetRowSelected]  = useState([])
+    const [rowSelected, SetRowSelected]  = useState([]);
+    const [countChecked, setCounChecked] = useState(0)
     
     var tabElevesPhoto = initPhotoList(props.photoList);
     
@@ -499,7 +500,7 @@ function BatchPhotoPic(props) {
                     />
                 }
 
-                {!(props.formMode=="consult")&&
+                {(!props.formMode=="consult" && countChecked==picturesList.length)&&
                     <CustomButton
                         btnText={t('close')}
                         buttonStyle={getGridButtonStyle()}

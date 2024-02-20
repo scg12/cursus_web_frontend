@@ -37,6 +37,7 @@ var CURRENT_PHOTO_LIST;
 var chosenMsgBox;
 const MSG_SUCCESS =1;
 const MSG_WARNING =2;
+const MSG_CONFIRM =3;
 
 
 
@@ -53,7 +54,8 @@ function WebcamCapture(props) {
     const [multiSelectVisible, setMultiSelectVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
-    useEffect(()=> {        
+    useEffect(()=> {
+        currentUiContext.setIsParentMsgBox(true);          
         if(gridRows.length==0){
             CURRENT_CLASSE_ID = undefined;
         }
@@ -89,7 +91,7 @@ function WebcamCapture(props) {
             listElt.id            = elt.id;
             listElt.libelle       = elt.libelle;
             listElt.description   = elt.but;
-            listElt.date_creation = elt.date_creation;
+            listElt.date_creation = elt.date;
             listElt.etat          = elt.etat;
             listElt.etatLabel     = elt.etat==0? t('en_cours'):t('cloture');  
             listElt.elvPhotos     = elt.elvPhotos;       
@@ -99,27 +101,68 @@ function WebcamCapture(props) {
         return formattedList;
     }
 
-    function startBatchPhoto(rowId, tabPhotos){
-        SELECTED_BATCHPHOTO_ID = rowId;
-        CURRENT_PHOTO_LIST     = [...tabPhotos];
+    const formatBatchPhotoList=(list) =>{
+        var listElt;
+        var tabelt=[];
+        var rang = 1;
+        
+        var formattedList =[]
+        list.map((elt)=>{
+            listElt={};
+            listElt.id           = elt.id;
+            listElt.label        = elt.nom +' '+elt.prenom;
+            listElt.nom          = elt.nom;
+            listElt.matricule    = elt.matricule;
+            listElt.classeLabel  = elt.classe_libelle;
+            listElt.classeId     = elt.classe_id;           
+            listElt.prenom       = elt.prenom; 
+            listElt.rang         = ajouteZeroAuCasOu(rang);           
+            tabelt.push(false);              
+            formattedList.push(listElt);  
+            rang++;          
+        });  
+
+        return formattedList;
+    }
+
+    function startBatchPhoto(row){
+        SELECTED_BATCHPHOTO_ID = row.id;
+        CURRENT_PHOTO_LIST     = [...row.elvPhotos];
         setModalOpen(3);
     }
 
-    function lookBatchPhoto(rowId, tabPhotos){
-        SELECTED_BATCHPHOTO_ID = rowId;
-        CURRENT_PHOTO_LIST     = [...tabPhotos];
+    function lookBatchPhoto(row){
+        SELECTED_BATCHPHOTO_ID = row.id;
+        CURRENT_PHOTO_LIST     = [...row.elvPhotos];
         setModalOpen(4);
     }
 
-    function editBatchPhoto(rowId, tabPhotos){
-        SELECTED_BATCHPHOTO_ID = rowId;
-        CURRENT_PHOTO_LIST     = [...tabPhotos];
+    function editBatchPhoto(row){
+        var inputs=[]; 
+        SELECTED_BATCHPHOTO_ID = row.id;
+        CURRENT_PHOTO_LIST     = [...formatBatchPhotoList(row.elvPhotos)];
+              
+        inputs[0]= row.id;
+        inputs[1]= row.libelle;
+        inputs[2]= row.description;
+        inputs[3]= row.date_creation;
+        inputs[4]= row.etat;
+
+        currentUiContext.setFormInputs(inputs)
         setModalOpen(2);
     }
 
     function deleteBatchPhoto(rowId){
         SELECTED_BATCHPHOTO_ID = rowId;
-        alert(rowId)
+
+        chosenMsgBox = MSG_CONFIRM;
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType  : "question", 
+            msgTitle : t("confirm_M"), 
+            message  : t("confirm_delete")
+        });
+       
     }
 
     /*************************** DataGrid Declaration ***************************/    
@@ -209,7 +252,7 @@ function WebcamCapture(props) {
                                     title={t('start_photo')} 
                                     className={classes.cellPointer} 
                                     onClick={(e)=> {
-                                        startBatchPhoto(params.row.id,params.row.elvPhotos);
+                                        startBatchPhoto(params.row);
                                     }}
                                     alt=''
                                 />
@@ -222,7 +265,7 @@ function WebcamCapture(props) {
                                     title={t('look_photo')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        lookBatchPhoto(params.row.id,params.row.elvPhotos);
+                                        lookBatchPhoto(params.row);
                                     }}
                                     alt=''
                                 />
@@ -237,7 +280,7 @@ function WebcamCapture(props) {
                                     title={t('modify')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        editBatchPhoto(params.row.id,params.row.elvPhotos);
+                                        editBatchPhoto(params.row);
                                     }}
                                     alt=''
                                 />
@@ -515,12 +558,13 @@ function WebcamCapture(props) {
 
         console.log('update',CURRENT_BATCH_PHOTO);
         //var listEleves = [];
-        axiosInstance.post(`update-liste-eleves-pour-photo/`, {
+        axiosInstance.post(`update-liste-eleves-pour-photo/`, {          
+            id_liste    : CURRENT_BATCH_PHOTO.id_liste,
             libelle     : CURRENT_BATCH_PHOTO.libelle,
             but         : CURRENT_BATCH_PHOTO.but,
-            id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
-            id_classe   : CURRENT_BATCH_PHOTO.id_classe,
             id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
+            // id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
+            // id_classe   : CURRENT_BATCH_PHOTO.id_classe,
         }).then((res)=>{
             console.log(res.data);
 
@@ -534,25 +578,29 @@ function WebcamCapture(props) {
         })      
     }
     
-    function deleteBatchPhoto(rowId) {
-       // alert(rowId);
-        //Message de confirmation
-        /*if(window.confirm('Voulez-vous vraiment supprimer la section selectionnée?')){
-            //requete  axios de suppression de l'eatab qui a cet id
+  
+
+    function delBatchPhoto(rowId){
+        return new Promise(function(resolve, reject){
             axiosInstance
-            .post(`delete-etab/`, {
-                id:rowId,
+            .post(`delete-liste-eleves-pour-photo/`, {
+                id : rowId,
             }).then((res)=>{
                 console.log(res.data.status)
-                 //Mise a jour du tableau
-                //setDataState(result)
-            })              
-        }*/
-    } 
+                resolve(1);
+            },(res)=>{
+                console.log(res.data.status)
+                reject(0);
+            })     
+
+        })       
+    }
 
     function quitForm() {
         //ClearForm();
-        setModalOpen(0)
+        getListProgrammations();
+        setModalOpen(0);
+        currentUiContext.setIsParentMsgBox(true);
     }
    
     function sendParentMsgHandler(e){
@@ -573,6 +621,27 @@ function WebcamCapture(props) {
                 }) 
                 getListProgrammations(); 
                 return 1;
+            }
+
+            case MSG_CONFIRM: 
+            {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                });  
+                
+                delBatchPhoto(SELECTED_BATCHPHOTO_ID).then(()=>{
+                    chosenMsgBox = MSG_SUCCESS;
+                    currentUiContext.showMsgBox({
+                        visible  : true, 
+                        msgType  : "info", 
+                        msgTitle : t("success_modif_M"), 
+                        message  : t("success_modif")
+                    });
+                    return 1;
+                });                
             }
 
             case MSG_WARNING: {
@@ -598,7 +667,50 @@ function WebcamCapture(props) {
     }
 
     const rejectHandler=()=>{
-        
+
+        switch(chosenMsgBox){
+
+            case MSG_SUCCESS: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }) 
+              
+                return 1;
+            }
+
+            case MSG_CONFIRM: 
+            {  currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                });  
+                return 1;                
+            }
+
+
+            case MSG_WARNING: {
+                    currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                return 1;
+            }            
+           
+            default: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+            }
+        } 
     }
 
     /********************************** JSX Code **********************************/ 
@@ -673,7 +785,7 @@ function WebcamCapture(props) {
                 <BatchPhotoPic 
                     batchPhotoId  = {SELECTED_BATCHPHOTO_ID}
                     photoList     = {CURRENT_PHOTO_LIST}
-                    formMode      = 'consult'  
+                    formMode      = 'none'  
                     actionHandler = {deleteBatchPhoto} 
                     cancelHandler = {quitForm}
                 />

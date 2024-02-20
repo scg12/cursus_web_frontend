@@ -14,7 +14,7 @@ import BackDrop from '../../../backDrop/BackDrop';
 import MsgBox from '../../../msgBox/MsgBox';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {getTodayDate, changeDateIntoMMJJAAAA} from '../../../../store/SharedData/UtilFonctions';
+import {getTodayDate, changeDateIntoMMJJAAAA, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 
 
@@ -56,6 +56,11 @@ function BatchPhotoProg(props) {
  
     useEffect(()=> {
         precDest_ids = "";
+        if(props.formMode=="modif"){
+            photoLibelle = currentUiContext.formInputs[1];
+            photoDesc    = currentUiContext.formInputs[2];
+            setGridRows(props.photoList);
+        }
         currentUiContext.setIsParentMsgBox(false);   
         getEtabListClasses(); 
     },[]);
@@ -181,7 +186,7 @@ function BatchPhotoProg(props) {
     }
 
 
-    function closeBatchPhoto(e){
+    function modifyBatchPhoto(e){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
         console.log('avant:',CURRENT_BATCH_PHOTO);
         getFormData();
@@ -388,6 +393,7 @@ function BatchPhotoProg(props) {
         var listElt;
         var tabelt=[];
         var rang = 1;
+        
         var formattedList =[{id:-1, label:t('all'), nom:"", prenom:""}]
         list.map((elt)=>{
             listElt={};
@@ -434,9 +440,15 @@ function BatchPhotoProg(props) {
         console.log("elves", listEleves, precDest_ids)
 
         tabIdEleves.map((Elv)=>{
+            var rang = gridData.length+1;
             var idElv = Elv.split('*')[0];
             var eleve = listEleves.find((elt)=>(elt.id == idElv));
-            gridData.push(eleve);
+            
+            if(gridData.find((elt)=>elt.id==eleve.id)==undefined){
+                eleve.rang = ajouteZeroAuCasOu(rang);
+                gridData.push(eleve);
+                rang++;
+            }           
         });        
 
         precDest_ids = "";
@@ -456,6 +468,13 @@ function BatchPhotoProg(props) {
 
     function recipientChangeHandler(e){
         setListDestinataires(e.target.value);
+    }
+
+    function removeEleve(id){
+        var grd = [...gridRows];
+        var index = grd.findIndex((elt)=>(elt.id == id));
+        grd.splice(index,1);
+        setGridRows(grd);
     }
 
     /*************************** DataGrid Declaration ***************************/    
@@ -525,7 +544,7 @@ function BatchPhotoProg(props) {
                                 height={17} 
                                 className={classes.cellPointer} 
                                 onClick={(event)=> {
-                                //deleteRowConfirm(params.row.id);
+                                    removeEleve(params.row.id);
                                 }}
                                 alt=''
                             />
@@ -604,7 +623,7 @@ function BatchPhotoProg(props) {
                                 height={17} 
                                 className={classes.cellPointer} 
                                 onClick={(event)=> {
-                                //deleteRowConfirm(params.row.id);
+                                removeEleve(params.row.id);
                                 }}
                                 alt=''
                             />
@@ -699,15 +718,14 @@ function BatchPhotoProg(props) {
                         {t("photo_object")}:
                     </div>
 
-                    {!(props.formMode=="consult")&&
+                    {(props.formMode=="creation")&&
                         <div> 
                             <input id="photoObject" type="text" onChange = {getPhotoLibelle}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
                         </div>
                     }
-
-                    {(props.formMode=="consult")&&   
+                    {(props.formMode=="modif")&&   
                         <div> 
-                            <input id="photoObject" type="text"  className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                            <input id="photoObject" type="text"  onChange = {getPhotoLibelle} className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis", textAlign:"left"}}/>
                         </div>
                     }
                 </div>
@@ -717,15 +735,15 @@ function BatchPhotoProg(props) {
                         {t("photo_desc")}:
                     </div>
 
-                    {!(props.formMode=="consult")&&
+                    {(props.formMode=="creation")&&
                         <div> 
                             <input id="photoDesc" type="text" onChange = {getPhotoDesc}  className={classes.inputRowControl}  defaultValue={props.currentPpLabel} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585'}}/>
                         </div>
                     }
 
-                    {(props.formMode=="consult")&&   
+                    {(props.formMode=="modif")&&   
                         <div> 
-                            <input id="photoDesc" type="text" className={classes.inputRowControl}  disabled={true} defaultValue={currentUiContext.formInputs[1]} style={{marginLeft:'-8.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis"}}/>
+                            <input id="photoDesc" type="text" onChange = {getPhotoDesc}  className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[2]} style={{marginLeft:'-3.3vw', height:'1.3rem', width:'20vw', fontSize:'1.13vw', color:'#898585', textOverflow:"ellipsis", textAlign:"left"}}/>
                         </div>
                     }
                 </div>
@@ -740,11 +758,11 @@ function BatchPhotoProg(props) {
 
                         <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
                         <MultiSelect
-                                id                  = {MultiSelectId}
+                                id                      = {MultiSelectId}
                                 //-----Fields-----
-                                optData             = {optClasses}
-                                fetchedData         = {listEleves}
-                                selectionMode       = {"multiple"}
+                                optData                 = {optClasses}
+                                fetchedData             = {listEleves}
+                                selectionMode           = {"multiple"}
                             
                                 //-----Handler-----
                                 optionChangeHandler     = {classChangeHandler      }
@@ -754,10 +772,10 @@ function BatchPhotoProg(props) {
                                 mouseEnter              = {()=>{MOUSE_INSIDE_DROPDOWN = true }}
                             
                                 //-----Styles-----
-                                searchInputStyleP    = {{width:"13vw",height:"3.7vh", fontSize:"0.8vw"}}
-                                comboBoxStyle       = {{width:"15vw", height:"3.7vh", marginBottom:"-1vh", border:"solid 1px #8eb1ec", fontSize:"0.8vw", borderRadius:"3px"}}
-                                dataFieldStyle      = {{width:"15vw",minHeight:"5vh", borderRadius:"1vh", height:"fit-content", maxHeight:"63vh", overflowY:"scroll", border:"solid 1px gray", fontSize:"0.8vw", backgroundColor:"whitesmoke", position:"absolute", top:"15.7vh", fontWeight:"100"}}
-                                MSContainerStyle    = {{/*border:"solid 1px grey",*/ paddingTop:"3vh", marginRight:"1vh"}}
+                                searchInputStyleP       = {{width:"13vw",height:"3.7vh", fontSize:"0.8vw"}}
+                                comboBoxStyle           = {{width:"15vw", height:"3.7vh", marginBottom:"-1vh", border:"solid 1px #8eb1ec", fontSize:"0.8vw", borderRadius:"3px"}}
+                                dataFieldStyle          = {{width:"15vw",minHeight:"5vh", borderRadius:"1vh", height:"fit-content", maxHeight:"63vh", overflowY:"scroll", border:"solid 1px gray", fontSize:"0.8vw", backgroundColor:"whitesmoke", position:"absolute", top:"15.7vh", fontWeight:"100"}}
+                                MSContainerStyle        = {{/*border:"solid 1px grey",*/ paddingTop:"3vh", marginRight:"1vh"}}
                             />
                            
                         </div>                   
@@ -831,7 +849,7 @@ function BatchPhotoProg(props) {
                         btnText={t('modify')}
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={closeBatchPhoto}
+                        btnClickHandler={modifyBatchPhoto}
                         //disable={(isDownload) ? !isDownload :!fileSelected}
                     />
                 }
