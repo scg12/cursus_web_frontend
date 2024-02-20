@@ -674,7 +674,7 @@ function BatchPhotoProg(props) {
     }));
 
     return (
-        <div className={'card '+ classes.formContainerP4P} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) document.getElementById("hidden1_"+MultiSelectId).value = ""; setListEleves([]);}}>
+        <div className={'card '+ classes.formContainerP4P} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) {document.getElementById("hidden1_"+MultiSelectId).value = ""; setListEleves([]);}}}>
             <div className={getCurrentHeaderTheme()}>
                 <div className={classes.formImageContainer}>
                     <img alt='add student' className={classes.formHeaderImg} src='images/newBatchPhoto.png'/>

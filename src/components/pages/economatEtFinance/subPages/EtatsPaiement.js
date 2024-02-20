@@ -625,7 +625,7 @@ function EtatsPaiement(props) {
     }));
 
     return (
-        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) setListEleves([]);}}>
+        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) {document.getElementById("hidden1_"+MultiSelectId).value = ""; setListEleves([]);}}}>
             {(modalOpen==1) && <BackDrop/>}
             {(modalOpen==1) && 
                 <PDFTemplate previewCloseHandler={closePreview} style={{height:"85.7vh"}} >

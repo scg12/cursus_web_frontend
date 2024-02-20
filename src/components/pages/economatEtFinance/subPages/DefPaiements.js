@@ -13,7 +13,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate,formatCurrency} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,formatCurrency,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 //import {createPrintingPages} from '../reports/PrintingModule';
@@ -95,7 +95,7 @@ function DefPaiements(props) {
             listElt.displayedName  = elt.nom +' '+elt.prenom;
             listElt.nom            = elt.nom;
             listElt.prenom         = elt.prenom;
-            listElt.rang           = rang; 
+            listElt.rang           = ajouteZeroAuCasOu(rang); 
             listElt.type_salaire   = elt.type_salaire==""? t("to_define"):elt.type_salaire; 
             listElt.type_salaire_libelle = elt.type_salaire==""? t("to_define"):t(elt.type_salaire);
             listElt.salaire        = listElt.type_salaire=="permanent"? formatCurrency(elt.salaire):0;
@@ -121,7 +121,7 @@ function DefPaiements(props) {
             listElt.displayedName         = elt.nom +' '+elt.prenom;
             listElt.nom                   = elt.nom;
             listElt.prenom                = elt.prenom;
-            listElt.rang                  = rang; 
+            listElt.rang                  = ajouteZeroAuCasOu(rang); 
             listElt.is_prof               = elt.is_prof ; 
             listElt.adm_data              = elt.admin_data;
             adm_data                      = elt.admin_data;

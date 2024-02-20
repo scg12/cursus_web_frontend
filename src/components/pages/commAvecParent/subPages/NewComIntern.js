@@ -12,7 +12,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import InternMsg from "../modals/InternMsg";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 //import {createPrintingPages} from '../reports/PrintingModule';
@@ -133,7 +133,7 @@ function NewComIntern(props) {
             listElt.message        = elt.message;
             listElt.validite       = elt.validite;
             listElt.msgType        = elt.msgType;
-            listElt.rang           = rang; 
+            listElt.rang           = ajouteZeroAuCasOu(rang); 
             formattedList.push(listElt);
             rang ++;
         })

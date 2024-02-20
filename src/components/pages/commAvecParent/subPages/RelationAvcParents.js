@@ -13,7 +13,7 @@ import ParentsMsg from "../modals/ParentsMsg";
 import MultiSelect from '../../../multiSelect/MultiSelect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 //import {createPrintingPages} from '../reports/PrintingModule';
@@ -149,7 +149,7 @@ function RelationAvcParents(props) {
         var rang = 1;
         list.map((elt)=>{
             listElt = {};
-            listElt.rang          = rang;
+            listElt.rang          = ajouteZeroAuCasOu(rang);
             listElt.id            = elt.id+"_"+rang;
             listElt.label         = elt.nom +' '+elt.prenom;
             listElt.displayedName = elt.nom +' '+elt.prenom;
@@ -455,7 +455,7 @@ function RelationAvcParents(props) {
     }));
   
     return (
-        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) setListEleves([]);}}>
+        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) {document.getElementById("hidden1_"+MultiSelectId).value = ""; setListEleves([]);}}}>
             {(modalOpen!=0) && <BackDrop style={{height:"100vh"}}/>}
             {(modalOpen >0 && modalOpen<3) && 
                 <ParentsMsg 

@@ -43,6 +43,8 @@ var listElt = {}
 var JOUR_DEB="", MOIS_DEB="", YEAR_DEB="", DATEDEB_VERIF='';
 var JOUR_FIN="", MOIS_FIN="", YEAR_FIN="", DATEFIN_VERIF='';
 
+const MultiSelectId = "MS-3";
+
 const ROWS_PER_PAGE   = 40;
 var ElevePageSet      = [];
 var printedETFileName ='';
@@ -692,7 +694,7 @@ function RecapSorties(props) {
     }));
 
     return (
-        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listProfs.length>0) setListProfs([]);}}>
+        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listProfs.length>0) {document.getElementById("hidden1_"+MultiSelectId).value = ""; setListProfs([]);}}}>
             {(modalOpen==1) && <BackDrop/>}
             {(modalOpen==1) && 
                 <PDFTemplate previewCloseHandler={closePreview} style={{height:"85.7vh"}}>
@@ -743,7 +745,7 @@ function RecapSorties(props) {
                       
                         <div className={classes.selectZone}>
                             <MultiSelect
-                                id                  = {"MS-3"}
+                                id                  = {MultiSelectId}
                                 //-----Fields-----
                                 optData             = {optDestinataire}
                                 fetchedData         = {listProfs}

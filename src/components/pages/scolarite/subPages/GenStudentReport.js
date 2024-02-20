@@ -9,7 +9,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -236,7 +236,7 @@ function GenStudentReport(props) {
             listElt={};
             listElt.id        = elt.id_eleve;
             listElt.nom       = elt.nom;
-            listElt.rang      = rang; 
+            listElt.rang      = ajouteZeroAuCasOu(rang); 
             listElt.matricule = elt.matricule;
             listElt.moyenne   = elt.moyenne;
             listElt.nb_matiere_sans_notes = elt.nb_matiere_sans_notes;
@@ -265,7 +265,7 @@ function GenStudentReport(props) {
             listElt              ={};
             listElt.id           = elt.id_eleve;
             listElt.nom          = elt.nom;
-            listElt.rang         = rang; 
+            listElt.rang         = ajouteZeroAuCasOu(rang); 
             listElt.matricule    = elt.matricule;
             listElt.moyennes_seq = elt.moyennes_seq;
             listElt.moyennes_seq.map((nt,index)=>{notesSeq[index]=nt});
@@ -307,7 +307,7 @@ function GenStudentReport(props) {
             listElt={};
             listElt.id   = elt.id_eleve;
             listElt.nom  = elt.nom;
-            listElt.rang = rang; 
+            listElt.rang = ajouteZeroAuCasOu(rang); 
             listElt.matricule    = elt.matricule;
             listElt.moyennes_trimestre = elt.moyennes_trimestre;
             listElt.moyennes_trimestre.map((nt, index)=>{notesTrim[index]=nt});

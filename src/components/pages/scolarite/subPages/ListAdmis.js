@@ -9,7 +9,7 @@ import AddStudent from "../modals/AddStudent";
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -62,7 +62,7 @@ function ListAdmis(props) {
         var formattedList =[];
         list.map((elt)=>{
             listElt={};
-            listElt.rang           = rang; 
+            listElt.rang           = ajouteZeroAuCasOu(rang); 
             listElt.id             = elt.id;
             listElt.matricule      = elt.matricule;
             listElt.nom            = elt.nom;

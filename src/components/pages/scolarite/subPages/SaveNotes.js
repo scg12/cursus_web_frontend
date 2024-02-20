@@ -15,7 +15,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 
@@ -150,7 +150,7 @@ function SaveNotes(props) {
             listElt={};
             listElt.id = elt.id;
             listElt.nom  = elt.nom +' '+elt.prenom;
-            listElt.rang = rang;            
+            listElt.rang = ajouteZeroAuCasOu(rang);            
             listElt.matricule = elt.matricule;
             listElt.note = '00'; 
             listElt.deja_saisi = -1;

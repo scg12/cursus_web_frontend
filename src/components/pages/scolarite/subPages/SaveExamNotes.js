@@ -10,7 +10,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import MsgBox from '../../../msgBox/MsgBox';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 import { srRS } from '@mui/material/locale';
 import Webcam from "react-webcam";
@@ -126,7 +126,7 @@ function SaveExamNotes(props) {
         list.map((elt, index)=>{
             listElt={};
 
-            listElt.rang           = rang; 
+            listElt.rang           = ajouteZeroAuCasOu(rang); 
             listElt.id             = elt.id;
             listElt.matricule      = elt.matricule;
             listElt.nom            = elt.nom;

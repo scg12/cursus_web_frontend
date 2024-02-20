@@ -10,7 +10,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -218,7 +218,7 @@ function LookStudentPresence(props) {
             listElt={};
             listElt.id = elt.id;
             listElt.nom  = elt.nom +' '+elt.prenom;
-            listElt.rang = rang; 
+            listElt.rang = ajouteZeroAuCasOu(rang); 
             listElt.presence = 1; 
             listElt.matricule = elt.matricule;
             listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);

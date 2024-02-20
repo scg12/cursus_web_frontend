@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -339,7 +339,7 @@ function ConseilDiscipline(props) {
             listElt.resume_general_decisions = elt.resume_general_decisions;
             listElt.nom            = elt.convoque_par.nom;
             listElt.user_id        = elt.convoque_par.id_user;
-            listElt.rang           = rang; 
+            listElt.rang           = ajouteZeroAuCasOu(rang); 
             listElt.status         = elt.status; 
             listElt.periodeId      = listElt.id_type_conseil;
             listElt.periode        = getPeriodeLabel(listElt.id_type_conseil, listElt.periodeId, seqInfos, trimInfos);

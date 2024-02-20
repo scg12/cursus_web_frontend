@@ -9,7 +9,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -483,7 +483,7 @@ function PrintStudentReport(props) {
             listElt={};
             listElt.id = elt.id;
             listElt.nom = elt.nom;
-            listElt.rang = rang; 
+            listElt.rang = ajouteZeroAuCasOu(rang); 
             listElt.matricule = elt.matricule;
             listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
             listElt.lieu_naissance = elt.lieu_naissance;

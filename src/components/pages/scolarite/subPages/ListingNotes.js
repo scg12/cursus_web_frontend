@@ -14,7 +14,7 @@ import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {createPrintingPages} from '../reports/PrintingModule';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -286,7 +286,7 @@ function ListingNotes(props) {
             listElt={};
             listElt.id = elt.id;
             listElt.nom  = elt.nom +' '+elt.prenom;
-            listElt.rang = rang;            
+            listElt.rang = ajouteZeroAuCasOu(rang);            
             listElt.matricule = elt.matricule;
             listCours.map((cours)=>{
                 ch = ch + (cours.value);

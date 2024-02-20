@@ -12,7 +12,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import AddPaiementStaff from "../modals/AddPaiementStaff";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 //import {createPrintingPages} from '../reports/PrintingModule';
@@ -103,7 +103,7 @@ function AcceptPaiement(props) {
             listElt.montant        = elt.montant;
             listElt.date           = elt.date;
             listElt.status         = (elt.status=="initiated")? t('initiated'): (elt.status=="accepted") ? t('accepted') : t('payed') ;
-            listElt.rang           = rang; 
+            listElt.rang           = ajouteZeroAuCasOu(rang); 
             formattedList.push(listElt);
             rang ++;
         })

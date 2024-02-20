@@ -10,7 +10,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -78,7 +78,7 @@ function NewOfficialExam(props) {
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.rang              = rang;
+            listElt.rang              = ajouteZeroAuCasOu(rang);
             listElt.id                = elt.id;
             listElt.libelleExam       = elt.libelleExam;
             listElt.classes           = elt.classes;

@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -282,7 +282,7 @@ function ConseilClasse(props) {
             listElt.id_type_conseil = elt.id_type_conseil;
             listElt.nom = (ProfInfo!= undefined && ProfInfo!= {})?  ProfInfo.nom : t("non_defini");
             listElt.user_id = ProfInfo.user_id;
-            listElt.rang   = rang; 
+            listElt.rang   = ajouteZeroAuCasOu(rang); 
             listElt.status = elt.status; 
             listElt.resume_general_decisions = elt.resume_general_decisions;
             listElt.periodeId = elt.id_type_conseil;
