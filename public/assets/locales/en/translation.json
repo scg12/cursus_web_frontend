@@ -1,5 +1,6 @@
                         
-{   "summary_for"                 : "Summary For",
+{   "confirm_photo"              : "Do you want to set this photo as the final one ?",
+    "summary_for"                : "Summary For",
     "position"                   : "Position",
     "list_of_children_M"         : "List Of Student To Take Photo",
     "consult_batch_picture_M"    : "CONSULT BATCH PHOTO",

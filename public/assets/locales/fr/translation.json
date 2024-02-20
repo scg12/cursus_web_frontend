@@ -1,4 +1,5 @@
-{   "summary_for"                : "Bilan Pour",
+{   "confirm_photo"              : "Voulez-vous conserver cette photo ?",
+    "summary_for"                : "Bilan Pour",
     "position"                   : "Poste",
     "list_of_children_M"         : "Liste Des Elèves Candidats pour Photo",
     "consult_batch_picture_M"    : "CONSULTATION DE PHOTO EN LOT",

@@ -42,7 +42,8 @@ function BatchPhotoPic(props) {
     const webcamRef = useRef(null);                        // create a webcam reference
     const [imgSrc, setImgSrc]            = useState(""); // initialize it
     const [rowSelected, SetRowSelected]  = useState([]);
-    const [countChecked, setCounChecked] = useState(props.photoList.filter((elt)=>elt.has_picture==true).length)
+    const [countChecked, setCounChecked] = useState(props.photoList.filter((elt)=>elt.has_picture==true).length);
+    const [isValid, setIsValid]  = useState(false);
     
     var tabElevesPhoto = initPhotoList(props.photoList);
     
@@ -409,6 +410,7 @@ function BatchPhotoPic(props) {
         var photoInf    = {...picturesList[CURRENT_SELECTED_INDEX]};
         console.log("gdgdgd", photoInf, CURRENT_SELECTED_INDEX); 
 
+        setIsValid(true);
         setPictureList(tabElevesPhoto);
         //setPhotoInfo(photoInf);
         
@@ -420,6 +422,7 @@ function BatchPhotoPic(props) {
         tabElevesPhoto[CURRENT_SELECTED_INDEX].photoPath  = "";
         tabElevesPhoto[CURRENT_SELECTED_INDEX].photoValid = -1;
         setPictureList(tabElevesPhoto);
+        setIsValid(false);
         //setPhotoInfo(tabElevesPhoto[CURRENT_SELECTED_INDEX]);
         setImgSrc(null);
     };
@@ -548,6 +551,7 @@ function BatchPhotoPic(props) {
                             buttonStyle={getSmallButtonStyle()}
                             btnTextStyle = {classes.btnSmallTextStyle}
                             btnClickHandler = {validatePicture}
+                            disable={isValid==false}
                         />
                     }
                     </div>
