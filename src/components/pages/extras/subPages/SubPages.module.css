@@ -1030,6 +1030,15 @@
 
 }
 
+
+.gridMainRowStyleP{
+    min-height: 5vh !important;
+    max-height: 5vh !important;
+    font-weight: 800;
+    font-size: 0.9vw;
+
+}
+
 .GridColumnStyle{
     background-color: rgb(6, 83, 134);
     /*background-color: rgb(3, 48, 78);---pour tester la CNI*/

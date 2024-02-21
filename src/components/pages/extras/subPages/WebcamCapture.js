@@ -865,7 +865,7 @@ function WebcamCapture(props) {
                         
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='etatLabel' && params.value==t('cloture'))? classes.gridMainRowStyleP : classes.gridRowStyle }
                         // onCellClick={handleDeleteRow}
                         onRowClick={(params,event)=>{
                             if(event.ignore) {
