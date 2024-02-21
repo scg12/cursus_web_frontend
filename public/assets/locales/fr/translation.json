@@ -1,4 +1,6 @@
-{   "confirm_photo"              : "Voulez-vous conserver cette photo ?",
+{   "re-filmer"                  : "Re-filmer",
+    "filmer"                     : "Filmer",
+    "confirm_photo"              : "Voulez-vous conserver cette photo ?",
     "summary_for"                : "Bilan Pour",
     "position"                   : "Poste",
     "list_of_children_M"         : "Liste Des Elèves Candidats pour Photo",

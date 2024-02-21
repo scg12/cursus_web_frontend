@@ -418,7 +418,7 @@ function WebcamCapture(props) {
                                     title={t('start_photo')} 
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        startBatchPhoto(params.row.id);
+                                        startBatchPhoto(params.row);
                                     }}
                                     alt=''
                                 />
@@ -431,7 +431,7 @@ function WebcamCapture(props) {
                                     title={t('look_photo')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        lookBatchPhoto(params.row.id);
+                                        lookBatchPhoto(params.row);
                                     }}
                                     alt=''
                                 />
@@ -446,7 +446,7 @@ function WebcamCapture(props) {
                                     title={t('modify')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        editBatchPhoto(params.row.id);
+                                        editBatchPhoto(params.row);
                                     }}
                                     alt=''
                                 />
@@ -461,7 +461,7 @@ function WebcamCapture(props) {
                                     title={t('delete')}
                                     className={classes.cellPointer} 
                                     onClick={(event)=> {
-                                        deleteBatchPhoto(params.row.id)
+                                        deleteBatchPhoto(params.row)
                                     }}
                                     alt=''
                                 />
