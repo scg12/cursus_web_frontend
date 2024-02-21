@@ -577,15 +577,15 @@ function BatchPhotoProg(props) {
 
         {
             field: 'matricule',
-            headerName: "MATRICULE",
+            headerName: "REG. ID",
             width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },       
        
         {
-            field: 'displayedName',
-            headerName: "NOM(S) ET PRENOM(S)",
+            field: 'label',
+            headerName: "NAME(S) ET SURNAME(S)",
             width: 200,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -593,7 +593,7 @@ function BatchPhotoProg(props) {
 
         {
             field: 'classeLabel',
-            headerName: "CLASSE",
+            headerName: "CLASS",
             width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle
@@ -601,7 +601,7 @@ function BatchPhotoProg(props) {
 
         {
             field: 'classeId',
-            headerName: "CLASSE",
+            headerName: "CLASS",
             width: 110,
             editable: false,
             hide : true,
