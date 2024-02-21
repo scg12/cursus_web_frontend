@@ -515,9 +515,9 @@ function BatchPhotoPic(props) {
                     </div>
                 }
 
-                    <div style={{width:"15vw", height:"15vw",border:"1px solid black"}}>
+                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", width:"15vw", height:"15vw",border:"2px solid black", borderRadius:"0.7vw"}}>
                         {!imgSrc?
-                            <Webcam height={80} width={200} screenshotFormat="image/jpeg" ref={webcamRef} />
+                            <Webcam screenshotFormat="image/jpeg" ref={webcamRef}  style={{width:"14.67vw",height:"15vw",aspectRatio:1}}/>
                             :
                             <img src={imgSrc}/>                        
                         }                        
