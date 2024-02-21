@@ -532,6 +532,7 @@ function BatchPhotoPic(props) {
                             buttonStyle={getSmallButtonStyle()}
                             btnTextStyle = {classes.btnSmallTextStyle}
                             btnClickHandler = {takePicture}
+                            style={{minWidth:"3vw"}}
                         />
                     }
 
@@ -542,6 +543,7 @@ function BatchPhotoPic(props) {
                             buttonStyle={getSmallButtonStyle()}
                             btnTextStyle = {classes.btnSmallTextStyle}
                             btnClickHandler = {retake}
+                            style={{minWidth:"3vw"}}
                         />
                     }
 
@@ -552,6 +554,7 @@ function BatchPhotoPic(props) {
                             btnTextStyle = {classes.btnSmallTextStyle}
                             btnClickHandler = {validatePicture}
                             disable={isValid==false}
+                            style={{minWidth:"3vw"}}
                         />
                     }
                     </div>
