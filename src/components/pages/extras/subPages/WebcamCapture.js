@@ -32,6 +32,7 @@ var MultiSelectId = "searchRecipient"
 
 var SELECTED_BATCHPHOTO_ID;
 var CURRENT_PHOTO_LIST;
+var BATCH_PHOTO_CLOSED = false;
 
 
 var chosenMsgBox;
@@ -521,8 +522,7 @@ function WebcamCapture(props) {
     }
 
 
-    function saveBatchPhoto(CURRENT_BATCH_PHOTO) { 
-
+    function saveBatchPhoto(CURRENT_BATCH_PHOTO) {         
         console.log('Ajout',CURRENT_BATCH_PHOTO);
         
         axiosInstance.post(`liste-eleves-pour-photo/`, {
@@ -535,7 +535,7 @@ function WebcamCapture(props) {
             etat          : CURRENT_BATCH_PHOTO.etat,
         }).then((res)=>{
             console.log(res.data);
-
+         
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -546,34 +546,10 @@ function WebcamCapture(props) {
         })      
     }
 
-
-    
-    // function saveBatchPhoto(CURRENT_BATCH_PHOTO) { 
-
-    //     console.log('Ajout',CURRENT_BATCH_PHOTO);
-    //     //var listEleves = [];
-    //     axiosInstance.post(`liste-eleves-pour-photo/`, {
-    //         libelle     : CURRENT_BATCH_PHOTO.libelle,
-    //         but         : CURRENT_BATCH_PHOTO.but,
-    //         id_sousetab : CURRENT_BATCH_PHOTO.id_sousetab,
-    //         id_classe   : CURRENT_BATCH_PHOTO.id_classe,
-    //         id_eleves   : CURRENT_BATCH_PHOTO.id_eleves,
-    //     }).then((res)=>{
-    //         console.log(res.data);
-
-    //         chosenMsgBox = MSG_SUCCESS;
-    //         currentUiContext.showMsgBox({
-    //             visible:true, 
-    //             msgType:"info", 
-    //             msgTitle:t("success_add_M"), 
-    //             message:t("success_add")
-    //         });
-    //     })      
-    // }
-
     
     function updateBatchPhoto(CURRENT_BATCH_PHOTO) { 
         console.log('update',CURRENT_BATCH_PHOTO);
+        var toClose =  CURRENT_BATCH_PHOTO.etat;
       
         axiosInstance.post(`update-liste-eleves-pour-photo/`, {          
             id_liste    : CURRENT_BATCH_PHOTO.id_liste,
@@ -583,7 +559,8 @@ function WebcamCapture(props) {
             etat        : CURRENT_BATCH_PHOTO.etat
             
         }).then((res)=>{
-            console.log(res.data);
+            console.log(res.data);       
+            if(toClose==1) BATCH_PHOTO_CLOSED = true;
 
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
@@ -614,7 +591,7 @@ function WebcamCapture(props) {
     }
 
     function quitForm() {
-        //ClearForm();
+        console.log("gggggggg");
         getListProgrammations();
         setModalOpen(0);
         currentUiContext.setIsParentMsgBox(true);
@@ -635,10 +612,12 @@ function WebcamCapture(props) {
                     msgType:"", 
                     msgTitle:"", 
                     message:""
-                }) 
-                getListProgrammations(); 
+                });
+                getListProgrammations();  
                 return 1;
             }
+
+          
 
             case MSG_CONFIRM: 
             {

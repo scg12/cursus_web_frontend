@@ -197,6 +197,7 @@ function BatchPhotoPic(props) {
                 errorDiv.textContent = '';
             }
            props.actionHandler(CURRENT_BATCH_PHOTO);  
+           props.cancelHandler();
     
         } else {
             errorDiv.textContent = fomCheckErrorStr;
@@ -519,7 +520,7 @@ function BatchPhotoPic(props) {
                         {!imgSrc?
                             <Webcam screenshotFormat="image/jpeg" ref={webcamRef}  style={{width:"14.67vw",height:"15vw",aspectRatio:1}}/>
                             :
-                            <img src={imgSrc}/>                        
+                            <img src={imgSrc} style={{width:"14.67vw"/*,height:"15vw",aspectRatio:1*/}}/>                        
                         }                        
                        
                     </div>
