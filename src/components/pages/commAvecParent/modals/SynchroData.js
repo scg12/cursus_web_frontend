@@ -10,6 +10,7 @@ import UiContext from "../../../../store/UiContext";
 import { useTranslation } from "react-i18next";
 import BackDrop from '../../../backDrop/BackDrop';
 import MsgBox from '../../../msgBox/MsgBox';
+import ProgressBar from '../../../progressBar/ProgressBar';
 
 var cur_fileToUpload = undefined;
 var cur_sequence = undefined;
@@ -17,6 +18,7 @@ var cur_coursId = undefined;
 var selected_file_name='';
 var LISTE_SEQUENCES=[];
 var LISTE_TRIMESTRE=[];
+const BARWIDTH = 20;
 
 
 var chosenMsgBox;
@@ -33,6 +35,9 @@ function SynchroData(props) {
     const [sequenceActivated, setSequenceActivated] = useState(false);
     const [checkDisabled, setCheckDisabled] = useState(true);
     const [isInternetAvailable, setIsInternetAvailable] = useState(false);
+    const [percent, setPercent] = useState(0);
+    const [currentAction, setCurrentAction] = useState("");
+    const [pgBarVisible, setPgBarVisible]   = useState(false)
     
     
    
@@ -248,32 +253,61 @@ function SynchroData(props) {
         axiosInstance.post(`test-internet-connection/`, {            
         }).then((res)=>{   
             console.log("resultat",res.data);
+<<<<<<< HEAD
             // setIsInternetAvailable(res.data.status)
             setIsInternetAvailable(true)
+=======
+            //setIsInternetAvailable(res.data.status)
+            setIsInternetAvailable(true);
+>>>>>>> 3ecc146ec4eb19bf8ce155127a43d4c18fe4fcb1
         })
     } 
 
     function envoyerMessages(){
+        var pourcentage = 0;
+
+        // setPercent(pourcentage);
+        setPgBarVisible(true);
+        setCurrentAction(t("Initialisation des messages des éventuels nouveaux élève")+'........');
         axiosInstance.post(`synchro-mongo-atlas/`, {   
             id_sousetab:currentAppContext.currentEtab,         
-        }).then((res)=>{   
+        
+        }).then((res)=>{  
+            pourcentage = pourcentage +25 
+            setPercent(pourcentage);
+            setCurrentAction(t('Mise à jour des informations de payement des élèves')+'.......');
             console.log("resultat",res.data);
-            console.log("Initialisation des messages des éventuels nouveaux élèves");
+            console.log("Mise à jour des informations de payement des élèves");
             axiosInstance.post(`update-paiement-mongo-atlas/`, { 
             id_sousetab:currentAppContext.currentEtab
+            
             }).then((res)=>{   
+                pourcentage = pourcentage +25
+                setPercent(pourcentage);
+                setCurrentAction(t("Modification eventuelles des info des eleves dans l'annuaire en ligne")+'.......');
                 console.log("resultat",res.data);
-                console.log("Mise à jour des informations de payement des élèves");
+                console.log("Modification eventuelles des info des eleves dans l'annuaire en ligne");
+                
                 axiosInstance.post(`modifier-annuaire-mongo-atlas/`, { 
-            id_sousetab:currentAppContext.currentEtab
-                }).then((res)=>{   
+                id_sousetab:currentAppContext.currentEtab
+                
+                }).then((res)=>{  
+                    pourcentage = pourcentage +25
+                    setPercent(pourcentage);
+                    setCurrentAction(t("Envoie des messages aux parents")+'..........'); 
                     console.log("resultat",res.data);
-                    console.log("Modification eventuelles des info des eleves dans l'annuaire en ligne");
+                    console.log("Envoie des messages aux parents");
+                    
                     axiosInstance.post(`send-message-mongo-atlas/`, { 
-            id_sousetab:currentAppContext.currentEtab
+                    id_sousetab:currentAppContext.currentEtab
+                   
                     }).then((res)=>{   
+                        pourcentage = pourcentage +25
+                        setPercent(pourcentage);
+                        setCurrentAction(t("")+"");
+                        setPgBarVisible(false);
                         console.log("resultat",res.data);
-                    console.log("Envoie des messages aux parents...");
+                        console.log("Envoie des messages aux parents..............");
 
                     })
                 })
@@ -352,14 +386,14 @@ function SynchroData(props) {
                 />                 
             }
             
-            <div className={classes.etape}>                   
+            <div className={classes.etape} style={{marginTop:"-1vh"}}>                   
     
                 <div  style={{ display:"flex", flexDirection: "row", justifyContent:"space-around", alignItems:"center", width:"100%", height:"80%"}}> 
                     <CustomButton
                         btnText={t('connect_to_internet')}
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyleP}
-                        style={{width:"14.7vw", height:"3vw", borderRadius:"0.7vw"}}
+                        style={{width:"15.7vw", height:"3vw", borderRadius:"0.7vw"}}
                         hasIconImg= {true}
                         imgSrc='images/connecttoWeb.png'
                         imgStyle = {classes.grdBtnImgStylePrim}
@@ -371,18 +405,53 @@ function SynchroData(props) {
                         btnText={t('start_msg_transfer')}
                         buttonStyle={getGridButtonStyle()}
                         btnTextStyle = {classes.btnTextStyleP}
-                        style={{width:"14.7vw", height:"3vw", borderRadius:"0.7vw", paddingLeft:"1vw"}}
+                        style={{width:"15.7vw", height:"3vw", borderRadius:"0.7vw", /*paddingLeft:"1vw"*/}}
                         hasIconImg= {true}
                         imgSrc='images/SmsP.png'
                         imgStyle = {classes.grdBtnImgStylePrim}
                         // btnClickHandler={props.cancelHandler}
+<<<<<<< HEAD
                         btnClickHandler={envoyerMessages}
                         // disable={envoyerMessages}
                         disable={false}
                         // disable={(isInternetAvailable)?!isInternetAvailable:}
                     />                    
+=======
+                        //btnClickHandler={props.cancelHandler}
+                        btnClickHandler={envoyerMessages}
+                        disable={(isInternetAvailable==false) ? true:false}
+                    /> 
+
+                                       
+>>>>>>> 3ecc146ec4eb19bf8ce155127a43d4c18fe4fcb1
                     
-                </div>                   
+                </div>    
+
+                {pgBarVisible &&                
+                    <ProgressBar 
+
+                        pgBarWidth    = {BARWIDTH+"vw"}
+                        rate          = {percent+'%'}
+                        rateTextStyle = {{fontSize:"0.9vw", marginBottom:"-0.53vh"}}
+                        rateStyle     = {{width:(percent*BARWIDTH)/100+'vw', /*backgroundColor:"#065386"*/ backgroundColor:"#0f68a4"}}
+                        showRate      = {true}
+                        ratePosition  = {"top"}
+
+                        barContainerStyle={{
+                            marginTop:"-5.3vh"
+                        }}
+
+                        barStyle={{
+                            height           :"1vh", 
+                            borderRadius     :"1vh", 
+                            backgroundColor  :"white",
+                            border           :"solid 1px #3b4f78",
+                        }}
+                        
+                    />   
+                }
+
+                <label className={classes.MarginLeft3} >{currentAction}</label>            
             
             </div>
             
