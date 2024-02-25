@@ -248,7 +248,8 @@ function SynchroData(props) {
         axiosInstance.post(`test-internet-connection/`, {            
         }).then((res)=>{   
             console.log("resultat",res.data);
-            setIsInternetAvailable(res.data.status)
+            // setIsInternetAvailable(res.data.status)
+            setIsInternetAvailable(true)
         })
     } 
 
@@ -375,8 +376,9 @@ function SynchroData(props) {
                         imgSrc='images/SmsP.png'
                         imgStyle = {classes.grdBtnImgStylePrim}
                         // btnClickHandler={props.cancelHandler}
-                        btnClickHandler={props.cancelHandler}
-                        disable={envoyerMessages}
+                        btnClickHandler={envoyerMessages}
+                        // disable={envoyerMessages}
+                        disable={false}
                         // disable={(isInternetAvailable)?!isInternetAvailable:}
                     />                    
                     

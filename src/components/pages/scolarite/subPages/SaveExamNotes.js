@@ -64,7 +64,7 @@ function SaveExamNotes(props) {
         .post(`list-appreciations-notes-exam/`,{id_sousetab: currentAppContext.currentEtab}).then((res)=>{
                 res.data.map((appreciation)=>{ appreciations.push({
 
-                     value:appreciation.code, 
+                    value:appreciation.code, 
                     //value:appreciation.libelle, 
                     label:appreciation.libelle, 
                     minNote:appreciation.min_note, 
@@ -289,7 +289,7 @@ function SaveExamNotes(props) {
         {
             field: 'matricule',
             headerName: "MATRICULE",
-            width: 100,
+            width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
@@ -375,7 +375,7 @@ function SaveExamNotes(props) {
         {
             field: 'matricule',
             headerName: "REG. ID",
-            width: 100,
+            width: 110,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
@@ -657,7 +657,7 @@ function SaveExamNotes(props) {
                         <StripedDataGrid
                             rows={gridRows}
                             columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                            getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
                             
                             onCellClick={(params,event)=>{
                                 if(event.ignore) {
