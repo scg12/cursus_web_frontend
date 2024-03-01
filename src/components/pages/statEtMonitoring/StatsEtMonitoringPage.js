@@ -87,11 +87,11 @@ function StatsEtMonitoringPage() {
       <div className= {getCurrentContaintTheme()}>
         {(currentAppContext.enableProfiles["STATS_A"]=='1') ? 
           <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("acad_bilan")} theme={selectedTheme}>
-            {(currentAppContext.enableProfiles["STATS_A2"]=='1') ? <MenuItemP menuItemId ='300'  imgSource='images/EvolutionEffectifs.png'    libelle={t("evolution_effectifs")}               itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyleP}></MenuItemP>  : null}
-            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='301'  imgSource='images/TauxCouvProg.png'          libelle={t("couverture_programs")}               itemSelected={showSideMenu}></MenuItemP>  : null} 
-            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='302'  imgSource='images/statCouverture.png'        libelle={t("couv_prog_cours")}                   itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A1"]=='1') ? <MenuItemP menuItemId ='300'  imgSource='images/EvolutionEffectifs.png'    libelle={t("evolution_effectifs")}               itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyleP}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A2"]=='1') ? <MenuItemP menuItemId ='301'  imgSource='images/TauxCouvProg.png'          libelle={t("couverture_programs")}               itemSelected={showSideMenu}></MenuItemP>  : null} 
+            {(currentAppContext.enableProfiles["STATS_A3"]=='1') ? <MenuItemP menuItemId ='302'  imgSource='images/statCouverture.png'        libelle={t("couv_prog_cours")}                   itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
             {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='303'  imgSource='images/statPresence.png'          libelle={t("stat_absences")}                     itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
-            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='304'  imgSource='images/statPaieElev.png'          libelle={t("stat_school_fees")}                     itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_A5"]=='1') ? <MenuItemP menuItemId ='304'  imgSource='images/statPaieElev.png'          libelle={t("stat_school_fees")}                     itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
             
           </MenuItemListP>
           :
@@ -100,20 +100,20 @@ function StatsEtMonitoringPage() {
 
         {(currentAppContext.enableProfiles["STATS_B"]=='1') ? 
           <MenuItemListP minWtdhStyle={classes.size72Vw} libelle= {t("acad_results")} theme={selectedTheme}>
-            {(currentAppContext.enableProfiles["STATS_A1"]=='1') ? <MenuItemP menuItemId ='305'  imgSource='images/EvolutionReussite.png'     libelle={t("taux_reussite")}                     itemSelected={showSideMenu} ></MenuItemP> : null}
-            {(currentAppContext.enableProfiles["STATS_A3"]=='1') ? <MenuItemP menuItemId ='306'  imgSource='images/EvolutionNiveauAcad.png'   libelle={t("evolution_niv_acad")}                itemSelected={showSideMenu}></MenuItemP>  : null}
-            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ? <MenuItemP menuItemId ='307'  imgSource='images/statTravail.png'           libelle={t("travail_scolaire")}                  itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_B1"]=='1') ? <MenuItemP menuItemId ='305'  imgSource='images/EvolutionReussite.png'     libelle={t("taux_reussite")}                     itemSelected={showSideMenu} ></MenuItemP> : null}
+            {(currentAppContext.enableProfiles["STATS_B2"]=='1') ? <MenuItemP menuItemId ='306'  imgSource='images/EvolutionNiveauAcad.png'   libelle={t("evolution_niv_acad")}                itemSelected={showSideMenu}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_B3"]=='1') ? <MenuItemP menuItemId ='307'  imgSource='images/statTravail.png'           libelle={t("travail_scolaire")}                  itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
           </MenuItemListP>
           :
           null
         }
 
-        {(currentAppContext.enableProfiles["STATS_B"]=='1') ? 
+        {(currentAppContext.enableProfiles["STATS_C"]=='1') ? 
           <MenuItemListP minWtdhStyle={classes.size72Vw}  libelle= {t("non_acad_stats")} theme={selectedTheme}>
-            {(currentAppContext.enableProfiles["STATS_B1"]=='1') ?  <MenuItemP menuItemId ='308' imgSource='images/EvolutionBudget.png'       libelle={t("evolution_budget")}         itemSelected={showSideMenu}></MenuItemP> :null}
-            {(currentAppContext.enableProfiles["STATS_B2"]=='1') ?  <MenuItemP menuItemId ='309' imgSource='images/TauxInteractionPrt.png'    libelle={t("evolution_comParents")}     itemSelected={showSideMenu}></MenuItemP> :null}
-            {(currentAppContext.enableProfiles["STATS_B3"]=='1') ?  <MenuItemP menuItemId ='310' imgSource='images/TauxInvestissement.png'    libelle={t("taux_realisation_invest")}  itemSelected={showSideMenu}></MenuItemP> :null}
-            {(currentAppContext.enableProfiles["STATS_A4"]=='1') ?  <MenuItemP menuItemId ='311' imgSource='images/statPaieProfs.png'         libelle={t("paiement_profs")}           itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
+            {(currentAppContext.enableProfiles["STATS_C1"]=='1') ?  <MenuItemP menuItemId ='308' imgSource='images/EvolutionBudget.png'       libelle={t("evolution_budget")}         itemSelected={showSideMenu}></MenuItemP> :null}
+            {(currentAppContext.enableProfiles["STATS_C2"]=='1') ?  <MenuItemP menuItemId ='309' imgSource='images/TauxInteractionPrt.png'    libelle={t("evolution_comParents")}     itemSelected={showSideMenu}></MenuItemP> :null}
+            {(currentAppContext.enableProfiles["STATS_C3"]=='1') ?  <MenuItemP menuItemId ='310' imgSource='images/TauxInvestissement.png'    libelle={t("taux_realisation_invest")}  itemSelected={showSideMenu}></MenuItemP> :null}
+            {(currentAppContext.enableProfiles["STATS_C4"]=='1') ?  <MenuItemP menuItemId ='311' imgSource='images/statPaieProfs.png'         libelle={t("paiement_profs")}           itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? null : classes.imgStyle}></MenuItemP>  : null}
           </MenuItemListP>
           :
           null

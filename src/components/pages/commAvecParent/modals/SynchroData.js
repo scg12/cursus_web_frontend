@@ -253,13 +253,8 @@ function SynchroData(props) {
         axiosInstance.post(`test-internet-connection/`, {            
         }).then((res)=>{   
             console.log("resultat",res.data);
-<<<<<<< HEAD
-            // setIsInternetAvailable(res.data.status)
-            setIsInternetAvailable(true)
-=======
             //setIsInternetAvailable(res.data.status)
             setIsInternetAvailable(true);
->>>>>>> 3ecc146ec4eb19bf8ce155127a43d4c18fe4fcb1
         })
     } 
 
@@ -409,21 +404,10 @@ function SynchroData(props) {
                         hasIconImg= {true}
                         imgSrc='images/SmsP.png'
                         imgStyle = {classes.grdBtnImgStylePrim}
-                        // btnClickHandler={props.cancelHandler}
-<<<<<<< HEAD
-                        btnClickHandler={envoyerMessages}
-                        // disable={envoyerMessages}
-                        disable={false}
-                        // disable={(isInternetAvailable)?!isInternetAvailable:}
-                    />                    
-=======
                         //btnClickHandler={props.cancelHandler}
                         btnClickHandler={envoyerMessages}
                         disable={(isInternetAvailable==false) ? true:false}
-                    /> 
-
-                                       
->>>>>>> 3ecc146ec4eb19bf8ce155127a43d4c18fe4fcb1
+                    />
                     
                 </div>    
 

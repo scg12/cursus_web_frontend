@@ -97,13 +97,13 @@ function EconomatEtFinancePage() {
                     null
                 }
 
-                {(currentAppContext.enableProfiles["FINANCE_B"]=='1') ? 
+                {(currentAppContext.enableProfiles["FINANCE_D"]=='1') ? 
                     <MenuItemListP minWtdhStyle={classes.size72Vw}  libelle= {t("staff_fees")} theme={selectedTheme}>
                         {/* pour le MenuItem ci, mettre le bon code */}
-                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='202' imgSource='images/confSalaire.png'        libelle={t("def_paiement_personnel")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}></MenuItemP>  : null}
-                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='203' imgSource='images/salaireProf.png'        libelle={t("paiement_personnel")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}></MenuItemP>  : null}
-                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='204' imgSource='images/acceptPaiement.png'     libelle={t("accept_paiement")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}></MenuItemP>  : null}
-                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='205' imgSource='images/ListeSorties.png'       libelle={t("bilan_paiement_staff")} itemSelected={showSideMenu}></MenuItemP> : null}
+                        {(currentAppContext.enableProfiles["FINANCE_D1"]=='1') ? <MenuItemP menuItemId ='202' imgSource='images/confSalaire.png'        libelle={t("def_paiement_personnel")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}></MenuItemP>  : null}
+                        {(currentAppContext.enableProfiles["FINANCE_D2"]=='1') ? <MenuItemP menuItemId ='203' imgSource='images/salaireProf.png'        libelle={t("paiement_personnel")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}></MenuItemP>  : null}
+                        {(currentAppContext.enableProfiles["FINANCE_D3"]=='1') ? <MenuItemP menuItemId ='204' imgSource='images/acceptPaiement.png'     libelle={t("accept_paiement")} itemSelected={showSideMenu} customImg={true} customImgStyle={isMobile ? M_classes.iconStyle3 : classes.imgStyleP}></MenuItemP>  : null}
+                        {(currentAppContext.enableProfiles["FINANCE_D4"]=='1') ? <MenuItemP menuItemId ='205' imgSource='images/ListeSorties.png'       libelle={t("bilan_paiement_staff")} itemSelected={showSideMenu}></MenuItemP> : null}
                         {/*<MenuItemP libelle='Admission en claase2 ' itemSelected={showSideMenu}></MenuItemP>*/}
                     </MenuItemListP>
                     :
@@ -115,8 +115,8 @@ function EconomatEtFinancePage() {
                         {/* pour le MenuItem ci, mettre le bon code */}
                         {(currentAppContext.enableProfiles["FINANCE_B1"]=='1') ? <MenuItemP menuItemId ='206' imgSource='images/EntreeFonds.png'        libelle={t("entree_fond")} itemSelected={showSideMenu}></MenuItemP>  : null}
                         {(currentAppContext.enableProfiles["FINANCE_B2"]=='1') ? <MenuItemP menuItemId ='207' imgSource='images/SortieFonds.png'        libelle={t("sortie_fond")} itemSelected={showSideMenu}></MenuItemP>  : null}
-                        {(currentAppContext.enableProfiles["FINANCE_B2"]=='1') ? <MenuItemP menuItemId ='208' imgSource='images/ListeEntrees.png'       libelle={t("recap_entree")} itemSelected={showSideMenu}></MenuItemP> : null}
-                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='209' imgSource='images/ListeSorties.png'       libelle={t("recap_sortie")} itemSelected={showSideMenu}></MenuItemP> : null}
+                        {(currentAppContext.enableProfiles["FINANCE_B3"]=='1') ? <MenuItemP menuItemId ='208' imgSource='images/ListeEntrees.png'       libelle={t("recap_entree")} itemSelected={showSideMenu}></MenuItemP> : null}
+                        {(currentAppContext.enableProfiles["FINANCE_B4"]=='1') ? <MenuItemP menuItemId ='209' imgSource='images/ListeSorties.png'       libelle={t("recap_sortie")} itemSelected={showSideMenu}></MenuItemP> : null}
                         {/*<MenuItemP libelle='Admission en claase2 ' itemSelected={showSideMenu}></MenuItemP>*/}
                     </MenuItemListP>
                     :
