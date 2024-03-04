@@ -130,7 +130,7 @@ function ListAdmis(props) {
         {
             field          : 'matricule',
             headerName     : "MATRICULE",
-            width          : 100,
+            width          : 110,
             editable       : false,
             headerClassName:classes.GridColumnStyle
         },
@@ -186,7 +186,7 @@ function ListAdmis(props) {
         {
             field          : 'matricule',
             headerName     : "REG. ID",
-            width          : 100,
+            width          : 110,
             editable       : false,
             headerClassName:classes.GridColumnStyle
         },

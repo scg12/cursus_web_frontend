@@ -404,13 +404,10 @@ function SynchroData(props) {
                         hasIconImg= {true}
                         imgSrc='images/SmsP.png'
                         imgStyle = {classes.grdBtnImgStylePrim}
-                        // btnClickHandler={props.cancelHandler}
                         //btnClickHandler={props.cancelHandler}
                         btnClickHandler={envoyerMessages}
                         disable={(isInternetAvailable==false) ? true:false}
-                    /> 
-
-                                       
+                    />
                     
                 </div>    
 
