@@ -785,7 +785,8 @@ const columnsFr = [
                 type_duree  :  BilletSortie.type_duree,
                 date_deb    :  BilletSortie.date_deb,
                 date_fin    :  BilletSortie.date_fin,
-                date_jour   :  BilletSortie.date_jour
+                date_jour   :  BilletSortie.date_jour,
+                id_user     :  currentAppContext.idUser
                 
             }).then((res)=>{   
                 console.log("resultat",res.data);
@@ -818,7 +819,8 @@ const columnsFr = [
             date_fin    :  BilletSortie.date_fin,
             date_jour   :  BilletSortie.date_jour,
             id_billet   :  BilletSortie.id_billet,
-            status      :  BilletSortie.status == true ? 1 : 0
+            status      :  BilletSortie.status == true ? 1 : 0,
+            id_user     :  currentAppContext.idUser
             
         }).then((res)=>{   
             console.log("resultat",res.data); 
@@ -837,9 +839,11 @@ const columnsFr = [
     function justifyAuthorization(){
       
         axiosInstance.post(`validate-billet-entree/`, {
-            id_billet: CURRENT_AUTORISATION_ID,
-            id_classe: CURRENT_CLASSE_ID,
-            status   : 1
+            id_billet   : CURRENT_AUTORISATION_ID,
+            id_classe   : CURRENT_CLASSE_ID,
+            status      : 1,
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser
         }).then((res)=>{
             console.log(res.data);
             listAutorisations = [...formatList(res.data.status)];

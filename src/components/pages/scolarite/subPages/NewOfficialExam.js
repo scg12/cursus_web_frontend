@@ -364,7 +364,8 @@ const columnsFr = [
             libelle     : exam.libelle,
             niveau      : exam.niveau,
             classes     : exam.classes,
-            id_sousetab : exam.id_sousetab            
+            id_sousetab : exam.id_sousetab,
+            id_user     : currentAppContext.idUser           
         }).then((res)=>{
             console.log(res.data);           
             chosenMsgBox = MSG_SUCCESS;
@@ -380,10 +381,12 @@ const columnsFr = [
     function modifyExam(exam) {
         console.log('Modif',exam);     
         axiosInstance.post(`update-examen-officiel/`, {
-            id       : exam.id_exam,
-            libelle  : exam.libelle,
-            niveau   : exam.niveau,
-            classes  : exam.classes,
+            id          : exam.id_exam,
+            libelle     : exam.libelle,
+            niveau      : exam.niveau,
+            classes     : exam.classes,
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser
         }).then((res)=>{
             console.log(res.data);
             chosenMsgBox = MSG_SUCCESS;
@@ -415,6 +418,8 @@ const columnsFr = [
             axiosInstance
             .post(`delete-examen-officiel/`, {
                 id:rowId,
+                id_sousetab : currentAppContext.currentEtab,
+                id_user     : currentAppContext.idUser
             }).then((res)=>{
                 console.log(res.data.status)
                 resolve(1);

@@ -498,10 +498,12 @@ function SaveExamNotes(props) {
         axiosInstance
         .post(`save-resultat-examen-officiel/`,{
             
-            id_exam   : CURRENT_EXAM_ID,           
-            id_eleves : id_eleves.join("_"),
-            mentions  : mention_eleves.join("_"),
-            moyennes  : moyennes_eleves.join("_")
+            id_exam     : CURRENT_EXAM_ID,           
+            id_eleves   : id_eleves.join("_"),
+            mentions    : mention_eleves.join("_"),
+            moyennes    : moyennes_eleves.join("_"),
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser
         
         }).then((res)=>{
             setModalOpen(0);

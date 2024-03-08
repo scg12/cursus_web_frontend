@@ -195,7 +195,8 @@ function HeadAndNav(props) {
 
     function closeExamSession(){
         axiosInstance.post(`cloture_session/`, {
-            
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser 
         }).then((res)=>{
            alert("EXAMENS TERMINEE AVEC SUCCESS !");
            currentUiContext.showMsgBox({

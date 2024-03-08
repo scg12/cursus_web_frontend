@@ -734,38 +734,46 @@ const columnsFr = [
     }
 
     const printStudentList=()=>{
-        
         if(document.getElementById("btnGen").classList.contains("disable")) return;
+        
+        axiosInstance
+        .post(`log-info/`,{
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser,
+            message     : "Impression carte scolaire : "+CURRENT_CLASSE_LABEL +" eleves ids :"+ selectedElevesIds[0].join(',')
+        
+        }).then((res)=>{
 
-        if(CURRENT_CLASSE_ID != undefined){
-            var PRINTING_DATA ={
-                currentClasse: CURRENT_CLASSE_LABEL,
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
-                rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: "",
-                tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                tableData :[...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
-                numberEltPerPage:ROWS_PER_PAGE 
-            };
-            printedETFileName = "carte_scolaires.pdf";
-            setModalOpen(4);
-            ElevePageSet=[];
-            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
-            document.getElementById("btnGen").classList.add("disable");
-            console.log("ici la",ElevePageSet,PRINTING_DATA);                    
-        } else{
-            chosenMsgBox = MSG_WARNING;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("ATTENTION!"), 
-                message  : t("must_select_class")
-            })            
-        }      
+            if(CURRENT_CLASSE_ID != undefined){
+                var PRINTING_DATA ={
+                    currentClasse: CURRENT_CLASSE_LABEL,
+                    dateText:'Yaounde, le 14/03/2023',
+                    leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
+                    rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    pageImages:["images/collegeVogt.png"],
+                    pageTitle: "",
+                    tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
+                    tableData :[...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
+                    numberEltPerPage:ROWS_PER_PAGE 
+                };
+                printedETFileName = "carte_scolaires.pdf";
+                setModalOpen(4);
+                ElevePageSet=[];
+                //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
+                ElevePageSet = createPrintingPages(PRINTING_DATA);
+                document.getElementById("btnGen").classList.add("disable");
+                console.log("ici la",ElevePageSet,PRINTING_DATA);                    
+            } else{
+                chosenMsgBox = MSG_WARNING;
+                currentUiContext.showMsgBox({
+                    visible  : true, 
+                    msgType  : "warning", 
+                    msgTitle : t("ATTENTION!"), 
+                    message  : t("must_select_class")
+                })            
+            }  
+        });    
     }
 
     

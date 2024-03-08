@@ -12,8 +12,9 @@ import BackDrop from '../../../backDrop/BackDrop';
 import MsgBox from '../../../msgBox/MsgBox';
 
 var cur_fileToUpload = undefined;
-var cur_classeId = undefined;
-var cur_coursId = undefined;
+var cur_classeId     = undefined;
+var cur_coursId      = undefined;
+var cur_coursLabel   = undefined
 var selected_file_name='';
 var filename = '';
 
@@ -287,11 +288,13 @@ function AddFicheProgess(props) {
 
     function coursChangeHandler(e){
         if(e.target.value != optCours[0].value){
-            cur_coursId = e.target.value;
+            cur_coursId    = e.target.value;
+            cur_coursLabel = optCours.find((elt)=>elt.value == cur_coursId).label
             setInputDataCorrect(true);
             
         } else {
-            cur_coursId = undefined;
+            cur_coursId    = undefined;
+            cur_coursLabel = undefined
             setInputDataCorrect(false);
         }
 
@@ -357,9 +360,11 @@ function AddFicheProgess(props) {
     function storeFicheProgress(coursId){
         //currentUiContext.setIsParentMsgBox(false);
         axiosInstance.post(`sauvegarder-fiche-progression/`, {
-            id_cours : coursId,
-            id_sousetab : currentAppContext.idEtabInit,
-            filename : filename,
+            id_cours      : coursId,
+            libelle_cours :cur_coursLabel,
+            id_sousetab   : currentAppContext.idEtabInit,
+            filename      : filename,
+            id_user       : currentAppContext.idUser
            
         }).then((res)=>{
             console.log("cours, sous etab:", coursId, currentAppContext.idEtabInit);

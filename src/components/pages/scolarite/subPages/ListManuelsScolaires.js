@@ -405,7 +405,8 @@ const columnsEn = [
             id_classes  : manuel.id_classes,
             id_sousetab : manuel.id_sousetab,
             id_niveau   : manuel.id_niveau,
-            data        : manuel.data
+            data        : manuel.data,
+            id_user     : currentAppContext.idUser
 
         }).then((res)=>{
             console.log(res.data);
@@ -424,9 +425,12 @@ const columnsEn = [
         console.log('Modif',manuel);
      
         axiosInstance.post(`update-manuel-scolaire/`, {
-            id_manuel  : manuel.id_manuel,
-            id_classes : manuel.id_classes,
-            data       : manuel.data
+            id_manuel   : manuel.id_manuel,
+            id_sousetab : currentAppContext.currentEtab,
+            id_classes  : manuel.id_classes,
+            data        : manuel.data,
+            id_user     : currentAppContext.idUser
+
         }).then((res)=>{
             console.log(res.data);
             //setModalOpen(0);
@@ -460,7 +464,9 @@ const columnsEn = [
             .post(`delete-manuel-scolaire/`, {
                 id_manuel          : rowId,
                 id_classe_courante : '',               
-                portee             : "niveau"
+                portee             : "niveau",
+                id_user     : currentAppContext.idUser,
+                id_sousetab : currentAppContext.currentEtab
             }).then((res)=>{
                 console.log(res.data.status)
                 resolve(1);

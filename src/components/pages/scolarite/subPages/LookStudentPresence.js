@@ -149,8 +149,11 @@ function LookStudentPresence(props) {
     function getStudentWithAbsence(coursId, classeId){
         listEleves = []; tabAbsenceCours=[];
         axiosInstance.post(`list-eleves-absences/`, {
-            id_classe: classeId,
-            id_cours: coursId,
+            id_classe   : classeId,
+            id_cours    : coursId,
+            id_user     : currentAppContext.idUser,
+            id_sousetab : currentAppContext.currentEtab
+
         }).then((res)=>{
             console.log(res.data);
             listEleves = [...formatList(res.data.eleves)]

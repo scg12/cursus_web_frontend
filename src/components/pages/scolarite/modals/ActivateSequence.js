@@ -248,14 +248,15 @@ function ActivateSequence(props) {
         var sequenceToUpdate = LISTE_SEQUENCES.find((elt)=>elt.id==cur_sequence);
         console.log(sequenceToUpdate);
         axiosInstance.post(`update-sequence/`, {
-            id : sequenceToUpdate.id,
-            id_sousetab : currentAppContext.currentEtab,
+            id           : sequenceToUpdate.id,
+            id_sousetab  : currentAppContext.currentEtab,
             id_trimestre : sequenceToUpdate.id_trimestre,
-            libelle : sequenceToUpdate.libelle,
-            date_deb : sequenceToUpdate.date_deb,
-            date_fin : sequenceToUpdate.date_fin,
-            is_active : sequenceActivated,
-            numero : sequenceToUpdate.numero
+            libelle      : sequenceToUpdate.libelle,
+            date_deb     : sequenceToUpdate.date_deb,
+            date_fin     : sequenceToUpdate.date_fin,
+            is_active    : sequenceActivated,
+            numero       : sequenceToUpdate.numero,
+            id_user      : currentAppContext.idUser,
             
         }).then((res)=>{   
             console.log("resultat",res.data); 

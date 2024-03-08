@@ -173,8 +173,11 @@ function ListingNotes(props) {
     const  getStudentsNotes=(classId, periode)=>{
         listNotes = []
         axiosInstance.post(`eleves-notes-sequence/`, {
-            id_classe: classId,
-            id_sequence:periode,
+            id_classe  : classId,
+            id_sequence: periode,
+            id_sousetab: currentAppContext.currentEtab,
+            id_user    : currentAppContext.idUser,
+
         }).then((res)=>{
             console.log("Notes:",res.data);
             listNotes = [...res.data];

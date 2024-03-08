@@ -275,20 +275,20 @@ function ConseilClasse(props) {
         var formattedList =[]
         listConseil.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.date_prevue  = elt.date_prevue;
-            listElt.heure_prevue = elt.heure_prevue;
-            listElt.type_conseil = elt.type_conseil;
+            listElt.id              = elt.id;
+            listElt.date_prevue     = elt.date_prevue;
+            listElt.heure_prevue    = elt.heure_prevue;
+            listElt.type_conseil    = elt.type_conseil;
             listElt.id_type_conseil = elt.id_type_conseil;
-            listElt.nom = (ProfInfo!= undefined && ProfInfo!= {})?  ProfInfo.nom : t("non_defini");
-            listElt.user_id = ProfInfo.user_id;
-            listElt.rang   = ajouteZeroAuCasOu(rang); 
-            listElt.status = elt.status; 
+            listElt.nom             = (ProfInfo!= undefined && ProfInfo!= {})?  ProfInfo.nom : t("non_defini");
+            listElt.user_id         = ProfInfo.user_id;
+            listElt.rang            = ajouteZeroAuCasOu(rang); 
+            listElt.status          = elt.status; 
             listElt.resume_general_decisions = elt.resume_general_decisions;
-            listElt.periodeId = elt.id_type_conseil;
-            listElt.periode   = getPeriodeLabel(elt.type_conseil, listElt.periodeId, seqInfos, trimInfos);
-            listElt.etatLabel = (elt.status == 0) ? t('en_cours') :t('cloture');
-            listElt.date_effective = (elt.status == 1) ? elt.date_effective : "";      
+            listElt.periodeId       = elt.id_type_conseil;
+            listElt.periode         = getPeriodeLabel(elt.type_conseil, listElt.periodeId, seqInfos, trimInfos);
+            listElt.etatLabel       = (elt.status == 0) ? t('en_cours') :t('cloture');
+            listElt.date_effective  = (elt.status == 1) ? elt.date_effective : "";      
             formattedList.push(listElt);            
             rang ++;
         })
@@ -892,6 +892,7 @@ const columnsFr = [
         setIsloading(true);
         axiosInstance.post(`create-conseil-classe/`, {
             id_sousetab     : meeting.id_sousetab,
+            id_user         : currentAppContext.idUser,
             id_classe       : meeting.classeId,
             id_pp           : meeting.profPrincipalId,
             id_pp_user      : meeting.currentPpUserId,
@@ -928,6 +929,7 @@ const columnsFr = [
         axiosInstance.post(`update-conseil-classe/`, {
             id_conseil_classe              : meeting.id_conseil_classe,
             id_sousetab                    : meeting.id_sousetab,
+            id_user                        : currentAppContext.idUser,
             id_classe                      : meeting.classeId,
             id_pp                          : meeting.profPrincipalId,
             id_pp_user                     : meeting.currentPpUserId,

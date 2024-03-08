@@ -430,14 +430,15 @@ function SaveNotes(props) {
             console.log("notes et ids",notes, NOTES_CHANGED_IDS);
         });
         axiosInstance.post(`save-classe-note/`, {
-            id_classe : CURRENT_CLASSE_ID,
-            id_cours  : CURRENT_COURS_ID,
-            id_groupe : CURRENT_COURS_GROUPE, 
+            id_classe   : CURRENT_CLASSE_ID,
+            id_cours    : CURRENT_COURS_ID,
+            id_groupe   : CURRENT_COURS_GROUPE, 
             id_sequence : CURRENT_SEQUENCE_ID,
-            coef   : CURRENT_COURS_COEF,
-            notes  :  notes.join('_'),
-            elevesIds: NOTES_CHANGED_IDS.join('_'),
-            id_sousetab : currentAppContext.currentEtab
+            coef        : CURRENT_COURS_COEF,
+            notes       : notes.join('_'),
+            elevesIds   : NOTES_CHANGED_IDS.join('_'),
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser
 
         }).then((res)=>{
             NOTES_CHANGED_IDS=[];

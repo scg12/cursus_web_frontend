@@ -153,10 +153,12 @@ function Sheet(props){
 
             axiosInstance.post(`update-lesson/`, {
                 id_lesson : id_lesson,
-                status  : status, 
-                devoirs : devoirs,
-                resumes : resumes,
-                date    : document.getElementById('date').value
+                status      : status, 
+                devoirs     : devoirs,
+                resumes     : resumes,
+                date        : document.getElementById('date').value,
+                id_user     : currentAppContext.idUser,
+                id_sousetab : currentAppContext.currentEtab,
             }).then((res)=>{
                 updateTableOfContent(props.id, status);
                 setEtaLesson(status)

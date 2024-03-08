@@ -106,7 +106,8 @@ function SearchAcademicHistory(props) {
             axiosInstance.post(`get-dossier-eleve/`, {
                 id_eleve      : isActualStudent ? eleveData.id : eleveData.id_eleve,
                 id_sousetab   : currentAppContext.currentEtab,
-                est_scolarise : isActualStudent
+                est_scolarise : isActualStudent,
+                id_user       : currentAppContext.idUser
     
             }).then((res)=>{    
                 // var tab = res.data.dossier_eleve[0]; 

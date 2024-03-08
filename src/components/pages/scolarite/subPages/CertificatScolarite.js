@@ -131,25 +131,25 @@ function CertificatScolarite(props) {
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
+            listElt.id              = elt.id;
+            listElt.displayedName   = elt.nom +' '+elt.prenom;
+            listElt.nom             = elt.nom;
+            listElt.prenom          = elt.prenom;
+            listElt.rang            = rang; 
+            listElt.presence        = 1; 
+            listElt.matricule       = elt.matricule;
+            listElt.date_naissance  = convertDateToUsualDate(elt.date_naissance);
+            listElt.lieu_naissance  = elt.lieu_naissance;
+            listElt.date_entree     = elt.date_entree;
+            listElt.nom_pere        = elt.nom_pere;
+            listElt.tel_pere        = elt.tel_pere;    
+            listElt.email_pere      = elt.email_pere;
+            listElt.nom_mere        = elt.nom_mere;
+            listElt.tel_mere        = elt.tel_mere;   
+            listElt.email_mere      = elt.email_mere;
             listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant";
+            listElt.sexe            = elt.sexe;
+            listElt.redouble        = (elt.redouble == false) ? "nouveau" : "Redoublant";
 
             listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
             listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
@@ -757,39 +757,48 @@ const columnsFr = [
         
         if(document.getElementById("btnGen").classList.contains("disable")) return;
 
-        if(CURRENT_CLASSE_ID != undefined){
-            var PRINTING_DATA ={
-                currentClasse: CURRENT_CLASSE_LABEL,
-                anneeScolaire:"2022-2023",
-                nomDirecteur:"ABENA Luc",
-                qualite: "Directeur",
-                schoolName:"College Francois Xavier VOGT",
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
-                rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: "CERTIFICAT DE SCOLARITE",
-                //tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                tableData :[...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
-                numberEltPerPage:ROWS_PER_PAGE 
-            };
-            printedETFileName ='certificat_scolarite.pdf'
-            setModalOpen(4);
-            ElevePageSet={};
-            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = {...PRINTING_DATA};
-            document.getElementById("btnGen").classList.add("disable");
-            console.log("ici la",ElevePageSet);                    
-        } else{
-            chosenMsgBox = MSG_WARNING;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("ATTENTION!"), 
-                message  : t("must_select_class")
-            })            
-        }      
+        axiosInstance
+        .post(`log-info/`,{
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser,
+            message     : "Impression certificat scolarite classe : "+CURRENT_CLASSE_LABEL +" eleves ids :"+ selectedElevesIds[0].join(',')
+        
+        }).then((res)=>{
+          
+            if(CURRENT_CLASSE_ID != undefined){
+                var PRINTING_DATA ={
+                    currentClasse: CURRENT_CLASSE_LABEL,
+                    anneeScolaire:"2022-2023",
+                    nomDirecteur:"ABENA Luc",
+                    qualite: "Directeur",
+                    schoolName:"College Francois Xavier VOGT",
+                    dateText:'Yaounde, le 14/03/2023',
+                    leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
+                    rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    pageImages:["images/collegeVogt.png"],
+                    pageTitle: "CERTIFICAT DE SCOLARITE",
+                    //tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
+                    tableData :[...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
+                    numberEltPerPage:ROWS_PER_PAGE 
+                };
+                printedETFileName ='certificat_scolarite.pdf'
+                setModalOpen(4);
+                ElevePageSet={};
+                //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
+                ElevePageSet = {...PRINTING_DATA};
+                document.getElementById("btnGen").classList.add("disable");
+                console.log("ici la",ElevePageSet);                    
+            } else{
+                chosenMsgBox = MSG_WARNING;
+                currentUiContext.showMsgBox({
+                    visible  : true, 
+                    msgType  : "warning", 
+                    msgTitle : t("ATTENTION!"), 
+                    message  : t("must_select_class")
+                })            
+            }
+        });
     }
 
     

@@ -469,6 +469,7 @@ function Appel(props) {
                 id_etab     : currentAppContext.currentEtab,
                 numero_jour : todayNumber,
                 id_tranches : tranchesHoraires.join('_'),
+                id_user     : currentAppContext.idUser
     
             }).then((res)=>{   
                 //setModalOpen(3);

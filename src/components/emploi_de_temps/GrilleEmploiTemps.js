@@ -1128,6 +1128,7 @@ function updateETHandler(emploiDetempsToUpdate){
     setModalOpen(3);
     axiosInstance .post(`set-emploi-de-temps/`,{
         id_sousetab    : currentAppContext.currentEtab,
+        id_user        : currentAppContext.idUser,
         emploiDeTemps  : emploiDetempsToUpdate,
         profPrincipaux : ppString 
     }).then((res)=>{

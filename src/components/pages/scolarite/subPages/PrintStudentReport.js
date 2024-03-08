@@ -1192,91 +1192,108 @@ function PrintStudentReport(props) {
 
 
     const printOrderedStudentReports=(e)=>{
-        var elevesToPrint = [];      
-       
+        var elevesToPrint = [];  
+
         if(document.getElementById("eleves_C").classList.contains("disable")) return;
 
-        if(ELEVES_C_TO_PRINT != {}){
+        axiosInstance
+        .post(`log-info/`,{
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser,
+            message     : "Impression Bulletin classe : " + CURRENT_CLASSE_LABEL + " periode :"+ CURRENT_PERIOD_LABEL
+        
+        }).then((res)=>{
 
-            if(selectedElevesIds[0].length < ELEVES_C_TO_PRINT.length){
-                selectedElevesIds[0].map((id)=>{
-                    var eleve = ELEVES_C_TO_PRINT.find((elv)=>elv.entete.matricule == id);
-                    elevesToPrint.push(eleve);
-                })
-            } else {
-                elevesToPrint = [...ELEVES_C_TO_PRINT];
-            }
+            if(ELEVES_C_TO_PRINT != {}){
 
-            console.log("data to print", elevesToPrint, selectedElevesIds.length, listEleves.length,selectedElevesIds);
+                if(selectedElevesIds[0].length < ELEVES_C_TO_PRINT.length){
+                    selectedElevesIds[0].map((id)=>{
+                        var eleve = ELEVES_C_TO_PRINT.find((elv)=>elv.entete.matricule == id);
+                        elevesToPrint.push(eleve);
+                    })
+                } else {
+                    elevesToPrint = [...ELEVES_C_TO_PRINT];
+                }
 
-            ElevePageSet = {};
-            ElevePageSet.typeBulletin   = typeBulletin;
-            ElevePageSet.isElevesclasse = true;
-            ElevePageSet.elvToPrintData  = elevesToPrint;
-            ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
-            ElevePageSet.effectif       = listEleves.length;
-            ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
-            ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
-            ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
-            ElevePageSet.etabLogo       = "images/collegeVogt.png";
-            ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
-            ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
-            printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
-            setModalOpen(4); 
-            document.getElementById("eleves_C").classList.add("disable");
-                          
-        } else{
-            chosenMsgBox = MSG_WARNING_PrRPT;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("ATTENTION!"), 
-                message  : t("must_select_class")
-            })            
-        }      
+                console.log("data to print", elevesToPrint, selectedElevesIds.length, listEleves.length,selectedElevesIds);
+
+                ElevePageSet = {};
+                ElevePageSet.typeBulletin   = typeBulletin;
+                ElevePageSet.isElevesclasse = true;
+                ElevePageSet.elvToPrintData  = elevesToPrint;
+                ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
+                ElevePageSet.effectif       = listEleves.length;
+                ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
+                ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
+                ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
+                ElevePageSet.etabLogo       = "images/collegeVogt.png";
+                ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
+                ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
+                printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
+                setModalOpen(4); 
+                document.getElementById("eleves_C").classList.add("disable");
+                            
+            } else{
+                chosenMsgBox = MSG_WARNING_PrRPT;
+                currentUiContext.showMsgBox({
+                    visible  : true, 
+                    msgType  : "warning", 
+                    msgTitle : t("ATTENTION!"), 
+                    message  : t("must_select_class")
+                })            
+            } 
+        });     
     }
 
     const printNOrderedStudentReports=(e)=>{
         var elevesToPrint = [];
-
         if(document.getElementById("eleves_NC").classList.contains("disable")) return;
 
-        if(ELEVES_NC_TO_PRINT != {}){
+        axiosInstance
+        .post(`log-info/`,{
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser,
+            message     : "Impression Bulletin classe : "+CURRENT_CLASSE_LABEL +" periode :"+ CURRENT_PERIOD_LABEL
+        
+        }).then((res)=>{
 
-            if(selectedNCElevesIds[0].length < ELEVES_NC_TO_PRINT.length){
-                selectedNCElevesIds[0].map((id)=>{
-                    var eleve = ELEVES_NC_TO_PRINT.find((elv)=>elv.entete.matricule == id);
-                    elevesToPrint.push(eleve);
-                })
-            } else {
-                elevesToPrint = [...ELEVES_NC_TO_PRINT];
+            if(ELEVES_NC_TO_PRINT != {}){
+
+                if(selectedNCElevesIds[0].length < ELEVES_NC_TO_PRINT.length){
+                    selectedNCElevesIds[0].map((id)=>{
+                        var eleve = ELEVES_NC_TO_PRINT.find((elv)=>elv.entete.matricule == id);
+                        elevesToPrint.push(eleve);
+                    })
+                } else {
+                    elevesToPrint = [...ELEVES_NC_TO_PRINT];
+                }
+
+                ElevePageSet = {};
+                ElevePageSet.typeBulletin   = typeBulletin;
+                ElevePageSet.isElevesclasse = false;
+                ElevePageSet.elvToPrintData  = elevesToPrint;
+                ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
+                ElevePageSet.effectif       = listEleves.length;
+                ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
+                ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
+                ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
+                ElevePageSet.etabLogo       = "images/collegeVogt.png";
+                ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
+                ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
+                printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
+                setModalOpen(4);
+                document.getElementById("eleves_NC").classList.add("disable");
+                            
+            } else{
+                chosenMsgBox = MSG_WARNING_PrRPT;
+                currentUiContext.showMsgBox({
+                    visible  : true, 
+                    msgType  : "warning", 
+                    msgTitle : t("ATTENTION!"), 
+                    message  : t("must_select_class")
+                })            
             }
-
-            ElevePageSet = {};
-            ElevePageSet.typeBulletin   = typeBulletin;
-            ElevePageSet.isElevesclasse = false;
-            ElevePageSet.elvToPrintData  = elevesToPrint;
-            ElevePageSet.periode        = CURRENT_PERIOD_LABEL;
-            ElevePageSet.effectif       = listEleves.length;
-            ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
-            ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
-            ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
-            ElevePageSet.etabLogo       = "images/collegeVogt.png";
-            ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
-            ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
-            printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
-            setModalOpen(4);
-            document.getElementById("eleves_NC").classList.add("disable");
-                          
-        } else{
-            chosenMsgBox = MSG_WARNING_PrRPT;
-            currentUiContext.showMsgBox({
-                visible  : true, 
-                msgType  : "warning", 
-                msgTitle : t("ATTENTION!"), 
-                message  : t("must_select_class")
-            })            
-        }      
+        });      
     }
 
 

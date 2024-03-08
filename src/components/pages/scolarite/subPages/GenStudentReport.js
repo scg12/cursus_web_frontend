@@ -995,7 +995,8 @@ const columnsSeq = [
             id_sequence                     : CURRENT_PERIOD_ID,
             id_matieres_ne_pouvant_manquer  : criteria.id_matieres_ne_pouvant_manquer,
             nb_max_matieres_sans_note       : criteria.nb_max_matieres_sans_note,
-            nb_max_coefs_manquants          : criteria.nb_max_coefs_manquants  
+            nb_max_coefs_manquants          : criteria.nb_max_coefs_manquants,
+            id_user                         : currentAppContext.idUser  
                                  
         }).then((res)=>{
 
@@ -1044,12 +1045,13 @@ const columnsSeq = [
 
             setModalOpen(5);
             axiosInstance.post(`generer-bulletin-trimestre-classe/`, {
-                id_sousetab  : currentAppContext.currentEtab,
-                id_classe    : CURRENT_CLASSE_ID,
-                id_trimestre : CURRENT_PERIOD_ID,
-                id_eleves    : eleves_ids,              
+                id_sousetab          : currentAppContext.currentEtab,
+                id_classe            : CURRENT_CLASSE_ID,
+                id_trimestre         : CURRENT_PERIOD_ID,
+                id_eleves            : eleves_ids,              
                 periodes_considerees : seq_consideree,
-                classer      : toBeClassed
+                classer              : toBeClassed,
+                id_user              : currentAppContext.idUser  
             }).then((res)=>{
 
                 ELEVES_DATA = res.data;
@@ -1121,7 +1123,9 @@ const columnsSeq = [
                 id_trimestre         : CURRENT_PERIOD_ID,
                 id_eleves            : eleves_ids,              
                 periodes_considerees : trim_consideree,
-                classer              : toBeClassed
+                classer              : toBeClassed,
+                id_user              : currentAppContext.idUser 
+                 
             }).then((res)=>{
 
                 console.log(res);

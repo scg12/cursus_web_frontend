@@ -346,7 +346,7 @@ function ScolaritePage(){
           {curentMenuItemPId== 102  && <CertificatScolarite/>                  }                    
           {curentMenuItemPId== 103  && <CarteScolaire formMode='generation'/>  }
           {curentMenuItemPId== 104  && <ConseilClasse formMode='ajout'/>       }
-          {curentMenuItemPId== 105  &&  <ChangementClasse/>                    }          
+          {curentMenuItemPId== 105  && <ChangementClasse/>                    }          
           {/* {curentMenuItemPId== 105  && <AdmissionClasseSup/>           } */}
           
           {/*-------SCOLARITE-2 : Emploi de temps - cours et programmes------*/}

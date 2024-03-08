@@ -941,7 +941,8 @@ function setEditMeetingGlobalData(meeting){
             id_membres                : meeting.id_membres,
             roles_membres             : meeting.roles_membres,
             membres_presents          : meeting.membre_presents,
-            list_motifs_covocations   : meeting.list_motifs_covocations
+            list_motifs_covocations   : meeting.list_motifs_covocations,
+            id_user                   : currentAppContext.idUser
             
         }).then((res)=>{
            var gridData = formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims);
@@ -988,6 +989,7 @@ function setEditMeetingGlobalData(meeting){
             list_motifs_covocations          : meeting.list_motifs_covocations,
             list_decisions_conseil_eleves    : meeting.to_close ? meeting.list_decisions_conseil_eleves    : "",
             id_type_sanction_generale_classe : meeting.to_close ? meeting.id_type_sanction_generale_classe : "",
+            id_user                          : currentAppContext.idUser
 
         }).then((res)=>{
            var gridData = formatList(res.data.conseil_disciplines, res.data.seqs, res.data.trims);
