@@ -334,6 +334,7 @@ function RelationAvcParents(props) {
             date        : CURRENT_COMM.date, 
             emetteur    : CURRENT_COMM.emetteur,
             id_eleves   : CURRENT_COMM.id_eleves,
+            id_user     : currentAppContext.idUser
                  
         }).then((res)=>{
             console.log(res.data);

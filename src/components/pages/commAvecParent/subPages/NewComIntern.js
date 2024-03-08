@@ -358,7 +358,8 @@ function NewComIntern(props) {
             date_debut_validite  : CURRENT_COMM.date_debut_validite,
             date_fin_validite    : CURRENT_COMM.date_fin_validite,
             id_destinataires     : CURRENT_COMM.id_destinataires,
-            msgType              : CURRENT_COMM.msgType,            
+            msgType              : CURRENT_COMM.msgType,  
+            id_user              : currentAppContext.idUser          
         }).then((res)=>{
             console.log(res.data);
 
