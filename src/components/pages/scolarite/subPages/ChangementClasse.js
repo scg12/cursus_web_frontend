@@ -84,25 +84,25 @@ function ChangementClasse(props) {
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
+            listElt.id              = elt.id;
+            listElt.displayedName   = elt.nom +' '+elt.prenom;
+            listElt.nom             = elt.nom;
+            listElt.prenom          = elt.prenom;
+            listElt.rang            = rang; 
+            listElt.presence        = 1; 
+            listElt.matricule       = elt.matricule;
+            listElt.date_naissance  = convertDateToUsualDate(elt.date_naissance);
+            listElt.lieu_naissance  = elt.lieu_naissance;
+            listElt.date_entree     = elt.date_entree;
+            listElt.nom_pere        = elt.nom_pere;
+            listElt.tel_pere        = elt.tel_pere;    
+            listElt.email_pere      = elt.email_pere;
+            listElt.nom_mere        = elt.nom_mere;
+            listElt.tel_mere        = elt.tel_mere;   
+            listElt.email_mere      = elt.email_mere;
             listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant";
+            listElt.sexe            = elt.sexe;
+            listElt.redouble        = (elt.redouble == false) ? "nouveau" : "Redoublant";
 
             listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
             listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
@@ -367,6 +367,8 @@ const columnsModel1Fr = [
                     id_classe_dep   : INITIAL_CLASSE_ID,
                     id_classe_cible : FINAL_CLASSE_ID,
                     eleves_ids_list : selectedElevesIds[0], 
+                    id_user         : currentAppContext.idUser,
+                    id_sousetab     : currentAppContext.currentEtab
 
                 }).then((res)=>{
                 console.log(res.data);

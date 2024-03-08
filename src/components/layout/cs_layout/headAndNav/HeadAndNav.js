@@ -231,7 +231,10 @@ function HeadAndNav(props) {
                
 
                 axiosInstance.post(`logout/`, {
-                    refresh: localStorage.getItem('refresh'),
+                    refresh  : localStorage.getItem('refresh'),
+                    userId   : currentAppContext.idUser,
+                    setab_id : currentAppContext.currentEtab,
+
                 },{headers:{}})
                     .then((res) => {
                         localStorage.removeItem('access');

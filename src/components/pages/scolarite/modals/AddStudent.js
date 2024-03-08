@@ -838,7 +838,7 @@ function AddStudent(props) {
                                 
                             <div style ={{display:'flex', flexDirection:'row'}}> 
                                 <label style={{color:'grey', marginLeft:'-2vw', marginRight:'0.17vw', fontSize:'1rem'}}>+237/ </label>
-                                <input id="tel_pere" disable={(props.formMode == 'consult')} type="text" maxLength={12} className={classes.inputRowControl} style={{width:'7vw', height:'1.3rem', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[7]} />
+                                <input id="tel_pere" disable={(props.formMode == 'consult')} type="text" maxLength={12} className={classes.inputRowControl} style={{width:'8.7vw', height:'1.3rem', marginLeft:'0vw'}}   defaultValue={currentUiContext.formInputs[7]} />
                             </div>
                         </div>
                         
@@ -869,7 +869,7 @@ function AddStudent(props) {
                                 
                             <div style ={{display:'flex', flexDirection:'row'}}> 
                                 <label style={{color:'grey', marginLeft:'-2vw', marginRight:'0.17vw', fontSize:'1rem'}}>+237/ </label>
-                                <input id="tel_mere" disable={(props.formMode == 'consult')} type="text" maxLength={12}  className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[10]} style={{width:'7vw', height:'1.3rem', marginLeft:'0vw'}}/>
+                                <input id="tel_mere" disable={(props.formMode == 'consult')} type="text" maxLength={12}  className={classes.inputRowControl}   defaultValue={currentUiContext.formInputs[10]} style={{width:'8.7vw', height:'1.3rem', marginLeft:'0vw'}}/>
                             </div>
                         </div>
 

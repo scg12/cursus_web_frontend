@@ -13,7 +13,7 @@ import UiContext from '../../../store/UiContext'
 import Enregistrement from "./subPages/Enregistrement";
 import ListeDesEleves from "./subPages/ListeDesEleves";
 import CarteScolaire from "./subPages/CarteScolaire";
-import ChangementClasse from "../extras/subPages/ChangementClasse";
+import ChangementClasse from "./subPages/ChangementClasse";
 import AdmissionClasseSup from "./subPages/AdmissionClasseSup";
 import EmploiDeTemps from "./subPages/EmploiDeTemps";
 import CahierDeTexte from "./subPages/CahierDeTexte";
