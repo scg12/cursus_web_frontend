@@ -629,6 +629,7 @@ function DefPaiements(props) {
             id_adminstaff_enseignant           : CURRENT_PAIEMENT.id_adminstaff_enseignant,
             type_salaire_adminstaff_enseignant : CURRENT_PAIEMENT.type_salaire_adminstaff_enseignant,
             salaire_adminstaff_enseignant      : CURRENT_PAIEMENT.salaire_adminstaff_enseignant,
+            user_id                            : currentAppContext.idUser
      
         }).then((res)=>{
             console.log(res.data);

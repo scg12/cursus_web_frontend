@@ -85,8 +85,10 @@ function AcceptPaiement(props) {
         var listEleves = []
         axiosInstance.post(`accepter-payement/`, {
             type_personnel     : "pas_utile_ici",
-            id_payement_initie : IdPaiement
-           
+            id_payement_initie : IdPaiement,
+            id_user            : currentAppContext.idUser,
+            id_sousetab        : currentAppContext.currentEtab
+                       
         }).then((res)=>{
             console.log(res.data);
             getUserPaiements();

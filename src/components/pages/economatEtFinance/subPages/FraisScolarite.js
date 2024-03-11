@@ -484,8 +484,9 @@ const columnsFr = [
         return payements;
     }
 
-    function addNewFraisScolarite(e) {       
-        e.preventDefault();
+    function addNewFraisScolarite(e) {  
+        //--- Pas appele ----     
+        /*e.preventDefault();
         var cycl = getFormData();
                         
             axiosInstance.post(`create-cycle/`, {
@@ -500,7 +501,7 @@ const columnsFr = [
                 setGridRows(elevesPaiment);                
                 setModalOpen(0);
             }) 
-        
+        */
     }
 
     function updatePaiement(){
@@ -521,9 +522,11 @@ const columnsFr = [
         eleves = [];         
 
         axiosInstance.post(`update-payement-eleve/`, {
-            id: paymnt.id,
-            montant: paymnt.montant,
-            id_classe: paymnt.id_classe,
+            id          : paymnt.id,
+            montant     : paymnt.montant,
+            id_classe   : paymnt.id_classe,
+            id_sousetab : currentAppContext.currentEtab,
+            id_user     : currentAppContext.idUser
 
         }).then((res)=>{
             console.log(res.data);
@@ -756,7 +759,15 @@ const columnsFr = [
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen==4) &&  <PDFTemplate previewCloseHandler={closePreview}><PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}><StudentListTemplate pageSet={ElevePageSet}/></PDFViewer></PDFTemplate>} 
             {/*(modalOpen==4) && <StudentList pageSet={ElevePageSet}/>*/}
-            {(modalOpen >0 && modalOpen<4) && <AddFraisScolarite currentClasseLabel={"4eA1"} currentClasseId={1} formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addNewFraisScolarite : updatePaiement} cancelHandler={quitForm} />}
+            {(modalOpen >0 && modalOpen<4) && 
+                <AddFraisScolarite 
+                    currentClasseLabel={"4eA1"} 
+                    currentClasseId={1} 
+                    formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    actionHandler={(modalOpen==1) ? addNewFraisScolarite : updatePaiement} 
+                    cancelHandler={quitForm} 
+                />
+            }
             
             {(currentUiContext.msgBox.visible == true)  && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) &&
