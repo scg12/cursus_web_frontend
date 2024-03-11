@@ -361,7 +361,8 @@ function AddFicheProgess(props) {
         //currentUiContext.setIsParentMsgBox(false);
         axiosInstance.post(`sauvegarder-fiche-progression/`, {
             id_cours      : coursId,
-            libelle_cours :cur_coursLabel,
+            id_classe     : cur_classeId,
+            libelle_cours : cur_coursLabel,
             id_sousetab   : currentAppContext.idEtabInit,
             filename      : filename,
             id_user       : currentAppContext.idUser
