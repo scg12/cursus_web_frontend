@@ -654,48 +654,46 @@ function SaveExamNotes(props) {
                     
                 
 
-                {(modalOpen==0) ?
-                    <div className={classes.gridDisplay} >
-                        <StripedDataGrid
-                            rows={gridRows}
-                            columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                            getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
-                            
-                            onCellClick={(params,event)=>{
-                                if(event.ignore) {
-                                    //console.log(params.row);
-                                    //handlePresence(params.row)
-                                }
-                            }}  
-                            
-                        //    onRowDoubleClick ={(params, event) => {
-                        //        if(!event.ignore){
-                        //             event.defaultMuiPrevented = true;
-                        //             consultRowData(params.row);
-                        //         }
-                        //     }}
-                            
-                            //loading={loading}
-                            //{...data}
-                            sx={{
-                                //boxShadow: 2,
-                                //border: 2,
-                                //borderColor: 'primary.light',
-                                '& .MuiDataGrid-cell:hover': {
-                                  color: 'primary.main',
-                                  border:0,
-                                  borderColor:'none'
-                                },
-                              
-                            }}
-                            getRowClassName={(params) =>
-                                params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+               
+                <div className={classes.gridDisplay} >
+                    <StripedDataGrid
+                        rows={gridRows}
+                        columns={(i18n.language =='fr') ? columnsFr : columnsEn}
+                        getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        
+                        onCellClick={(params,event)=>{
+                            if(event.ignore) {
+                                //console.log(params.row);
+                                //handlePresence(params.row)
                             }
-                        />
-                    </div>
-                    :
-                    null
-                }
+                        }}  
+                        
+                    //    onRowDoubleClick ={(params, event) => {
+                    //        if(!event.ignore){
+                    //             event.defaultMuiPrevented = true;
+                    //             consultRowData(params.row);
+                    //         }
+                    //     }}
+                        
+                        //loading={loading}
+                        //{...data}
+                        sx={{
+                            //boxShadow: 2,
+                            //border: 2,
+                            //borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                                color: 'primary.main',
+                                border:0,
+                                borderColor:'none'
+                            },
+                            
+                        }}
+                        getRowClassName={(params) =>
+                            params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+                        }
+                    />
+                </div>
+                  
             
             </div>
            
