@@ -248,7 +248,7 @@ function LookStudentPresence(props) {
         {
             field: 'presence',
             headerName: t('present')+'?',
-            width: 50,
+            width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle,
            

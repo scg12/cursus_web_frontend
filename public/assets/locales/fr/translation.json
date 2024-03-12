@@ -1,4 +1,6 @@
-{   "re-filmer"                  : "Re-filmer",
+{   "accepted"                   : "Accepté",
+    "initiated"                  : "Initié",
+    "re-filmer"                  : "Re-filmer",
     "filmer"                     : "Filmer",
     "confirm_photo"              : "Voulez-vous conserver cette photo ?",
     "summary_for"                : "Bilan Pour",

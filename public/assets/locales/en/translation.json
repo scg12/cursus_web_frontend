@@ -1,5 +1,7 @@
                         
-{   "re-filmer"                  : "Re-capture",
+{   "accepted"                   : "Accepted",
+    "initiated"                  : "Initiated",
+    "re-filmer"                  : "Re-capture",
     "filmer"                     : "Capture",
     "confirm_photo"              : "Do you want to set this photo as the final one ?",
     "summary_for"                : "Summary For",
