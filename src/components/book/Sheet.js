@@ -145,14 +145,15 @@ function Sheet(props){
     function updateLesson(id_lesson, status){
         console.log("devoirs", devoirTab);
         var errorCode = checkData();
-        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        var errorDiv = document.getElementById('msgPlaceHolder'+ props.id);
+       
         
         if(errorCode==0){
             var devoirs = createString(devoirTab);
             var resumes = createString(resumeTab);
 
             axiosInstance.post(`update-lesson/`, {
-                id_lesson : id_lesson,
+                id_lesson   : id_lesson,
                 status      : status, 
                 devoirs     : devoirs,
                 resumes     : resumes,
@@ -160,11 +161,15 @@ function Sheet(props){
                 id_user     : currentAppContext.idUser,
                 id_sousetab : currentAppContext.currentEtab,
             }).then((res)=>{
-                updateTableOfContent(props.id, status);
-                setEtaLesson(status)
-                var errorDiv = document.getElementById('errMsgPlaceHolder');
-                errorDiv.className = classes.formSuccessMsg;
-                errorDiv.textContent = t("success_operation");             
+                updateTableOfContent(props.id, status);      
+                  
+                errorDiv.className     = classes.formSuccessMsg;
+                errorDiv.textContent   = t("success_operation");
+                errorDiv.style.display = "block";
+
+                console.log("gsggsgsgsgsggs",errorDiv) 
+
+                setEtaLesson(status)      
             })
         } else {
             if(errorCode==1){              
@@ -223,10 +228,11 @@ function Sheet(props){
     }
 
     function initDialogBox(){
-        var errorDiv = document.getElementById('errMsgPlaceHolder');
+        var errorDiv = document.getElementById('msgPlaceHolder'+ props.id);
         if(errorDiv.textContent.length!=0){
-            errorDiv.className = null;
-            errorDiv.textContent = '';
+            errorDiv.style.display="none";
+            // errorDiv.className = null;
+            // errorDiv.textContent = '';
         }   
     }
 
@@ -236,7 +242,7 @@ function Sheet(props){
         
     return(        
         <div id={props.id} className={classes.page}>
-             <div id='errMsgPlaceHolder'/> 
+            <div id={'msgPlaceHolder'+ props.id}/> 
             <div className={classes.dateZone}>
                 <div className={classes.inputRow}>
                     <div style={{marginRight:'-1vw', fontWeight:'700', fontSize:'1vw', width:'7vw'}}>
@@ -315,11 +321,11 @@ function Sheet(props){
                 <div  style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', alignItems:'center', width:'97%', height:'93%', overflowX:'scroll', overflowY:'scroll', backgroundColor:'#d4deee'}}> 
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center', width:'100%', height:'10%', backgroundColor:"gray"}}>
                         <div style={{width:'80%'}}>
-                            <label className={classes.textStyle+' '+classes.BoldMediumP}>Titre</label>
+                            <label className={classes.textStyle+' '+classes.BoldMediumP}>{t('title')}</label>
                         </div>
 
-                        <div style={{width:'20%'}}>
-                            <label className={classes.textStyle+' '+classes.BoldMediumP}>Date</label>
+                        <div style={{width:'20%', paddingLeft:"1vh"}} >
+                            <label className={classes.textStyle+' '+classes.BoldMediumP}>{t('date')}</label>
                         </div>                            
                     </div>
                                         
@@ -327,12 +333,12 @@ function Sheet(props){
                         devoirTab.map((devoir)=>{
                             return(  
                                 <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
-                                    <div style={{width:'80%', borderBottom:"1px solid black"}}>
-                                        <div className={classes.textStyleP}> {devoir.libelle}</div>
+                                    <div style={{width:'80%', borderBottom:"1px solid black", overflowX:"hidden",}}>
+                                        <div className={classes.textStyleP} title={devoir.libelle}> <div>{devoir.libelle}</div> </div>
                                     </div>
 
-                                    <div style={{width:'20%', borderBottom:"1px solid black"}}>
-                                        <div className={classes.textStyleP}> {devoir.date}</div>
+                                    <div style={{width:'20%', borderBottom:"1px solid black", paddingLeft:"1vh"}}>
+                                        <div className={classes.textStylePP}> {devoir.date}</div>
                                     </div> 
                                                                           
                                 </div>                     
@@ -343,10 +349,10 @@ function Sheet(props){
                             resumeTab.map((resume)=>{
                                 return(  
                                     <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', width:'97%'}}>
-                                        <div style={{width:'80%',borderBottom:"1px solid black"}}>
-                                            <div className={classes.textStyleP}> {resume.libelle}</div>
+                                        <div style={{width:'80%',borderBottom:"1px solid black", overflowX:"hidden"}}>
+                                            <div className={classes.textStyleP} title={resume.libelle}> {resume.libelle}</div>
                                         </div>
-                                        <div style={{width:'20%', borderBottom:"1px solid black"}}>
+                                        <div style={{width:'20%', borderBottom:"1px solid black", paddingLeft:"1vh"}}>
                                             <div className={classes.textStyleP}> {resume.date}</div>
                                         </div>
                                                                                 
@@ -389,7 +395,7 @@ function Sheet(props){
                     buttonStyle={getSmallButtonStyle()}
                     style={{width:'7vw'}}
                     btnTextStyle = {classes.btnSmallTextStyle}
-                    btnClickHandler={()=>{initDialogBox(); updateLesson(props.bd_id,EN_COURS)}}
+                    btnClickHandler={()=>{/*initDialogBox();*/ updateLesson(props.bd_id,EN_COURS)}}
                     disable={(etatLesson==CLOTURE)}
                 /> 
 
@@ -412,7 +418,7 @@ function Sheet(props){
                 />*/}                
             </div>:null}
 
-            <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', alignSelf:'center', width:'97%' }}>
+            <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center', alignSelf:'center', width:'93%', marginTop:"3vh" }}>
                 <CustomButton
                     btnText= {'< '+t("previous")}
                     buttonStyle={getSmallButtonStyle()}

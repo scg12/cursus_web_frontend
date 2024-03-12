@@ -60,7 +60,7 @@ function AddLessonNote(props) {
                 <div className={classes1.inputRowSimple+' '+classes1.container}>
                     <div style={{fontSize:"0.9vw", fontWeight:"800"}}>{(props.isDevoir)? t("homework") : t("summary")}:</div>
                     <div className={classes1.inputRowLeft+' '+classes1.textStyle}>
-                        <textarea id="noteZone"  rows={100} type="text" style={{fontSize:"0.87rem", height:'4.7rem',marginLeft:'0.7vw', marginRight:'0.7vw', borderRadius:3}} onChange={(e)=>{cur_note = e.target.value}}/>
+                        <textarea id="noteZone"  rows={100} type="text" style={{fontSize:"0.87rem", height:'4.7rem',marginLeft:'0.7vw', marginRight:'0.7vw', width:"19.3vw", borderRadius:3}} onChange={(e)=>{cur_note = e.target.value}}/>
                     </div>
                     
                 </div>        

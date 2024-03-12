@@ -1,4 +1,5 @@
-{   "accepted"                   : "Accepté",
+{   "title"                      : "Title",
+    "accepted"                   : "Accepté",
     "initiated"                  : "Initié",
     "re-filmer"                  : "Re-filmer",
     "filmer"                     : "Filmer",
