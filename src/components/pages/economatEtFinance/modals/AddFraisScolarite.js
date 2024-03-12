@@ -6,7 +6,7 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate, formatCurrency} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, formatCurrency,formatCurrencyInverse} from '../../../../store/SharedData/UtilFonctions';
 import { fontSize } from '@mui/system';
 import { useTranslation } from "react-i18next";
 
@@ -59,8 +59,8 @@ function AddFraisScolarite(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const [isValid, setIsValid] = useState(props.formMode=='modif');
-    const [montantRestant, setMontantRestant] = useState(Number(0?currentUiContext.formInputs[4]>=currentUiContext.formInputs[7] : currentUiContext.formInputs[7]-currentUiContext.formInputs[4]));
-    const [montantVerse, setMontantVerse] = useState(Number(currentUiContext.formInputs[4]));
+    const [montantRestant, setMontantRestant] = useState(Number(0? formatCurrencyInverse(currentUiContext.formInputs[4])>= formatCurrencyInverse(currentUiContext.formInputs[7]) : formatCurrencyInverse(currentUiContext.formInputs[7])-formatCurrencyInverse(currentUiContext.formInputs[4])));
+    const [montantVerse, setMontantVerse] = useState(Number(formatCurrencyInverse(currentUiContext.formInputs[4])));
     const selectedTheme = currentUiContext.theme;
     
     useEffect(()=> {
@@ -243,7 +243,7 @@ function AddFraisScolarite(props) {
                                 <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i>{t("paid")} :</i></div>
                                 <div style={{width:'10vw',fontSize:'1.1em',color:'green', marginLeft:'-1.7vw'}}><b> {formatCurrency(montantVerse)}</b></div>
                                 <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i>{t("waited")} :</i></div>
-                                <div style={{width:'10vw', marginLeft:'-0.77vw', marginTop:'0.57vh'}}><b>{a_payer}</b></div>
+                                <div style={{width:'10vw', marginLeft:'-0.77vw', marginTop:'0.57vh'}}><b>{formatCurrency(a_payer)}</b></div>
                                 <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i>{t("remaning")} :</i></div>
                                 <div style={{width:'10vw',color:'red', marginTop:'0.57vh'}}><b>{formatCurrency(montantRestant)}</b></div>
                                 </div>
@@ -252,9 +252,9 @@ function AddFraisScolarite(props) {
                             ligne.push(<div key={"tranche_recap"} style={{marginTop:'-3.3vh', display:'flex',flexDirection:'row', marginLeft:"15.3vw", width:"33vw", backgroundColor:'lightgrey'}}>
                                 <div style={{width:'10vw', marginTop:'0.7vh'}}><b>{t("totaux")}</b></div>
                                 <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i> {t("paid")} :</i></div>
-                                <div style={{width:'10vw',fontSize:'1.1em',color:'green', marginLeft:'-1.7vw'}}><b> {formatCurrency(montantVerse)}</b></div>
+                                <div style={{width:'10vw',fontSize:'1.1em',color:'green', marginLeft:'-1.7vw'}}><b> {montantVerse}</b></div>
                                 <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i> {t("waited")} :</i></div>
-                                <div style={{width:'10vw', marginLeft:'-0.77vw', marginTop:'0.57vh'}}><b>{a_payer}</b></div>
+                                <div style={{width:'10vw', marginLeft:'-0.77vw', marginTop:'0.57vh'}}><b>{formatCurrency(a_payer)}</b></div>
                                 <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i> {t("remaning")} :</i></div>
                                 <div style={{width:'10vw',color:'green', marginTop:'0.57vh'}}><b>{formatCurrency(montantRestant)}</b></div>
                                 </div>
