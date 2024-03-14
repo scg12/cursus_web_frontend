@@ -421,9 +421,9 @@ const columnsFr = [
             totalAttendu +=  parseInt(tranche.montantAttendu); 
         });
 
-        recap.verse   = totalVerse;
-        recap.attendu = totalAttendu;
-        recap.reste   = totalAttendu-totalVerse;
+        recap.montantVerse   = totalVerse;
+        recap.montantAttendu = totalAttendu;
+        recap.montantRestant = totalAttendu-totalVerse;
 
         inputs[0] = row.nom;
         inputs[1] = row.prenom;

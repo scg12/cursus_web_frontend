@@ -563,7 +563,7 @@ function EtatsPaiement(props) {
                 centerHeaders: ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
                 rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
                 pageImages   : ["images/collegeVogt.png"],
-                pageTitle    : "Etats des paiements des frais de scolarite " + CURRENT_CLASSE_LABEL,
+                pageTitle    : t("etats_frais_scolarite_M") + " " + CURRENT_CLASSE_LABEL,
                 tableHeaderModel:["N°",t("matricule"), t("displayedName_M"), t("total_paye_M"), t("total_restant_M"), t("total_attendu_M")],
                 // bilans          : {},
                 tableData       : [...gridRows],

@@ -45,6 +45,8 @@ function AddFraisScolarite(props) {
 
        currentUiContext.setIsParentMsgBox(false);
 
+       console.log("Tranche a payer",trancheToPay)
+
     },[])
 
     
@@ -94,54 +96,83 @@ function AddFraisScolarite(props) {
         else return chaine;
     }
 
+    function formDataCheck1(){       
+        var errorMsg='';
+   
+        if( CURRENT_PAIEMENT.montant<0) {
+            errorMsg=t("incorrect_amount_value");
+            setIsValid(false);
+            return errorMsg;
+        } 
+
+        if(CURRENT_PAIEMENT.montant > trancheToPay.montantAttendu) {
+            errorMsg=t("topay_over_waited_for_tranch");
+            setIsValid(false);
+            return errorMsg;
+        } 
+
+        return errorMsg;  
+    }
+
     function handleChange(e){
         var frais;
         var objRecap = {};
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
       
-        frais = e.target.value;        
-        if(frais!=undefined && frais>0) { 
-            objRecap.verse   = BASE_MONTANT_VERSE + Number(frais);
-            objRecap.attendu = recap.attendu;
-            objRecap.reste   = BASE_MONTANT_RESTANT - Number(frais);
+        frais = e.target.value;   
+        var totalVerse =  parseInt(frais) +  parseInt(trancheToPay.montantVerse); 
+        
+        console.log("fdfdfdf",totalVerse, trancheToPay.montantVerse, trancheToPay.montantAttendu)
+       
+        if(frais!="" && frais!=undefined && frais>0 && totalVerse  <= trancheToPay.montantAttendu) { 
+            objRecap.montantVerse   = BASE_MONTANT_VERSE + Number(frais);
+            objRecap.montantAttendu = recap.montantAttendu;
+            objRecap.montantRestant = BASE_MONTANT_RESTANT - Number(frais);
             
             setRecap(objRecap);
+
+            errorDiv.className = null;
+            errorDiv.textContent = '';
             setIsValid(true);
+ 
         } else {
+            objRecap.montantVerse   = BASE_MONTANT_VERSE ;
+            objRecap.montantAttendu = recap.montantAttendu;
+            objRecap.montantRestant = BASE_MONTANT_RESTANT ;
+
+            setRecap(objRecap);
+
             setMontantRestant(BASE_MONTANT_RESTANT);
             setMontantVerse(BASE_MONTANT_VERSE);
-            setIsValid(false);       
+            setIsValid(false); 
+            
+            if(totalVerse  > trancheToPay.montantAttendu) { 
+                errorDiv.className   = classes.formErrorMsg;
+                errorDiv.textContent = t("topay_over_waited_for_tranch");;
+            }
         }
     }
 
     function actionHandler(){
-       
+        var errorDiv = document.getElementById('errMsgPlaceHolder');
         getFormData();
-        
-        if(CURRENT_PAIEMENT.montant<0) {
-            chosenMsgBox = MSG_WARNING;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"warning", 
-                msgTitle:t("warning_M"), 
-                message:t("Le montant saisi est incorrect!")
-            });
 
-        }else{
-            if(montantVerse > currentUiContext.formInputs[7]){
-                chosenMsgBox = MSG_WARNING;
-                currentUiContext.showMsgBox({
-                    visible:true, 
-                    msgType:"warning", 
-                    msgTitle:t("warning_M"), 
-                    message:t("Le montant saisi est incorrect!")
-                });
+        if(formDataCheck1().length==0){
 
-            }else{
-                setIsLoading(true);
-                props.actionHandler(CURRENT_PAIEMENT);               
-            }
+            if(errorDiv.textContent.length!=0){
+                errorDiv.className = null;
+                errorDiv.textContent = '';
+                setIsValid(true);
+            } 
+
+            //setIsLoading(true);
+            props.actionHandler(CURRENT_PAIEMENT);         
+      
+        } else {
+            errorDiv.className = classes.formErrorMsg;
+            errorDiv.textContent = formDataCheck1();
         }
-    
+
     }
 
     function getFormData(){
@@ -184,11 +215,11 @@ function AddFraisScolarite(props) {
             <div key={"tranche_recap"} style={{marginTop:'-3.3vh', display:'flex',flexDirection:'row', marginLeft:"15.3vw", width:"33vw", backgroundColor:'lightgrey'}}>
                     <div style={{width:'10vw', marginTop:'0.7vh'}}><b>{t("totaux")}</b></div>
                     <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i>{t("paid")} :</i></div>
-                    <div style={{width:'10vw',fontSize:'1.1em',color:'green', marginLeft:'-1.7vw'}}><b id="recap_verse"> {formatCurrency(props.recap.verse)}</b></div>
+                    <div style={{width:'10vw',fontSize:'1.1em',color:'green', marginLeft:'-1.7vw'}}><b id="recap_verse"> {formatCurrency(props.recap.montantVerse)}</b></div>
                     <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i>{t("waited")} :</i></div>
-                    <div style={{width:'10vw', marginLeft:'-0.77vw', marginTop:'0.57vh'}}><b>{formatCurrency(props.recap.attendu)}</b></div>
+                    <div style={{width:'10vw', marginLeft:'-0.77vw', marginTop:'0.57vh'}}><b>{formatCurrency(props.recap.montantAttendu)}</b></div>
                     <div style={{width:'10vw', fontSize:'0.93vw', marginTop:'0.7vh', marginLeft:'1vw'}}> <i>{t("remaning")} :</i></div>
-                    <div  style={{width:'10vw',color:'red', marginTop:'0.57vh'}}><b id="recap_reste">{formatCurrency(props.recap.reste)}</b></div>
+                    <div  style={{width:'10vw',color:'red', marginTop:'0.57vh'}}><b id="recap_reste">{formatCurrency(props.recap.montantRestant)}</b></div>
             </div>
         );
     }

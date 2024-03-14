@@ -78,12 +78,12 @@ function StudentListTemplate(props){
     const TableHeader = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'5vw',   marginLeft:"-0.7vh",justifyContent:'center',...styles.headercell}}><Text>{props.page.tableHeaderModel[0]}</Text></View>
-                <View style={{width:'10vw', marginLeft:"-2vh", justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[1]}</Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[2]}</Text></View>
-                <View style={{width:'12vw',  marginLeft:"-4vh", justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[3]}</Text></View>
+                <View style={{width:'5vw',   marginLeft:"-1.7vh",justifyContent:'center',...styles.headercell}}><Text>{props.page.tableHeaderModel[0]}</Text></View>
+                <View style={{width:'10vw',   marginLeft:"-2.7vh", justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[1]}</Text></View>
+                <View style={{width:'23vw',  marginLeft:"-2vh", justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[2]}</Text></View>
+                <View style={{width:'12vw',  marginLeft:"-1.3vh", justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[3]}</Text></View>
                 <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}><Text>{props.page.tableHeaderModel[4]}</Text></View>
-                <View style={{width:'12vw', marginLeft:"-2vh", justifyContent:'flex-start', ...styles.headercell}}><Text>{props.page.tableHeaderModel[5]}</Text></View>
+                <View style={{width:'12vw', marginLeft:"-3vh", justifyContent:'flex-start', ...styles.headercell}}><Text>{props.page.tableHeaderModel[5]}</Text></View>
                 {/* <View style={{width:'12vw',  justifyContent:'center',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[6]}</Text></View> */}
             </View>
         );
@@ -93,7 +93,7 @@ function StudentListTemplate(props){
         return(
             <View style={props.style}>
                 <View style={{width:'5vw', justifyContent:'center',...styles.cell}}><Text>{props.eleve.rang}</Text></View>
-                <View style={{width:'7vw', marginLeft:"-2vw", justifyContent:'center',...styles.cell}}><Text>{props.eleve.matricule}</Text></View>
+                <View style={{width:'10vw', marginLeft:"-2vw", justifyContent:'center',...styles.cell}}><Text>{props.eleve.matricule}</Text></View>
                 <View style={{marginLeft:"2vw",width:'23vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.eleve.displayedName}</Text></View>
                 <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.eleve.displayedMontantPaye} </Text></View>
                 <View style={{width:'12vw', justifyContent:'center',...styles.cell}}><Text>{props.eleve.displayedMontantRestant}</Text></View>
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
         height:'2.3vh',
         backgroundColor:'#414244',
         textTransform:'uppercase',
-        fontSize:9,
+        fontSize:8.7,
         fontWeight:'heavy',
         color:'white'
     },
