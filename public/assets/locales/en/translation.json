@@ -1,5 +1,7 @@
                         
-{   "tranche_correspondante"     : "Corresponding Tranch",
+{   
+    "school_fees_payment_M"      : "STUDENT'S SCHOOL FEES MANAGEMENT",
+    "tranche_correspondante"     : "Corresponding Tranch",
     "title"                      : "Title",
     "accepted"                   : "Accepted",
     "initiated"                  : "Initiated",
@@ -736,8 +738,8 @@
     "date_M":"DATE",
     "check_date_M":"CHECK DATE",
     
-    "eco_and_finance": "Finances",
-    "eco_and_financeM": "FINANCES",
+    "eco_and_finance": "Accounting",
+    "eco_and_financeM": "ACCOUNTING",
     "stats_and_monitoring": "Statistics",
     "stats_and_monitoringM": "STATISTICS",
     "impressions": "Printings",

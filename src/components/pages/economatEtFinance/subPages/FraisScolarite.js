@@ -166,7 +166,7 @@ function FraisScolarite(props) {
         
             field: '',
             headerName: 'ACTION',
-            width: 30,
+            width: 67,
             editable: false,
             hide:(props.formMode=='ajout')? false : true,
             headerClassName:classes.GridColumnStyle,
@@ -730,7 +730,7 @@ const columnsFr = [
                 centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
                 rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
                 pageImages:["images/collegeVogt.png"],
-                pageTitle: "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL,
+                pageTitle: t("listing_paiement") + CURRENT_CLASSE_LABEL,
                 tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
                 tableData :[...gridRows],
                 numberEltPerPage:ROWS_PER_PAGE  
@@ -857,7 +857,7 @@ const columnsFr = [
             <div className={classes.inputRow} >
                 {(props.formMode=='ajout')?  
                     <div className={classes.formTitle}>
-                        {t('GESTION DU PAIEMENT DES FRAIS DE SCOLARITE')}  
+                        {t('school_fees_payment_M')}  
                     </div>
                     :
                     <div className={classes.formTitle}>
@@ -901,7 +901,7 @@ const columnsFr = [
                             null
                             */}
 
-                        <CustomButton
+                        {/* <CustomButton
                             btnText={t('imprimer')}
                             hasIconImg= {true}
                             imgSrc='images/printing1.png'
@@ -910,7 +910,7 @@ const columnsFr = [
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={printStudentList}
                             disable={(isValid==false)}   
-                        />
+                        /> */}
                        
                     </div>
                         

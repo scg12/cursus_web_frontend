@@ -1,4 +1,5 @@
-{   "tranche_correspondante"     : "Tranche Correspondante",
+{   "school_fees_payment_M"      : "GESTION DU PAIEMENT DES FRAIS DE SCOLARITE",
+    "tranche_correspondante"     : "Tranche Correspondante",
     "title"                      : "Title",
     "accepted"                   : "Accepté",
     "initiated"                  : "Initié",
