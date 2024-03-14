@@ -165,8 +165,8 @@ function FraisScolarite(props) {
         gridCols.push({ 
         
             field: '',
-            headerName: '',
-            width: 15,
+            headerName: 'ACTION',
+            width: 30,
             editable: false,
             hide:(props.formMode=='ajout')? false : true,
             headerClassName:classes.GridColumnStyle,
@@ -201,7 +201,7 @@ function FraisScolarite(props) {
                                 alt=''
                             />
                         </div>
-                    :null
+                    : <b style={{fontWeight:"700", color:"blue" /*color:"#065386"*/}}>{t('acquitted')}</b>
                 )}           
                 
             }
