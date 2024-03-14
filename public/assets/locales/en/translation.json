@@ -1,5 +1,6 @@
                         
-{   "title"                      : "Title",
+{   "tranche_correspondante"     : "Corresponding Tranch",
+    "title"                      : "Title",
     "accepted"                   : "Accepted",
     "initiated"                  : "Initiated",
     "re-filmer"                  : "Re-capture",

@@ -1,3 +1,45 @@
+.photoStyleP{
+    width:5.6vw;
+    height:5.3vw;
+    border-Radius:3px;
+    border: solid 1px grey;
+}
+
+.studentInfo{
+    display:'flex';
+    width:77%; 
+    justify-Content:center; 
+    height:5vw; 
+    /*background-Color:rgb(23 116 227);*/
+    background-color: rgb(78,148,235);
+    color:white;  
+    align-self:center; 
+    align-items:center; 
+    border-radius:7px;
+    /* align-self: flex-start; */
+    padding-left: 0.9vw;
+    padding-top: 0.7vh;
+    padding-bottom: 0.7vh;
+    font-size: 1vw;
+}
+
+.studentInfoP{
+    display:'flex';
+    width:77%; 
+    justify-Content:center; 
+    height:5vw; 
+    /*background-Color:rgb(23 116 227);*/
+    /*background-color: rgb(78,148,235);*/
+    color:white;  
+    align-self:center; 
+    align-items:center; 
+    /*border-radius:7px;*/
+    padding-left: 0.9vw;
+    padding-top: 0.7vh;
+    padding-bottom: 0.7vh;
+    font-size: 1vw;
+}
+
 
 
 .msgContent{

@@ -22,34 +22,10 @@ import { useTranslation } from "react-i18next";
 
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
+let CURRENT_PAIEMENT;
 var ROW_TO_DELETE_ID = undefined;
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"",
-    displayedName:'',
-    nom: '',
-    prenom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    nom_mere : '',
-    tel_pere : '',
-    tel_mere : '',
-    email_pere : '',
-    email_mere : '',
-    etab_provenance:'',
-    id:1,
-    redouble: '',
-    sexe:'M', 
-    
-    nom_parent      : '', 
-    tel_parent      : '', 
-    email_parent    : '',
-   
-}
+var listElt ={}
 
 
 var pageSet = [];
@@ -79,10 +55,11 @@ function FraisScolarite(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
-    const [gridRows, setGridRows] = useState([]);
+    const [isValid, setIsValid]     = useState(false);
+    const [gridRows, setGridRows]   = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optClasse, setOpClasse] = useState([]);
+    const [optClasse, setOpClasse]  = useState([]);
+    const [grdCols, setGrdCols]     = useState([]);
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -90,10 +67,149 @@ function FraisScolarite(props) {
         if(gridRows.length==0){
             CURRENT_CLASSE_ID = undefined;
         }
-
+        setGrdCols((i18n.language=='Fr')? columnsFr : columnsEn);
         getEtabListClasses();
         
     },[]);
+
+
+    function updateGridCols(listTypePaiements){
+        if(i18n.language=='fr'){
+            var gridCols =[...columnsFr];
+        } else {
+            var gridCols =[...columnsEn];
+        }
+            
+        var column ={};
+      
+        listTypePaiements.map((pay, index)=>{
+            column = {
+                field: pay.libelle,
+                headerName: pay.libelle.toUpperCase(),
+                width: 97,
+                editable: false,
+                headerClassName: classes.GridColumnStyle,
+                renderCell: (params) => (                   
+                   <div>{params.value+" FCFA"}</div>                  
+                )
+            }
+
+            gridCols.push(column);
+        });
+
+        console.log("popo ici", gridCols, listTypePaiements);
+        
+        gridCols.push({
+            field: 'montant',
+            headerName: (i18n.language=='fr') ? 'TOTAL VERSE' : 'TOTAL PAID',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params) => (                   
+                (params.value < params.row.montant_total_a_payer)?
+                <b style={{color:'red'}}>{params.value+" FCFA"}</b>
+                :
+                <b style={{color:'green'}}>{params.value+" FCFA"}</b>                    
+            )
+        });
+
+        gridCols.push({
+            field: 'montant_total_a_payer',
+            headerName: (i18n.language=='fr') ? 'TOTAL ATTENDU' : 'AMOUNT TO PAY',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params) => (
+                <b style={{fontWeight:"700"}}>{params.value+" FCFA"}</b>
+            ),
+        });
+
+
+        gridCols.push({            
+            field: 'dates_payements',
+            headerName: (i18n.language=='fr') ? 'Date' : 'Date',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle            
+        });
+
+        gridCols.push({             
+            field: 'montants',
+            headerName: (i18n.language=='fr') ? 'MONTANT TOTAL' : 'TOTAL PAID FEES',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle            
+        });
+
+        gridCols.push( {            
+            field: 'photoUrl',
+            headerName: 'Photo',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle            
+        });
+
+        gridCols.push({
+            field: 'redouble',
+            headerName: 'Redouble',
+            width: 120,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        });
+    
+
+        gridCols.push({ 
+        
+            field: '',
+            headerName: '',
+            width: 15,
+            editable: false,
+            hide:(props.formMode=='ajout')? false : true,
+            headerClassName:classes.GridColumnStyle,
+            renderCell: (params)=>{
+                return(
+                    (params.row.montant < params.row.montant_total_a_payer)?
+                        <div className={classes.inputRow}>
+                            <img src="icons/baseline_edit.png"  
+                                width={17} 
+                                height={17} 
+                                className={classes.cellPointer} 
+                                onClick={(event)=> {
+                                    event.ignore = true;
+                                }}
+                                alt=''
+                            />
+                            <img src="icons/baseline_delete.png"  
+                                width={17} 
+                                height={17} 
+                                className={classes.cellPointer} 
+                                onClick={(event)=> {
+                                    //event.ignore = true;
+                                    ROW_TO_DELETE_ID = params.row.id;
+                                    chosenMsgBox = OP_SUCCESS;
+                                    currentUiContext.showMsgBox({
+                                        visible:true, 
+                                        msgType:"question", 
+                                        msgTitle:t("SUPPRESSION PAIEMENT"), 
+                                        message:t("Voulez-vous vraiment supprimer le paiement?")
+                                    })
+                                }}
+                                alt=''
+                            />
+                        </div>
+                    :null
+                )}           
+                
+            }
+        );
+
+        setGrdCols(gridCols)
+
+    }
 
     const getEtabListClasses=()=>{
         var tempTable  = [{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }];
@@ -125,6 +241,7 @@ function FraisScolarite(props) {
     function getListStudentPayements(classeId){
         type_payements = [];
         eleves = [];
+        setModalOpen(5);
         axiosInstance
         .post(`list-payement-eleve/`,{
             id_sousetab: currentAppContext.currentEtab,
@@ -133,29 +250,39 @@ function FraisScolarite(props) {
             res.data.type_payements.map((payement)=>{type_payements.push(payement)});
             res.data.eleves.map((el)=>{eleves.push(el)});
             montant_total_a_payer = res.data.montant_total_a_payer;
-            console.log(type_payements);
-            var elevesPaiment = [...formatList(eleves)];
+            console.log("hdhdhd",type_payements, eleves);
+            var elevesPaiment = [...formatList(eleves, type_payements)];
+            updateGridCols(type_payements) 
             setGridRows(elevesPaiment);
+            setModalOpen(0);
         })  
     }
 
     
 
-    const formatList=(list) =>{
+    const formatList=(list, typesPaiements) =>{
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.montant = formatCurrency(elt.montant);
-            listElt.matricule = elt.matricule;
-            listElt.montants = elt.montants;
-            listElt.dates_payements = convertDateToUsualDate(elt.dates_payements);
+            listElt.id                    = elt.id;
+            listElt.displayedName         = elt.nom +' '+elt.prenom;
+            listElt.nom                   = elt.nom;
+            listElt.prenom                = elt.prenom;
+            listElt.rang                  = rang; 
+            listElt.presence              = 1; 
+            listElt.montant               = formatCurrency(elt.montant);
+            listElt.matricule             = elt.matricule;
+            listElt.montants              = elt.montants;
+            listElt.montant_total_a_payer = formatCurrency(montant_total_a_payer);
+            listElt.photoUrl              = elt.photoUrl;
+            listElt.redouble              = elt.redouble;
+            listElt.montant_par_types     = elt.montant_par_types;
+            listElt.dates_payements       = convertDateToUsualDate(elt.dates_payements);
+
+            typesPaiements.map((el, index)=>{
+                listElt[el.libelle]   =  formatCurrency(Math.abs(listElt.montant_par_types.split('_')[index]))
+            })
             
             formattedList.push(listElt);
             rang ++;
@@ -207,77 +334,9 @@ const columnsFr = [
         headerClassName:classes.GridColumnStyle
     },
 
-    {
-        field: 'montant',
-        headerName: 'MONTANT VERSE',
-        width: 120,
-        editable: false,
-        headerClassName:classes.GridColumnStyle,
-        renderCell: (params) => (
-            params.value < montant_total_a_payer?
-            <b style={{color:'red'}}>{params.value}</b>
-            :
-            <b style={{color:'green'}}>{params.value}</b>
-        ),
-    },
-    {
-        field: 'dates_payements',
-        headerName: 'Date',
-        width: 120,
-        editable: false,
-        hide:true,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: 'montants',
-        headerName: 'Montant',
-        width: 120,
-        editable: false,
-        hide:true,
-        headerClassName:classes.GridColumnStyle
-    },
-    {
-        field: '',
-        headerName: '',
-        width: 15,
-        editable: false,
-        hide:(props.formMode=='ajout')? false : true,
-        headerClassName:classes.GridColumnStyle,
-        renderCell: (params)=>{
-            return(
-                (params.row.montant < montant_total_a_payer)?
-                <div className={classes.inputRow}>
-                    <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            event.ignore = true;
-                        }}
-                        alt=''
-                    />
-                    <img src="icons/baseline_delete.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
-                        onClick={(event)=> {
-                            //event.ignore = true;
-                            ROW_TO_DELETE_ID = params.row.id;
-                            chosenMsgBox = OP_SUCCESS;
-                            currentUiContext.showMsgBox({
-                                visible:true, 
-                                msgType:"question", 
-                                msgTitle:t("SUPPRESSION PAIEMENT"), 
-                                message:t("Voulez-vous vraiment supprimer le paiement?")
-                            })
-                        }}
-                        alt=''
-                    />
-                </div>
-                :null
-            )}           
-            
-        },
+   
+
+   
     ];
 
     const columnsEn = [
@@ -323,81 +382,7 @@ const columnsFr = [
             hide:true,
             headerClassName:classes.GridColumnStyle
         },
-    
-        {
-            field: 'montant',
-            headerName: 'PAID FEES',
-            width: 120,
-            editable: false,
-            headerClassName:classes.GridColumnStyle,
-            renderCell: (params) => (
-                params.value < montant_total_a_payer?
-                <b style={{color:'red'}}>{params.value}</b>
-                :
-                <b style={{color:'green'}}>{params.value}</b>
-            ),
-        },
-        {
-            field: 'dates_payements',
-            headerName: 'DATE',
-            width: 120,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },
-        {
-            field: 'montants',
-            headerName: 'MONTANT',
-            width: 120,
-            editable: false,
-            hide:true,
-            headerClassName:classes.GridColumnStyle
-        },
-    
-        {
-            field: '',
-            headerName: '',
-            width: 15,
-            editable: false,
-            hide:(props.formMode=='ajout')? false : true,
-            headerClassName:classes.GridColumnStyle,
-            renderCell: (params)=>{
-                return(
-                    (params.row.montant < montant_total_a_payer)?
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
-                        <img src="icons/baseline_delete.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            onClick={(event)=> {
-                                //event.ignore = true;
-                                ROW_TO_DELETE_ID = params.row.id;
-                                chosenMsgBox = OP_SUCCESS;
-                                currentUiContext.showMsgBox({
-                                    visible:true, 
-                                    msgType:"question", 
-                                    msgTitle:t("PAIEMENT DELETION"), 
-                                    message:t("Are you sure you want to delete this paiement?")
-                                })
-                               // handleDeleteRow(params)
-                            }}
-                            alt=''
-                        />
-                    </div>
-                    :
-                    null
-                )}           
-                
-        },        
+
          
     ];
      
@@ -415,18 +400,46 @@ const columnsFr = [
 /*************************** Handler functions ***************************/
     function handleEditRow(row){       
         console.log(type_payements)
-        var inputs=[];
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[3]= row.matricule;
-        inputs[4]= row.montant;
-        inputs[2]= row.id;
-        inputs[5]= CURRENT_CLASSE_ID;
-        inputs[6]= type_payements;
-        inputs[7]= montant_total_a_payer;
-        inputs[8]= row.dates_payements;
-        inputs[9]= row.montants;
+        var inputs   = [];
+        var tranches = [];
+        var tranche  = {};
+        var recap    = {};
+
+        var totalVerse   = 0;
+        var totalAttendu = 0;
+
+        type_payements.map((elt, index)=>{
+            tranche  = {};
+            tranche.id             =  elt.id;
+            tranche.libelle        =  elt.libelle;
+            tranche.date_deb       =  elt.date_deb;
+            tranche.date_fin       =  elt.date_fin;
+            tranche.montantVerse   =  row.montant_par_types.split('_')[index];
+            tranche.montantAttendu =  elt.montant;
+            tranches.push(tranche); 
+            totalVerse   += parseInt(tranche.montantVerse);
+            totalAttendu +=  parseInt(tranche.montantAttendu); 
+        });
+
+        recap.verse   = totalVerse;
+        recap.attendu = totalAttendu;
+        recap.reste   = totalAttendu-totalVerse;
+
+        inputs[0] = row.nom;
+        inputs[1] = row.prenom;
+        inputs[3] = row.matricule;
+        inputs[4] = row.montant;
+        inputs[2] = row.id;
+        inputs[5] = CURRENT_CLASSE_ID;
+        inputs[6] = type_payements;
+        inputs[7] = montant_total_a_payer;
+        inputs[8] = row.dates_payements;
+        inputs[9] = row.montants;
         inputs[10]= CURRENT_CLASSE_LABEL;
+        inputs[11]= row.photoUrl;
+        inputs[12]= row.redouble;
+        inputs[13]= [...tranches];
+        inputs[14]= {...recap};
         
         currentUiContext.setFormInputs(inputs);
         console.log(row);
@@ -460,7 +473,8 @@ const columnsFr = [
             setIsValid(true);
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
-            getListStudentPayements(CURRENT_CLASSE_ID);   
+            getListStudentPayements(CURRENT_CLASSE_ID);  
+            
             console.log(CURRENT_CLASSE_LABEL)          
         }else{
             CURRENT_CLASSE_ID = undefined;
@@ -504,7 +518,8 @@ const columnsFr = [
         */
     }
 
-    function updatePaiement(){
+    function updatePaiement(paiement){
+        CURRENT_PAIEMENT = {...paiement}
         chosenMsgBox = MSG_CONFIRM;
         currentUiContext.showMsgBox({
             visible:true, 
@@ -516,35 +531,61 @@ const columnsFr = [
 
     function modifyFraisScolarite(e) {
         e.preventDefault();
-        var paymnt = getFormData();
-        console.log('kilo',paymnt);
+        //var paymnt = getFormData();
+        console.log('kilo',CURRENT_PAIEMENT);
+        currentUiContext.setIsParentMsgBox(true);
+        
         type_payements = [];
         eleves = [];         
-
+        
         axiosInstance.post(`update-payement-eleve/`, {
-            id          : paymnt.id,
-            montant     : paymnt.montant,
-            id_classe   : paymnt.id_classe,
-            id_sousetab : currentAppContext.currentEtab,
-            id_user     : currentAppContext.idUser
+            id                : CURRENT_PAIEMENT.id,
+            montant           : CURRENT_PAIEMENT.montant,
+            id_classe         : CURRENT_PAIEMENT.id_classe,
+            type_paiement_Id  : CURRENT_PAIEMENT.type_paiement_Id,
+            id_sousetab       : currentAppContext.currentEtab,
+            id_user           : currentAppContext.idUser
 
         }).then((res)=>{
-            console.log(res.data);
-            res.data.type_payements.map((payement)=>{type_payements.push(payement)});
-            res.data.eleves.map((el)=>{eleves.push(el)});
-            montant_total_a_payer = res.data.montant_total_a_payer;
-            console.log(type_payements);
-            var elevesPaiment = [...formatList(eleves)];
-            setGridRows(elevesPaiment);
+            // console.log(res.data);
+            // res.data.type_payements.map((payement)=>{type_payements.push(payement)});
+            // res.data.eleves.map((el)=>{eleves.push(el)});
+            // montant_total_a_payer = res.data.montant_total_a_payer;
+            // console.log(type_payements);
+            // var elevesPaiment = [...formatList(eleves,type_payements)];
+            // setGridRows(elevesPaiment);
+
+            type_payements = [];
+            eleves = [];
+            axiosInstance
+            .post(`list-payement-eleve/`,{
+                id_sousetab: currentAppContext.currentEtab,
+                id_classe:CURRENT_CLASSE_ID
+            }).then((res)=>{
+                res.data.type_payements.map((payement)=>{type_payements.push(payement)});
+                res.data.eleves.map((el)=>{eleves.push(el)});
+                montant_total_a_payer = res.data.montant_total_a_payer;
+                
+                
+                var elevesPaiment = [...formatList(eleves, type_payements)];
+                
+                updateGridCols(type_payements) 
+                setGridRows(elevesPaiment);
+
+                setModalOpen(0);
+                chosenMsgBox = MSG_SUCCESS;
+                currentUiContext.showMsgBox({
+                    visible:true, 
+                    msgType:"info", 
+                    msgTitle:t("success_operation_M"), 
+                    message:t("success_operation")
+                });
+                
+            })  
+
+            //getListStudentPayements(CURRENT_CLASSE_ID)
             
-            setModalOpen(0);
-            chosenMsgBox = MSG_SUCCESS;
-            currentUiContext.showMsgBox({
-                visible:true, 
-                msgType:"info", 
-                msgTitle:t("success_operation_M"), 
-                message:t("success_operation")
-            })
+            
         })       
     }
 
@@ -761,11 +802,11 @@ const columnsFr = [
             {/*(modalOpen==4) && <StudentList pageSet={ElevePageSet}/>*/}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddFraisScolarite 
-                    currentClasseLabel={"4eA1"} 
-                    currentClasseId={1} 
-                    formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
-                    actionHandler={(modalOpen==1) ? addNewFraisScolarite : updatePaiement} 
-                    cancelHandler={quitForm} 
+                    currentClasseLabel = {CURRENT_CLASSE_LABEL} 
+                    currentClasseId    = {CURRENT_CLASSE_ID} 
+                    formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    actionHandler      = {(modalOpen==1) ? addNewFraisScolarite : updatePaiement} 
+                    cancelHandler      = {quitForm} 
                 />
             }
             
@@ -785,6 +826,34 @@ const columnsFr = [
                     buttonRejectHandler = {rejectHandler}            
                 />                    
             }
+
+
+
+            {(modalOpen==5) &&
+                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
+                    {t('loading')}...
+                </div>                    
+            }
+            {(modalOpen==5) &&
+                <div style={{   
+                    alignSelf: 'center',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '13vw',
+                    height: '3.13vh',
+                    position: 'absolute',
+                    top:'50%',
+                    zIndex: '1200',
+                    overflow: 'hidden'
+                }}
+                >
+                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                </div>                    
+            }
+
             <div className={classes.inputRow} >
                 {(props.formMode=='ajout')?  
                     <div className={classes.formTitle}>
@@ -852,7 +921,8 @@ const columnsFr = [
                     <div className={classes.gridDisplay} >
                         <StripedDataGrid
                             rows={gridRows}
-                            columns={(i18n.language =='fr') ? columnsFr : columnsEn}
+                           // columns={(i18n.language =='fr') ? columnsFr : columnsEn}
+                            columns={grdCols}
                             getCellClassName={(params) => (params.field==='displayedName')? classes.gridMainRowStyle : classes.gridRowStyle }
                             //onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
