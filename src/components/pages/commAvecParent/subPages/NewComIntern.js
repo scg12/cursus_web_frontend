@@ -114,6 +114,7 @@ function NewComIntern(props) {
             console.log(LIST_COMMS_INTERNES);
             setGridRows(LIST_COMMS_INTERNES);
             console.log(gridRows);
+            setIsValid(true);
         })  
          
     }
@@ -592,7 +593,7 @@ function NewComIntern(props) {
                             style={{width:"12.3vw", height:"4.3vh"}}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={saveNewMsgHandler}
-                            // disable={(isValid==false)}   
+                            disable={(isValid==false)}   
                         />
                          
 

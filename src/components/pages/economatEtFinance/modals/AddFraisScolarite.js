@@ -228,7 +228,7 @@ function AddFraisScolarite(props) {
             
             {currentUiContext.isParentMsgBox && 
                 <div id="loadingText" style={{alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
-                    {t('loading')}...
+                    {t('traitement')}...
                 </div> 
             }                 
             
