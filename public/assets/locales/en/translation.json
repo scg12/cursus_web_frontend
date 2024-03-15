@@ -1,5 +1,6 @@
                         
-{   "topay_over_waited_for_tranch": "The given amount is greater than the bill part to pay!",
+{   "receipt_printing"            : "Printing receipt",
+    "topay_over_waited_for_tranch": "The given amount is greater than the bill part to pay!",
     "school_fees_payment_M"       : "STUDENT'S SCHOOL FEES MANAGEMENT",
     "tranche_correspondante"      : "Associated Bill part",
     "title"                       : "Title",

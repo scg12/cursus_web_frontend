@@ -6,7 +6,7 @@ import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate, formatCurrency,formatCurrencyInverse} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, formatCurrency,formatCurrencyInverse, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 import { fontSize } from '@mui/system';
 import { useTranslation } from "react-i18next";
 import BackDrop from '../../../backDrop/BackDrop';
@@ -177,6 +177,15 @@ function AddFraisScolarite(props) {
 
     function getFormData(){
         CURRENT_PAIEMENT = {}
+        CURRENT_PAIEMENT.eleveNom         = currentUiContext.formInputs[0] + " "+ currentUiContext.formInputs[1];
+        CURRENT_PAIEMENT.eleveClasse      = props.currentClasseLabel;
+        CURRENT_PAIEMENT.tranchePaye      = trancheToPay.libelle;
+        CURRENT_PAIEMENT.anneeScolaire    = "2023-2024";
+        CURRENT_PAIEMENT.numeroRecu       = "00000008888";
+        CURRENT_PAIEMENT.dateVerse        = getTodayDate();
+        CURRENT_PAIEMENT.matricule        = currentUiContext.formInputs[3];
+        
+        
         CURRENT_PAIEMENT.id               = currentUiContext.formInputs[2];
         CURRENT_PAIEMENT.montant          = document.getElementById("montant_paye").value;
         CURRENT_PAIEMENT.id_classe        = props.currentClasseId;
@@ -381,7 +390,7 @@ function AddFraisScolarite(props) {
                         </div>
 
                         <div style={{marginLeft:'1.7vw', width:'27vw'}}>
-                            <b>{t('tranche_correspondante')} :</b> {trancheToPay.libelle} 
+                            <b>{t('tranche_correspondante')} :</b> <label style={{color:"blue"}}> <b>{trancheToPay.libelle}</b></label>
                         </div>
                     </div>
                 :null  

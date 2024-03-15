@@ -16,6 +16,7 @@ import {convertDateToUsualDate,formatCurrency} from '../../../../store/SharedDat
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../../scolarite/reports/PDFTemplate';
 import StudentListTemplate from '../../scolarite/reports/StudentListTemplate';
+import RecuPaiementFrais from '../reports/RecuPaiementFrais';
 import {createPrintingPages} from '../../scolarite/reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 
@@ -106,7 +107,7 @@ function FraisScolarite(props) {
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params) => (                   
-                (params.value < params.row.montant_total_a_payer)?
+                (parseInt(params.value) < parseInt(params.row.montant_total_a_payer))?
                 <b style={{color:'red'}}>{params.value+" FCFA"}</b>
                 :
                 <b style={{color:'green'}}>{params.value+" FCFA"}</b>                    
@@ -172,7 +173,7 @@ function FraisScolarite(props) {
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    (params.row.montant < params.row.montant_total_a_payer)?
+                    (parseInt(params.row.montant) < parseInt(params.row.montant_total_a_payer))?
                         <div className={classes.inputRow}>
                             <img src="icons/baseline_edit.png"  
                                 width={17} 
@@ -647,7 +648,9 @@ const columnsFr = [
                     msgType:"", 
                     msgTitle:"", 
                     message:""
-                })               
+                })  
+                
+                printStudentList();
                 return 1;
             }
 
@@ -724,23 +727,23 @@ const columnsFr = [
         
         
         if(CURRENT_CLASSE_ID != undefined){
-            var PRINTING_DATA ={
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: t("listing_paiement") + CURRENT_CLASSE_LABEL,
-                tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                tableData :[...gridRows],
-                numberEltPerPage:ROWS_PER_PAGE  
-            };
+            // var PRINTING_DATA ={
+            //     dateText:'Yaounde, le 14/03/2023',
+            //     leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            //     centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+            //     rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+            //     pageImages:["images/collegeVogt.png"],
+            //     pageTitle: t("listing_paiement") + CURRENT_CLASSE_LABEL,
+            //     tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
+            //     tableData :[...gridRows],
+            //     numberEltPerPage:ROWS_PER_PAGE  
+            // };
 
+           
             setModalOpen(4);
             ElevePageSet=[];
-            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
-            console.log("ici la",ElevePageSet,gridRows);                    
+            //ElevePageSet = createPrintingPages(PRINTING_DATA);
+            console.log("ici la",CURRENT_PAIEMENT,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING;
             currentUiContext.showMsgBox({
@@ -798,8 +801,14 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen==4) &&  <PDFTemplate previewCloseHandler={closePreview}><PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}><StudentListTemplate pageSet={ElevePageSet}/></PDFViewer></PDFTemplate>} 
-            {/*(modalOpen==4) && <StudentList pageSet={ElevePageSet}/>*/}
+            {(modalOpen==4) &&  
+                <PDFTemplate previewCloseHandler={closePreview} loadingText={t("receipt_printing")}>
+                    <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                        <RecuPaiementFrais recuInfo={CURRENT_PAIEMENT}/>
+                    </PDFViewer>
+                </PDFTemplate>
+            } 
+           
             {(modalOpen >0 && modalOpen<4) && 
                 <AddFraisScolarite 
                     currentClasseLabel = {CURRENT_CLASSE_LABEL} 
