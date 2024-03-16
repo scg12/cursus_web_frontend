@@ -1,4 +1,6 @@
-{   "receipt_printing"            : "Impression recu",
+{            
+    "student_registration_form_M" : "FORMULAIRE D'ENREGISTREMENT ELEVE",
+    "receipt_printing"            : "Impression recu",
     "topay_over_waited_for_tranch": "Le montant saisi est supérieur à la tranche!",
     "school_fees_payment_M"       : "GESTION DU PAIEMENT DES FRAIS DE SCOLARITE",
     "tranche_correspondante"      : "Tranche Correspondante",
@@ -599,6 +601,9 @@
     "enreg_eleve_M":"ENREGISTREMENT D'UN NOUVEL ELEVE",
     "modif_eleve_M":"MODIFICATION DES INFORMATIONS D'UN ELEVE",
     "consult_eleve_M":"CONSULTATION DES INFORMATIONS SUR UN ELEVE",
+    "nom_parent"    : "Nom du Parent",
+    "adress_parent" : "Adresse du Parent",
+    "email_parent"  : "Email du Parent",
     "form_nom":"Nom(s)",
     "form_prenom":"Prénom(s)",
     "form_dateNaiss":"Date de Naissance",

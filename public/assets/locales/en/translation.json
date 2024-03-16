@@ -1,5 +1,6 @@
                         
-{   "receipt_printing"            : "Printing receipt",
+{   "student_registration_form_M" : "STUDENT REGISTRATION FORM",
+    "receipt_printing"            : "Printing receipt",
     "topay_over_waited_for_tranch": "The given amount is greater than the bill part to pay!",
     "school_fees_payment_M"       : "STUDENT'S SCHOOL FEES MANAGEMENT",
     "tranche_correspondante"      : "Associated Bill part",
@@ -600,6 +601,9 @@
     "enreg_eleve_M":"NEW SCHOOL STUDENT REGISTRATION",
     "modif_eleve_M":"STUDENT REGISTRATION DATA UPDATE",
     "consult_eleve_M":"STUDENT REGISTRATION DATA CONSULTATION",
+    "nom_parent"    : "Parent Name",
+    "adress_parent" : "Parent Adress",
+    "email_parent"  : "Parent Email",
     "form_nom":"Name(s)",
     "form_prenom":"Surname(s)",
     "form_dateNaiss":"Birth Date",

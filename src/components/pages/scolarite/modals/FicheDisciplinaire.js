@@ -280,7 +280,7 @@ function FicheDisciplinaire(props) {
                 <div className={classes.etapeP} style={{overflowY:'scroll', height:'75vh'}}>
                     <div className={classes.inputRow} style={{marginBottom:'1.3vh'}}> 
                         <div style={{marginLeft:'-4vw'}}>
-                            <img alt='student' className={classes.photoStyleP}src={props.eleve.photo_url.length>0? props.eleve.photo_url : 'images/photo4Fois4P.png'}/>
+                            <img alt='student' className={classes.photoStyleP} src={props.eleve.photo_url.length>0? props.eleve.photo_url : 'images/photo4Fois4P.png'}/>
                         </div>   
                        
                         <div className={classes.studentInfo}  style={{marginRight:'-3.7vw', marginLeft:'1vw'}}>

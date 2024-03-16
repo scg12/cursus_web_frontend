@@ -1,11 +1,13 @@
 import classes from "./SubPages.module.css";
 import React from 'react';
 import CustomButton from "../../../customButton/CustomButton";
+import { useTranslation } from "react-i18next";
 import FormPuce from "../../../formPuce/FormPuce";
 import UiContext from "../../../../store/UiContext";
 import { useContext, useState } from "react";
 
 function Enregistrement(props) {
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const [isValid, setIsValid] = useState(false);
     const selectedTheme = currentUiContext.theme;
@@ -59,14 +61,14 @@ function Enregistrement(props) {
         <div className={classes.formStyle}>
             <div className={classes.inputRow}> 
                 <div className={classes.formTitle}>
-                    FORMULAIRE D'ENREGISTREMENT ELEVE
+                    {t('student_registration_form_M')}
                 </div>
             </div>
 
             <div className={classes.etabLogo+ ' ' +classes.right + ' '+ classes.margRight7}>
                         < div className={classes.logoImg}> PHOTO </div>
                         <CustomButton
-                            btnText='Choisir Photo' 
+                            btnText={t('select_photo')} 
                             buttonStyle={getSmallButtonStyle()}
                             btnTextStyle = {classes.btnSmallTextStyle}
                         />
@@ -80,7 +82,7 @@ function Enregistrement(props) {
                     <FormPuce menuItemId ='1' isSimple={true} noSelect={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle="Informations de L'Eleve"  itemSelected={null}> </FormPuce>
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}> 
                         <div className={classes.inputRowLabel}>
-                            Nom(s) :  
+                            {t('form_nom')} :  
                         </div>
                             
                         <div> 
@@ -90,7 +92,7 @@ function Enregistrement(props) {
 
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}>  
                         <div className={classes.inputRowLabel}>
-                        Prenom(s) :
+                            {t('form_prenom')} :
                         </div>
                             
                         <div> 
@@ -100,7 +102,7 @@ function Enregistrement(props) {
 
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}>  
                         <div className={classes.inputRowLabel}>
-                            Date de Naissance :
+                            {t('form_dateNaiss')} :
                         </div>
                             
                         <div> 
@@ -110,7 +112,7 @@ function Enregistrement(props) {
 
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}>  
                         <div className={classes.inputRowLabel}>
-                            Lieu de Naissance :
+                            {t('form_lieuNaiss')} :
                         </div>
                             
                         <div> 
@@ -120,7 +122,7 @@ function Enregistrement(props) {
 
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}>  
                         <div className={classes.inputRowLabel}>
-                            Classe :
+                            {t('class')} :
                         </div>
                             
                         <div> 
@@ -136,7 +138,7 @@ function Enregistrement(props) {
                     
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}> 
                         <div className={classes.inputRowLabel}>
-                            Nom du Parent :
+                            {t('nom_parent')} :
                         </div>
                             
                         <div> 
@@ -146,7 +148,7 @@ function Enregistrement(props) {
 
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}>  
                         <div className={classes.inputRowLabel}>
-                            Adresse du Parent :
+                            {t('adress_parent')} :
                         </div>
                             
                         <div> 
@@ -156,7 +158,7 @@ function Enregistrement(props) {
 
                     <div className={classes.inputRowLeft+' '+classes.margLeft5}>  
                         <div className={classes.inputRowLabel}>
-                            Email du Parent :
+                            {t('email_parent')} :
                         </div>
                             
                         <div> 
