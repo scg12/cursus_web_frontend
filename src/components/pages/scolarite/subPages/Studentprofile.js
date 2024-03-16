@@ -376,6 +376,7 @@ function Studentprofile(props) {
             listElt.rang           = rang;
             listElt.id             = elt.id;
             listElt.matricule      = elt.matricule;
+            listElt.photo_url      = elt.photo_url; 
             listElt.displayedName  = elt.nom + ' '+elt.prenom;             
             listElt.nb_heures      = getEleveAbsences(elt.id, absences);
             listElt.nb_sanctions   = getEleveSanctions(elt.id,sanctions);
@@ -477,6 +478,16 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
+
+    {
+        field: 'photo_url',
+        headerName: 'photo',
+        width: 100,
+        editable: false,
+        hide:true,
+        headerClassName:classes.GridColumnStyle
+    },
+
     {
         field: '',
         headerName: 'ACTION',
@@ -545,6 +556,14 @@ const columnsFr = [
             headerName: 'SANCTIONS',
             width: 100,
             editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+        {
+            field: 'photo_url',
+            headerName: 'photo',
+            width: 100,
+            editable: false,
+            hide:true,
             headerClassName:classes.GridColumnStyle
         },
         {

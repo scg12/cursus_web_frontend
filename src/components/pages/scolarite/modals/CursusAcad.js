@@ -264,7 +264,7 @@ function CursusAcad(props) {
                
             <div className={classes.inputRow} style={{marginBottom:'1vh', marginTop:'7.7vh'}}> 
                 <div style={{marginLeft:'-4vw'}}>
-                    <img alt='student' className={classes.photoStyleP} src={'images/photoHomme2.jpg'}/>
+                    <img alt='student' className={classes.photoStyleP} src={props.eleve.photo_url.length>0? props.eleve.photo_url : 'images/photo4Fois4P.png'}/>
                 </div>   
                 
                 <div className={classes.studentInfo}  style={{marginRight:'-3.7vw', marginLeft:'1vw', alignSelf:'center', marginTop:'-2vh'}}>
