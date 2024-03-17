@@ -44,7 +44,7 @@ var CURRENT_ELEVE = {
 };
 let tabSexePrim=[];
 let tabRedoublePrim=[];
-var CURRENT_ELEVE_PHOTO;
+
 
 function AddStudent(props) {
     const { t, i18n } = useTranslation();
@@ -387,7 +387,7 @@ function AddStudent(props) {
         //if(currentUiContext.formInputs.length>0)
         //tabRedoublePrim = tabRedouble.filter((situation)=>situation.value == currentUiContext.formInputs[13]);
        
-        console.log("getting data",CURRENT_ELEVE, CURRENT_ELEVE_PHOTO, filesContent);
+        console.log("getting data",CURRENT_ELEVE, filesContent);
     }
 
     function setFormData1(){
@@ -672,7 +672,7 @@ function AddStudent(props) {
                                         btnText={t("select_photo")}
                                         buttonStyle={getSmallButtonStyle()}
                                         btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector(); CURRENT_ELEVE_PHOTO = filesContent[0];}}
+                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
                                     />
                                 </div>  
                                     :
@@ -683,7 +683,7 @@ function AddStudent(props) {
                                         btnText={t("select_photo")} 
                                         buttonStyle={getSmallButtonStyle()}
                                         btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector(); CURRENT_ELEVE_PHOTO = filesContent[0];}}
+                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
                                     />
                                     <input id="photo_url" type="hidden"  defaultValue=''/>
                                 </div>
