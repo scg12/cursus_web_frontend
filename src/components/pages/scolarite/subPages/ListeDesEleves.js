@@ -46,7 +46,7 @@ var ElevePageSet=[];
 var printedETFileName ='';
 
 
-function ListeEleves(props) {
+function ListeDesEleves(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
@@ -668,14 +668,14 @@ const columnsFr = [
             email_mere      : eleve.email_mere,
             photo_url       : eleve.photo_url, 
             redouble        : (eleve.redouble == "O") ? true : false,
-            age             :  eleve.age,
+            age             : eleve.age,
             est_en_regle    : eleve.est_en_regle,
             etab_provenance : eleve.etab_provenance, 
             id_user         : currentAppContext.idUser           
         }).then((res)=>{
             console.log(res.data);
 
-            //setModalOpen(0);
+            setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -718,7 +718,7 @@ const columnsFr = [
 
         }).then((res)=>{
             console.log(res.data);
-            //setModalOpen(0);
+            setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;
             currentUiContext.showMsgBox({
                 visible:true, 
@@ -884,7 +884,16 @@ const columnsFr = [
         <div className={classes.formStyleP}>
             
             {(modalOpen!=0) && <BackDrop/>}
-            {(modalOpen >0 && modalOpen<4) && <AddStudent currentClasseLabel={optClasse[optClasse.findIndex((classe)=> classe.value == CURRENT_CLASSE_ID)].label} currentClasseId={CURRENT_CLASSE_ID} formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addNewStudent : modifyStudent} cancelHandler={quitForm}/>}
+            {(modalOpen >0 && modalOpen<4) && 
+                <AddStudent 
+                    currentClasseLabel={optClasse[optClasse.findIndex((classe)=> classe.value == CURRENT_CLASSE_ID)].label} 
+                    currentClasseId={CURRENT_CLASSE_ID} 
+                    formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    actionHandler={(modalOpen==1) ? addNewStudent : modifyStudent} 
+                    cancelHandler={quitForm}
+                />
+            }
+
             {(modalOpen==4) &&              
                 <PDFTemplate previewCloseHandler={closePreview}>
                     {isMobile?
@@ -1035,4 +1044,4 @@ const columnsFr = [
         
     );
 } 
-export default ListeEleves;
+export default ListeDesEleves;

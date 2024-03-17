@@ -44,6 +44,7 @@ var CURRENT_ELEVE = {
 };
 let tabSexePrim=[];
 let tabRedoublePrim=[];
+var CURRENT_ELEVE_PHOTO;
 
 function AddStudent(props) {
     const { t, i18n } = useTranslation();
@@ -373,19 +374,20 @@ function AddStudent(props) {
     }
     
     function getFormData1(){
-        CURRENT_ELEVE.id      = document.getElementById('id').value;
-        CURRENT_ELEVE.nom     = putToEmptyStringIfUndefined(document.getElementById('nom').value).trim(); //(document.getElementById('nom').value !='') ? putToEmptyStringIfUndefined(document.getElementById('nom').value).trim() : putToEmptyStringIfUndefined(document.getElementById('nom').defaultValue).trim();
-        CURRENT_ELEVE.prenom  = putToEmptyStringIfUndefined(document.getElementById('prenom').value).trim(); // (document.getElementById('prenom').value !='') ? putToEmptyStringIfUndefined(document.getElementById('prenom').value).trim() : putToEmptyStringIfUndefined(document.getElementById('prenom').defaultValue).trim();
+        CURRENT_ELEVE.id             = document.getElementById('id').value;
+        CURRENT_ELEVE.nom            = putToEmptyStringIfUndefined(document.getElementById('nom').value).trim(); //(document.getElementById('nom').value !='') ? putToEmptyStringIfUndefined(document.getElementById('nom').value).trim() : putToEmptyStringIfUndefined(document.getElementById('nom').defaultValue).trim();
+        CURRENT_ELEVE.prenom         = putToEmptyStringIfUndefined(document.getElementById('prenom').value).trim(); // (document.getElementById('prenom').value !='') ? putToEmptyStringIfUndefined(document.getElementById('prenom').value).trim() : putToEmptyStringIfUndefined(document.getElementById('prenom').defaultValue).trim();
         CURRENT_ELEVE.date_naissance = document.getElementById('anne').value+'-'+ document.getElementById('mois').value + '-' + document.getElementById('jour').value;
         CURRENT_ELEVE.lieu_naissance = putToEmptyStringIfUndefined(document.getElementById('lieu_naissance').value).trim(); //(document.getElementById('lieu_naissance').value !='') ? putToEmptyStringIfUndefined(document.getElementById('lieu_naissance').value).trim() : putToEmptyStringIfUndefined(document.getElementById('lieu_naissance').defaultValue).trim();
-        CURRENT_ELEVE.sexe = isMasculin ? 'M' : 'F';
-        CURRENT_ELEVE.age  = 20;
+        CURRENT_ELEVE.sexe           = isMasculin ? 'M' : 'F';
+        CURRENT_ELEVE.age            = 20;
+        CURRENT_ELEVE.photo_url      = (filesContent.length==0)  ? "":filesContent[0].content;
 
         
         //if(currentUiContext.formInputs.length>0)
         //tabRedoublePrim = tabRedouble.filter((situation)=>situation.value == currentUiContext.formInputs[13]);
        
-        console.log(CURRENT_ELEVE);
+        console.log("getting data",CURRENT_ELEVE, CURRENT_ELEVE_PHOTO, filesContent);
     }
 
     function setFormData1(){
@@ -670,7 +672,7 @@ function AddStudent(props) {
                                         btnText={t("select_photo")}
                                         buttonStyle={getSmallButtonStyle()}
                                         btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector()}}
+                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector(); CURRENT_ELEVE_PHOTO = filesContent[0];}}
                                     />
                                 </div>  
                                     :
@@ -681,7 +683,7 @@ function AddStudent(props) {
                                         btnText={t("select_photo")} 
                                         buttonStyle={getSmallButtonStyle()}
                                         btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
+                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector(); CURRENT_ELEVE_PHOTO = filesContent[0];}}
                                     />
                                     <input id="photo_url" type="hidden"  defaultValue=''/>
                                 </div>
