@@ -270,6 +270,7 @@ function FraisScolarite(props) {
             listElt.displayedName         = elt.nom +' '+elt.prenom;
             listElt.nom                   = elt.nom;
             listElt.prenom                = elt.prenom;
+            listElt.age                   = elt.age;
             listElt.rang                  = rang; 
             listElt.presence              = 1; 
             listElt.montant               = formatCurrency(elt.montant);
@@ -441,6 +442,7 @@ const columnsFr = [
         inputs[12]= row.redouble;
         inputs[13]= [...tranches];
         inputs[14]= {...recap};
+        inputs[15]= row.age;
         
         currentUiContext.setFormInputs(inputs);
         console.log(row);
