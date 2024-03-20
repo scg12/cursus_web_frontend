@@ -3,14 +3,18 @@ import axiosInstance from '../../../../axios';
 import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import UiContext from "../../../../store/UiContext";
+import AppContext from '../../../../store/AppContext';
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 var login;
 function ConfigLogin(props) {
-    const currentUiContext = useContext(UiContext);
+    const currentUiContext  = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
+    const { t, i18n }       = useTranslation();
+    
+    const selectedTheme         = currentUiContext.theme;
     const [isValid, setIsValid] = useState(false);
-
-    const selectedTheme = currentUiContext.theme;
 
     function getButtonStyle()
     { // Choix du theme courant
@@ -41,19 +45,19 @@ function ConfigLogin(props) {
         var errorDiv = document.getElementById('errMsgPlaceHolder');
            
         if (formDataCheck(newLogin).length==0) { 
-            clearForm(); 
-            alert('Login Modifier avec succes!')
+            //clearForm();            
         
-           /*axiosInstance.post(`update_user/`, {
-                id: '', // a fournir
-                username:newLogin                
+           axiosInstance.post(`change-login/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_user     : currentAppContext.idUser,
+                new_login: newLogin                
             }).then((res)=>{
                 console.log(res.data);
-                 //Retourner le statut de l'action
-               
-                alert('Login Modifier avec succes!')
-                clearForm();              
-            }) */        
+                //Retourner le statut de l'action
+                errorDiv.className = classes.formSuccessMsg;
+                errorDiv.textContent = t("success_modif"); 
+                //clearForm();              
+            })       
 
         } else {
             errorDiv.className = classes.errorMsg;

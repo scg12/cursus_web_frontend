@@ -1,14 +1,20 @@
 import React from 'react';
 import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
+import axiosInstance from '../../../../axios';
 import UiContext from "../../../../store/UiContext";
+import AppContext from '../../../../store/AppContext';
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 var oldPasswd, newPasswd, pwdConfirm;
 
 function ConfigPswd(props) {
-    const currentUiContext = useContext(UiContext);
-    const selectedTheme = currentUiContext.theme;
+    const currentUiContext  = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
+    const { t, i18n }       = useTranslation();
+
+    const selectedTheme         = currentUiContext.theme;
     const [isValid, setIsValid] = useState(false);
 
     function getButtonStyle()
@@ -43,19 +49,23 @@ function ConfigPswd(props) {
         var errorDiv = document.getElementById('errMsgPlaceHolder');        
      
         if (formDataCheck(newPassWordObj).length==0) { 
-            clearForm(); 
-            alert('Login Modifier avec succes!')
+            //clearForm(); 
+            //alert('Login Modifier avec succes!')
         
-           /*axiosInstance.post(`update_user/`, {
-                id: '', // a fournir
-                password: newPassWord                
+           axiosInstance.post(`change-password/`, {
+                id_sousetab : currentAppContext.currentEtab,
+                id_user     : currentAppContext.idUser,
+                old_password: newPassWordObj.oldPasswd,
+                new_password: newPassWordObj.newPasswd
+                               
             }).then((res)=>{
                 console.log(res.data);
-                 //Retourner le statut de l'action
-               
-                alert('Login Modifier avec succes!')
-                clearForm();              
-            }) */        
+                //Retourner le statut de l'action
+                errorDiv.className = classes.formSuccessMsg;
+                errorDiv.textContent = t("success_modif");               
+                //alert('Login Modifier avec succes!')
+                //clearForm();              
+            })   
 
         } else {
             errorDiv.className = classes.errorMsg;
