@@ -12,6 +12,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import AddStudent from "../modals/AddStudent";
 import ListNotesEleves from "../reports/ListNotesEleves";
 import BackDrop from "../../../backDrop/BackDrop";
+import LoadingView from '../../../loadingView/LoadingView';
 import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
@@ -663,30 +664,7 @@ function SaveNotes(props) {
             
            
             {(modalOpen==4) && <BackDrop/>}
-            {(modalOpen==4) &&
-                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
-                    {t('loading')}...
-                </div>                    
-            }
-            {(modalOpen==4) &&
-                <div style={{   
-                    alignSelf: 'center',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '13vw',
-                    height: '3.13vh',
-                    position: 'absolute',
-                    top:'50%',
-                    zIndex: '1200',
-                    overflow: 'hidden'
-                }}
-                >
-                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
-                </div>                    
-            }
+            {(modalOpen==4) && <LoadingView loadinText={t('traitement')} loadingTextStyle={{color:"white"}}/>}
 
             <div className={classes.inputRow}>  
                 { (props.formMode!='consult')?  

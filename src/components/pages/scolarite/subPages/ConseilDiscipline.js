@@ -9,6 +9,7 @@ import axiosInstance from '../../../../axios';
 import AddDisciplinMeeting from "../modals/AddDisciplinMeeting";
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
+import LoadingView from '../../../loadingView/LoadingView';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
@@ -1382,7 +1383,17 @@ function setEditMeetingGlobalData(meeting){
                />             
             }
 
-            {(isLoading) &&
+            {/* {(isLoading)    && <LoadingView loadinText={t('traitement')} loadingTextStyle={{color:"white"}}/>} */}
+            {(isLoading) && 
+                <LoadingView loadinText={t('traitement')} 
+                    loadingTextStyle={{fontSize:'1.2vw', top:"60.7vh", marginTop:'-5.7vh', fontWeight:'800', color:'#4d4848'}}   
+                    loadingImgStyle={{top:'58.3vh', backgroundColor:'white'}}
+                />
+            }
+
+            {(modalOpen==5) && <LoadingView loadinText={t('loading')} loadingTextStyle={{color:"white"}}/>}
+
+            {/* {(isLoading) &&
                 <div style={{ alignSelf: 'center',position:'absolute', top:"60.7vh",  fontSize:'1.2vw', fontWeight:'800', color:'#4d4848', zIndex:'1207',marginTop:'-5.7vh'}}> 
                     {t('traitement')}...
                 </div>                    
@@ -1432,7 +1443,7 @@ function setEditMeetingGlobalData(meeting){
                 >
                     <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
                 </div>                    
-            }
+            } */}
             <div className={classes.inputRow} >
                 {(props.formMode=='ajout')?  
                     <div className={classes.formTitle}>

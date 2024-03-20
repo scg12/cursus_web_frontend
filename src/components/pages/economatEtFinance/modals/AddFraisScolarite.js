@@ -10,6 +10,7 @@ import {convertDateToUsualDate, formatCurrency,formatCurrencyInverse, getTodayDa
 import { fontSize } from '@mui/system';
 import { useTranslation } from "react-i18next";
 import BackDrop from '../../../backDrop/BackDrop';
+import LoadingView from '../../../loadingView/LoadingView';
 
 
 var CURRENT_PAIEMENT = {};
@@ -265,8 +266,15 @@ function AddFraisScolarite(props) {
             {currentUiContext.isParentMsgBox && 
                 <BackDrop id="backDrop" style={{height:"100%"}}/>
             }
+
+            {(currentUiContext.isParentMsgBox) && 
+                <LoadingView loadinText={t('traitement')} 
+                    loadingTextStyle={{top:'49.3%', fontWeight:'bolder', color:'#fffbfb',marginTop:'-2.7vh', fontSise:'0.9vw'}}
+                    loadingImgStyle={{ top:'50%',}}
+                />                    
+            }  
             
-            {currentUiContext.isParentMsgBox && 
+            {/* {currentUiContext.isParentMsgBox && 
                 <div id="loadingText" style={{alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
                     {t('traitement')}...
                 </div> 
@@ -291,11 +299,9 @@ function AddFraisScolarite(props) {
                 >
                     <img id="imgloading" src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
                 </div> 
-            }                   
+            }       */}
+
             
-
-
-           
             <div style={{display:"flex", flexDirection:"row", marginRight:'-3.7vw', marginLeft:'0.7vw', marginTop:'7.7vh', marginBottom:"3vh",  width:'97%', height:'13.3vh', justifyContent:"flex-start", backgroundColor:'rgb(23 116 227)', color:'white',  borderRadius:7}}>
                 <div style={{marginLeft:'2vw', marginRight:"1vw", paddingTop:"0.7vh"}}>
                     <img alt='student' className={classes.photoStyleP} src={currentUiContext.formInputs[11].length>0? currentUiContext.formInputs[11] : 'images/photo4Fois4P.png'}/>

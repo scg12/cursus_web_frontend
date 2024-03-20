@@ -7,6 +7,7 @@ import AppContext from "../../../../store/AppContext";
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AddClassMeeting from "../modals/AddClassMeeting";
+import LoadingView from '../../../loadingView/LoadingView';
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
@@ -1398,56 +1399,18 @@ const columnsFr = [
                     buttonRejectHandler = {rejectHandler}            
                 />               
             }
-            {(isLoading) &&
-                <div style={{ alignSelf: 'center',position:'absolute', top:"56.7vh",  fontSize:'1.2vw', fontWeight:'800', color:'#4d4848', zIndex:'1207',marginTop:'-5.7vh'}}> 
-                    {t('traitement')}...
-                </div>                    
-            }
-            {(isLoading) &&
-                <div style={{   
-                    alignSelf: 'center',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '13vw',
-                    height: '3.13vh',
-                    position: 'absolute',
-                    top:'54.3vh',
-                    backgroundColor: 'white',
-                    zIndex: 1207,
-                    overflow: 'hidden'
-                }}
-                >
-                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
-                </div>                    
+
+            {(isLoading) && 
+                <LoadingView loadinText={t('traitement')} 
+                    loadingTextStyle={{fontSize:'1.2vw', marginTop:'-5.7vh', fontWeight:'800', color:'#4d4848',}}   
+                    loadingImgStyle={{ top:'54.3vh', backgroundColor:'white'}}
+                />
             }
 
-            {(modalOpen==5) &&
-                <div style={{ alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
-                    {t('loading')}...
-                </div>                    
-            }
-            {(modalOpen==5) &&
-                <div style={{   
-                    alignSelf: 'center',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '13vw',
-                    height: '3.13vh',
-                    position: 'absolute',
-                    top:'50%',
-                    zIndex: '1200',
-                    overflow: 'hidden'
-                }}
-                >
-                    <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
-                </div>                    
-            }
+            {(modalOpen==5) && <LoadingView loadinText={t('loading')} loadingTextStyle={{color:"white"}}/>}
+            
+
+            
 
             <div className={classes.inputRow} >
                 {(props.formMode=='ajout')?  

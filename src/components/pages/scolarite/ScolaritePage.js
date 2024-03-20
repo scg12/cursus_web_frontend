@@ -10,11 +10,10 @@ import M from 'materialize-css';
 import { useState,useContext } from "react";
 import UiContext from '../../../store/UiContext'
 
-import Enregistrement from "./subPages/Enregistrement";
+
 import ListeDesEleves from "./subPages/ListeDesEleves";
 import CarteScolaire from "./subPages/CarteScolaire";
 import ChangementClasse from "./subPages/ChangementClasse";
-import AdmissionClasseSup from "./subPages/AdmissionClasseSup";
 import EmploiDeTemps from "./subPages/EmploiDeTemps";
 import CahierDeTexte from "./subPages/CahierDeTexte";
 import ConseilClasse from "./subPages/ConseilClasse";
@@ -23,8 +22,6 @@ import Appel from "./subPages/Appel";
 import ConseilDiscipline from "./subPages/ConseilDiscipline";
 import Studentprofile from "./subPages/Studentprofile";
 import BilletEntreeSortie from "./subPages/BilletEntreeSortie";
-//import BilletSortie from "./subPages/BilletSortie";
-import NewEvaluation from "./subPages/NewEvaluation";
 import SaveNotes from "./subPages/SaveNotes";
 import GenStudentReport   from "./subPages/GenStudentReport";
 import PrintStudentReport from "./subPages/PrintStudentReport";
@@ -35,7 +32,6 @@ import SaveExamNotes from "./subPages/SaveExamNotes";
 import ListAdmis from "./subPages/ListAdmis";
 import ListingNotes from "./subPages/ListingNotes";
 import SuiviFicheProgress from "./subPages/SuiviFicheProgress";
-import ConsultEmploiDeTemps from "./subPages/ConsultEmploiDeTemps";
 import CertificatScolarite from "./subPages/CertificatScolarite";
 
 
