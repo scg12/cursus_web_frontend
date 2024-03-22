@@ -33,7 +33,7 @@ function RecuPaiementFrais(props){
 
         return (       
             <View  style={{display:"flex", flexDirection:"column", marginTop:"3vh", width:"63vw", height:"21.7vh", justifyContent:"flex-start", borderStyle:"solid", borderWidth:"2px", borderRadius:3}} key={0}>
-                <Filigrane photoStyle ={{width:"23vw", height:"20vw"}} imageSrc="images/collegeVogt_fil.png"/>
+                <Filigrane photoStyle={{width:"23vw", height:"20vw"}} imageSrc="images/collegeVogt_fil.png"/>
                 <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center", alignSelf:"center", width:"93%", marginTop:"1.3vh"}}>
                     
                     <View style={{width:"24vw",height:"2vh", borderBottomStyle:"solid", borderBottomWidth:"1px", borderBottomColor:"black"}}>

@@ -112,8 +112,8 @@ function StudentListTemplate(props){
          { Array.from(props.pageSet,
           (el, index) => (
             <Page size="A4"  style={styles.page} key={index}>
-               <Filigrane photoStyle ={{width:"73vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>
-                 <View style={styles.header}>
+                <Filigrane photoStyle ={{width:"73vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>
+                <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={el}  />                                     

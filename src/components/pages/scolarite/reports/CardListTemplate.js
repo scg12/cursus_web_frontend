@@ -1,5 +1,6 @@
 import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
+import Filigrane from "../../../filigrane/Filigrane";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 import { useTranslation } from "react-i18next";
@@ -89,6 +90,7 @@ function CardListTemplate(props){
 
         return (       
             <View size='A8' orientation='landscape' style={styles.cardPage} key={0}>
+                <Filigrane photoStyle={{width:"23vw", height:"20vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
                 <View style={styles.header}>
                     <CardHeadLeft  style={styles.headerLeft}   page={props.page}   />
                     <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.page.pageImages[0]}/>
@@ -382,7 +384,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "50%",
         width: "97%",
     },

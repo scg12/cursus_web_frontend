@@ -1,5 +1,6 @@
 import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
+import Filigrane from "../../../filigrane/Filigrane";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 import { useTranslation } from "react-i18next";
@@ -121,6 +122,7 @@ function CertificatScolarite(props){
 
     return (
         <Page size='A4' style={styles.page} key={0}>
+            <Filigrane photoStyle ={{width:"73vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
             <View style={styles.header}>
                 <PageHeadLeft  style={styles.headerLeft}   page={props.pageSet}   />
                 <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
@@ -312,7 +314,7 @@ const styles = StyleSheet.create({
 
     main: {
         textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "70%",
         width: "97%",
         color:'black',

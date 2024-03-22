@@ -1,5 +1,6 @@
 import React from "react";
 import { Page, Text, View, Document, StyleSheet, Image, Font } from "@react-pdf/renderer";
+import Filigrane from "../../../filigrane/Filigrane";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 
@@ -25,6 +26,7 @@ function BulletinSequence(props) {
         {Array.from(props.data.eleveNotes ,
         (el, index) => (
             <Page size="A4"  style={styles.page} key={index}>
+              <Filigrane photoStyle ={{width:"73vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>
               <View style={styles.header}>
                 <View style={styles.header1}>
                   <View style={styles.header1_1}>
@@ -450,7 +452,7 @@ const styles = StyleSheet.create({
     main: {
       boxSizing:"border-box",
       textAlign: "center",
-      backgroundColor: "white",
+      // backgroundColor: "white",
       color: "black",
       height: "60vh",
       width: "97%",
