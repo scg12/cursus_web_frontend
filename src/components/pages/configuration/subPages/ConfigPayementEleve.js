@@ -247,21 +247,6 @@ function ConfigPayementEleve(props) {
         inputs[0]= row.classe;
         inputs[1]= row.info_tranches;
         inputs[2]= row.id;
-
-        inputs[3]= document.getElementById('id_cycle').value;
-        inputs[4]= document.getElementById('id_niveau').value;
-        inputs[5]= document.getElementById('id_classe').value;
-        inputs[6]= row.id;
-
-        payements.id_cycle = document.getElementById('id_cycle').value;
-        payements.id_niveau = document.getElementById('id_niveau').value;
-        payements.id_classe = document.getElementById('id_classe').value;
-        payements.libelle = document.getElementById('libelle').value;
-        payements.montant = document.getElementById('montant').value;
-        payements.date_deb = document.getElementById('date_deb').value;
-        payements.date_fin = document.getElementById('date_fin').value;
-
-
         
         currentUiContext.setFormInputs(inputs)
         setModalOpen(2);
