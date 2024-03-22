@@ -363,6 +363,8 @@ function loadEmploiDetemps(etabId){
             setIsLoading(false);
 
             currentUiContext.updateTheme(res.data.theme);
+            currentUiContext.updatePhotoUrl(res.data.photo_url);
+            
             i18n.changeLanguage(res.data.langue);
             //updateCalendarTheme(res.data.theme);
 

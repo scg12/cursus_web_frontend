@@ -381,7 +381,13 @@ function AddStudent(props) {
         CURRENT_ELEVE.lieu_naissance = putToEmptyStringIfUndefined(document.getElementById('lieu_naissance').value).trim(); //(document.getElementById('lieu_naissance').value !='') ? putToEmptyStringIfUndefined(document.getElementById('lieu_naissance').value).trim() : putToEmptyStringIfUndefined(document.getElementById('lieu_naissance').defaultValue).trim();
         CURRENT_ELEVE.sexe           = isMasculin ? 'M' : 'F';
         CURRENT_ELEVE.age            = 20;
-        CURRENT_ELEVE.photo_url      = (filesContent.length==0)  ? "":filesContent[0].content;
+
+        if(props.formMode == "creation"){
+            CURRENT_ELEVE.photo_url      = (filesContent.length==0)  ? "":filesContent[0].content;
+        } else {
+            CURRENT_ELEVE.photo_url      = (filesContent.length==0)  ? currentUiContext.formInputs[15]:filesContent[0].content;
+        }
+        
 
         
         //if(currentUiContext.formInputs.length>0)
@@ -397,6 +403,7 @@ function AddStudent(props) {
         tabEleve[1]  = CURRENT_ELEVE.prenom; 
         tabEleve[2]  = convertDateToUsualDate(CURRENT_ELEVE.date_naissance); 
         tabEleve[3]  = CURRENT_ELEVE.lieu_naissance;
+        tabEleve[15] = CURRENT_ELEVE.photo_url;
         //tabEleve[12] = CURRENT_ELEVE.sexe;
         
         currentUiContext.setFormInputs(tabEleve);
@@ -664,31 +671,66 @@ function AddStudent(props) {
                             </div>
                         </div>
 
-                        <div className={classes.inputRowRight} style={{paddingRight:'1vw'}}> 
-                            {(filesContent.length==0) ? 
-                                <div className={classes.etabLogo}>
-                                    <div  className={classes.logoImg}>Photo 4X4</div>
-                                    <CustomButton
-                                        btnText={t("select_photo")}
-                                        buttonStyle={getSmallButtonStyle()}
-                                        btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
-                                    />
-                                </div>  
+                        {(props.formMode =='creation') ?
+
+                            <div className={classes.inputRowRight} style={{paddingRight:'1vw'}}> 
+                                                            
+                                {(filesContent.length==0) ? 
+                                    <div className={classes.etabLogo}>
+                                        <div  className={classes.logoImg}>Photo 4X4</div>
+                                        <CustomButton
+                                            btnText={t("select_photo")}
+                                            buttonStyle={getSmallButtonStyle()}
+                                            btnTextStyle = {classes.btnSmallTextStyle}
+                                            btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
+                                        />
+                                    </div>  
                                     :
-                                <div className={classes.etabLogo}>
-                                    <img alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
-                                    <div className={classes.photoFileName}>{filesContent[0].name}</div>
-                                    <CustomButton
-                                        btnText={t("select_photo")} 
-                                        buttonStyle={getSmallButtonStyle()}
-                                        btnTextStyle = {classes.btnSmallTextStyle}
-                                        btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
-                                    />
-                                    <input id="photo_url" type="hidden"  defaultValue=''/>
-                                </div>
-                            }              
-                        </div>                     
+                                    <div className={classes.etabLogo}>
+                                        <img alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
+                                        <div className={classes.photoFileName}>{filesContent[0].name}</div>
+                                        <CustomButton
+                                            btnText={t("select_photo")} 
+                                            buttonStyle={getSmallButtonStyle()}
+                                            btnTextStyle = {classes.btnSmallTextStyle}
+                                            btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
+                                        />
+                                        <input id="photo_url" type="hidden"  defaultValue=''/>
+                                    </div>
+                                }              
+                            </div>
+                            
+                            :
+
+                            <div className={classes.inputRowRight} style={{paddingRight:'1vw'}}> 
+                                
+                                {(filesContent.length==0) ? 
+                                    <div className={classes.etabLogo}>
+                                        {(currentUiContext.formInputs[15]!="") && <img alt={"eleve_photo"} className={classes.logoImg} src={currentUiContext.formInputs[15]}/>}
+                                        {/* <div  className={classes.logoImg}>Photo 4X4</div> */}
+                                        <CustomButton
+                                            btnText={t("select_photo")}
+                                            buttonStyle={getSmallButtonStyle()}
+                                            btnTextStyle = {classes.btnSmallTextStyle}
+                                            btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
+                                        />
+                                    </div>  
+                                    :
+                                    <div className={classes.etabLogo}>
+                                        <img alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
+                                        <div className={classes.photoFileName}>{filesContent[0].name}</div>
+                                        <CustomButton
+                                            btnText={t("select_photo")} 
+                                            buttonStyle={getSmallButtonStyle()}
+                                            btnTextStyle = {classes.btnSmallTextStyle}
+                                            btnClickHandler = {() => {getFormData1(); setFormData1(); openFileSelector();}}
+                                        />
+                                        <input id="photo_url" type="hidden"  defaultValue=''/>
+                                    </div>
+                                }              
+                            </div>    
+                                                    
+                        }
 
                     </div>
                     

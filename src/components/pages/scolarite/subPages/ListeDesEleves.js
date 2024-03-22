@@ -145,6 +145,7 @@ function ListeDesEleves(props) {
             listElt.email_mere      = elt.email_mere;
             listElt.etab_provenance = elt.etab_provenance;
             listElt.sexe            = elt.sexe;
+            listElt.photo_url       = elt.photo_url;
             listElt.redouble        = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
 
             listElt.nom_parent      = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
@@ -326,13 +327,22 @@ const columnsFr = [
     },
 
     {
+        field: 'photo_url',
+        headerName: 'photo',
+        hide:true,
+        width: 110,
+        editable: false,
+        hide:true,
+        headerClassName:classes.GridColumnStyle,            
+    },
+
+    {
         field: 'sexe',
         headerName: 'SEXE',
         hide:true,
         width: 110,
         editable: false,
-        headerClassName:classes.GridColumnStyle,
-            
+        headerClassName:classes.GridColumnStyle,            
     },
 
     {
@@ -514,8 +524,17 @@ const columnsFr = [
             hide:true,
             width: 110,
             editable: false,
-            headerClassName:classes.GridColumnStyle,
-                
+            headerClassName:classes.GridColumnStyle,                
+        },
+
+        {
+            field: 'photo_url',
+            headerName: 'photo',
+            hide:true,
+            width: 110,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle,            
         },
     
         {
@@ -588,15 +607,15 @@ const columnsFr = [
     function handleEditRow(row){       
         var inputs=[];
         
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[2]= row.date_naissance;
-        inputs[3]= row.lieu_naissance;
-        inputs[4]= row.etab_provenance;
+        inputs[0] = row.nom;
+        inputs[1] = row.prenom;
+        inputs[2] = row.date_naissance;
+        inputs[3] = row.lieu_naissance;
+        inputs[4] = row.etab_provenance;
 
-        inputs[5]= row.nom_pere;
-        inputs[6]= row.email_pere;
-        inputs[7]= row.tel_pere;
+        inputs[5] = row.nom_pere;
+        inputs[6] = row.email_pere;
+        inputs[7] = row.tel_pere;
 
         inputs[8] = row.nom_mere;
         inputs[9] = row.email_mere;
@@ -608,6 +627,7 @@ const columnsFr = [
         inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
 
         inputs[14]= row.date_entree;
+        inputs[15]= row.photo_url;
 
         console.log("laligne",row);
         currentUiContext.setFormInputs(inputs)
