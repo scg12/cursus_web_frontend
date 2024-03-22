@@ -636,7 +636,8 @@ function LoginForm(props){
                 userProfile = 'admin';
                 profileAuthorisationString = getRightsStringFromProfile(userProfile)
             
-                generateFeaturesCodeFromString(res.data.FeaturesCode)
+                generateFeaturesCodeFromString(res.data.FeaturesCode);
+                
                 currentAppContext.setInfoAnnees(res.data.info_annees);
                 currentAppContext.setUsrConnected(loginText,userProfile);
                 currentAppContext.setEnableProfiles(FeaturesCode);

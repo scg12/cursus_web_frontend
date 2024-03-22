@@ -1,6 +1,7 @@
 import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
 import { useTranslation } from "react-i18next";
+import Filigrane from "../../../filigrane/Filigrane.js";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 import '../../../../translation/i18n';
@@ -32,6 +33,7 @@ function RecuPaiementFrais(props){
 
         return (       
             <View  style={{display:"flex", flexDirection:"column", marginTop:"3vh", width:"63vw", height:"21.7vh", justifyContent:"flex-start", borderStyle:"solid", borderWidth:"2px", borderRadius:3}} key={0}>
+                <Filigrane photoStyle ={{width:"23vw", height:"20vw"}} imageSrc="images/collegeVogt_fil.png"/>
                 <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center", alignSelf:"center", width:"93%", marginTop:"1.3vh"}}>
                     
                     <View style={{width:"24vw",height:"2vh", borderBottomStyle:"solid", borderBottomWidth:"1px", borderBottomColor:"black"}}>

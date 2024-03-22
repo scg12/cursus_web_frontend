@@ -3,6 +3,7 @@ import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/r
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 import { useTranslation } from "react-i18next";
+import Filigrane from "../../../filigrane/Filigrane";
 import '../../../../translation/i18n';
 
 
@@ -111,7 +112,8 @@ function StudentListTemplate(props){
          { Array.from(props.pageSet,
           (el, index) => (
             <Page size="A4"  style={styles.page} key={index}>
-                <View style={styles.header}>
+               <Filigrane photoStyle ={{width:"73vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>
+                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={el}  />                                     
@@ -303,7 +305,7 @@ const styles = StyleSheet.create({
 
     main: {
         textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "70%",
         width: "97%",
         color:'black',
