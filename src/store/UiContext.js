@@ -9,9 +9,12 @@ var constMsg ={
 }
 
 const UiContext = createContext({
-    logo :'',
-    theme : 'Theme1',
-    langue : 'fr',
+    logo      :'',
+    theme     : 'Theme1',
+    langue    : 'fr',
+    //Pour les photos de profile 
+    photo_url : false,
+
     selectedTab : 'menuLi0',
     firstLoad : true,
     modalOpen : false,
@@ -88,6 +91,10 @@ const UiContext = createContext({
     updateTheme: (newTheme)=> {},
     updateLangue: (newLangue)=> {},
     updateLogo : (newLogo)=> {},
+    
+    //Pour les photos de profile 
+    updatePhotoUrl : (newPhoto)=> {},
+
     updateTab : (newTab) => {},
     updateFirstLoad : (boolVal) => {},
     setModalOpen : (boolVal) => {},
@@ -149,6 +156,10 @@ export function UiContextProvider(props)
     const [ChangedTheme, setTheme]= useState('Theme1');
     const [ChangedLangue, setLangue]= useState('fr');
     const [ChangedLogo, setLogo] = useState();
+    
+    //Pour les photos de profile 
+    const [ChangedPhotoUrl, setPhotoUrl] = useState();
+
     const [ChangedTab, setTab] = useState('menuLi0');
     const [ChangedFirstLoad, setFirstLoad] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
@@ -230,6 +241,11 @@ export function UiContextProvider(props)
 
     function updateLogoHandler(newLogo){
         setLogo(newLogo)
+    }
+
+    //Pour les photos de profile 
+    function updatePhotoUrlHandler(newPhoto){
+        setPhotoUrl(newPhoto)
     }
     
     function updateTabHandler(newTab){
@@ -430,9 +446,12 @@ export function UiContextProvider(props)
 
 
     const UI_Ctx = {
-        logo : ChangedLogo,
-        theme : ChangedTheme,
-        langue : ChangedLangue,
+        logo      : ChangedLogo,
+        theme     : ChangedTheme,
+        langue    : ChangedLangue,
+        //Pour les photos de profile 
+        photo_url : ChangedPhotoUrl,
+
         selectedTab : ChangedTab,
         firstLoad : ChangedFirstLoad,
         modalOpen : modalOpen,
@@ -504,9 +523,12 @@ export function UiContextProvider(props)
        
        
 
-        updateTheme: updateThemeHandler,
-        updateLangue: updateLangueHandler,
-        updateLogo : updateLogoHandler,
+        updateTheme    : updateThemeHandler,
+        updateLangue   : updateLangueHandler,
+        updateLogo     : updateLogoHandler,
+        //Pour les photos de profile 
+        updatePhotoUrl : updatePhotoUrlHandler,
+
         updateTab : updateTabHandler,
         updateFirstLoad: updateFirstLoadHandler,
         setModalOpen: updateModalHandler,

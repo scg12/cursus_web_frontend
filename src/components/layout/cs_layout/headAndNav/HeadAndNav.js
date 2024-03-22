@@ -437,9 +437,16 @@ function HeadAndNav(props) {
 
                 <div className={classes.divider}/>
 
-                <div onClick={editProfile} className={classes.langButton}>
-                    < img src="images/profile.png" id='en'  className={classes.widgetIcon} alt="my image" onClick={changeLanguage}/>  
-                </div>
+                {(currentUiContext.photo_url=="")?
+                    <div onClick={editProfile} className={classes.langButton}>
+                        < img src="images/profile.png" className={classes.widgetIcon} alt="my image"/>  
+                    </div>
+                    :
+                    <div onClick={editProfile} className={classes.langButton}>
+                        < img src={currentUiContext.photo_url}  className={classes.widgetIcon} alt="my image" />  
+                    </div>
+                }
+               
 
                 <div  onClick={editProfile} className={classes.profileLabel}>
                     {usrConnected}

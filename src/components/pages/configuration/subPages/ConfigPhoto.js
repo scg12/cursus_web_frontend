@@ -1,14 +1,21 @@
 import React from 'react';
 import { useFilePicker } from 'use-file-picker';
 import classes from "./SubPages.module.css";
+import axiosInstance from '../../../../axios';
 import CustomButton from "../../../customButton/CustomButton";
 import UiContext from "../../../../store/UiContext";
+import AppContext from '../../../../store/AppContext';
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 
 function ConfigPhoto(props) {
-    const currentUiContext = useContext(UiContext);
+    const currentUiContext  = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
+
     const [isValid, setIsValid] = useState(false);
+    const { t, i18n }           = useTranslation();
+
     const selectedTheme = currentUiContext.theme;
     const [openFileSelector, { filesContent, loading, errors }] = useFilePicker({
         readAs: 'DataURL',
@@ -85,18 +92,24 @@ function ConfigPhoto(props) {
         e.preventDefault();
         var fileName = filesContent[0].name; 
         var fileContent = filesContent[0].content;
+        var errorDiv = document.getElementById('MsgPlaceHolder');
+
         console.log(fileContent);   
         //Mettre a jour le profil utilisateur
-        /*axiosInstance.post(`update_user/`, {
-            id: '', // a fournir
-            username:newLogin                
+        axiosInstance.post(`save-photo-url/`, {
+            id_user    :currentAppContext.idUser, 
+            photo_url  :fileContent,
+                          
         }).then((res)=>{
             console.log(res.data);
-                //Retourner le statut de l'action
+            currentUiContext.updatePhotoUrl(fileContent);
+            errorDiv.className = classes.formSuccessMsg;
+            errorDiv.textContent = t("success_modif"); 
             
-            alert('Login Modifier avec succes!')
-            clearForm();              
-        }) */        
+            //Retourner le statut de l'action            
+            //alert('Login Modifier avec succes!')
+            //clearForm();              
+        })         
 
     }
 
@@ -104,25 +117,26 @@ function ConfigPhoto(props) {
 
     return (
         <div className={classes.formStyle}>  
-            {(errors.length) ?
-                <div className={classes.errorMsg}> {getUploadError()}</div>
-                :
-                null
-            }
-    
+            <div id='MsgPlaceHolder'></div>
+            {(errors.length>0)&&<div className={classes.errorMsg}> {getUploadError()}</div>}
+           
             {(filesContent.length==0) ?        
-                <div className={classes.photoZone}>       
-                    <div className={classes.photoStyle}>
-                        <img src="images/profile.png" id='en'  className={classes.widgetIcon} alt="my image"/>
-                    </div>
-                    <div className={classes.photoFileName}></div>                
+                <div className={classes.photoZone}>
+                    {(currentUiContext.photo_url=="")?       
+                        <div className={classes.photoStyle}>
+                            <img src="images/profile.png"  className={classes.widgetIcon} alt="my image"/>
+                        </div>
+                        :
+                        <div className={classes.photoStyle}>
+                            <img src={currentUiContext.photo_url} className={classes.widgetIcon} alt="my image"/>
+                        </div>
+                    }   
                 </div>
                 :
                 <div className={classes.photoZone}>
                     <div className={classes.photoStyle}>
                         <img alt={filesContent[0].name} className={classes.widgetIcon} src={filesContent[0].content}/>
                     </div>
-                    <div className={classes.photoFileName}>{filesContent[0].name}</div>
                 </div>
             }
             
