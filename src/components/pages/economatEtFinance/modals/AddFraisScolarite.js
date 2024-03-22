@@ -321,7 +321,7 @@ function AddFraisScolarite(props) {
                             </div>
                             <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start'}}>
                                 <div>{props.currentClasseLabel}</div>
-                                <div>{currentUiContext.formInputs[15]}</div>
+                                <div>{currentUiContext.formInputs[15]} {t('years')}</div>
                             </div>
 
                         </div>

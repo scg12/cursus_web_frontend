@@ -33,11 +33,12 @@ function RecuPaiementFrais(props){
         return (       
             <View  style={{display:"flex", flexDirection:"column", marginTop:"3vh", width:"63vw", height:"21.7vh", justifyContent:"flex-start", borderStyle:"solid", borderWidth:"2px", borderRadius:3}} key={0}>
                 <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between", alignItems:"center", alignSelf:"center", width:"93%", marginTop:"1.3vh"}}>
-                    <View style={props.style}>
+                    
+                    <View style={{width:"24vw",height:"2vh", borderBottomStyle:"solid", borderBottomWidth:"1px", borderBottomColor:"black"}}>
                         <Text style={{fontWeight:"900", fontSize:10, textTransform:"uppercase"}}>ANNEE SCOLAIRE : {props.recu.anneeScolaire}</Text>
                     </View>
                     
-                    <View style={{color:"white", backgroundColor:"#80abd6", borderRadius:2.3, height:"2vh", width:"23vw", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+                    <View style={{color:"white", /*backgroundColor:"#80abd6",*/ backgroundColor:"#5576b5", borderRadius:2.3, height:"2vh", width:"23vw", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
                         <Text style={{fontFamily:"Times-Roman", fontSize:10, textTransform:"uppercase"}}>RECU N°: {props.recu.numeroRecu}</Text>
                     </View>                                     
                 </View>
@@ -49,18 +50,18 @@ function RecuPaiementFrais(props){
 
                 <View style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start",alignSelf:"center", marginTop:"1vh", width:"97%"}}>
                     <View style={{display:"flex", flexDirection:"row", width:"80%"}}>
-                        <Text style={{fontFamily:"Times-Roman", width:"17.7vw", fontSize:9, textTransform:"uppercase"}}>Nom & Prenom :</Text>
+                        <Text style={{fontFamily:"Times-Roman", width:"17.7vw", fontSize:9, textTransform:"uppercase"}}>Nom(s) & Prenom(s) :</Text>
                         <Text style={{fontFamily:"Times-Roman", marginLeft:"1vw", fontSize:10, fontFamily:"MyBold" }}>{props.recu.eleveNom}</Text>
-
-                        <View style={{display:"flex", flexDirection:"row",  marginLeft:"3vw", marginTop:"0 .7vh"}}>
-                            <Text style={{fontFamily:"Times-Roman",  width:"10vw", fontSize:9, textTransform:"uppercase"}}>Matricule :</Text>
-                            <Text style={{fontFamily:"Times-Roman", marginLeft:"1vw",fontSize:10, fontFamily:"MyBold"}}>{props.recu.matricule}</Text>
-                         </View>
                     </View>
 
                     <View style={{display:"flex", flexDirection:"row", marginTop:"0.7vh", width:"80%"}}>
                         <Text style={{fontFamily:"Times-Roman", width:"17.7vw", fontSize:9, textTransform:"uppercase"}}>Classe :</Text>
                         <Text style={{fontFamily:"Times-Roman", marginLeft:"1vw", fontSize:10, fontFamily:"MyBold"}}>{props.recu.eleveClasse}</Text>
+
+                        <View style={{display:"flex", flexDirection:"row",  marginLeft:"3vw", marginTop:"0 .7vh"}}>
+                            <Text style={{fontFamily:"Times-Roman",  width:"10vw", fontSize:9, textTransform:"uppercase"}}>Matricule :</Text>
+                            <Text style={{fontFamily:"Times-Roman", marginLeft:"1vw",fontSize:10, fontFamily:"MyBold"}}>{props.recu.matricule}</Text>
+                        </View>
                     </View>
 
                     <View style={{display:"flex", flexDirection:"row", marginTop:"0.7vh", width:"97%"}}>

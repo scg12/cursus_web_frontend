@@ -296,7 +296,7 @@ function FicheDisciplinaire(props) {
                                     </div>
                                     <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start'}}>
                                         <div>{props.currentClasseLabel}</div>
-                                        <div>{props.eleve.age}</div>
+                                        <div>{props.eleve.age} {t('years')}</div>
                                     </div>
 
                                 </div>

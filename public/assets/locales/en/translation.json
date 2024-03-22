@@ -1,5 +1,7 @@
-                        
-{   "student_registration_form_M" : "STUDENT REGISTRATION FORM",
+                     
+{   
+    "years"                       : "Years",
+    "student_registration_form_M" : "STUDENT REGISTRATION FORM",
     "receipt_printing"            : "Printing receipt",
     "topay_over_waited_for_tranch": "The given amount is greater than the fee band to pay!",
     "school_fees_payment_M"       : "STUDENT'S SCHOOL FEES MANAGEMENT",

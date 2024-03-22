@@ -275,7 +275,7 @@ function CursusAcad(props) {
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                         <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t('class_M')} : </div> <div>{props.dossierEleve[0].classe}</div>
                         <div style={{fontWeight:'700', marginRight:'0.3vw', marginLeft:'4.3vw'}}> {t('matricule_M')}  : </div> <div>{props.eleve.matricule}</div>
-                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> {props.eleve.age} </div>
+                        <div style={{fontWeight:'700', marginLeft:'2vw'}}> {t('age_M')} : </div> <div> {props.eleve.age} {t('years')}</div>
                     </div>
                     <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-start'}}>
                         <div style={{fontWeight:'700', marginRight:'0.3vw'}}> {t("entree_M")} : </div> <div> {props.eleve.date_entree} </div>
