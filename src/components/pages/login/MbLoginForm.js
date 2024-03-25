@@ -19,6 +19,9 @@ import FeaturesCode from '../../Features/FeaturesCode';
 var userProfile = ''
 var profileAuthorisationString = ''
 var ERROR_CODE;
+
+var listNotifs=[];
+
 function MbLoginForm(){
 
     const currentUiContext = useContext(UiContext);
@@ -313,6 +316,55 @@ function loadEmploiDetemps(etabId){
     
 }
 
+
+function initUserNotifs(foundedNotifs){
+    var msgText = {};
+    listNotifs  = [];
+ 
+    console.log("comm internes", foundedNotifs);
+    foundedNotifs.map((com)=>{
+        msgText ={
+            id                  : com.id,
+            type                : com.msgType,
+            libelle             : com.titreMsg,
+            Description         : com.message,
+            date_debut_validite : com.validite_deb,
+            date_fin_validite   : com.validite_fin,
+            hasAction           : true,
+            btnText             : t("set_as_read"),
+            
+            btnStyle :{
+                display:"flex",
+                justifyContent:"center",
+                alignItems : "center",
+                backgroundColor : "blue",
+                borderRadius : "3px",
+                width: "3vw",
+                height:"3vh", 
+                fontSize :"0.8vw",
+                marginBottom:"1vh",
+                alignSelf:"flex-end",
+                marginRight:"1vh"
+            },
+        
+            btnTextStyle:{
+                fontSize :"0.8vw"
+            },
+        
+            btnClickHandler:{
+        
+            }
+        }
+        
+
+        listNotifs.push({msg:msgText}); 
+        msgText = {} ;             
+    })
+
+    currentAppContext.setTabNotifs(listNotifs);             
+    
+}
+
     function connectHandler()
     {   
         setPassWordError(false); 
@@ -337,6 +389,7 @@ function loadEmploiDetemps(etabId){
             profileAuthorisationString = getRightsStringFromProfile(userProfile)
           
             generateFeaturesCodeFromString(res.data.FeaturesCode)
+            
             currentAppContext.setInfoAnnees(res.data.info_annees);
             currentAppContext.setUsrConnected(loginText,userProfile);
             currentAppContext.setEnableProfiles(FeaturesCode);
@@ -345,12 +398,18 @@ function loadEmploiDetemps(etabId){
             currentAppContext.setCurrentEtab(res.data.id_etab_init);
             currentAppContext.setActivatedYear(res.data.activated_year);
             currentAppContext.setInfoSetabs(res.data.info_setabs);
+            currentAppContext.setInfoUser(res.data.info_user);
             currentAppContext.setInfoCycles(res.data.info_cycles);
             currentAppContext.setInfoNiveaux(res.data.info_niveaux);
             currentAppContext.setInfoClasses(res.data.info_classes);
             currentAppContext.setInfoMatieres(res.data.info_matieres);
             currentAppContext.setInfoCours(res.data.info_cours);
             currentUiContext.updateFirstLoad(true);
+
+
+            //Ici, on va aller chercher toutes les notifs non lu du user
+            initUserNotifs(res.data.info_user.user_comms);          
+
             
             
             //Pour les MsgBoxes
@@ -366,8 +425,7 @@ function loadEmploiDetemps(etabId){
             currentUiContext.updatePhotoUrl(res.data.photo_url);
             
             i18n.changeLanguage(res.data.langue);
-            //updateCalendarTheme(res.data.theme);
-
+    
             history.replace('/');
 
         },(res)=>{
@@ -379,7 +437,7 @@ function loadEmploiDetemps(etabId){
     }
     
 
-        return(
+    return(
         <div className= {classes.loginContainer}>
             <div className= {getCurrentHeaderTheme()}>
                 <img src='images/cursusLogo.png'  alt='AppLogo' className= {classes.logoStyle}></img>
@@ -394,11 +452,11 @@ function loadEmploiDetemps(etabId){
                     < img src="images/drapeauAnglais.png" id='en' width ='23px' height='23px' alt="my image" onClick={changeLanguage}/>  
                 </div> 
             </div>
-            
+                
             <div className= {classes.loginMainContent}>
                 <div className={'card ' + ' '+ getCurrentContentTheme()}>
                     <div className={getFormHeaderStyle()} >
-                       {t("Connexion")} 
+                    {t("Connexion")} 
                     </div>
                     <form class={classes.formContent}>
                         <h8><b> {t("acceder_espace" )}</b></h8>
@@ -411,7 +469,7 @@ function loadEmploiDetemps(etabId){
                             <input id="password" type="password" class="validate" />
                             <label for="password">{t("password" )}</label>
                         </div>
-                       
+                    
                         <Link className= {classes.linkStyle}> <i>{t("forgetPwd")}</i></Link>
                         { passWordError ? 
                             <p className={classes.errorMsgStyle}> {t(getErrorMessage(ERROR_CODE))}</p> 
@@ -444,13 +502,10 @@ function loadEmploiDetemps(etabId){
                     <section className={classes.aboutAppTextStyle}> 
                         {t("rightsReserve")} 
                     </section>
-                </div>
-            <div>  
-                    
+                </div>           
+                
+            </div>
         </div>
-              
-    </div>
-</div>
     );
 }
 export default MbLoginForm;
