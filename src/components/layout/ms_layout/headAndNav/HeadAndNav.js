@@ -46,12 +46,22 @@ function HeadAndNav(props) {
     }
   
     function logouthandler(){
+        // currentUiContext.showMsgBox({
+        //     visible:true, 
+        //     msgType:"question", 
+        //     msgTitle:t("logout"), 
+        //     message:t("quit_question")
+        // })    
+        
+        currentUiContext.setIsParentMsgBox(true);
+        chosenMsgBox = MSG_QUESTION
         currentUiContext.showMsgBox({
             visible:true, 
-            msgType:"question", 
+            msgType :"question", 
             msgTitle:t("logout"), 
-            message:t("quit_question")
-        })       
+            msgCode :"CLOSE_APP",
+            message :t("quit_question")
+        })
     }
   
     function getCurrentTheme()
@@ -149,19 +159,14 @@ function HeadAndNav(props) {
     }
 
     const acceptHandler=()=>{
-        switch(chosenMsgBox){
-            case MSG_SUCCESS: {
-                currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                }) 
-                return 1;
+        console.log("code MSG",chosenMsgBox);
+        switch(currentUiContext.msgBox.msgCode){
+            case "CLOSE_YEAR": {
+               
             }
 
     
-            case MSG_QUESTION: {
+            case "CLOSE_APP": {
                 console.log("IL VEUT DECONNECTER: ")
                 currentUiContext.updateFirstLoad(true);
                 currentAppContext.logOut();
@@ -175,7 +180,10 @@ function HeadAndNav(props) {
                
 
                 axiosInstance.post(`logout/`, {
-                    refresh: localStorage.getItem('refresh'),
+                    refresh  : localStorage.getItem('refresh'),
+                    userId   : currentAppContext.idUser,
+                    setab_id : currentAppContext.currentEtab,
+
                 },{headers:{}})
                     .then((res) => {
                         localStorage.removeItem('access');
@@ -188,25 +196,34 @@ function HeadAndNav(props) {
                 return 1;
             }
     
-            case MSG_WARNING: {
-                    currentUiContext.showMsgBox({
-                    visible:false, 
-                    msgType:"", 
-                    msgTitle:"", 
-                    message:""
-                })  
+            case "CLOSE_YEAR": {
+                alert("cloture annee!!!");
+                //closeSchoolYear();
+                
                 return 1;
             }
+
+            case "CLOSE_EXAMS": {
+                alert("ok ok");
+                // closeExamSession();
+                
+                return 1;
+            }
+
+            
             
            
             default: {
+
                 currentUiContext.showMsgBox({
                     visible:false, 
                     msgType:"", 
                     msgTitle:"", 
                     message:""
-                })  
+                }) 
                 return 1;
+
+               
             }
         }
        
@@ -352,9 +369,19 @@ function HeadAndNav(props) {
 
                     <div className={classes.divider}/>
 
-                    <div onClick={editProfile} className={classes.langButton}>
-                        < img src="images/profile.png" id='en'  className={classes.widgetIcon} alt="my image" onClick={changeLanguage}/>  
+                    {(currentUiContext.photo_url=="")?
+                    <div className={classes.langButton}>
+                        < img src="images/profile.png" className={classes.widgetIcon} alt="my image"/>  
                     </div>
+                    :
+                    <div className={classes.langButton}>
+                        < img src={currentUiContext.photo_url}  className={classes.widgetIcon} alt="my image" />  
+                    </div>
+                }
+
+                    {/* <div  className={classes.langButton}>
+                        < img src="images/profile.png" id='en'  className={classes.widgetIcon} alt="my image" onClick={changeLanguage}/>  
+                    </div> */}
 
                     {/*<div  onClick={editProfile} className={classes.profileLabel}>
                         {usrConnected}

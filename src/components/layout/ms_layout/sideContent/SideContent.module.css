@@ -1,3 +1,15 @@
+.notifZone{
+  display : "flex";
+  flex-direction : column;
+  justify-content: center;
+  width   : 20vw;
+  
+  position : absolute;
+  top      : 7vh; 
+  left     : 0;
+  z-index  : 9999;
+}
+
 .comboBoxStyle{
   font-weight: 700;
   font-size: 1.7vh;
@@ -7,7 +19,6 @@
   border-width: 0.47vh;
   padding-left: 0.7vh !important;
   padding-bottom: 0.7vh !important;
-
 }
 
 .mainInfosStyle{

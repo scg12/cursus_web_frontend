@@ -3,10 +3,12 @@ import React, {useState, useEffect} from 'react'
 import { Component, useContext } from "react";
 import UiContext from '../../../../store/UiContext';
 import AppContext from '../../../../store/AppContext';
+import Notification from '../../../notification/Notification';
 
 
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n';
+import axiosInstance from '../../../../axios';
 
 import 'react-materialize';
 import 'materialize-css/dist/css/materialize.min.css';
@@ -165,12 +167,82 @@ function SideContent(props) {
     function onChangeNiveauHandler(e){
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_cycle == e.value),'id_cycle','libelle')[0]);
     }
+
+
+    function setNotifAsReaded(idNotif,userId){
+        return new Promise(function(resolve, reject){
+          
+            axiosInstance.post(`set-message-as-read/`, {
+                id_sousetab     : currentAppContext.currentEtab,
+                user_id         : userId,
+                msg_id          : idNotif
+    
+            }).then((res)=>{
+                console.log("resultat du remove",res.data);
+                resolve(res.data);
+            })
+            
+        });
+    }
+
+
+    function closeNotifHandler(e,notif,index){
+        var notifs = [...currentAppContext.tabNotifs];
+
+        console.log("notif",  notif);
+        notifs.splice(index,1);     
+        document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+        
+
+        // notifs.map((ntf, ind)=>{
+        //     if(ind != index){           
+        //         document.getElementById("notifMsg"+ntf.msg.id).style.display = 'block';
+        //     }                
+        // });      
+        
+        console.log("reste",notifs);
+       // currentAppContext.setTabNotifs((notifs));
+    }
+
+    function seNotifAsReadHandler(e,notif,index){
+        var notifs = [...currentAppContext.tabNotifs];
+        console.log("notif",  notif);
+        //Ici je vais en BD marquer que la notif est lue
+        //Et, je cache la notif et je l'enleve du tableau des notifs
+        setNotifAsReaded(notif.msg.id, currentAppContext.idUser).then((result)=>{
+            notifs.splice(index,1);
+            document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+            // notifs.map((ntf, ind)=>{
+            //     if(ind == index){
+            //         document.getElementById("notifMsg"+notif.msg.id).style.display = 'none';
+            //     } else {
+            //         document.getElementById("notifMsg"+ntf.msg.id).style.display = 'block';
+            //     }                
+            // })          
+           
+            console.log("reste",notifs);
+            //currentAppContext.setTabNotifs((notifs));
+        });        
+    }
           
     return (
 
         <div> 
             
             <div className= {classes.mainInfosStyle}>
+                <div id="notifZone" className={classes.notifZone + " notifFrom"}>
+                    {currentAppContext.tabNotifs.map((notif, index)=>{
+                        return(
+                            <Notification 
+                                msg={notif.msg} 
+                                notifStyle      = {{marginBottom:"0.3vh"}} 
+                                closeNotif      = {(e)=>{closeNotifHandler(e,notif,index)}} 
+                                btnClickHandler = {(e)=>{seNotifAsReadHandler(e,notif,index)}}
+                            />
+                        )
+                       
+                    })}
+                </div>
 
                 {/*<div> 
                     <label className= {getCurrentThemeSideLabel() +' '+ classes.upperCase}> 

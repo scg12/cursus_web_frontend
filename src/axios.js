@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {Buffer} from 'buffer';
 
-const baseURL = 'http://127.0.0.1:8000/api/';
+//const baseURL = 'http://127.0.0.1:8000/api/';
 
-// const baseURL = 'http://192.168.43.99:8000/api/';
+const baseURL = 'http://192.168.43.99:8000/api/';
 //const baseURL = 'http://192.168.87.235:8000/api/';
 //const baseURL = 'http://192.168.61.235:8000/api/';
 //const baseURL = 'http://192.168.89.235:8000/api/';
