@@ -17,6 +17,17 @@
     border-radius: 15px;
 }
 
+.imgStylePP {
+    width: 9.1vw;
+    height: 8.7vw;   
+    margin-top: -0.7vh;
+}
+
+.imageStyleP3{
+    width: 8.57vw;
+    height: 8.3vw;
+}
+
 
 .titleHmself{
     align-self: flex-end;
