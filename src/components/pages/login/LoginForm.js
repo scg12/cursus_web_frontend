@@ -511,25 +511,7 @@ function LoginForm(props){
                 date_fin_validite   : com.validite_fin,
                 hasAction           : true,
                 btnText             : t("set_as_read"),
-                
-                btnStyle :{
-                    display:"flex",
-                    justifyContent:"center",
-                    alignItems : "center",
-                    backgroundColor : "blue",
-                    borderRadius : "3px",
-                    width: "3vw",
-                    height:"3vh", 
-                    fontSize :"0.8vw",
-                    marginBottom:"1vh",
-                    alignSelf:"flex-end",
-                    marginRight:"1vh"
-                },
-            
-                btnTextStyle:{
-                    fontSize :"0.8vw"
-                },
-            
+             
                 btnClickHandler:{
             
                 }

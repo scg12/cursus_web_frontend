@@ -50,3 +50,54 @@
     justify-content: center;
     align-items: center;
 }
+
+.notifTitle {
+    align-self: center;
+    font-size: 2.3vh;
+    font-weight: bold;
+}
+
+.notifDescription {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1.3vw;
+    font-size: 0.9vw;
+    justify-content: center;
+}
+
+/*////////////////////////////////TELEPHONES/////////////////////////////*/
+/*----------------------------Horizontalement----------------------------*/
+    @media screen and (max-height: 420px) {
+        
+  
+    }
+  
+  /*----------------------------Verticalement-----------------------------*/
+    @media screen and (max-width: 420px) {
+        .notifTitle{
+            align-self: center;
+            font-size: 2.3vw;
+            font-weight: bold;
+        }
+
+        .notifDescription {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1.3vh;
+            font-size: 0.9vh;
+            justify-content: center;
+        }
+
+        .notifContainerStyle{
+            color:white;
+            /* max-height: 27vh; */
+            height: fit-content;
+            width : 20vh;
+            border-radius: 3px;
+            position : relative;
+            z-index  : 9999; 
+        }
+    }
+  
+
+

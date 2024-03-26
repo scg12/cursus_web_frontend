@@ -237,6 +237,10 @@ function SideContent(props) {
                                 msg={notif.msg} 
                                 notifStyle      = {{marginBottom:"0.3vh"}} 
                                 closeNotif      = {(e)=>{closeNotifHandler(e,notif,index)}} 
+                                
+                                btnStyle        = {classes.buttonStyle}                            
+                                btnTextStyle    = {classes.buttonTexStyle}
+
                                 btnClickHandler = {(e)=>{seNotifAsReadHandler(e,notif,index)}}
                             />
                         )

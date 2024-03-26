@@ -41,6 +41,26 @@
 }
 
 
+.buttonStyle{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  background-color: blue ;
+  border-radius: 3px;
+  width:3vw;
+  height:3vh ;
+  font-size: 0.8vw;
+  margin-bottom: 1vh;
+  align-self: flex-end;
+  margin-right: 1vh;
+}
+
+.buttonTexStyle{
+  font-size: 0.8vw;
+}
+
+
+
 /*--------------------- Theme1 ----------------------- */
 .Theme1_sideContent {
     background-color:rgb(77, 75, 75);

@@ -30,49 +30,6 @@ let tab_valeur_horaire = [];
 const LIGNE_WIDTH = 70;
 const MIN_HEIGHT  = 7;
 
-var msgText1={
-    type   : "info",
-    title  : "Message Test",
-    message: "dffdfdffdfdffdffdfdfdffdfdfdffd",
-    hasAction : false
-}
-
-var msgText2={
-    type   : "release",
-    title  : "Message Test",
-    message: "dffdfdffdfdffdffdfdfdffdfdfdffd",
-    hasAction : false
-}
-
-var msgText3={
-    type   : "urgent",
-    title  : "Message Test",
-    message: "dffdfdffdfdffdffdfdfdffdfdfdffd dffdfdffdfdffdffdfdfdffdfdfdffddffdfdf fdfdffdffdfdfdffdfdfdf fddffdfdffdfdffdffdfdfdffdfdfdffd",
-    hasAction : true,
-    btnText:"ok",
-    
-    btnStyle :{
-        display:"flex",
-        justifyContent:"center",
-        alignItems : "center",
-        backgroundColor : "blue",
-        borderRadius : "3px",
-        width: "3vw",
-        height:"3vh", 
-        fontSize :"0.8vw",
-        marginBottom:"1vh",
-        alignSelf:"flex-end",
-        marginRight:"1vh"
-    },
-
-    btnTextStyle:{
-        fontSize :"0.8vw"
-    },
-
-    btnClickHandler:{
-
-    }
-}
 
 
 
@@ -404,6 +361,8 @@ function SideContent(props) {
                             <Notification 
                                 msg={notif.msg} 
                                 notifStyle      = {{marginBottom:"0.3vh"}} 
+                                btnStyle        = {classes.buttonStyle}                            
+                                btnTextStyle    = {classes.buttonTexStyle}
                                 closeNotif      = {(e)=>{closeNotifHandler(e,notif,index)}} 
                                 btnClickHandler = {(e)=>{seNotifAsReadHandler(e,notif,index)}}
                             />

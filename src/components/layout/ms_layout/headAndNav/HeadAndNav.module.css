@@ -577,6 +577,26 @@ div .Theme3_widget_content :hover {
       right: 0;
     }
   }
+
+  /*----------------------------Verticalement-----------------------------*/
+
+@media screen and (max-width: 420px) {
+  .msgContent{
+    display: flex;
+    color:black;
+    font-size: 1vh;
+    font-weight: 657;
+    align-self: center;
+    margin-left: 0.17vw;
+  }
+
+  .msgBoxImgStyleP{
+    width:2.7vh;
+    height: 2.7vh;
+  }
+  
+}
+
     
 
 
