@@ -1065,7 +1065,7 @@ const resultatsMatiereHandler=(e)=>{
               </select> 
 
             </div>
-            <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
+            <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
               <ProgramCoverClass barchartDataLabels={barchartDataLabels} barchartDataValues={barchartDataValues}  selectedClasse={prgramCoverSelectedClass.id}/>
             </div>
             

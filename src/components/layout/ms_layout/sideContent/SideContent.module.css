@@ -5,8 +5,8 @@
   width   : 20vw;
   
   position : absolute;
-  top      : 7vh; 
-  left     : 0;
+  top      : -3vh; 
+  left     : -7vw;
   z-index  : 9999;
 }
 

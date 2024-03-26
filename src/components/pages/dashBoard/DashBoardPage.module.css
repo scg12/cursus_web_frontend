@@ -6,12 +6,16 @@
     width:13vw;
 }
 
+
 .assiduite{
-    padding-top: 2vh;
+    padding-top: 13vh;
+    display: flex;
     justify-content: center;
     align-items: center;
     width:20vw;
-    height: 0vh;    
+    height: 0vh;
+    align-self:center;
+    
 }
 
 .barChartStyle{
