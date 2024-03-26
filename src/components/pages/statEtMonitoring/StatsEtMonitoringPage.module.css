@@ -24,9 +24,27 @@
 }
 
 .imageStyleP3{
-    width: 8.57vw;
+    width: 8.7vw;
     height: 8.3vw;
 }
+
+.imageStyleP4{
+    width: 9.3vw;
+    height: 8.7vw;
+}
+
+.imageStyleP5{
+    width: 8.7vw;
+    height: 8.7vw;
+}
+
+.imageStyleP6{
+    width: 7.3vw;
+    height: 7.3vw;
+    margin-top: 0.3vh;
+    margin-bottom: 1vh;
+}
+
 
 
 .titleHmself{
