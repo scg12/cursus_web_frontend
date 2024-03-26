@@ -1,3 +1,27 @@
+.tauxCouverture{
+    padding-top: 0vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:13vw;
+}
+
+.assiduite{
+    padding-top: 2vh;
+    justify-content: center;
+    align-items: center;
+    width:20vw;
+    height: 0vh;    
+}
+
+.barChartStyle{
+    width:20vw;
+    height: 23vw;
+    justify-content: center;
+}
+
+
+
 .Theme1_BtnstyleConfig {
     display:flex;
     flex-direction: row;
@@ -37,6 +61,10 @@
     font-weight: 900;
     align-self: flex-start;
     margin-right: 3px;
+}
+
+.radioSize{
+    width:1.3vw
 }
 
 .comboBoxStyle{

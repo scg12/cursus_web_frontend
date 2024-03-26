@@ -93,6 +93,7 @@ function getData(niveauId){
 }
 
     return(
+        
         <Doughnut id={props.id}
             data={state}
                 options={{
@@ -106,7 +107,11 @@ function getData(niveauId){
                         position:'left'
                     }
             }}
+            
         />
+
+      
+        
     )
 }
 export default ProgramCoverNiveau;

@@ -54,6 +54,7 @@
     align-items: flex-start;
 }
 
+
 /*--------------------- Theme1 ----------------------- */
 .Theme1_mainContentPosition {
     z-index: 1;
@@ -132,6 +133,14 @@
 /*///////////////////////////////////TELEPHONES/////////////////////////////*/
 /*----------------------------horizontalement------------------------------*/
 @media screen and (max-height: 420px) {
+    .dashBoardRow{
+        display:flex;
+        flex-direction: row;
+        justify-content: center;
+        border-bottom: 1px solid black;
+        min-height: 33vh;
+    }
+    
     .sectionTitle {
         display: flex;
         flex-direction: row;
@@ -145,8 +154,66 @@
         border-style: solid;
         border-width: 1.3px;
         margin-left: -6.7vw;
-        font-size: 2vh;   
+        font-size: 2vh; 
+         /*------------*/
+        position:absolute;
+        margin-left: -91.3vw;   
+        
     } 
+
+    .comboBoxStyle{
+        font-weight: 600;
+        font-size: 0.97vw;
+        height:4.3vh;
+        border-radius:1vh;
+        border-style:solid;
+        border-color: rgb(128, 180, 248);
+        border-width: 0.47vh;
+        padding-left: 0.7vh !important;
+        padding-bottom: 0.7vh !important;  
+    }
+
+    .labelTitle{
+        font-size: 0.87vw;
+        font-weight: 900;
+        align-self: flex-start;
+        margin-right: 3px;
+    }
+
+    .radioSize{
+        width:1.7vw
+    }
+
+    .tauxCouverture{
+        padding-top: 13vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width:20vw;
+        height: 0vh;
+        margin-left: -7vw;
+    }
+
+    
+    .assiduite{
+        padding-top: 1vh;
+        justify-content: center;
+        align-items: center;
+        width:15vw;
+        height: 0vh;
+        /* margin-left: -7vw; */
+        align-self: center;
+    }
+
+        
+    .barChartStyle{
+        width:20vw;
+        height: 23vw;
+        justify-content: center;
+    }
+        
+    
+    
 
     .Theme1_mainContentPosition {
         position :absolute;
@@ -172,6 +239,16 @@
 /*----------------------------Verticalement-----------------------------*/
 
 @media screen and (max-width: 420px) {
+    .dashBoardRow{
+        display:flex;
+        flex-direction: row;
+        justify-content: center;
+        border-bottom: 1px solid black;
+        min-height: 13vh;
+    }
+
+   
+
     .sectionTitle {
         display: flex;
         flex-direction: row;
@@ -180,13 +257,74 @@
         font-weight: 670;
         align-self: center;
         transform: rotate(-90deg);
-        width: 33vh;
-        height: 4vw;
+        width: 13vh;
+        height: 2vh;
         border-style: solid;
         border-width: 1.3px;
         margin-left: -6.7vw;
-        font-size: 2vh;   
+        font-size: 2vw; 
+         /*------------*/
+        position:absolute;
+        margin-left: -87.3vw;   
+    } 
+
+    .comboBoxStyle{
+        font-weight: 600;
+        font-size: 0.97vw;
+        height:4.3vw;
+        border-radius:1vh;
+        border-style:solid;
+        border-color: rgb(128, 180, 248);
+        border-width: 0.47vh;
+        padding-left: 0.7vh !important;
+        padding-bottom: 0.7vh !important;  
     }
+
+    .labelTitle{
+        font-size: 0.87vh;
+        font-weight: 900;
+        align-self: flex-start;
+        margin-right: 3px;
+    }
+
+    .radioSize{
+        width:1.3vh
+    }
+
+    .tauxCouverture{
+        /*padding-top: 3vh;*/
+        margin-top: -13vh;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width:7vw;
+        
+        margin-bottom: 10vh;
+        /* display: none;
+         */
+    }
+
+    .assiduite{
+        margin-top: -14vh;
+        justify-content: center;
+        align-items: center;
+        width:7vw;
+       /* height: 3vw;*/
+       /* display: none;*/
+    }
+
+
+    
+    .barChartStyle{
+        width:19vh;
+        height: 30vw;
+        justify-content: center;
+    }
+        
+    
+
+    
+   
 }
 
 /*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
