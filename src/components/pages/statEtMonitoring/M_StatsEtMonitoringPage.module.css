@@ -1,3 +1,11 @@
+.imgStyleP {
+    width: 7.7vw;
+    height: 7.3vw;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+
 .size72Vw{
     min-width:72vw;    
 }
@@ -143,6 +151,8 @@
         padding-bottom: 0vh;
     }
 }
+
+
 
 /*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
 /*----------------------------horizontalement------------------------------*/
