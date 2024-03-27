@@ -99,12 +99,12 @@ function getData(niveauId){
             data={state}
                 options={{
                     title:{
-                        display:false,
+                        display:true,
                         text:'Taux de couverture',
                         fontSize:20
                     },
                     legend:{
-                        display:false,
+                        display:true,
                         position:'left',
                         // fontSize:"20vw"
                     }
