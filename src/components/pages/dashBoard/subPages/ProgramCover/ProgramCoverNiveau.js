@@ -12,6 +12,7 @@ import ReactDOM from 'react-dom';
 import axiosInstance from '../../../../../axios';
 import MsgBox from "../../../../msgBox/MsgBox";
 
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -56,7 +57,7 @@ function ProgramCoverNiveau(props){
   },[]);
 
 let state = {
-    labels: ['       %'+t('couvert'), '% '+t('non_couvert')],
+    labels:['       %'+t('couvert'), '% '+t('non_couvert')],
     datasets: [{        
         label: 'couverture',
         backgroundColor: [
@@ -98,13 +99,14 @@ function getData(niveauId){
             data={state}
                 options={{
                     title:{
-                        display:true,
+                        display:false,
                         text:'Taux de couverture',
                         fontSize:20
                     },
                     legend:{
-                        display:true,
-                        position:'left'
+                        display:false,
+                        position:'left',
+                        // fontSize:"20vw"
                     }
             }}
             
