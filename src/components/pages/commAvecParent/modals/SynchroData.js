@@ -283,7 +283,7 @@ function SynchroData(props) {
                 console.log("resultat",res.data);
                 console.log("Modification eventuelles des info des eleves dans l'annuaire en ligne");
                 
-                axiosInstance.post(`modifier-annuaire-mongo-atlas/`, { 
+                axiosInstance.post(`update-annuaire-mongo-atlas/`, { 
                 id_sousetab:currentAppContext.currentEtab
                 
                 }).then((res)=>{  
