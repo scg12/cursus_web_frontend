@@ -564,7 +564,7 @@ function LoginForm(props){
                 currentAppContext.setEnableProfiles(FeaturesCode);
                 currentAppContext.setIdUser(res.data.id_user);
                 currentAppContext.setIdEtabInit(res.data.id_etab_init);
-                currentAppContext.setCurrentEtab(res.data.id_etab_init);
+                currentAppContext.setCurrentEtab(res.data.id_etab_init);                
                 currentAppContext.setActivatedYear(res.data.activated_year);
                 currentAppContext.setInfoSetabs(res.data.info_setabs);
                 currentAppContext.setInfoUser(res.data.info_user);
@@ -574,6 +574,9 @@ function LoginForm(props){
                 currentAppContext.setInfoMatieres(res.data.info_matieres);
                 currentAppContext.setInfoCours(res.data.info_cours);
                 currentUiContext.updateFirstLoad(true);
+
+                //Added 29/03/2024
+                currentAppContext.setCurrentEtabInfos(res.data.info_setabs.find((setab)=>setab.id_setab == res.data.id_etab_init));
 
                 // Added 04/02/2024
                 //Ici, on va aller chercher toutes les notifs non lu du user

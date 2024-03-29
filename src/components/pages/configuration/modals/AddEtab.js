@@ -468,33 +468,30 @@ return (
             }
            
            {(filesContent.length==0) ? 
-                    <div className={classes.etabLogo}>
-                        {(currentUiContext.formInputs[11]!==undefined && currentUiContext.formInputs[11] !== null )?
-                        < img src={baseURL+currentUiContext.formInputs[11]} id='en'  className={classes.logoImg} alt="my image"/>:
-                        < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image"/>}
-                        <CustomButton
-                            btnText='Choisir LogoA' 
-                            buttonStyle={getSmallButtonStyle()}
-                            btnTextStyle = {classes.btnSmallTextStyle}
-                            btnClickHandler = {() => {openFileSelector();}}
-                        />
-                    </div>  
-                        :
+                <div className={classes.etabLogo}>
+                    {(currentUiContext.formInputs[11]!==undefined && currentUiContext.formInputs[11] !== null )?
+                    < img src={currentUiContext.formInputs[11]} className={classes.logoImg} alt="my image"/>:
+                    < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image"/>}
+                    <CustomButton
+                        btnText='Choisir LogoA' 
+                        buttonStyle={getSmallButtonStyle()}
+                        btnTextStyle = {classes.btnSmallTextStyle}
+                        btnClickHandler = {() => {openFileSelector();}}
+                    />
+                </div>                      
+                :                
+                <div className={classes.etabLogo}>
+                    <img id="logo" alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
                     
-                    <div className={classes.etabLogo}>
-                        <img id="logo" alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
-                        
-                        <CustomButton
-                            btnText='Choisir LogoB' 
-                            buttonStyle={getSmallButtonStyle()}
-                            btnTextStyle = {classes.btnSmallTextStyle}
-                            btnClickHandler = {() => {openFileSelector();}}
-                        />
-                    </div>
+                    <CustomButton
+                        btnText='Choisir LogoB' 
+                        buttonStyle={getSmallButtonStyle()}
+                        btnTextStyle = {classes.btnSmallTextStyle}
+                        btnClickHandler = {() => {openFileSelector();}}
+                    />
+                </div>
             }
 
-           
-            
         </div>
        
         <div id='errMsgPlaceHolder'/>

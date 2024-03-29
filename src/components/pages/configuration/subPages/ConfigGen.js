@@ -424,6 +424,16 @@ function ConfigGen(props) {
         e.preventDefault();
         var etablismnt = getFormData();
         console.log(etablismnt);
+       
+        var infosEtab = {};
+        infosEtab.id_setab = etablismnt.id;
+        infosEtab.libelle  = etablismnt.libelle;
+        infosEtab.devise   = etablismnt.devise;
+        infosEtab.logo_url = etablismnt.logo;
+        infosEtab.email    = etablismnt.email;
+        infosEtab.bp       = etablismnt.bp;
+        infosEtab.tel      = etablismnt.tel;
+        infosEtab.id_annee = currentAppContext.currentYear;
      
         if (formDataCheck(etablismnt).length==0) { 
             axiosInstance.post(`update-sousetab/`, {
@@ -441,13 +451,16 @@ function ConfigGen(props) {
                 langue: etablismnt.langue,
                 site_web: etablismnt.site_web,
                 id_annee: currentAppContext.currentYear
-            }).then((res)=>{
+            }).then((res)=>{              
+
+                currentAppContext.setCurrentEtabInfos(infosEtab);
                 console.log(res.data);
                 etablissements = []
                 res.data.etabs.map((etab)=>{etablissements.push(etab)});
                 setGridRows(etablissements);
                 ClearForm();
                 setModalOpen(0);
+                
             })          
 
         } else {

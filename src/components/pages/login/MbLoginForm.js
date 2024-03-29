@@ -415,6 +415,10 @@ function initUserNotifs(foundedNotifs){
             currentUiContext.updateFirstLoad(true);
 
 
+            //Added 29/03/2024
+            currentAppContext.setCurrentEtabInfos(res.data.info_setabs.find((setab)=>setab.id_setab == res.data.id_etab_init));
+
+
             //Ici, on va aller chercher toutes les notifs non lu du user
             initUserNotifs(res.data.info_user.user_comms);          
 

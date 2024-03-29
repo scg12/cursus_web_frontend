@@ -294,7 +294,7 @@ function HeadAndNav(props) {
                 :
                 null
             }
-            <div className={classes.etabInfos}>
+            {/* <div className={classes.etabInfos}>
                 <div className={classes.logoStyle}> 
                     <Link to='/' onClick={backToHome}><img src='images/collegeVogt.png'  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img></Link>
                 </div>
@@ -305,6 +305,31 @@ function HeadAndNav(props) {
                     </div>
                     <div className= {classes.etabMotoStyle}> 
                         <i> {devise} </i> 
+                    </div>
+                </div>
+                
+            </div> */}
+
+            <div className={classes.etabInfos}>
+                <div className={classes.logoStyle}> 
+                    {/* <Link to='/' onClick={backToHome}><img src='images/collegeVogt.png'  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img></Link> */}
+                    <Link to='/' onClick={backToHome}>
+                        {(currentAppContext.currentEtabInfos.logo_url.length==0)?
+                            <img src= "images/logoDefault.png"  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img>
+                            :
+                            <img src={ currentAppContext.currentEtabInfos.logo_url}  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img>
+                        }
+                        
+                    </Link>
+                    
+                </div>
+            
+                <div className= {classes.etabNameDisplayPos}> 
+                    <div className= {classes.etabNameStyle}>
+                       {currentAppContext.currentEtabInfos.libelle}
+                    </div>
+                    <div className= {classes.etabMotoStyle}> 
+                        <i> {currentAppContext.currentEtabInfos.devise} </i> 
                     </div>
                 </div>
                 
