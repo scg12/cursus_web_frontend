@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,grey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -55,6 +55,7 @@ function CarteScolaire(props) {
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
+    const[imageUrl, setImageUrl] = useState('');
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -63,9 +64,20 @@ function CarteScolaire(props) {
             CURRENT_CLASSE_ID = undefined;
         }
 
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
+
         getEtabListClasses();
         
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
 
     const getEtabListClasses=()=>{
         var tempTable=[
@@ -751,7 +763,10 @@ const columnsFr = [
                     leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
                     centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
                     rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                    pageImages:["images/collegeVogt.png"],
+                    // pageImages:["images/collegeVogt.png"],
+                    // pageImages:["images/collegeVogt.png"],
+                    pageImages:[imgUrl],
+                    pageImagesDefault:[imgUrlDefault],
                     pageTitle: "",
                     tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
                     tableData :[...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],

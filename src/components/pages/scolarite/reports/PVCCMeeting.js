@@ -1,8 +1,8 @@
 import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
 import fontBold from "../../../../fonts/timesBold.ttf";
-import {useState } from "react";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
+import Filigrane from "../../../filigrane/Filigrane";
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n';
 
@@ -144,7 +144,7 @@ function PVCCMeeting(props){
                 </View> 
 
                 <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:"12vw"}}>
-                    <Image style={{width:"23vw", height:"23vw"}} src={'images/cachet.png'}/>                       
+                    <Image style={{width:"23vw", height:"23vw", borderRadius:"12vw"}} src={'images/cachet.png'}/>                       
                 </View>
 
                 <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:"12vw"}}>
@@ -189,6 +189,7 @@ function PVCCMeeting(props){
     return (
         <Document>        
             <Page size="A4"   style={styles.page} >
+                <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}} />                    
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={props.pageSet}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
@@ -438,7 +439,7 @@ const styles = StyleSheet.create({
 
     main: {
         textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "70%",
         width: "97%",
         color:'black',

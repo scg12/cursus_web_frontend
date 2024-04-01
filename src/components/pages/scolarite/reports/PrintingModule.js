@@ -36,6 +36,7 @@ export const createPrintingPages=(printingData)=>{
         rightHeaders:[],
         centerHeaders:[],
         pageImages:[],
+        pageImagesDefault:[],
         pageTitle:'',
         tableHeaderModel:[],
         pageRows:[],
@@ -46,14 +47,15 @@ export const createPrintingPages=(printingData)=>{
     
     for(var i = 0; i < printingData.tableData.length; i+eltsPerPage){
         page = {};
-        page.dateText         = printingData.dateText;
-        page.leftHeaders      = [...printingData.leftHeaders];
-        page.rightHeaders     = [...printingData.rightHeaders];
-        page.centerHeaders    = [...printingData.centerHeaders];
-        page.pageImages       = [...printingData.pageImages];
-        page.tableHeaderModel = [...printingData.tableHeaderModel];
-        page.pageTitle        = printingData.pageTitle + getTitleSuffix(index, eltsPerPage, tabSize);
-        page.currentClasse    = printingData.currentClasse;
+        page.dateText           = printingData.dateText;
+        page.leftHeaders        = [...printingData.leftHeaders];
+        page.rightHeaders       = [...printingData.rightHeaders];
+        page.centerHeaders      = [...printingData.centerHeaders];
+        page.pageImages         = [...printingData.pageImages];
+        page.pageImagesDefault  = [...printingData.pageImagesDefault];
+        page.tableHeaderModel   = [...printingData.tableHeaderModel];
+        page.pageTitle          = printingData.pageTitle + getTitleSuffix(index, eltsPerPage, tabSize);
+        page.currentClasse      = printingData.currentClasse;
         
         var subTable = printingData.tableData.splice(i,i+eltsPerPage);
         page.pageRows = [...subTable];

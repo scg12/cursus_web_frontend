@@ -1,8 +1,8 @@
 import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
-import Filigrane from "../../../filigrane/Filigrane";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
+import Filigrane from "../../../filigrane/Filigrane";
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n';
 
@@ -48,8 +48,8 @@ function CertificatScolarite(props){
         return(
             <View style={props.style}>
                 <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:12, textTransform:'uppercase', fontWeight:'heavy'}}>{props.page.centerHeaders[0]}</Text>
-                <Text style={{fontFamily:"Times-Roman", fontSize:12}}>{props.page.centerHeaders[1]}</Text>
-                <Text style={{fontFamily:"Times-Roman", fontSize:8.7}}>{props.page.centerHeaders[2]}</Text>
+                <Text style={{fontFamily:"Times-Roman", fontFamily:"MyItalic", fontSize:12}}>{props.page.centerHeaders[1]}</Text>
+                {/* <Text style={{fontFamily:"Times-Roman", fontSize:8.7}}>{props.page.centerHeaders[2]}</Text>  */}
             </View>
         );
     }
@@ -122,10 +122,11 @@ function CertificatScolarite(props){
 
     return (
         <Page size='A4' style={styles.page} key={0}>
-            <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
+            <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}}/>                    
             <View style={styles.header}>
                 <PageHeadLeft  style={styles.headerLeft}   page={props.pageSet}   />
                 <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
+                <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.pageSet.pageImagesDefault[0]}/>
                 <PageHeadRight style={styles.headerRight}  page={props.pageSet}  />                                     
             </View>
             
@@ -211,11 +212,27 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-9.7vh",
+        left:0,
+        zIndex:2,       
+        width :'14vw',
+        height:'13vw',
+        borderRadius:3,
+        marginLeft:"-7vw"
+    },
+
     imagestyle:{
-        width:'12vw',
-        height:'11vw',
+        position:"absolute",
+        top:"-9.7vh",
+        left:30,
+        zIndex:3,       
+        width :'14vw',
+        height:'13vw',
         borderRadius:3
     },
+
 
     headerCenter:{
         display: "flex",

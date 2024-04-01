@@ -71,7 +71,7 @@ function StudentListTemplate(props){
     const PageLOGO = (props) =>{
         return(
             <View style={props.style}>
-                <Image style={props.imagestyle} src={props.imageSrc}/>
+                <Image  style={props.imagestyle} src={props.imageSrc}/>
             </View>                           
         );
     }
@@ -116,6 +116,7 @@ function StudentListTemplate(props){
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={el.pageImagesDefault[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={el}  />                                     
                 </View>
                 
@@ -205,8 +206,23 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-8vh",
+        left:0,
+        zIndex:2,       
+        width :'12vw',
+        height:'11vw',
+        borderRadius:3,
+        marginLeft:"-7vw"
+    },
+
     imagestyle:{
-        width:'12vw',
+        position:"absolute",
+        top:"-8vh",
+        left:30,
+        zIndex:3,       
+        width :'12vw',
         height:'11vw',
         borderRadius:3
     },
