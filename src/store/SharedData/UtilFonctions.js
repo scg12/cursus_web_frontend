@@ -1,3 +1,39 @@
+export function getImage(imgPath){
+    var input = new Image();
+    input.src = imgPath; 
+    return input;      
+}
+
+export function grey(imgPath,cnv,cnx) {
+    var input  = new Image();
+    input.src  = imgPath;
+    cnv.width  = input.width;
+    cnv.height = input.height;
+
+    cnx.drawImage(input, 0 , 0);
+    var width = input.width;
+    var height = input.height;
+    var imgPixels = cnx.getImageData(0, 0, width, height);
+
+    for(var y = 0; y < imgPixels.height; y++){
+        for(var x = 0; x < imgPixels.width; x++){
+            var i = (y * 4) * imgPixels.width + x * 4;
+            var avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3;
+            imgPixels.data[i] = avg;
+            imgPixels.data[i + 1] = avg;
+            imgPixels.data[i + 2] = avg;
+        }
+    }
+
+    cnx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
+
+    var dataUrl = cnv.toDataURL();
+    var newImg  = dataUrl;
+    console.log("convert",newImg,width,height);
+    return newImg;
+}
+
+
 
 export function formatCurrency(number){
     var formattedValue = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');

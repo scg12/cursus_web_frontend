@@ -90,7 +90,7 @@ function CardListTemplate(props){
 
         return (       
             <View size='A8' orientation='landscape' style={styles.cardPage} key={0}>
-                <Filigrane photoStyle={{width:"23vw", height:"20vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
+                <Filigrane photoStyle={{width:"26vw", height:"23vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
                 <View style={styles.header}>
                     <CardHeadLeft  style={styles.headerLeft}   page={props.page}   />
                     <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.page.pageImages[0]}/>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     photoStyle:{
         width:'10vw',
         height:'10vw',
-        borderRadius:3
+        borderRadius:"7vw"
     },
 
     cardInfo:{

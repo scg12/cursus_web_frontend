@@ -278,6 +278,7 @@ function ConfigGen(props) {
     }
 
     function getFormData(){
+        var photo_file = {}
         var etablissement = { 
             id:0, 
             libelle:'',
@@ -293,10 +294,13 @@ function ConfigGen(props) {
             langue:'fr',
             site_web:'' 
         }
+        
         let logoElt = document.getElementById('logo')
-        if (document.getElementById('logo') !== null)
+        if (document.getElementById('logo') !== null) {
             etablissement.logo = document.getElementById('logo').src;
-        console.log("logo:",document.getElementById('logo'))
+            console.log("logo:",document.getElementById('logo'));           
+        }          
+        
         etablissement.id = document.getElementById('idEtab').value;
         etablissement.type_sousetab = document.getElementById('typeSousetab').value;
         etablissement.libelle = (document.getElementById('libelle').value !='') ? putToEmptyStringIfUndefined(document.getElementById('libelle').value).trim() : putToEmptyStringIfUndefined(document.getElementById('libelle').defaultValue).trim();
@@ -382,6 +386,15 @@ function ConfigGen(props) {
         })  
     }
 
+    function savePhotoOnServer(imageFile){
+        let formData = new FormData();
+        
+        formData.append("logo_filigrane",imageFile)
+        fetch('logo_filigrane/', {
+            method: "POST", body:formData
+        }).then((response)=>{console.log("reponse",response)});
+    }
+
 
     function addNewEtab(e) {       
         e.preventDefault();
@@ -407,9 +420,11 @@ function ConfigGen(props) {
                 console.log(res.data);
                 etablissements = []
                 res.data.etabs.map((etab)=>{etablissements.push(etab)});
+                
                 setGridRows(etablissements);
                 ClearForm();
                 setModalOpen(0);
+               
             }) 
             
         } else {
@@ -453,14 +468,17 @@ function ConfigGen(props) {
                 id_annee: currentAppContext.currentYear
             }).then((res)=>{              
 
-                currentAppContext.setCurrentEtabInfos(infosEtab);
+                //currentAppContext.setCurrentEtabInfos(infosEtab);
+                if( etablismnt.id == currentAppContext.currentEtab)  MajEtabDisplayedInfos(infosEtab);               
                 console.log(res.data);
                 etablissements = []
                 res.data.etabs.map((etab)=>{etablissements.push(etab)});
+               
                 setGridRows(etablissements);
                 ClearForm();
                 setModalOpen(0);
                 
+
             })          
 
         } else {
@@ -468,6 +486,16 @@ function ConfigGen(props) {
             errorDiv.className = classes.errorMsg;
             errorDiv.textContent = formDataCheck(etablismnt);
         }
+    }
+
+    function MajEtabDisplayedInfos(infosEtab){
+        document.getElementById("etab_name").textContent  = infosEtab.libelle;
+        document.getElementById("etab_motto").textContent = infosEtab.devise;
+        if(infosEtab.logo_url!=undefined && infosEtab.logo_url!= null && infosEtab.logo_url!="")
+        document.getElementById("etab_logo").setAttribute('src', infosEtab.logo_url);
+
+        console.log("infos", document.getElementById("etab_motto"))
+        
     }
 
     function deleteRow(rowId) {

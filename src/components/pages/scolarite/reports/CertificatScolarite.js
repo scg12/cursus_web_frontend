@@ -109,7 +109,7 @@ function CertificatScolarite(props){
                     <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:13, textTransform:'uppercase', fontWeight:'heavy'}}>Le {props.qualite}</Text>                       
                 </View>
                 <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:"10vw", marginTop:"3vh", marginTop:"1vh"}}>
-                    <Image style={{width:"23vw", height:"23vw"}} src={'images/cachet.png'}/>                       
+                    <Image style={{width:"23vw", height:"23vw", borderRadius:"12vw"}} src={'images/cachet.png'}/>                       
                 </View>
 
                 <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:"12vw", marginTop:"0.7vh", marginLeft:'3vw'}}>
@@ -122,7 +122,7 @@ function CertificatScolarite(props){
 
     return (
         <Page size='A4' style={styles.page} key={0}>
-            <Filigrane photoStyle ={{width:"73vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
+            <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
             <View style={styles.header}>
                 <PageHeadLeft  style={styles.headerLeft}   page={props.pageSet}   />
                 <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>

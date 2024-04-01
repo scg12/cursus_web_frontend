@@ -46,6 +46,7 @@ var ElevePageSet=[];
 var printedETFileName ='';
 
 
+
 function ListeDesEleves(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
@@ -66,6 +67,9 @@ function ListeDesEleves(props) {
         getEtabListClasses();
         
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
@@ -829,14 +833,15 @@ const columnsFr = [
     }
 
     const printStudentList=()=>{
-        
+       
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
                 dateText:'Yaounde, le 14/03/2023',
                 leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
                 centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
                 rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
+                //pageImages:["images/collegeVogt.png"],
+                pageImages:[imgUrl],
                 pageTitle: "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL,
                 tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
                 tableData :[...gridRows],

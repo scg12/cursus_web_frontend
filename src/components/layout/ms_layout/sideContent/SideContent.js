@@ -282,7 +282,8 @@ function SideContent(props) {
                     </select>
                 </div>
             </div>
-            
+            <input id="logo_url" type ="hidden"/>
+            <canvas id="output" style={{display:'none'}}></canvas>
         </div>
     );
 }
