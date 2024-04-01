@@ -765,7 +765,7 @@ const columnsFr = [
             var PRINTING_DATA ={
                 dateText:'Yaounde, le 14/03/2023',
                 leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                centerHeaders:[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
                 rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
                 pageImages:["images/collegeVogt.png"],
                 pageTitle: "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL,
