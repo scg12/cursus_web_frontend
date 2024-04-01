@@ -29,6 +29,7 @@ import PDFTemplate from '../pages/scolarite/reports/PDFTemplate';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import ETTemplate from '../pages/scolarite/reports/ETTemplate';
 import {createPrintingPages} from '../pages/scolarite/reports/PrintingModule';
+import { grey } from '../../store/SharedData/UtilFonctions';
 
 
 
@@ -90,6 +91,7 @@ function GrilleEmploiTemps(props) {
     const [isPPset, setIsPPset] = useState(false);
     const [selectedPP, setSelectedPP] = useState({});
     const [currentPP, setCurrentPP] = useState({});
+    const[imageUrl, setImageUrl] = useState('');
     
     
     
@@ -106,8 +108,16 @@ function GrilleEmploiTemps(props) {
     }
     
     
+    
     useEffect(()=> {
-        console.log("les menus",currentUiContext.previousSelectedMenuID, currentUiContext.currentSelectedMenuID)
+        console.log("les menus",currentUiContext.previousSelectedMenuID, currentUiContext.currentSelectedMenuID);
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
        // if((currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID) || (currentUiContext.previousSelectedMenuID=='0' && currentUiContext.currentSelectedMenuID=='0')){
         if(optClasse.length == 0){
             console.log("00000 ",currentUiContext)
@@ -176,6 +186,9 @@ function GrilleEmploiTemps(props) {
         }
  
     },[currentUiContext.TAB_CRENEAU_PAUSE]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
    
     /*************************** <Managing Theme> ****************************/
@@ -1358,9 +1371,10 @@ function PrintEmploiDeTemps(){
         var PRINTING_DATA ={
             dateText:'Yaounde, le 14/03/2023',
             leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-            centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+            centerHeaders:[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+', Telephone:'+ currentAppContext.currentEtabInfos.tel],
             rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-            pageImages:["images/collegeVogt.png"],
+            pageImages:[imgUrl],
+            pageImagesDefault:[imgUrlDefault],
             pageTitle: t("class_schedule") + currentClasseLabel /*CURRENT_CLASSE_LABEL*/,
             tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
             tableData :[],

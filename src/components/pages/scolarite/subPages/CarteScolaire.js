@@ -122,30 +122,31 @@ function CarteScolaire(props) {
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
-            listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
+            listElt                 = {};
+            listElt.id              = elt.id;
+            listElt.displayedName   = elt.nom +' '+elt.prenom;
+            listElt.nom             = elt.nom;
+            listElt.prenom          = elt.prenom;
+            listElt.rang            = rang; 
+            listElt.presence        = 1; 
+            listElt.matricule       = elt.matricule;
+            listElt.photo_url       = elt.photo_url;
+            listElt.date_naissance  = convertDateToUsualDate(elt.date_naissance);
+            listElt.lieu_naissance  = elt.lieu_naissance;
+            listElt.date_entree     = elt.date_entree;
+            listElt.nom_pere        = elt.nom_pere;
+            listElt.tel_pere        = elt.tel_pere;    
+            listElt.email_pere      = elt.email_pere;
+            listElt.nom_mere        = elt.nom_mere;
+            listElt.tel_mere        = elt.tel_mere;   
+            listElt.email_mere      = elt.email_mere;
             listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant";
+            listElt.sexe            = elt.sexe;
+            listElt.redouble        = (elt.redouble == false) ? "nouveau" : "Redoublant";
 
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
+            listElt.nom_parent      = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
+            listElt.tel_parent      = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
+            listElt.email_parent    = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
 
             
             formattedList.push(listElt);
@@ -759,13 +760,13 @@ const columnsFr = [
             if(CURRENT_CLASSE_ID != undefined){
                 var PRINTING_DATA ={
                     currentClasse: CURRENT_CLASSE_LABEL,
-                    dateText:'Yaounde, le 14/03/2023',
-                    leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                    centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
+                    dateText     :'Yaounde, le 14/03/2023',
+                    leftHeaders  :["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    centerHeaders:[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+', Telephone:'+ currentAppContext.currentEtabInfos.tel],
                     rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
                     // pageImages:["images/collegeVogt.png"],
                     // pageImages:["images/collegeVogt.png"],
-                    pageImages:[imgUrl],
+                    pageImages   :[imgUrl],
                     pageImagesDefault:[imgUrlDefault],
                     pageTitle: "",
                     tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],

@@ -192,7 +192,9 @@ function PVCCMeeting(props){
                 <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}} />                    
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={props.pageSet}   />
+                    {/* <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/> */}
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.pageSet.pageImagesDefault[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={props.pageSet}  />                                     
                 </View>
                 
@@ -320,11 +322,33 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
+    // imagestyle:{
+    //     width:'12vw',
+    //     height:'11vw',
+    //     borderRadius:3
+    // },
+
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-9.7vh",
+        left:0,
+        zIndex:2,       
+        width :'14vw',
+        height:'13vw',
+        borderRadius:3,
+        marginLeft:"-7vw"
+    },
+
     imagestyle:{
-        width:'12vw',
-        height:'11vw',
+        position:"absolute",
+        top:"-9.7vh",
+        left:30,
+        zIndex:3,       
+        width :'14vw',
+        height:'13vw',
         borderRadius:3
     },
+
 
     headerCenter:{
         display: "flex",

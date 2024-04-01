@@ -16,7 +16,7 @@ import UiContext from "../../../../store/UiContext";
 import { useTranslation } from "react-i18next";
 import { useFilePicker } from 'use-file-picker';
 import {isMobile} from 'react-device-detect';
-import {getTodayDate} from '../../../../store/SharedData/UtilFonctions';
+import {getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
 
 
 
@@ -53,6 +53,7 @@ function CursusAcad(props) {
     
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const selectedTheme = currentUiContext.theme;
+    const[imageUrl, setImageUrl] = useState('');
     // const [dossierEleve, setDossierEleve] = useState([]);
    
     
@@ -61,9 +62,19 @@ function CursusAcad(props) {
         //getClassStudentList(props.currentClasseId);
         console.log("dossier+eleve", props.dossierEleve,props.eleve);
         dossierEleve = props.dossierEleve;
-        // props.eleve.persoData       
+        // props.eleve.persoData    
+        
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
       
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
   
     const  getClassStudentList=(classId)=>{
         var listEleves = []
@@ -166,9 +177,10 @@ function CursusAcad(props) {
         var PRINTING_DATA ={
             dateText     : 'Yaounde, le '+getTodayDate(),
             leftHeaders  : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-            centerHeaders: ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+            centerHeaders       :[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+', Telephone:'+ currentAppContext.currentEtabInfos.tel],
             rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-            pageImages   : ["images/collegeVogt.png"],
+            pageImages          :[imgUrl],
+            pageImagesDefault   :[imgUrlDefault],
             classeLabel  : props.dossierEleve[0].classe,
             pageTitle    : t("dossier_academique_of_student") +' '+ props.eleve.nom+' '+props.eleve.prenom,
             eleveData    : eleveData
@@ -243,7 +255,7 @@ function CursusAcad(props) {
                             {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>
                         :
-                        <PDFViewer style={{height:"87.3vh", width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                        <PDFViewer style={{height:"87.3vh", width: "120vw" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
                             <StudentCursus pageSet={studentFolderData}/>
                         </PDFViewer>
                     } 

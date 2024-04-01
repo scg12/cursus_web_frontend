@@ -12,7 +12,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, grey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -91,13 +91,24 @@ function ConseilClasse(props) {
     const [optClasse, setOpClasse]  = useState([]);
     const [isLoading, setIsloading] = useState(false);
     const[LoadingVisible,setLoadingVisible] = useState(false);
+    const[imageUrl, setImageUrl] = useState('');
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
         if(gridMeeting.length==0)  CURRENT_CLASSE_ID = undefined;
+       
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabListClasses();
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
   
     function getClassMeetingData(classId){
@@ -1259,9 +1270,11 @@ const columnsFr = [
                 ville               :'Yaounde',
 
                 leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders       : ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                centerHeaders       : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+', Telephone:'+ currentAppContext.currentEtabInfos.tel],
                 rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages          : ["images/collegeVogt.png"],
+                // pageImages          : ["images/collegeVogt.png"],
+                pageImages          :[imgUrl],
+                pageImagesDefault   :[imgUrlDefault],
                 pageTitle           : "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,
                 tableHeaderModel    : [t('form_nom'), t('form_dateNaiss'), t("form_lieuNaiss"), t('moyenne'), t("redoublant"), t("decision_conseil"), t("promotion")],
                 
