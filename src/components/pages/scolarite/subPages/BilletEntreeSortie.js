@@ -10,7 +10,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -209,18 +209,18 @@ function BilletEntreeSortie(props) {
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
-            listElt={};
-            listElt.id_billet = elt.id_billet;
-            listElt.id = rang; 
-            listElt.idEleve = elt.id;
-            listElt.matricule = elt.matricule;
-            listElt.nom  = elt.nom;
-            listElt.rang = rang; 
-            listElt.type_duree = elt.type_duree;
-            listElt.date_jour =  (listElt.type_duree=='jour') ? '': elt.date_jour;
-            listElt.date_deb = elt.date_deb;
-            listElt.date_fin = elt.date_fin;
-            listElt.status = elt.status;
+            listElt             = {};
+            listElt.id_billet   = elt.id_billet;
+            listElt.id          = rang; 
+            listElt.idEleve     = elt.id;
+            listElt.matricule   = elt.matricule;
+            listElt.nom         = elt.nom;
+            listElt.rang        = ajouteZeroAuCasOu(rang); 
+            listElt.type_duree  = elt.type_duree;
+            listElt.date_jour   = (listElt.type_duree=='jour') ? '': elt.date_jour;
+            listElt.date_deb    = elt.date_deb;
+            listElt.date_fin    = elt.date_fin;
+            listElt.status      = elt.status;
             
             if (listElt.type_duree != 'jour'){
                 listElt.dateJour_deb = elt.date_jour+' '+elt.date_deb;
