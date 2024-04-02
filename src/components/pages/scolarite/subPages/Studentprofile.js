@@ -735,21 +735,21 @@ const columnsFr = [
     
     const printStudentProfille=()=>{       
         var PRINTING_DATA ={
-            dateText            :'Yaounde, le 14/03/2023',
-            leftHeaders         :["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-            centerHeaders       :[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+', Telephone:'+ currentAppContext.currentEtabInfos.tel],
-            rightHeaders        :["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-            pageImages          :[imgUrl],
-            pageImagesDefault   :[imgUrlDefault],
-            pageTitle           : "Fiche disciplinaire",            
-            absencesHeaderModel :[t('date'), t('nbre_hour'), t('justify'), t('not_justify')],
-            absencesData        :[...ELEVE_ABSENCES],
-            sanctionsHeaderModel:[t('date'), t('libelle'), t('duree')],
-            sanctionsData       :[...ELEVE_SANCTIONS],
-            eleveInfo           :SELECTED_ELEVE,
-            classeLabel         :CURRENT_CLASSE_LABEL,
-            date_debut          :DATE_DEBUT,
-            date_fin            :DATE_FIN,
+            dateText            :'Yaounde, '+ t('le')+ ' '+ getTodayDate(),
+            leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders       : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+', Telephone:'+ currentAppContext.currentEtabInfos.tel],
+            rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+            pageImages          : [imgUrl],
+            pageImagesDefault   : [imgUrlDefault],
+            pageTitle           : t("fiche_disciplinaire_M"),            
+            absencesHeaderModel : [t('date'), t('nbre_hour'), t('justify'), t('not_justify')],
+            absencesData        : [...ELEVE_ABSENCES],
+            sanctionsHeaderModel: [t('date'), t('libelle'), t('duree')],
+            sanctionsData       : [...ELEVE_SANCTIONS],
+            eleveInfo           : SELECTED_ELEVE,
+            classeLabel         : CURRENT_CLASSE_LABEL,
+            date_debut          : DATE_DEBUT,
+            date_fin            : DATE_FIN,
 
             numberEltPerPage:ROWS_PER_PAGE  
         };

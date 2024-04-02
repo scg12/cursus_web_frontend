@@ -1249,32 +1249,29 @@ function setEditMeetingGlobalData(meeting){
 
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
-                date:'27/04/2023',
-                time:'17h45',
-                schoolName:'College FX Vogt',
-                quartier:'Mvolye',
-                ville:'Yaounde',
+                date                : CURRENT_MEETING.date,
+                time                : CURRENT_MEETING.heure,
+                schoolName          : currentAppContext.currentEtabInfos.libelle,
+                quartier            : 'Mvolye',
+                ville               : 'Yaounde',
                 
-                typeMeeting : CURRENT_MEETING.objetLabel,
-                compteRendu: CURRENT_MEETING.decision,
-                //successMark:CURRENT_MEETING.note_passage,
-                //exclusionMark:CURRENT_MEETING.note_exclusion,
-                eleveConvoques:  [...CURRENT_MEETING.listConvoques],
-                elevesDecisions: [...CURRENT_MEETING.listCaspasCas],
-                participants:    [...CURRENT_MEETING.listParticipants],
-
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                // pageImages:["images/collegeVogt.png"],
-                pageImages:[imgUrl],
-                pageImagesDefault:[imgUrlDefault],
-                pageTitle: "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,
+                typeMeeting         : CURRENT_MEETING.objetLabel,
+                compteRendu         : CURRENT_MEETING.decision,
                
-                numberEltPerPage:ROWS_PER_PAGE  
+                eleveConvoques      : [...CURRENT_MEETING.listConvoques],
+                elevesDecisions     : [...CURRENT_MEETING.listCaspasCas],
+                participants        : [...CURRENT_MEETING.listParticipants],
+
+                leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders       : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages          : [imgUrl],
+                pageImagesDefault   : [imgUrlDefault],
+                pageTitle           : "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,               
+                numberEltPerPage    : ROWS_PER_PAGE  
             };
-            printedETFileName = "PV_Conseil_discipline("+CURRENT_CLASSE_LABEL+").pdf";
-            
+
+            printedETFileName = "PV_Conseil_discipline("+CURRENT_CLASSE_LABEL+").pdf";            
             setModalOpen(4);
             CCPageSet={...PRINTING_DATA};
             console.log("ici la",CCPageSet);                    

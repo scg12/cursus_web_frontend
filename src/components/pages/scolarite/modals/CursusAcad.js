@@ -175,20 +175,18 @@ function CursusAcad(props) {
 
 
         var PRINTING_DATA ={
-            dateText     : 'Yaounde, le '+getTodayDate(),
-            leftHeaders  : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-            centerHeaders       :[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
-            rightHeaders : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-            pageImages          :[imgUrl],
-            pageImagesDefault   :[imgUrlDefault],
-            classeLabel  : props.dossierEleve[0].classe,
-            pageTitle    : t("dossier_academique_of_student") +' '+ props.eleve.nom+' '+props.eleve.prenom,
-            eleveData    : eleveData
-            //numberEltPerPage:ROWS_PER_PAGE  
+            dateText          : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+            leftHeaders       : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders     : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+            rightHeaders      : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+            pageImages        : [imgUrl],
+            pageImagesDefault : [imgUrlDefault],
+            classeLabel       : props.dossierEleve[0].classe,
+            pageTitle         : t("dossier_academique_of_student") +' '+ props.eleve.nom+' '+props.eleve.prenom,
+            eleveData         : eleveData
         };
-
-        printedETFileName = 'Dossier_academique('+props.eleve.nom+'_'+props.eleve.prenom+').pdf';
-        studentFolderData = PRINTING_DATA;
+        printedETFileName     = 'Dossier_academique('+props.eleve.nom+'_'+props.eleve.prenom+').pdf';
+        studentFolderData     = PRINTING_DATA;
         console.log("ici la",PRINTING_DATA);
         setModalOpen(1);
     }
@@ -245,7 +243,7 @@ function CursusAcad(props) {
     
 
     return (
-        <div className={'card '+ classes.formContainerP} style={{height:(props.dossierEleve.length*LIST_HEIGHT)+ "vh", justifyContent:"flex-start", maxHeight:"97.3vh", minHeight:"67vh"}}>          
+        <div className={'card '+ classes.formContainerP} style={{height:"93vh", justifyContent:"flex-start", maxHeight:"97.3vh", minHeight:"67vh"}}>          
            
             {(modalOpen!=0) && <BackDrop />}
             {(modalOpen==1) &&              
@@ -255,7 +253,7 @@ function CursusAcad(props) {
                             {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>
                         :
-                        <PDFViewer style={{height:"87.3vh", width: "120vw" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                        <PDFViewer style={{height:"87.3vh", width: "70vw" , marginTop:"15vh", display:'flex', flexDirection:'column', justifyContent:'center',}}>
                             <StudentCursus pageSet={studentFolderData}/>
                         </PDFViewer>
                     } 
@@ -297,7 +295,7 @@ function CursusAcad(props) {
             
             </div>
 
-            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', marginTop:'1.7vh', /*paddingTop:'27vh',*/ paddingBottom:'7vh', marginBottom:'3vh', height:'auto', overflowY:'scroll'}}>
+            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', marginTop:'1.7vh', /*paddingTop:'27vh',*/ paddingBottom:'1vh', marginBottom:'3vh', height:'100%', overflowY:'scroll'}}>
                 {props.dossierEleve.map((resultat,index)=>{
                     return(
                         <div style={{display:'flex', flexDirection:'column',fontSize:'1vw', fontWeight:'bold', marginLeft:'0vw', marginBottom:'2.3vh', justifyContent:'center', width:"107%"}}>

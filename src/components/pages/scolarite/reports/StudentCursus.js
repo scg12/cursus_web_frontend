@@ -347,8 +347,8 @@ const styles = StyleSheet.create({
     }, 
 
     photoStyle:{
-        width:'13vw',
-        height:'10vw',
+        width:'15vw',
+        height:'13vw',
         borderRadius:3
     },
 

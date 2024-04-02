@@ -49,7 +49,7 @@ function CertificatScolarite(props){
             <View style={props.style}>
                 <Text style={{fontFamily:"Times-Roman", fontFamily:"MyBold", fontSize:12, textTransform:'uppercase', fontWeight:'heavy'}}>{props.page.centerHeaders[0]}</Text>
                 <Text style={{fontFamily:"Times-Roman", fontFamily:"MyItalic", fontSize:12}}>{props.page.centerHeaders[1]}</Text>
-                {/* <Text style={{fontFamily:"Times-Roman", fontSize:8.7}}>{props.page.centerHeaders[2]}</Text>  */}
+                <Text style={{fontFamily:"Times-Roman", fontSize:8.7}}>{props.page.centerHeaders[2]}</Text>  
             </View>
         );
     }

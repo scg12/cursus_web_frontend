@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, grey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -844,23 +844,21 @@ const columnsFr = [
        
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                //pageImages:["images/collegeVogt.png"],
-                pageImages:[imgUrl], 
-                pageImagesDefault:[imgUrlDefault],
-                pageTitle: "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL,
-                tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                tableData :[...gridRows],
-                numberEltPerPage:ROWS_PER_PAGE  
+                dateText         : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders     : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages       : [imgUrl], 
+                pageImagesDefault: [imgUrlDefault],
+                pageTitle        : t("studentList_of")+' '+ CURRENT_CLASSE_LABEL,
+                tableHeaderModel : [t("matricule_short"), t('displayedName_M'), t("form_dateNaiss"), t("form_lieuNaiss"), t("enrole en"), t("nom_parent"), t("nouveau")],
+                tableData        : [...gridRows],
+                numberEltPerPage : ROWS_PER_PAGE  
             };
-            printedETFileName = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
+            printedETFileName    = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4);
-            ElevePageSet=[];
-            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet         = [];
+            ElevePageSet         = createPrintingPages(PRINTING_DATA);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING;

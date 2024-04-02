@@ -171,6 +171,7 @@ function LookStudentPresence(props) {
             setGridRows([]);
             setPresent(0);
             setAbsent(0); 
+            setIsValid(false);
 
         } else{
             getStudentWithAbsence(coursId, classeId);            
@@ -474,9 +475,12 @@ function LookStudentPresence(props) {
     }
 
     function getStudentCheckList(){
-        console.log("les dates",DATE_VERIF,tabAbsenceCours)
-        var index ;
         
+        console.log("les dates",DATE_VERIF,tabAbsenceCours);
+        
+        var index ;        
+        setIsValid(false);
+       
         if(DATE_VERIF.length==0 ||!((isNaN(DATE_VERIF) && (!isNaN(Date.parse(DATE_VERIF)))))){
            
             chosenMsgBox = MSG_WARNING_APPEL;
@@ -484,7 +488,7 @@ function LookStudentPresence(props) {
                 visible:true, 
                 msgType:"danger", 
                 msgTitle:t("error_M"),
-                message:t("enter_good_meeting_date")
+                message:t("incorrect_date")
             }) 
            
         }else{
@@ -494,7 +498,7 @@ function LookStudentPresence(props) {
                     visible:true, 
                     msgType:"warning", 
                     msgTitle:t("warning_M"), 
-                    message:t("la date fournie ne correspond pas a une date de cours!")
+                    message:t("period_not_matching")
                 }) 
 
             } else {
@@ -508,6 +512,7 @@ function LookStudentPresence(props) {
                 setGridRows(listEleves);
                 setPresent(listEleves.length-absencesJour.length);
                 setAbsent(absencesJour.length);
+                setIsValid(true);
             }
         }
     }
@@ -745,7 +750,7 @@ function LookStudentPresence(props) {
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            disable={(isValid == false)}   
                         />
 
                     </div>
