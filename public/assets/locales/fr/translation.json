@@ -1,4 +1,10 @@
-{   "years"                       : "Ans",        
+{   
+    "depot_fiches"                : "Dépôt de Fiche de Progression",
+    "fiches_progression_attendues": "Certaines de vos fiches de progressions sont encore attendue !!",
+    "FP_management_M"             : "SUIVI DES FICHES DE PROGRESSION",
+    "awaited_FP"                  : "FICHES DE PROGRESSION ENCORE ATTENDUES",
+    "remind_teachers"             : "Relancer les Profs",
+    "years"                       : "Ans",        
     "student_registration_form_M" : "FORMULAIRE D'ENREGISTREMENT ELEVE",
     "receipt_printing"            : "Impression recu",
     "topay_over_waited_for_tranch": "Le montant saisi est supérieur à la tranche!",

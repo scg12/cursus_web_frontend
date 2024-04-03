@@ -22,69 +22,8 @@ var userProfile = ''
 var profileAuthorisationString = ''
 var ERROR_CODE;
 
-var msgText1={
-    type   : "info",
-    libelle  : "Message Test",
-    Description: "dffdfdffdfdffdffdfdfdffdfdfdffd",
-    date_debut_validite:"07/01/2024",
-    date_fin_validite:"31/01/2024",
-    hasAction : false
-}
 
-var msgText2={
-    type   : "release",
-    libelle  : "Message Test",
-    Description: "dffdfdffdfdffdffdfdfdffdfdfdffd",
-    date_debut_validite:"07/01/2024",
-    date_fin_validite:"31/01/2024",
-    hasAction : false
-}
-
-var msgText3={
-    type   : "urgent",
-    libelle  : "Message Test",
-    Description: "dffdfdffdfdffdffdfdfdffdfdfdffd dffdfdffdfdffdffdfdfdffdfdfdffddffdfdf fdfdffdffdfdfdffdfdfdf fddffdfdffdfdffdffdfdfdffdfdfdffd",
-    date_debut_validite:"07/01/2024",
-    date_fin_validite:"31/01/2024",
-    hasAction : true,
-    btnText:"ok",
-    
-    btnStyle :{
-        display:"flex",
-        justifyContent:"center",
-        alignItems : "center",
-        backgroundColor : "blue",
-        borderRadius : "3px",
-        width: "3vw",
-        height:"3vh", 
-        fontSize :"0.8vw",
-        marginBottom:"1vh",
-        alignSelf:"flex-end",
-        marginRight:"1vh"
-    },
-
-    btnTextStyle:{
-        fontSize :"0.8vw"
-    },
-
-    btnClickHandler:{
-
-    }
-}
-
-var listNotifs=[
-    // {   msg: msgText1, 
-    //     isVisible: true,  
-    // },
-
-    // {   msg: msgText2, 
-    //     isVisible: true,  
-    // },
-
-    // {   msg: msgText3, 
-    //     isVisible: true,  
-    // },
-];
+var listNotifs=[];
 
 
 // let FeaturesCode = {
@@ -572,25 +511,7 @@ function LoginForm(props){
                 date_fin_validite   : com.validite_fin,
                 hasAction           : true,
                 btnText             : t("set_as_read"),
-                
-                btnStyle :{
-                    display:"flex",
-                    justifyContent:"center",
-                    alignItems : "center",
-                    backgroundColor : "blue",
-                    borderRadius : "3px",
-                    width: "3vw",
-                    height:"3vh", 
-                    fontSize :"0.8vw",
-                    marginBottom:"1vh",
-                    alignSelf:"flex-end",
-                    marginRight:"1vh"
-                },
-            
-                btnTextStyle:{
-                    fontSize :"0.8vw"
-                },
-            
+             
                 btnClickHandler:{
             
                 }
@@ -656,7 +577,6 @@ function LoginForm(props){
 
                 // Added 04/02/2024
                 //Ici, on va aller chercher toutes les notifs non lu du user
-
                 initUserNotifs(res.data.info_user.user_comms);
                 
                 
@@ -667,11 +587,7 @@ function LoginForm(props){
                 currentUiContext.setIsDashboardNav(true);
 
                 loadEmploiDetemps(res.data.id_etab_init);
-                setIsLoading(false);
-
-            
-                // getUserCommnicationsInternes(currentAppContext.idUser);
-                // console.log("notifs",listNotifs);
+                setIsLoading(false);            
                 
                 currentUiContext.updateTheme(res.data.theme);
                 currentUiContext.updatePhotoUrl(res.data.photo_url);
@@ -726,21 +642,6 @@ function LoginForm(props){
                                 <label for="password">{t("password" )}</label>
                             </div>
 
-
-                            {/*<div id="roles" class="input-field">
-                                <Select 
-                                    options={optRoles}
-                                    className="basic-single"
-                                    classNamePrefix="select"
-                                    //defaultValue={optAnnee[0]}
-                                    placeholder = 'Selectionnez une qualite'
-                                    styles={roleStyles}
-                                    onChange={dropDownHandler} 
-                                />
-                                </div>*/
-                            }
-
-                            
                             <Link className= {classes.linkStyle}> <i>{t("forgetPwd")}</i></Link>
                             { passWordError ? 
                                 <p className={classes.errorMsgStyle}> {t(getErrorMessage(ERROR_CODE))}</p> 

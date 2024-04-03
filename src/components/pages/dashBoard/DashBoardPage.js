@@ -1029,7 +1029,7 @@ const resultatsMatiereHandler=(e)=>{
   return ( 
     <div className={classes.viewContent}>
       <div className= {getCurrentContaintTheme()}>
-        <div className={classes.dashBoardRow}>
+        <div className={isMobile ? M_classes.dashBoardRow : classes.dashBoardRow}>
             
           <div className={isMobile ? M_classes.sectionTitle +' '+ getSectionBgClr() : classes.sectionTitle +' '+ getSectionBgClr()}>
             {t('taux_couverture')}
@@ -1038,8 +1038,8 @@ const resultatsMatiereHandler=(e)=>{
             
           <div className={classes.column25}>
             <div className={classes.selectZone} style={{marginLeft:'-3.7vw'}}>
-              <div className={classes.labelTitle}>{t('level')} : </div>
-              <select id='selectNiveau1' onChange={progCompletionLevelHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}>{t('level')} : </div>
+              <select id='selectNiveau1' onChange={progCompletionLevelHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optNiveauPC||[]).map((option)=> {
                       return(
                           <option  value={option.value}>{option.label}</option>
@@ -1047,7 +1047,7 @@ const resultatsMatiereHandler=(e)=>{
                   })}
               </select> 
             </div>
-            <div style={{paddingTop:'13vh', display: 'flex', width:'13vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
+            <div  className={isMobile ? M_classes.tauxCouverture : classes.tauxCouverture}>
               <ProgramCoverNiveau  id='couvertureByLevel' DoughnutData={DoughnutData} selectedNiveau={currentUiContext.prgramCoverSelectedLevel.id}/>
             </div>
           </div>
@@ -1055,8 +1055,8 @@ const resultatsMatiereHandler=(e)=>{
             
           <div className={classes.column26}>
             <div className={classes.selectZone} style={{marginLeft:'2vh'}}>
-              <div className={classes.labelTitle}> {t('class')}   : </div>
-              <select id='selectClasse1' onChange={progCompletionClassHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('class')}   : </div>
+              <select id='selectClasse1' onChange={progCompletionClassHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optClassePC||[]).map((option)=> {
                       return(
                           <option  value={option.value}>{option.label}</option>
@@ -1065,7 +1065,7 @@ const resultatsMatiereHandler=(e)=>{
               </select> 
 
             </div>
-            <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
+            <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
               <ProgramCoverClass barchartDataLabels={barchartDataLabels} barchartDataValues={barchartDataValues}  selectedClasse={prgramCoverSelectedClass.id}/>
             </div>
             
@@ -1073,8 +1073,8 @@ const resultatsMatiereHandler=(e)=>{
 
           <div>
             <div className={classes.selectZone} style={{marginLeft:'2vh'}}>
-                <div className={classes.labelTitle}> {t('matiere')}   : </div>
-                <select id='selectMatiere1' onChange={progCompletionMatiereHandler} className={classes.comboBoxStyle} style={{width:'10.3vw', marginBottom:1}}>
+                <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('matiere')}   : </div>
+                <select id='selectMatiere1' onChange={progCompletionMatiereHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'10.3vw', marginBottom:1}}>
                     {(optMatieresPC||[]).map((option)=> {
                         return(
                             <option  value={option.value}>{option.label}</option>
@@ -1101,15 +1101,15 @@ const resultatsMatiereHandler=(e)=>{
 
         </div>
 
-        <div className={classes.dashBoardRow}>
+        <div className={isMobile ? M_classes.dashBoardRow : classes.dashBoardRow}>
           <div className={isMobile ? M_classes.sectionTitle+' '+ getSectionBgClr() : classes.sectionTitle +' '+ getSectionBgClr()}>
             {t('effectifs')}
           </div>
           
           <div className={classes.column30}>
             <div className={classes.selectZone} style={{marginLeft:'-4.7vw'}}>
-              <div className={classes.labelTitle}> {t('level')}   : </div>
-              <select id='selectNiveau2' onChange={effectifNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('level')}   : </div>
+              <select id='selectNiveau2' onChange={effectifNiveauHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optNiveauEFF||[]).map((option)=> {
                     return(
                       <option  value={option.value}>{option.label}</option>
@@ -1117,16 +1117,16 @@ const resultatsMatiereHandler=(e)=>{
                 })}
               </select>
               <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}>{t('effectifs_total')} </label>
-                <input type='radio' checked={!isInscritLevelChart}  value={'enreg'} name='effectifsNiveau' onClick={()=> { console.log(isInscritLevelChart); isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true);getEffectifData2()}}/>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}> {t('effectifs_inscrit')}</label>
-                <input type='radio' checked={isInscritLevelChart}  value={'inscrits'} name='effectifsNiveau' onClick={()=> { console.log(isInscritLevelChart); isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true);getEffectifData2()}}/>
+                <label className={isMobile ? M_classes.labelTitle: classes.labelTitle} style={{color:'grey', marginLeft:'2vw', marginRight:3}}>{t('effectifs_total')} </label>
+                <input className={isMobile ? M_classes.radioSize : classes.radioSize} type='radio' checked={!isInscritLevelChart}  value={'enreg'} name='effectifsNiveau' onClick={()=> { console.log(isInscritLevelChart); isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true);getEffectifData2()}}/>
+                <label className={isMobile ? M_classes.labelTitle: classes.labelTitle}style={{color:'grey', marginLeft:'2vw', marginRight:3}}> {t('effectifs_inscrit')}</label>
+                <input className={isMobile ? M_classes.radioSize : classes.radioSize}type='radio' checked={isInscritLevelChart}  value={'inscrits'} name='effectifsNiveau' onClick={()=> { console.log(isInscritLevelChart); isInscritLevelChart ? setIsInscritLevelChart(false) :setIsInscritLevelChart(true);getEffectifData2()}}/>
               </div> 
 
             </div>
           
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
+              <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
                 <Effectifs BarchartData={BarchartData} selectedClass='' selectedNiveau={effectifLevel} isInscrits={isInscritLevelChart}/>
               </div>             
             </div>
@@ -1135,8 +1135,8 @@ const resultatsMatiereHandler=(e)=>{
   
           <div style={{display:'flex', flexDirection:'column'}}>
             <div className={classes.selectZone} style={{marginLeft:'2vw'}}>
-              <div className={classes.labelTitle}> {t('class')}   : </div>
-              <select id='selectclass2' onChange={effectifClasseHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('class')}   : </div>
+              <select id='selectclass2' onChange={effectifClasseHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optClasseEFF||[]).map((option)=> {
                     return(
                       <option  value={option.value}>{option.label}</option>
@@ -1144,15 +1144,15 @@ const resultatsMatiereHandler=(e)=>{
                 })}
               </select>
               <div style={{display:'flex', flexDirection:'row', alignItems:'center', paddingTop:'0.7vh' }}>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}>{t('effectifs_total')} </label>
-                <input type='radio' checked={!isInscritClassChart}  value={'enreg'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true);getEffectifClassesData2()}}/>
-                <label style={{color:'grey', marginLeft:'2vw', marginRight:3}}> {t('effectifs_inscrit')} </label>
-                <input type='radio' checked={isInscritClassChart}  value={'inscrits'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true);getEffectifClassesData2()}}/>
+                <label className={isMobile ? M_classes.labelTitle : classes.labelTitle} style={{color:'grey', marginLeft:'2vw', marginRight:3}}>{t('effectifs_total')} </label>
+                <input  className={isMobile ? M_classes.radioSize : classes.radioSize} type='radio' checked={!isInscritClassChart}  value={'enreg'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true);getEffectifClassesData2()}}/>
+                <label className={isMobile ? M_classes.labelTitle : classes.labelTitle} style={{color:'grey', marginLeft:'2vw', marginRight:3}}> {t('effectifs_inscrit')} </label>
+                <input  className={isMobile ? M_classes.radioSize : classes.radioSize} type='radio' checked={isInscritClassChart}  value={'inscrits'} name='effectifsClasse' onClick={()=> { isInscritClassChart ? setIsInscritClassChart(false) :setIsInscritClassChart(true);getEffectifClassesData2()}}/>
               </div> 
             </div>    
             
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
+              <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
                 <Effectifs BarchartData={BarchartClasseData} selectedNiveau='' selectedClass={effectifClass} isInscrits={isInscritClassChart}/>
               </div>             
             </div> 
@@ -1160,15 +1160,15 @@ const resultatsMatiereHandler=(e)=>{
           
         </div>
 
-        <div className={classes.dashBoardRow}>
+        <div className={isMobile ? M_classes.dashBoardRow : classes.dashBoardRow}>
           <div className={isMobile ? M_classes.sectionTitle+' '+ getSectionBgClr() : classes.sectionTitle +' '+ getSectionBgClr()}>
             {t('frais')}
           </div>
             
           <div className={classes.column30}>
             <div className={classes.selectZone} style={{marginLeft:'-4.3vw'}}>
-              <div className={classes.labelTitle}> {t('level')}   : </div>
-              <select id='selectNiveau3' onChange={fraisNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('level')}   : </div>
+              <select id='selectNiveau3' onChange={fraisNiveauHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optNiveauFR||[]).map((option)=> {
                     return(
                       <option  value={option.value}>{option.label}</option>
@@ -1185,7 +1185,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>
           
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
+              <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
                 <Frais LabelsFraisClasse={LabelsFraisClasse} LabelsFrais={LabelsFrais} BarchartData={BarchartDataFrais} selectedClass='' selectedNiveau={effectifLevelFrais} isSchoolFees={!isFraisScolaireLevel}/>
               </div>             
             </div>
@@ -1193,8 +1193,8 @@ const resultatsMatiereHandler=(e)=>{
 
           <div style={{display:'flex', flexDirection:'column'}}>
             <div className={classes.selectZone} style={{marginLeft:'2vw'}}>
-              <div className={classes.labelTitle}> {t('class')}   : </div>
-              <select id='selectclass3' onChange={fraisClasseHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('class')}   : </div>
+              <select id='selectclass3' onChange={fraisClasseHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optClasseFR||[]).map((option)=> {
                     return(
                       <option  value={option.value}>{option.label}</option>
@@ -1211,7 +1211,7 @@ const resultatsMatiereHandler=(e)=>{
             </div>    
             
             <div style={{display:'flex', flexDirection:'row', justifyContent:'center'}}>
-              <div style={{  width:'20vw', height:'23vw', justifyContent:'center'}}>
+              <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
                 <Frais LabelsFraisClasse={LabelsFraisClasse} LabelsFrais={LabelsFrais} BarchartData={BarchartClasseDataFrais} selectedNiveau='' selectedClass={effectifClassFrais} isSchoolFees={isFraisScolaireClass}/>
               </div>             
             </div> 
@@ -1222,7 +1222,7 @@ const resultatsMatiereHandler=(e)=>{
 
         </div>
 
-        <div className={classes.dashBoardRow}>
+        <div className={isMobile ? M_classes.dashBoardRow : classes.dashBoardRow}>
           <div className={isMobile ? M_classes.sectionTitle+' '+ getSectionBgClr() : classes.sectionTitle +' '+ getSectionBgClr()}>
             {t('assiduite')}
           </div>
@@ -1230,8 +1230,8 @@ const resultatsMatiereHandler=(e)=>{
             
           <div className={classes.column25}>
             <div className={classes.selectZone} style={{marginLeft:'-1vw'}}>
-              <div className={classes.labelTitle} style={{width:'4vw'}}> {t('level')} : </div>
-              <select id='selectNiveau4' onChange={assiduiteNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle} style={{width:'4vw'}}> {t('level')} : </div>
+              <select id='selectNiveau4' onChange={assiduiteNiveauHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optNiveauASS||[]).map((option)=> {
                       return(
                           <option  value={option.value}>{option.label}</option>
@@ -1239,7 +1239,7 @@ const resultatsMatiereHandler=(e)=>{
                   })}
               </select>
 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'7.7vw'}}>
+              {/* <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'7.7vw'}}>
                 <div style={{display:'flex', flexDirection:'row'}}>
                   <input type='radio' checked={assiduiteLevel==1}  value={'enreg'} name='AssiduiteLevel' onClick={()=> {setAssiduiteLevel(1)}}/>
                   <label style={{color:'grey', marginLeft:'0vw', marginRight:1}}> Absences </label>
@@ -1254,11 +1254,11 @@ const resultatsMatiereHandler=(e)=>{
                   <input type='radio' checked={assiduiteLevel==3}  value={'inscrits'} name='AssiduiteLevel' onClick={()=> {setAssiduiteLevel(3)}}/>
                   <label style={{color:'grey', marginLeft:'0.1vw', marginRight:1}}> Exclusion </label>
                 </div>
-              </div>  
+              </div>   */}
 
             </div>
 
-            <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
+            <div className={isMobile ? M_classes.assiduite : classes.assiduite} >
               <Assiduite id='Assiduite_niveau' Labels={sanctionLabels} DoughnutData={DoughnutDataAssiduiteNiveau} selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeAssiduite={assiduiteLevel}/>
             </div>
 
@@ -1267,8 +1267,8 @@ const resultatsMatiereHandler=(e)=>{
             
           <div className={classes.column26}>
             <div className={classes.selectZone} style={{marginLeft:'2vh'}}>
-              <div className={classes.labelTitle}> {t('class')}   : </div>
-              <select id='selectClasse4' onChange={assiduiteClasseHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('class')}   : </div>
+              <select id='selectClasse4' onChange={assiduiteClasseHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optClasseASS||[]).map((option)=> {
                       return(
                           <option  value={option.value}>{option.label}</option>
@@ -1276,7 +1276,7 @@ const resultatsMatiereHandler=(e)=>{
                   })}
               </select> 
 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
+              {/* <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
                 <div style={{display:'flex', flexDirection:'row'}}>
                   <input type='radio' checked={assiduiteClass==1}  value={'enreg'} name='AssiduiteClasse'   onClick={()=> {setAssiduiteClass(1)}}/>
                   <label style={{color:'grey', marginLeft:'0vw', marginRight:1}}> Absences </label>
@@ -1291,10 +1291,10 @@ const resultatsMatiereHandler=(e)=>{
                   <input type='radio' checked={assiduiteClass==3}  value={'inscrits'} name='AssiduiteClasse' onClick={()=> {setAssiduiteClass(3)}}/>
                   <label style={{color:'grey', marginLeft:'0.1vw', marginRight:1}}> Exclusion </label>
                 </div>
-              </div> 
+              </div>  */}
 
             </div>
-            <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
+            <div className={isMobile ? M_classes.assiduite : classes.assiduite} >
               <Assiduite id='Assiduite_classe' Labels={sanctionLabels} DoughnutData={DoughnutDataAssiduiteClasse} selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeAssiduite={assiduiteClass}/>
             </div>
             
@@ -1302,8 +1302,8 @@ const resultatsMatiereHandler=(e)=>{
 
           <div>
             <div className={classes.selectZone} style={{marginLeft:'2vh'}}>
-              <div className={classes.labelTitle}> {t('matiere')}: </div>
-              <select id='selectMatiere4' onChange={assiduiteMatiereHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('matiere')}: </div>
+              <select id='selectMatiere4' onChange={assiduiteMatiereHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optMatieresASS||[]).map((option)=> {
                       return(
                           <option  value={option.value}>{option.label}</option>
@@ -1311,7 +1311,7 @@ const resultatsMatiereHandler=(e)=>{
                   })}
               </select> 
 
-              <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
+              {/* <div style={{display:'flex', flexDirection:'column', justifyContent:"center", alignItems:'flex-end', paddingTop:'0.7vh', width:'12vw'}}>
                 <div style={{display:'flex', flexDirection:'row'}}>
                   <input type='radio' checked={assiduiteMatiere==1}  value={'enreg'} name='AssiduiteMatiere'   onClick={()=> {setAssiduiteMatiere(1)}}/>
                   <label style={{color:'grey', marginLeft:'0vw', marginRight:1}}> Absences </label>
@@ -1326,11 +1326,11 @@ const resultatsMatiereHandler=(e)=>{
                   <input type='radio' checked={assiduiteMatiere==3} value={'inscrits'} name='AssiduiteMatiere' onClick={()=> {setAssiduiteMatiere(3)}}/>
                   <label style={{color:'grey', marginLeft:'0.1vw', marginRight:1}}> Exclusion </label>
                 </div>
-              </div>              
+              </div>               */}
 
             </div>
 
-            <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
+            <div className={isMobile ? M_classes.assiduite : classes.assiduite}  >
               <Assiduite id='Assiduite_matiere' Labels={absenceLabels} DoughnutData={DoughnutDataAssiduiteMatiere} selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeAssiduite={assiduiteMatiere}/>
             </div>
   
@@ -1338,7 +1338,7 @@ const resultatsMatiereHandler=(e)=>{
 
         </div>
 
-        <div className={classes.dashBoardRow}>
+        <div className={isMobile ? M_classes.dashBoardRow : classes.dashBoardRow}>
           <div className={isMobile ? M_classes.sectionTitle+' '+ getSectionBgClr() : classes.sectionTitle +' '+ getSectionBgClr()}>
             {t('resultats_scolaires')}
           </div>
@@ -1346,8 +1346,8 @@ const resultatsMatiereHandler=(e)=>{
             
           <div className={classes.column25}>
             <div className={classes.selectZone} style={{marginLeft:'-1vw'}}>
-              <div className={classes.labelTitle} style={{width:'4vw'}}> {t('level')}   : </div>
-              <select id='selectNiveau5' onChange={resultatsNiveauHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle} style={{width:'4vw'}}> {t('level')}   : </div>
+              <select id='selectNiveau5' onChange={resultatsNiveauHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                 {(optNiveauRES||[]).map((option)=> {
                     return(
                         <option  value={option.value}>{option.label}</option>
@@ -1369,7 +1369,7 @@ const resultatsMatiereHandler=(e)=>{
 
             </div>
 
-            <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
+            <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
               <Resultats LabelsResult={LabelsResult} BarchartData={BarchartDataResultNiveau} selectedNiveau={prgramCoverSelectedLevel.id} selectedClass='' selectedMatiere='' codeResultat={resultatLevel}/>
             </div>
             
@@ -1378,8 +1378,8 @@ const resultatsMatiereHandler=(e)=>{
             
           <div className={classes.column26}>
             <div className={classes.selectZone} style={{marginLeft:'2vh'}}>
-              <div className={classes.labelTitle}> {t('class')}   : </div>
-              <select id='selectClasse5' onChange={resultatsClasseHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('class')}   : </div>
+              <select id='selectClasse5' onChange={resultatsClasseHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optClasseRES||[]).map((option)=> {
                       return(
                           <option  value={option.value}>{option.label}</option>
@@ -1402,7 +1402,7 @@ const resultatsMatiereHandler=(e)=>{
 
             </div>
 
-            <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
+            <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
               <Resultats LabelsResult={LabelsResult} BarchartData={BarchartDataResultClasse} selectedNiveau='' selectedClass={prgramCoverSelectedLevel.id} selectedMatiere='' codeResultat={resultatClass}/>
             </div>
             
@@ -1410,8 +1410,8 @@ const resultatsMatiereHandler=(e)=>{
 
           <div>
             <div className={classes.selectZone} style={{marginLeft:'2vh'}}>
-              <div className={classes.labelTitle}> {t('matiere')}: </div>
-              <select id='selectMatiere5' onChange={resultatsMatiereHandler} className={classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
+              <div className={isMobile ? M_classes.labelTitle : classes.labelTitle}> {t('matiere')}: </div>
+              <select id='selectMatiere5' onChange={resultatsMatiereHandler} className={isMobile ? M_classes.comboBoxStyle : classes.comboBoxStyle} style={{width:'7.3vw', marginBottom:1}}>
                   {(optMatieresRES||[]).map((option)=> {
                       return(
                           <option  value={option.value}>{option.label}</option>
@@ -1426,7 +1426,7 @@ const resultatsMatiereHandler=(e)=>{
 
               </div>  */}
             </div>
-            <div style={{paddingTop:'8vh', display: 'flex', width:'15vw', height:'0vw', justifyContent:'center', alignItems:'center'}}>
+            <div className={isMobile ? M_classes.barChartStyle : classes.barChartStyle}>
               <Resultats LabelsResult={LabelsResult} BarchartData={BarchartDataResultMatiere} selectedNiveau='' selectedClass='' selectedMatiere={prgramCoverSelectedLevel.id} codeResultat={1}/>
             </div>  
           </div>

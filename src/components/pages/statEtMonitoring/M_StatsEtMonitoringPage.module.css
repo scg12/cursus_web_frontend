@@ -1,3 +1,60 @@
+
+
+.imgStyleP {
+    width: 7.7vw;
+    height: 7.3vw;
+    margin-top: 0.3vh;
+    margin-bottom: 0.3vh;
+    margin-right: 0.3vh;
+}
+
+.imgStylePFin{
+    width: 7.7vw;
+    height: 7.3vw;
+    margin-top: 0.3vh;
+    margin-bottom: -1vh;
+    margin-right: 0.3vh;
+}
+
+.imgStylePP {
+    width: 9.67vw;
+    height: 9vw;
+    margin-top: 0.3vh;
+    margin-bottom: 0.3vh;
+    margin-left: -0.3vh;
+    
+}
+
+
+.imgStyleP3 {
+    width: 9.57vw;
+    height: 9vw;
+    margin-top: 0.3vh;
+    margin-bottom: 0.3vh;
+    margin-left: -0.53vh;
+}
+
+.imgStyleP4 {
+    width: 8.7vw;
+    height: 8.3vw;
+    margin-top: 0.3vh;
+    margin-bottom: 0.3vh;
+    margin-right: 0.3vh;
+    margin-left: -0.33vh;
+}
+
+.imgStyleP5 {
+    width: 7.7vw;
+    height: 7.7vw;
+    margin-top: 0.3vh;
+    margin-bottom: 0.3vh;
+    margin-right: 0.3vh;
+    margin-left: 0.3vh;
+}
+
+
+
+
 .size72Vw{
     min-width:72vw;    
 }
@@ -143,6 +200,8 @@
         padding-bottom: 0vh;
     }
 }
+
+
 
 /*/////////////////////////TABLETTES RECTANGULAIRES//////////////////////*/
 /*----------------------------horizontalement------------------------------*/

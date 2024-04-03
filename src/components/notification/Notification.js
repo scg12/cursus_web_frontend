@@ -50,7 +50,7 @@ function Notification(props) {
             
         <div id={"notifMsg"+props.msg.id} className={'card '+ getNotifBackgrd()} style={isMobile?{left:'35%',...props.mobNotifStyle}:props.notifStyle}>
             <div style={{display:"flex", flexDirection:"column", justifyContent:"center", width:"100%", marginBottom:"1vh"}} >
-                <div  style={{alignSelf:"center", fontSize:"2.3vh", fontWeight:"bold"}}>
+                <div className={classes.notifTitle}>
                     {props.msg.libelle}
                 </div>
 
@@ -59,7 +59,7 @@ function Notification(props) {
                 </div>                
             </div> 
 
-            <div id={"notif"+props.msg.id} style={{display:"flex", marginLeft:"1.3vw", flexDirection:"column", fontSize:"0.97vw",  justifyContent:"center",}}>                           
+            <div id={"notif"+props.msg.id}   className={classes.notifDescription}>                           
                 {/* {props.msg.Description}  */}
             </div>
                 
@@ -69,10 +69,10 @@ function Notification(props) {
                     <CustomButton
                         btnText        = {props.msg.btnText}
                         hasIconImg     = {false}
-                        buttonStyle    = {props.msg.btnStyle}
-                        btnTextStyle   = {props.msg.btnTextStyle}
+                        buttonStyle    = {props.btnStyle}
+                        btnTextStyle   = {props.btnTextStyle}
                         btnClickHandler= {props.btnClickHandler}
-                        style          = {props.msg.btnStyle}
+                        
                     />
                 </div>            
             }    

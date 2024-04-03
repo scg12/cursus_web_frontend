@@ -6,12 +6,11 @@ import UiContext from "../../../../store/UiContext";
 import AppContext from "../../../../store/AppContext";
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
-import AddClassMeeting from "../modals/AddClassMeeting";
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
@@ -27,7 +26,7 @@ let CURRENT_CLASSE_LABEL;
 let CURRENT_COURS_ID;
 let CURRENT_COURS_LABEL;
 
-var pageSet = [];
+var FPLIST_HAS_AT_LEAST_ONE_TEACHER = false;
 
 var listElt={};
 
@@ -59,6 +58,7 @@ function SuiviFicheProgress(props) {
         if(gridRows.length==0){
             CURRENT_CLASSE_ID = undefined;
         }
+        currentUiContext.setIsParentMsgBox(true);
         getEtabListClasses();
         setGridRows([]);     
         
@@ -117,6 +117,7 @@ function SuiviFicheProgress(props) {
                 id_sousetab: currentAppContext.currentEtab,
                 id_classe : classeId
             }).then((res)=>{
+                FPLIST_HAS_AT_LEAST_ONE_TEACHER = false;
                 console.log(res.data);
                 list_data = res.data[0].id_cours;
                 console.log(list_data);       
@@ -127,6 +128,8 @@ function SuiviFicheProgress(props) {
                         console.log("data returned",res.data);
                         list_data = [...formatList(res.data)];
                         setGridRows(list_data);
+                        if(FPLIST_HAS_AT_LEAST_ONE_TEACHER) setIsValid(true);
+                        else setIsValid(false);
                     }) 
                 }else{
                     CURRENT_CLASSE_ID = undefined;
@@ -143,23 +146,26 @@ function SuiviFicheProgress(props) {
         var formattedList =[]
         list.map((elt)=>{
             listElt={};
-            listElt.id = elt.id;
+            listElt.id             = elt.id;
+            listElt.ens_id         = elt.ens_id;
             listElt.displayedName  = elt.first_name +' '+elt.last_name;
-            listElt.nom = elt.first_name;
-            listElt.prenom = elt.last_name;
-            listElt.coursLabel = elt.libelle; 
-            listElt.classeLabel = CURRENT_CLASSE_LABEL; 
+            listElt.nom            = elt.first_name;
+            listElt.prenom         = elt.last_name;
+            listElt.coursLabel     = elt.libelle; 
+            listElt.classeLabel    = CURRENT_CLASSE_LABEL; 
             formattedList.push(listElt);
-        })
+            if(listElt.ens_id!=-1 && FPLIST_HAS_AT_LEAST_ONE_TEACHER == false) FPLIST_HAS_AT_LEAST_ONE_TEACHER = true;
+        });
+
+
+        
         return formattedList;
     }
 
 
     function dropDownHandler(e){
-       var list_cours='';
-       var list_data =[];
         if(e.target.value != optClasse[0].value){
-            setIsValid(true);
+           // setIsValid(true);
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getCoursWithoutFP(CURRENT_CLASSE_ID);           
@@ -447,6 +453,47 @@ const columnsEn = [
         }      
     }
 
+    function getProfDestinataires(){
+        var profIds = [];
+
+        gridRows.map((crs, index)=>{
+            if(crs.ens_id!=-1 && profIds.findIndex((elt)=>elt==crs.ens_id)==-1){
+                profIds.push(crs.ens_id);               
+            }
+        });
+        console.log("Liste des ids profs", profIds,gridRows);
+        if(profIds.length > 0) return profIds.join('_');
+        else return "";        
+    }
+
+
+    function saveMsg() {       
+        axiosInstance.post(`save-msg-interne/`, {
+
+            id_sousetab          : currentAppContext.currentEtab,
+            id_user              : currentAppContext.idUser, 
+            sujet                : t('depot_fiches'),
+            message              : t('fiches_progression_attendues'),
+            date                 : getTodayDate(), 
+            emetteur             : currentAppContext.idUser,
+            date_debut_validite  : getTodayDate(), 
+            date_fin_validite    : "",
+            id_destinataires     : getProfDestinataires(),
+            msgType              : 'release'
+
+        }).then((res)=>{
+            console.log(res.data);
+
+            chosenMsgBox = MSG_SUCCESS;
+            currentUiContext.showMsgBox({
+                visible : true, 
+                msgType : "info", 
+                msgTitle: t("success_operation_M"), 
+                message : t("success_operation")
+            })
+        });      
+    }
+
     
  
 
@@ -504,15 +551,15 @@ const columnsEn = [
                     customStyle={true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {"oui"}
-                    buttonRejectText = {"non"}  
+                    buttonAcceptText = {t('yes')}
+                    buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
                 />               
             }
             <div className={classes.inputRow} >               
                 <div className={classes.formTitle}>
-                    {t('SUIVI DES FICHES DE PROGRESSION')}  
+                    {t('FP_management_M')}  
                 </div>                   
                
             </div>
@@ -521,7 +568,7 @@ const columnsEn = [
                 <div className={classes.gridTitleRow}> 
                     <div className={classes.gridTitle}>                  
                         <div className={classes.gridTitleText}>
-                            {t('FICHES DE PROGRESSION ENCORE ATTENDUES')}  :
+                            {t('awaited_FP')}  :
                         </div>
                       
                         <div className={classes.selectZone}>
@@ -537,33 +584,21 @@ const columnsEn = [
                     
                                 
                     <div className={classes.gridAction}> 
-                         
-                       {/* <CustomButton
-                            btnText={t('Obtenir le modele')}
-                            hasIconImg= {true}
-                            imgSrc='images/printing1.png'
-                            imgStyle = {classes.grdBtnImgStyle}  
-                            buttonStyle={getNotifButtonStyle()}
-                            btnTextStyle = {classes.notifBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(2);}}
-                            disable={(isValid==false)}   
-                            />*/}
-
+                     
                         <CustomButton
-                            btnText={t('Alerter les prof')}
+                            btnText={t('remind_teachers')}
                             hasIconImg= {true}
                             imgSrc='images/alarme.png'
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getNotifButtonStyle()}
                             btnTextStyle = {classes.notifBtnTextStyle}
-                            btnClickHandler={printStudentList}
+                            btnClickHandler={saveMsg}
                             disable={(isValid==false)}   
                         />
-
-                       
+  
                     </div>
                         
-                    </div>
+                </div>
                     
                 
 

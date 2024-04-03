@@ -79,7 +79,7 @@ function FormLayout(props){
             case '102':  return   t('school_certificate_M');
             case '103':  return   t('generate_card_M');
             case '104':  return   t('conseils_classses');
-            case '105':  return   t('next_class_admission');
+            case '105':  return   t('changemnt_class');
 
             case '106':  return   t('schedules');
             case '107':  return   t("consult_schedule_M");
@@ -101,50 +101,62 @@ function FormLayout(props){
             case '123':  return   t('print_bulletin_M');
             
             case '124':  return   t('examen_officiels');
-            case '125':  return   t('Saisie Des Notes Aux Examens Officiels');
+            case '125':  return   t('save_exam_results');
             case '126':  return   t('official_exams_results');
             
 
             //----FINANCES ----
-            case '200':  return   'Frais De Scolarité';
-            case '201':  return   'Etats Des Paiments Des Frais de Scolarité';
+            case '200':  return   t('frais_scolariteP');
+            case '201':  return   t('etats_frais_scolarite');
+            
+            case '202':  return   t("def_paiement_personnel");
+            case '203':  return   t('paiement_personnel');
+            case '204':  return   t('accept_paiement');
+            case '205':  return   t("bilan_paiement_staff");
 
-            case '202':  return   'Nouvelle Entrée De Fonds';
-            case '203':  return   'Nouvelle Sortie De Fonds';
-            case '204':  return   'Recapitulatif Des Entrées de Fonds';
-            case '205':  return   'Recapitulatif Des Sorties De Fonds';
+            case '206':  return   t("entree_fond");
+            case '207':  return   t("sortie_fond");
+            case '208':  return   t("recap_entree");
+            case '209':  return   t("recap_sortie");
 
-            case '206':  return   'Budget Previsionnel';
-            case '207':  return   'Montant Total perÇu';
+            case '210':  return   t("budget_evolution");
+            case '211':  return   t("total_percu");
+            
 
             //----STATS ----
-            case '300':  return  'Taux De Réussite aux Examens';
-            case '301':  return  'Evolution Des Effectifs';
-            case '302':  return  'Evolution Du Niveau académique';
-            case '303':  return  'Taux De Couverture Des Programmes';
+            case '300':  return  t('evolution_effectifs');
+            case '301':  return  t('couverture_programs');
+            case '302':  return  t('couv_prog_cours');
+            case '303':  return  t("stat_absences");
+            case '304':  return  t('stat_school_fees');
 
-            case '304':  return  'EVolution Du Budget';
-            case '305':  return  "Evolution de l'Interaction Avec les Parents D'Elèves";
-            case '306':  return  'Taux de Ralisation Des Investissements';
-
+            case '305':  return  t('taux_reussite');
+            case '306':  return  t('evolution_niv_acad');
+            case '307':  return  t('travail_scolaire');
+            
+            case '308':  return  t("evolution_budget");
+            case '309':  return  t('evolution_comParents');
+            case '310':  return  t('taux_realisation_invest');
+            case '310':  return  t('taux_realisation_invest');
+            case '311':  return  t('paiement_profs');
            
             //----COMMUNICATION ----
-            case '400':  return  'Nouveau Communiqué Interne';
+            case '400':  return  t('comm_interne');
             case '401':  return  'Consultation Des Messages';
 
             case '402':  return  "Relation Avec Les Parents D'Elèves";
             case '403':  return  'Orientation Et suivi Des Elèves';
             case '404':  return  'Envoi De Message';
+            case '405':  return  t('synchro_data')
 
             //----EXTRAS ----
-            case '500':  return  t('Changement de classe');
+            case '500':  return  t('prise_de_photo_par_lot');
             case '501':  return  t('gest_stageAcad');
-            case '503':  return  t('distance_learning');
-
-            case '504':  return  t('gest_cantine');
-            case '505':  return  t('gest_transfort');
-            case '506':  return  t('gest_biblio');
-            case '507':  return  t('gest_dortoir');
+            case '502':  return  t('distance_learning');
+            case '503':  return  t('gest_cantine');
+            case '504':  return  t('gest_transfort');
+            case '505':  return  t('gest_biblio');
+            case '506':  return  t('gest_dortoir');
 
             //----CONFIG ----
 
@@ -162,7 +174,7 @@ function FormLayout(props){
             case '102':   return  'images/certificateP.png';
             case '103':   return  'images/PrintSchoolCard.png';
             case '104':   return  'images/ConseilClasse.png';
-            case '105':   return  'images/ClassSup.png';
+            case '105':   return  'images/ChangemtClass.png';
 
             case '106':   return  'images/Schedule.png';
             case '107':   return  'images/lookSchedule.png';
@@ -189,24 +201,36 @@ function FormLayout(props){
             //----FINANCES ----
             case '200':  return  'images/SchoolFees.png';
             case '201':  return  'images/ListeEntrees.png';
-
-            case '202':  return  'images/EntreeFonds.png';
-            case '203':  return  'images/SortieFonds.png';
-            case '204':  return  'images/ListeEntrees.png';
+            
+            case '202':  return  'images/confSalaire.png';
+            case '203':  return  'images/salaireProf.png';
+            case '204':  return  'images/acceptPaiement.png';
             case '205':  return  'images/ListeSorties.png';
+            
+            case '206':  return  'images/EntreeFonds.png';
+            case '207':  return  'images/SortieFonds.png';
+            case '208':  return  'images/ListeEntrees.png';
+            case '209':  return  'images/ListeSorties.png';
 
-            case '206':  return  'images/EvolutionBudget.png';
-            case '207':  return  'images/EtatPaiement.png';
+            case '210':  return  'images/EvolutionBudget.png';
+            case '211':  return  'images/EtatPaiement.png';
+           
 
             //----STATS ----
-            case '300':  return  'images/EvolutionReussite.png';
-            case '301':  return  'images/EvolutionEffectifs.png';
-            case '302':  return  'images/EvolutionNiveauAcad.png';
-            case '303':  return  'images/TauxCouvProg.png';
-
-            case '304':  return  'images/EvolutionBudget.png';
-            case '305':  return  'images/TauxInteractionPrt.png';
-            case '306':  return  'images/TauxInvestissement.png';
+            case '300':  return  'images/EvolutionEffectifs.png';
+            case '301':  return  'images/TauxCouvProg.png';
+            case '302':  return  'images/statCouverture.png';
+            case '303':  return  'images/statPresence.png';
+            case '304':  return  'images/statPaieElev.png';
+            case '305':  return  'images/EvolutionReussite.png';           
+           
+           
+            case '306':  return  'images/EvolutionNiveauAcad.png';
+            case '307':  return  'images/statTravail.png';
+            case '308':  return  'images/EvolutionBudget.png';
+            case '309':  return  'images/TauxInteractionPrt.png';
+            case '310':  return  'images/TauxInvestissement.png';
+            case '311':  return  'images/statPaieProfs.png';
           
             //----COMMUNICATION ----
             case '400':  return  'images/NewComInterne.png';
@@ -215,10 +239,11 @@ function FormLayout(props){
             case '402':  return  'images/RelationAvcParent.png';
             case '403':  return  'images/Orientation.png';
             case '404':  return  'images/SmsP.png';
+            case '405':  return  t('images/synchro.png')
 
            
             //----EXTRAS ----
-            case '500':  return  'images/ChangemtClass.png';
+            case '500':  return  'images/photo4f4.png';
             case '501':  return  'images/StageAcad.png';
             case '502':  return  'images/distanceLearning.png';
 

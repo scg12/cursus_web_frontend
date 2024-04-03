@@ -4,6 +4,7 @@ import classes from "./SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
 import FormPuce from "../../../formPuce/FormPuce";
 import axiosInstance from '../../../../axios';
+import { isMobile } from 'react-device-detect';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Select from 'react-select';
 
@@ -769,7 +770,7 @@ function EvolutionEffectifs(props){
             
                 
             <FormPuce menuItemId ='1' isSimple={true} imgSource={'images/' + getPuceByTheme()} withCustomImage={true} imageStyle={classes.PuceStyle}    libelle={t('evolution_effectif_cycle')} itemSelected={null} puceLabelStyle={{color:"black"}}> </FormPuce>
-            <div className={classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom}>
+            <div className={isMobile ? classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom : classes.inputRow + ' '+ classes.margBottom3 +' '+ classes.borderBottom }>
                 <div id='effectifsEtabParCycle' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw", marginRight:"7vw"}}/>
                 <div id='effectifsParCycleParSexe' className={classes.inputRow33 +' '+ classes.spaceAround} style={{width:"20vw", height:"10vw"}}/>
             </div>

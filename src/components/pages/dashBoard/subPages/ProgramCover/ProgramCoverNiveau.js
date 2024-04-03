@@ -12,6 +12,7 @@ import ReactDOM from 'react-dom';
 import axiosInstance from '../../../../../axios';
 import MsgBox from "../../../../msgBox/MsgBox";
 
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -56,7 +57,7 @@ function ProgramCoverNiveau(props){
   },[]);
 
 let state = {
-    labels: ['       %'+t('couvert'), '% '+t('non_couvert')],
+    labels:['       %'+t('couvert'), '% '+t('non_couvert')],
     datasets: [{        
         label: 'couverture',
         backgroundColor: [
@@ -93,6 +94,7 @@ function getData(niveauId){
 }
 
     return(
+        
         <Doughnut id={props.id}
             data={state}
                 options={{
@@ -103,10 +105,15 @@ function getData(niveauId){
                     },
                     legend:{
                         display:true,
-                        position:'left'
+                        position:'left',
+                        // fontSize:"20vw"
                     }
             }}
+            
         />
+
+      
+        
     )
 }
 export default ProgramCoverNiveau;

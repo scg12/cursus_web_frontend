@@ -1,3 +1,15 @@
+.notifZone{
+  display : "flex";
+  flex-direction : column;
+  justify-content: center;
+  width   : 20vw;
+  
+  position : absolute;
+  top      : -3vh; 
+  left     : -7vw;
+  z-index  : 9999;
+}
+
 .comboBoxStyle{
   font-weight: 700;
   font-size: 1.7vh;
@@ -7,7 +19,6 @@
   border-width: 0.47vh;
   padding-left: 0.7vh !important;
   padding-bottom: 0.7vh !important;
-
 }
 
 .mainInfosStyle{
@@ -24,6 +35,25 @@
 .upperCase{
   text-transform: uppercase;
 }
+
+.buttonStyle{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  background-color: blue ;
+  border-radius: 3px;
+  width:3vw;
+  height:3vh ;
+  font-size: 0.8vw;
+  margin-bottom: 1vh;
+  align-self: flex-end;
+  margin-right: 1vh;
+}
+
+.buttonTexStyle{
+  font-size: 0.8vw;
+}
+
 
 
 /*--------------------- Theme1 ----------------------- */
@@ -106,8 +136,6 @@
     border-right: solid 3px #4031a5;
   }
 
-
-
  /* @media (min-width: 380px) and (max-width: 900px) {
     .comboBoxStyle {
       font-weight: 700;
@@ -134,7 +162,7 @@
 
   }*/
 
-  /*////////////////////////////////TELEPHONES/////////////////////////////*/
+/*////////////////////////////////TELEPHONES/////////////////////////////*/
 /*----------------------------Horizontalement----------------------------*/
 @media screen and (max-height: 420px) {
   .comboBoxStyle {
@@ -159,6 +187,40 @@
     height:100%;
     height: 10.7vh;
   }  
+
+}
+
+/*----------------------------Verticalement-----------------------------*/
+@media screen and (max-width: 420px) {
+  .notifZone{
+    display : "flex";
+    flex-direction : column;
+    justify-content: center;
+    width   : 20vw;
+    
+    position : absolute;
+    top      : -3vh; 
+    left     : -7vw;
+    z-index  : 9999;
+  }
+
+  .buttonStyle{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    background-color: blue ;
+    border-radius: 3px;
+    width:3vh;
+    height:3vw ;
+    font-size: 0.8vh;
+    margin-bottom: 1vw;
+    align-self: flex-end;
+    margin-right: 1vw;
+  }
+
+  .buttonTexStyle{
+    font-size: 0.8vh;
+  }
 
 }
 

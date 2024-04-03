@@ -19,6 +19,9 @@ import FeaturesCode from '../../Features/FeaturesCode';
 var userProfile = ''
 var profileAuthorisationString = ''
 var ERROR_CODE;
+
+var listNotifs=[];
+
 function MbLoginForm(){
 
     const currentUiContext = useContext(UiContext);
@@ -160,7 +163,7 @@ const getRightsStringFromProfile = (profile) => {
 }
 
 function generateFeaturesCodeFromString(string){
-    console.log(string.length)
+    console.log(string)
     let codes = string.split('');
     FeaturesCode["SCOLARITE"] = codes[0];
     FeaturesCode["SCOLARITE_A"] = codes[1];
@@ -194,84 +197,106 @@ function generateFeaturesCodeFromString(string){
     FeaturesCode["SCOLARITE_E1"] = codes[29];
     FeaturesCode["SCOLARITE_E2"] = codes[30];
     FeaturesCode["SCOLARITE_E3"] = codes[31];
-    FeaturesCode["FINANCE"] = codes[32];
-    FeaturesCode["FINANCE_A"] = codes[33];
-    FeaturesCode["FINANCE_A1"] = codes[34];
-    FeaturesCode["FINANCE_A2"] = codes[35];
-    FeaturesCode["FINANCE_B"] = codes[36];
-    FeaturesCode["FINANCE_B1"] = codes[37];
-    FeaturesCode["FINANCE_B2"] = codes[38];
-    FeaturesCode["FINANCE_B3"] = codes[39];
-    FeaturesCode["FINANCE_B4"] = codes[40];
-    FeaturesCode["FINANCE_C"] = codes[41];
-    FeaturesCode["FINANCE_C1"] = codes[42];
-    FeaturesCode["FINANCE_C2"] = codes[43];
-    FeaturesCode["STATS"] = codes[44];
-    FeaturesCode["STATS_A"] = codes[45];
-    FeaturesCode["STATS_A1"] = codes[46];
-    FeaturesCode["STATS_A2"] = codes[47];
-    FeaturesCode["STATS_A3"] = codes[48];
-    FeaturesCode["STATS_A4"] = codes[49];
-    FeaturesCode["STATS_B"] = codes[50];
-    FeaturesCode["STATS_B1"] = codes[51];
-    FeaturesCode["STATS_B2"] = codes[52];
-    FeaturesCode["STATS_B3"] = codes[53];
-    FeaturesCode["COMM_PARENT"] = codes[54];
-    FeaturesCode["COMM_PARENT_A"] = codes[55];
-    FeaturesCode["COMM_PARENT_A1"] = codes[56];
-    FeaturesCode["COMM_PARENT_A2"] = codes[57];
-    FeaturesCode["COMM_PARENT_B"] = codes[58];
-    FeaturesCode["COMM_PARENT_B1"] = codes[59];
-    FeaturesCode["COMM_PARENT_B2"] = codes[60];
-    FeaturesCode["COMM_PARENT_B3"] = codes[61];
-    FeaturesCode["CONFIG"] = codes[62];
-    FeaturesCode["CONFIG_A"] = codes[63];
-    FeaturesCode["CONFIG_A1"] = codes[64];
-    FeaturesCode["CONFIG_A2"] = codes[65];
-    FeaturesCode["CONFIG_A3"] = codes[66];
-    FeaturesCode["CONFIG_A4"] = codes[67];
-    FeaturesCode["CONFIG_A5"] = codes[68];
-    FeaturesCode["CONFIG_A6"] = codes[69];
-    FeaturesCode["CONFIG_B"] = codes[70];
-    FeaturesCode["CONFIG_B1"] = codes[71];
-    FeaturesCode["CONFIG_B2"] = codes[72];
-    FeaturesCode["CONFIG_B3"] = codes[73];
-    FeaturesCode["CONFIG_B4"] = codes[74];
-    FeaturesCode["CONFIG_B5"] = codes[75];
-    FeaturesCode["CONFIG_B6"] = codes[76];
-    FeaturesCode["CONFIG_B7"] = codes[77];
-    FeaturesCode["CONFIG_B8"] = codes[78];
-    FeaturesCode["CONFIG_B9"] = codes[79];
-    FeaturesCode["CONFIG_B10"] = codes[80];
-    FeaturesCode["CONFIG_B11"] = codes[81];
-    FeaturesCode["CONFIG_B12"] = codes[82];
-    FeaturesCode["CONFIG_B13"] = codes[83];
-    FeaturesCode["CONFIG_B14"] = codes[84];
-    FeaturesCode["CONFIG_B15"] = codes[85];
-    FeaturesCode["CONFIG_B16"] = codes[86];
-    FeaturesCode["CONFIG_B17"] = codes[87];
-    FeaturesCode["CONFIG_B18"] = codes[88];
-    FeaturesCode["CONFIG_B19"] = codes[89];
-    FeaturesCode["CONFIG_B20"] = codes[90];
-    FeaturesCode["CONFIG_B21"] = codes[91];
-    FeaturesCode["CONFIG_B22"] = codes[92];
-    FeaturesCode["CONFIG_B23"] = codes[93];
-    FeaturesCode["CONFIG_B24"] = codes[94];
-    FeaturesCode["CONFIG_B25"] = codes[95];
-    FeaturesCode["CONFIG_B26"] = codes[96];
-    FeaturesCode["CONFIG_C"] = codes[97];
-    FeaturesCode["CONFIG_C1"] = codes[98];
-    FeaturesCode["CONFIG_C2"] = codes[99];
-    FeaturesCode["CONFIG_C3"] = codes[100];
-    FeaturesCode["CONFIG_D"] = codes[101];
-    FeaturesCode["CONFIG_D1"] = codes[102];
-    FeaturesCode["CONFIG_D2"] = codes[103];
-    FeaturesCode["CONFIG_D3"] = codes[104];
-    FeaturesCode["CONFIG_D4"] = codes[105];
-    FeaturesCode["CONFIG_E"] = codes[106];
-    FeaturesCode["CONFIG_E1"] = codes[107];
-    FeaturesCode["CONFIG_E2"] = codes[108];
-    FeaturesCode["EXTRAS"] = codes[109];
+    FeaturesCode["SCOLARITE_E4"] = codes[32];
+    FeaturesCode["FINANCE"] = codes[33];
+    FeaturesCode["FINANCE_A"] = codes[34];
+    FeaturesCode["FINANCE_A1"] = codes[35];
+    FeaturesCode["FINANCE_A2"] = codes[36];
+    FeaturesCode["FINANCE_B"] = codes[37];
+    FeaturesCode["FINANCE_B1"] = codes[38];
+    FeaturesCode["FINANCE_B2"] = codes[39];
+    FeaturesCode["FINANCE_B3"] = codes[40];
+    FeaturesCode["FINANCE_B4"] = codes[41];
+    FeaturesCode["FINANCE_C"] = codes[42];
+    FeaturesCode["FINANCE_C1"] = codes[43];
+    FeaturesCode["FINANCE_C2"] = codes[44];
+    FeaturesCode["FINANCE_D"] = codes[45];
+    FeaturesCode["FINANCE_D1"] = codes[46];
+    FeaturesCode["FINANCE_D2"] = codes[47];
+    FeaturesCode["FINANCE_D3"] = codes[48];
+    FeaturesCode["FINANCE_D4"] = codes[49];
+    FeaturesCode["STATS"] = codes[50];
+    FeaturesCode["STATS_A"] = codes[51];
+    FeaturesCode["STATS_A1"] = codes[52];
+    FeaturesCode["STATS_A2"] = codes[53];
+    FeaturesCode["STATS_A3"] = codes[54];
+    FeaturesCode["STATS_A4"] = codes[55];
+    FeaturesCode["STATS_A5"] = codes[56];
+    FeaturesCode["STATS_B"] = codes[57];
+    FeaturesCode["STATS_B1"] = codes[58];
+    FeaturesCode["STATS_B2"] = codes[59];
+    FeaturesCode["STATS_B3"] = codes[60];
+    FeaturesCode["STATS_C"] = codes[61];
+    FeaturesCode["STATS_C1"] = codes[62];
+    FeaturesCode["STATS_C2"] = codes[63];
+    FeaturesCode["STATS_C3"] = codes[64];
+    FeaturesCode["STATS_C4"] = codes[65];
+    FeaturesCode["COMM_PARENT"] = codes[66];
+    FeaturesCode["COMM_PARENT_A"] = codes[67];
+    FeaturesCode["COMM_PARENT_A1"] = codes[68];
+    FeaturesCode["COMM_PARENT_A2"] = codes[69];
+    FeaturesCode["COMM_PARENT_B"] = codes[70];
+    FeaturesCode["COMM_PARENT_B1"] = codes[71];
+    FeaturesCode["COMM_PARENT_B2"] = codes[72];
+    FeaturesCode["COMM_PARENT_B3"] = codes[73];
+    FeaturesCode["CONFIG"] = codes[74];
+    FeaturesCode["CONFIG_A"] = codes[75];
+    FeaturesCode["CONFIG_A1"] = codes[76];
+    FeaturesCode["CONFIG_A2"] = codes[77];
+    FeaturesCode["CONFIG_A3"] = codes[78];
+    FeaturesCode["CONFIG_A4"] = codes[79];
+    FeaturesCode["CONFIG_A5"] = codes[80];
+    FeaturesCode["CONFIG_A6"] = codes[81];
+    FeaturesCode["CONFIG_B"] = codes[82];
+    FeaturesCode["CONFIG_B1"] = codes[83];
+    FeaturesCode["CONFIG_B2"] = codes[84];
+    FeaturesCode["CONFIG_B3"] = codes[85];
+    FeaturesCode["CONFIG_B4"] = codes[86];
+    FeaturesCode["CONFIG_B5"] = codes[87];
+    FeaturesCode["CONFIG_B6"] = codes[88];
+    FeaturesCode["CONFIG_B7"] = codes[89];
+    FeaturesCode["CONFIG_B8"] = codes[90];
+    FeaturesCode["CONFIG_B9"] = codes[91];
+    FeaturesCode["CONFIG_B10"] = codes[92];
+    FeaturesCode["CONFIG_B11"] = codes[93];
+    FeaturesCode["CONFIG_B12"] = codes[94];
+    FeaturesCode["CONFIG_B13"] = codes[95];
+    FeaturesCode["CONFIG_B14"] = codes[96];
+    FeaturesCode["CONFIG_B15"] = codes[97];
+    FeaturesCode["CONFIG_B16"] = codes[98];
+    FeaturesCode["CONFIG_B17"] = codes[99];
+    FeaturesCode["CONFIG_B18"] = codes[100];
+    FeaturesCode["CONFIG_B19"] = codes[101];
+    FeaturesCode["CONFIG_B20"] = codes[102];
+    FeaturesCode["CONFIG_B21"] = codes[103];
+    FeaturesCode["CONFIG_B22"] = codes[104];
+    FeaturesCode["CONFIG_B23"] = codes[105];
+    FeaturesCode["CONFIG_B24"] = codes[106];
+    FeaturesCode["CONFIG_B25"] = codes[107];
+    FeaturesCode["CONFIG_B26"] = codes[108];
+    FeaturesCode["CONFIG_C"] = codes[109];
+    FeaturesCode["CONFIG_C1"] = codes[110];
+    FeaturesCode["CONFIG_C2"] = codes[111];
+    FeaturesCode["CONFIG_C3"] = codes[112];
+    FeaturesCode["CONFIG_D"] = codes[113];
+    FeaturesCode["CONFIG_D1"] = codes[114];
+    FeaturesCode["CONFIG_D2"] = codes[115];
+    FeaturesCode["CONFIG_D3"] = codes[116];
+    FeaturesCode["CONFIG_D4"] = codes[117];
+    FeaturesCode["CONFIG_E"] = codes[118];
+    FeaturesCode["CONFIG_E1"] = codes[119];
+    FeaturesCode["CONFIG_E2"] = codes[120];
+    FeaturesCode["EXTRAS"] = codes[121];
+    FeaturesCode["EXTRAS_A"] = codes[122];
+    FeaturesCode["EXTRAS_A1"] = codes[123];
+    FeaturesCode["EXTRAS_A2"] = codes[124];
+    FeaturesCode["EXTRAS_A3"] = codes[125];
+    FeaturesCode["EXTRAS_B"] = codes[126];
+    FeaturesCode["EXTRAS_B1"] = codes[127];
+    FeaturesCode["EXTRAS_B2"] = codes[128];
+    FeaturesCode["EXTRAS_B3"] = codes[129];
+    FeaturesCode["EXTRAS_B4"] = codes[130];
+
 
 
     console.log("fct FeaturesCode: ",FeaturesCode)
@@ -284,7 +309,7 @@ function loadEmploiDetemps(etabId){
     axiosInstance.post(`get-current-emploi-de-temps/`, {
         id_sousetab: etabId
     }).then((res)=>{
-        console.log("ET",res.data);
+        console.log("ET",res.data, res.data.profPrincipaux);
         res.data.matieres.map((m)=>{matieres.push(m)});
         res.data.classes.map((c)=>{classess.push(c)});
         res.data.ListMatieres.map((lm)=>{listMatieres.push(lm)});
@@ -306,10 +331,45 @@ function loadEmploiDetemps(etabId){
         currentUiContext.setEmploiDeTemps(emploiDeTemps);
         currentUiContext.setTAB_CRENEAU_PAUSE(tab_creneau_pause);
         currentUiContext.setCurrentPPList(res.data.profPrincipaux);
+       
+
+        console.log("------ListProfs:------", listProfs)
 
         if(tab_valeur_horaire.length>0){
         currentUiContext.setIntervalleMaxTranche(tab_valeur_horaire[0]+"_"+tab_valeur_horaire[tab_valeur_horaire.length-1]);
     }})
+    
+}
+
+function initUserNotifs(foundedNotifs){
+    var msgText = {};
+    listNotifs  = [];
+ 
+    console.log("comm internes", foundedNotifs);
+    foundedNotifs.map((com)=>{
+        msgText ={
+            id                  : com.id,
+            type                : com.msgType,
+            libelle             : com.titreMsg,
+            Description         : com.message,
+            date_debut_validite : com.validite_deb,
+            date_fin_validite   : com.validite_fin,
+            hasAction           : true,
+            btnText             : t("set_as_read"),
+            
+            
+        
+            btnClickHandler:{
+        
+            }
+        }
+        
+
+        listNotifs.push({msg:msgText}); 
+        msgText = {} ;             
+    })
+
+    currentAppContext.setTabNotifs(listNotifs);             
     
 }
 
@@ -332,11 +392,12 @@ function loadEmploiDetemps(etabId){
             axiosInstance.defaults.headers['Authorization'] =
                 'JWT ' + localStorage.getItem('access');
             // history.push('/test');
-            console.log(res.data);
+            // alert("les data"+res.data.info_user.is_boss+res.data.photo_url);
             userProfile = 'admin';
             profileAuthorisationString = getRightsStringFromProfile(userProfile)
           
             generateFeaturesCodeFromString(res.data.FeaturesCode)
+            
             currentAppContext.setInfoAnnees(res.data.info_annees);
             currentAppContext.setUsrConnected(loginText,userProfile);
             currentAppContext.setEnableProfiles(FeaturesCode);
@@ -345,12 +406,18 @@ function loadEmploiDetemps(etabId){
             currentAppContext.setCurrentEtab(res.data.id_etab_init);
             currentAppContext.setActivatedYear(res.data.activated_year);
             currentAppContext.setInfoSetabs(res.data.info_setabs);
+            currentAppContext.setInfoUser(res.data.info_user);
             currentAppContext.setInfoCycles(res.data.info_cycles);
             currentAppContext.setInfoNiveaux(res.data.info_niveaux);
             currentAppContext.setInfoClasses(res.data.info_classes);
             currentAppContext.setInfoMatieres(res.data.info_matieres);
             currentAppContext.setInfoCours(res.data.info_cours);
             currentUiContext.updateFirstLoad(true);
+
+
+            //Ici, on va aller chercher toutes les notifs non lu du user
+            initUserNotifs(res.data.info_user.user_comms);          
+
             
             
             //Pour les MsgBoxes
@@ -366,8 +433,7 @@ function loadEmploiDetemps(etabId){
             currentUiContext.updatePhotoUrl(res.data.photo_url);
             
             i18n.changeLanguage(res.data.langue);
-            //updateCalendarTheme(res.data.theme);
-
+    
             history.replace('/');
 
         },(res)=>{
@@ -379,7 +445,7 @@ function loadEmploiDetemps(etabId){
     }
     
 
-        return(
+    return(
         <div className= {classes.loginContainer}>
             <div className= {getCurrentHeaderTheme()}>
                 <img src='images/cursusLogo.png'  alt='AppLogo' className= {classes.logoStyle}></img>
@@ -394,11 +460,11 @@ function loadEmploiDetemps(etabId){
                     < img src="images/drapeauAnglais.png" id='en' width ='23px' height='23px' alt="my image" onClick={changeLanguage}/>  
                 </div> 
             </div>
-            
+                
             <div className= {classes.loginMainContent}>
                 <div className={'card ' + ' '+ getCurrentContentTheme()}>
                     <div className={getFormHeaderStyle()} >
-                       {t("Connexion")} 
+                    {t("Connexion")} 
                     </div>
                     <form class={classes.formContent}>
                         <h8><b> {t("acceder_espace" )}</b></h8>
@@ -411,7 +477,7 @@ function loadEmploiDetemps(etabId){
                             <input id="password" type="password" class="validate" />
                             <label for="password">{t("password" )}</label>
                         </div>
-                       
+                    
                         <Link className= {classes.linkStyle}> <i>{t("forgetPwd")}</i></Link>
                         { passWordError ? 
                             <p className={classes.errorMsgStyle}> {t(getErrorMessage(ERROR_CODE))}</p> 
@@ -444,13 +510,10 @@ function loadEmploiDetemps(etabId){
                     <section className={classes.aboutAppTextStyle}> 
                         {t("rightsReserve")} 
                     </section>
-                </div>
-            <div>  
-                    
+                </div>           
+                
+            </div>
         </div>
-              
-    </div>
-</div>
     );
 }
 export default MbLoginForm;
