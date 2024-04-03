@@ -5,6 +5,7 @@ import {isMobile} from 'react-device-detect';
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 import { useTranslation } from "react-i18next";
+import Filigrane from "../../../filigrane/Filigrane";
 import '../../../../translation/i18n';
 
 
@@ -248,9 +249,12 @@ function ETTemplate(props){
     return (
         <Document>        
             <Page size="A4"  orientation='landscape' style={styles.page} >
+                <Filigrane photoStyle ={{width:"67vw", height:"63vw"}} style={{zIndex:9999}} /*imageSrc="images/collegeVogt_fil.png"*//>
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={props.pageSet}   />
+                    {/* <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/> */}
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.pageSet.pageImagesDefault[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={props.pageSet}  />                                     
                 </View>
                 
@@ -384,8 +388,29 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
+    // imagestyle:{
+    //     width:'13vh',
+    //     height:'12vh',
+    //     borderRadius:3
+    // },
+
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-9.7vh",
+        left:0,
+        zIndex:2,       
+        width :'13vh',
+        height:'12vh',
+        borderRadius:3,
+        marginLeft:"-7vw"
+    },
+
     imagestyle:{
-        width:'13vh',
+        position:"absolute",
+        top:"-9.7vh",
+        left:30,
+        zIndex:3,       
+        width :'13vh',
         height:'12vh',
         borderRadius:3
     },
@@ -503,7 +528,7 @@ const styles = StyleSheet.create({
         justifyContent:'flex-start',
         alignItems:"center",
         //textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "70%",
         width: "97%",
         color:'black',
@@ -685,7 +710,7 @@ const styles = StyleSheet.create({
     
         borderRightStyle:'solid',
         borderRightWidth: '1px',  
-        backgroundColor: "white",
+        //backgroundColor: "white",
         //backgroundColor: "rgb(247, 243, 240)",
 
     },
@@ -704,7 +729,7 @@ const styles = StyleSheet.create({
         borderRightStyle: 'solid',
         borderRightWidth: '1px',  
         //backgroundColor: 'rgb(174, 187, 201)', 
-        backgroundColor: 'white', 
+        //backgroundColor: 'white', 
     }
    
 });

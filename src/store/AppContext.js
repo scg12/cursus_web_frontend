@@ -3,63 +3,69 @@ import { createContext, useState } from 'react';
 import FeaturesCode from '../components/Features/FeaturesCode';
 
 const AppContext = createContext({
-    usrLogin :'',
-    usrIsLogged : false,
-    isDataLoaded : false,
-    userProfile : '',
-    enableProfiles : {},
-    idUser : {},
-    idEtabInit : {},
-    activatedYear : {},
-    currentYear : {},
-    currentEtab : {},
-    currentCycle : {},
-    infoAnnees : {},
-    infoSetabs : {},
-    infoUser : {},
-    infoCycles : {},
-    infoNiveaux : {},
-    infoClasses : {},
-    infoMatieres: {},
-    infoCours: {},
+    usrLogin         :'',
+    usrIsLogged      : false,
+    isDataLoaded     : false,
+    userProfile      : '',
+    enableProfiles   : {},
+    idUser           : {},
+    idEtabInit       : {},
+    activatedYear    : {},
+    currentYear      : {},
+    currentEtab      : {},
+    currentCycle     : {},
+    infoAnnees       : {},
+    infoSetabs       : {},
+    infoUser         : {},
+    infoCycles       : {},
+    infoNiveaux      : {},
+    infoClasses      : {},
+    infoMatieres     : {},
+    infoCours        : {},
    
     /*---------- Gestion des lecons -----------*/
-    etatLesson:0,
-    currentLesson:{},
+    etatLesson       : 0,
+    currentLesson    : {},
 
     /*---------- Gestion des messages -----------*/
-    tabNotifs : {},
+    tabNotifs        : {},
+
+    /*---------- Infos Etablissement en cours -----------*/
+    currentEtabInfos : {},
     
 
 
 
-    setUsrLogin: (givenLogin, givenProfile) => {},
-    setUsrConnected: ()=> {},
-    logOut:() => {},
-    setIsDataLoaded:(boolValue) => {},
-    setUserProfile : (userProfile) => {},
-    setEnableProfiles :(profilecodeMap) => {},
-    setCurrentEtab :(givenEtab) => {},
-    setCurrentCycle :(givenCycle) => {},
-    setCurrentYear :(givenYear) => {},
-    setIdUser :(givenIdUser) => {},
-    setIdEtabInit :(givenIdEtab) => {},
-    setActivatedYear :(givenYear) => {},
-    setInfoAnnees :(givenAnnee) => {},
-    setInfoSetabs :(infoSetab) => {},
-    setInfoUser :(infoUser) => {},
-    setInfoCycles :(infoCycle) => {},
-    setInfoNiveaux :(infoNiveau) => {},
-    setInfoClasses :(infoClasse) => {},
-    setInfoMatieres:(infoMatiere) => {},
-    setInfoCours:(infoCours) => {},
+    setUsrLogin        : (givenLogin, givenProfile) => {},
+    setUsrConnected    : ()=> {},
+    logOut             :() => {},
+    setIsDataLoaded    :(boolValue) => {},
+    setUserProfile     :(userProfile) => {},
+    setEnableProfiles  :(profilecodeMap) => {},
+    setCurrentEtab     :(givenEtab) => {},
+    setCurrentCycle    :(givenCycle) => {},
+    setCurrentYear     :(givenYear) => {},
+    setIdUser          :(givenIdUser) => {},
+    setIdEtabInit      :(givenIdEtab) => {},
+    setActivatedYear   :(givenYear) => {},
+    setInfoAnnees      :(givenAnnee) => {},
+    setInfoSetabs      :(infoSetab) => {},
+    setInfoUser        :(infoUser) => {},
+    setInfoCycles      :(infoCycle) => {},
+    setInfoNiveaux     :(infoNiveau) => {},
+    setInfoClasses     :(infoClasse) => {},
+    setInfoMatieres    :(infoMatiere) => {},
+    setInfoCours       :(infoCours) => {},
 
     /*---------- Gestion des lecons -----------*/
-    setEtatLesson:(etat) => {},
-    setCurrentLesson:(lecon)=>{},
+    setEtatLesson      :(etat) => {},
+    setCurrentLesson   :(lecon)=>{},
 
     /*---------- Gestion des messages -----------*/
-    setTabNotifs:(listNotifs) => {},
+    setTabNotifs       :(listNotifs) => {},
+
+    /*---------- Infos Etablissement en cours -----------*/
+    setCurrentEtabInfos:(etabInfos) => {},
     
 });
 
@@ -92,6 +98,9 @@ export function AppContextProvider(props)
 
     /*---------- Gestion des messages -----------*/
     const [tabNotifs, setTabNotifs] = useState([]);
+
+    /*---------- Infos Etablissement en cours -----------*/
+    const [currentEtabInfos, setCurrentEtabInfos] = useState({});
    
     
   
@@ -182,63 +191,75 @@ export function AppContextProvider(props)
         setTabNotifs(notifList);
     }
 
+    /*---------- Infos Etablissement en cours -----------*/
+    function setCurrentEtabInfosHandler(etabInfos){
+        setCurrentEtabInfos(etabInfos);
+    }
+    
+
    
 
     
     const APP_Ctx = {
-        usrLogin       : usrLogin,
-        usrIsLogged    : isUsrLogged,
-        isDataLoaded   : isDataLoaded,
-        userProfile    : userProfile,
-        enableProfiles : enableProfiles,
-        idUser         : idUser,
-        currentYear    : currentYear,
-        currentCycle   : currentCycle,
-        currentEtab    : currentEtab,
-        idEtabInit     : idEtabInit,
-        activatedYear  : activatedYear,
-        infoAnnees     : infoAnnees,
-        infoSetabs     : infoSetabs,
-        infoUser       : infoUser,
-        infoCycles     : infoCycles,
-        infoNiveaux    : infoNiveaux,
-        infoClasses    : infoClasses,
-        infoMatieres   : infoMatieres,
-        infoCours      : infoCours,        
+        usrLogin            : usrLogin,
+        usrIsLogged         : isUsrLogged,
+        isDataLoaded        : isDataLoaded,
+        userProfile         : userProfile,
+        enableProfiles      : enableProfiles,
+        idUser              : idUser,
+        currentYear         : currentYear,
+        currentCycle        : currentCycle,
+        currentEtab         : currentEtab,
+        idEtabInit          : idEtabInit,
+        activatedYear       : activatedYear,
+        infoAnnees          : infoAnnees,
+        infoSetabs          : infoSetabs,
+        infoUser            : infoUser,
+        infoCycles          : infoCycles,
+        infoNiveaux         : infoNiveaux,
+        infoClasses         : infoClasses,
+        infoMatieres        : infoMatieres,
+        infoCours           : infoCours,        
         /*---------- Gestion des Lesons -----------*/
-        etatLesson     : etatLesson,
-        currentLesson  : currentLesson,
-
+        etatLesson          : etatLesson,
+        currentLesson       : currentLesson,
+  
         /*---------- Gestion des messages -----------*/
-        tabNotifs      : tabNotifs,
+        tabNotifs           : tabNotifs,
+
+        /*---------- Infos Etablissement en cours -----------*/
+        currentEtabInfos    : currentEtabInfos,
        
-        setUsrConnected   : connectHandler,
-        setUsrLogin       : connectedUserHandler,
-        logOut            : logOutHandler,
-        setIsDataLoaded   : setIsDataLoadedHandler,
-        setUserProfile    : setUserProfileHandler,
-        setEnableProfiles : setEnableProfilesHandler,
-        setIdUser         : setIdUserHandler,
-        setCurrentEtab    : setCurrentEtabHandler,
-        setCurrentCycle   : setCurrentCycleHandler,
-        setCurrentYear    : setCurrentYearHandler,
-        setIdEtabInit     : setIdEtabInitHandler,
-        setActivatedYear  : setActivatedYearHandler,
-        setInfoAnnees     : setInfoAnneesHandler,
-        setInfoSetabs     : setInfoSetabsHandler,
-        setInfoUser       : setInfoUserHandler,
-        setInfoCycles     : setInfoCyclesHandler,
-        setInfoNiveaux    : setInfoNiveauxHandler,
-        setInfoClasses    : setInfoClassesHandler,
-        setInfoMatieres   : setInfoMatieresHandler,
-        setInfoCours      : setInfoCoursHandler,
+        setUsrConnected     : connectHandler,
+        setUsrLogin         : connectedUserHandler,
+        logOut              : logOutHandler,
+        setIsDataLoaded     : setIsDataLoadedHandler,
+        setUserProfile      : setUserProfileHandler,
+        setEnableProfiles   : setEnableProfilesHandler,
+        setIdUser           : setIdUserHandler,
+        setCurrentEtab      : setCurrentEtabHandler,
+        setCurrentCycle     : setCurrentCycleHandler,
+        setCurrentYear      : setCurrentYearHandler,
+        setIdEtabInit       : setIdEtabInitHandler,
+        setActivatedYear    : setActivatedYearHandler,
+        setInfoAnnees       : setInfoAnneesHandler,
+        setInfoSetabs       : setInfoSetabsHandler,
+        setInfoUser         : setInfoUserHandler,
+        setInfoCycles       : setInfoCyclesHandler,
+        setInfoNiveaux      : setInfoNiveauxHandler,
+        setInfoClasses      : setInfoClassesHandler,
+        setInfoMatieres     : setInfoMatieresHandler,
+        setInfoCours        : setInfoCoursHandler,
 
         /*---------- Gestion des lecons -----------*/
-        setEtatLesson     : setEtatLessonHandler,
-        setCurrentLesson  : setCurrentLessonHandler,  
+        setEtatLesson       : setEtatLessonHandler,
+        setCurrentLesson    : setCurrentLessonHandler,  
         
         /*---------- Gestion des messages -----------*/
-        setTabNotifs      : setTabNotifsHandler,         
+        setTabNotifs        : setTabNotifsHandler,    
+        
+        /*---------- Infos Etablissement en cours -----------*/
+        setCurrentEtabInfos : setCurrentEtabInfosHandler, 
     };
 
 

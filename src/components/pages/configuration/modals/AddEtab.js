@@ -5,6 +5,7 @@ import CustomButton from "../../../customButton/CustomButton";
 import UiContext from "../../../../store/UiContext";
 import { useContext, useState, useEffect } from "react";
 import Select from 'react-select';
+import axios from 'axios';
 
 const baseURL = 'http://127.0.0.1:8000/';
 // const baseURL = 'http://192.168.43.36:8000/';
@@ -30,6 +31,7 @@ function AddEtab(props) {
     const [lang, setLang] = useState(currentUiContext.formInputs[8]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const selectedTheme = currentUiContext.theme;
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const [openFileSelector, { filesContent, loading, errors }] = useFilePicker({
         readAs: 'DataURL',
@@ -269,195 +271,46 @@ function AddEtab(props) {
     function dropDownTypeEtabChangeHandler(e){
         document.getElementById('typeSousetab').value = e.value;
         setTypeEtab(e.value);
-      }
+    }
+
+
+    function actionHandler(e){
+        if (filesContent.length>0){
+            document.getElementById("logo_url").value = filesContent[0].content;
+            console.log("fichier fff",document.getElementById("logo_url").value, filesContent[0].content)
+        }
+       
+        props.actionHandler(e)
+    }
+
+    // const handleFileUpload = (event) => {
+    //     setSelectedFile(event.target.files[0]);
+    // };
+
+  
+    // const handleUpload = (e) => {
+    //     e.preventDefault();
+    //     const formData = new FormData();
+    //     formData.append('file', selectedFile);
+    // //     fetch('/process.php', {
+    // //         method: "POST", 
+    // //         body:formData
+    // //     }).then((response)=>{console.log("reponse",response)});
+    // // }
+    //      axios.post('api/logo_filigrane', formData,{
+    //         headers:{'Content-type':'multipart/form-data'}
+    //     })
+    //        .then((response) => {
+    //          console.log(response.data);
+    //          })
+    //          .catch((error) => {
+    //          console.log(error);
+    //          });
+    //      };
 
     /************************************ JSX Code ************************************/
 
-//     return (
-//         <div className={classes.formStyle}>
-//             <div className={classes.inputRow}> 
-//                 {(errors.length) ?
-//                     <div className={classes.errorMsg}> {getUploadError()}</div>
-//                     :
-//                     null
-//                 }
-//                 {(filesContent.length==0) ? 
-//                     <div className={classes.etabLogo}>
-//                         {(currentUiContext.formInputs[11]!==undefined && currentUiContext.formInputs[11] !== null )?
-//                         < img src={baseURL+currentUiContext.formInputs[11]} id='en'  className={classes.logoImg} alt="my image"/>:
-//                         < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image"/>}
-//                         <CustomButton
-//                             btnText='Choisir Logo' 
-//                             buttonStyle={getSmallButtonStyle()}
-//                             btnTextStyle = {classes.btnSmallTextStyle}
-//                             btnClickHandler = {() => openFileSelector()}
-//                         />
-//                     </div>  
-//                         :
-//                     <div className={classes.etabLogo}>
-//                         <img id="logo" alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
-//                         <div className={classes.photoFileName}>{filesContent[0].name}</div>
-//                         <CustomButton
-//                             btnText='Choisir Logo' 
-//                             buttonStyle={getSmallButtonStyle()}
-//                             btnTextStyle = {classes.btnSmallTextStyle}
-//                             btnClickHandler = {() => openFileSelector()}
-//                         />
-//                     </div>
-//                 }
-                
-//             </div>
-           
-//             <div id='errMsgPlaceHolder'/>
 
-            
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Nom Etablissement :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="libelle" type="text" className={classes.inputRowControl + ' formInput'} onChange={handleChange} defaultValue={currentUiContext.formInputs[0]} />
-//                 </div>
-//             </div>
-
-//              <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Type :  
-//                 </div>
-//                 <div style={{marginBottom:'1.3vh'}}> 
-//                     <Select
-//                         options={optEtab}
-//                         className={classes.selectStyle +' slctClasseStat'}
-//                         classNamePrefix="select"
-//                         value={{value: typeEtab,  label:typeEtab==="primaire"?'Primaire':typeEtab==="secondaire"?"Secondaire":"Maternelle"  }}
-//                         styles={selectLangueStyles}
-//                         onChange={dropDownTypeEtabChangeHandler} 
-//                     />
-//                 </div>
-//             </div> 
-
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Date Creation :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="date_creation" type="text" className={classes.inputRowControl + ' formInput medium' }  defaultValue={currentUiContext.formInputs[1]}/>
-//                 </div>
-//             </div>
-
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Nom Fondateur :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="nom_fondateur" type="text" className={classes.inputRowControl + ' formInput'} onChange={handleChange} defaultValue={currentUiContext.formInputs[2]}/>
-//                 </div>
-//             </div>
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                 Devise Etablissement :
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="devise" type="text" className={classes.inputRowControl + ' formInput'}  defaultValue={currentUiContext.formInputs[3]}/>
-//                 </div>
-//             </div>
-
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Localisation :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="localisation" type="text" className={classes.inputRowControl + ' formInput'}  defaultValue={currentUiContext.formInputs[4]} />
-//                 </div>
-//             </div>
-
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     BP :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="bp" type="text" className={classes.inputRowControl + ' formInput small'}  defaultValue={currentUiContext.formInputs[5]} />
-//                 </div>
-//             </div>
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Email :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="email" type="text" className={classes.inputRowControl + ' formInput'}  defaultValue={currentUiContext.formInputs[6]}/>
-//                 </div>
-//             </div>
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     TEL :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="tel" type="text" className={classes.inputRowControl + ' formInput medium'}  defaultValue={currentUiContext.formInputs[7]}/>
-//                 </div>
-//             </div>
-//              <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Langue :  
-//                 </div>
-                    
-//                 <div style={{marginBottom:'1.3vh'}}> 
-//                     <Select
-//                         options={optLangue}
-//                         className={classes.selectStyle +' slctClasseStat'}
-//                         classNamePrefix="select"
-//                         value={{value: lang,  label:lang==="fr"?'Français':"English"}}
-//                         styles={selectLangueStyles}
-//                         onChange={dropDownChangeHandler} 
-//                     />
-//                 </div>
-//             </div> 
-//             <div className={classes.inputRowLeft}> 
-//                 <div className={classes.inputRowLabel}>
-//                     Site Web :  
-//                 </div>
-                    
-//                 <div> 
-//                     <input id="site_web" type="text" className={classes.inputRowControl + ' formInput'} onChange={handleChange} defaultValue={currentUiContext.formInputs[9]}/>
-//                 </div>
-//             </div>
-//             <div>
-//                 <input id="codeLangue" type="hidden"  value={lang}/>
-//                 <input id="typeSousetab" type="hidden"  value={typeEtab}/>
-//                 <input id="idEtab" type="hidden"  value={currentUiContext.formInputs[10]}/>
-//             </div>
-           
-//             <div className={classes.buttonRow}>
-//                 <CustomButton
-//                     btnText='Annuler' 
-//                     buttonStyle={getButtonStyle()}
-//                     btnTextStyle = {classes.btnTextStyle}
-//                     btnClickHandler={props.cancelHandler}
-//                 />
-                
-//                 <CustomButton
-//                     btnText={(props.formMode=='creation') ? 'Valider':'Modifier'} 
-//                     buttonStyle={getButtonStyle()}
-//                     btnTextStyle = {classes.btnTextStyle}
-//                     btnClickHandler={(isValid) ? props.actionHandler : null}
-//                     disable={!isValid}
-//                 />
-                
-//             </div>
-
-            
-
-//         </div>
-       
-//      );
-//  }
 return (
     <div className={classes.formStyle}>
         <div className={classes.inputRow}> 
@@ -468,33 +321,33 @@ return (
             }
            
            {(filesContent.length==0) ? 
-                    <div className={classes.etabLogo}>
-                        {(currentUiContext.formInputs[11]!==undefined && currentUiContext.formInputs[11] !== null )?
-                        < img src={baseURL+currentUiContext.formInputs[11]} id='en'  className={classes.logoImg} alt="my image"/>:
-                        < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image"/>}
-                        <CustomButton
-                            btnText='Choisir LogoA' 
-                            buttonStyle={getSmallButtonStyle()}
-                            btnTextStyle = {classes.btnSmallTextStyle}
-                            btnClickHandler = {() => {openFileSelector();}}
-                        />
-                    </div>  
-                        :
-                    
-                    <div className={classes.etabLogo}>
-                        <img id="logo" alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
+                <div className={classes.etabLogo}>
+                    {(currentUiContext.formInputs[11]!==undefined && currentUiContext.formInputs[11] !== null )?
+                    < img src={currentUiContext.formInputs[11]} className={classes.logoImg} alt="my image"/>:
+                    < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image"/>}
+                    {/* <input type="file" onChange={handleFileUpload} /> */}
+                    <CustomButton
+                        btnText='Choisir Logo' 
+                        buttonStyle={getSmallButtonStyle()}
+                        btnTextStyle = {classes.btnSmallTextStyle}
+                        btnClickHandler = {() => {openFileSelector();}}
+                        //btnClickHandler = {handleUpload}
                         
-                        <CustomButton
-                            btnText='Choisir LogoB' 
-                            buttonStyle={getSmallButtonStyle()}
-                            btnTextStyle = {classes.btnSmallTextStyle}
-                            btnClickHandler = {() => {openFileSelector();}}
-                        />
-                    </div>
+                    />
+                </div>                      
+                :                
+                <div className={classes.etabLogo}>
+                    <img id="logo" alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
+                    <input type="hidden"  id ="logo_info" value={filesContent[0].lastModified}/>
+                    <CustomButton
+                        btnText='Choisir Logo' 
+                        buttonStyle={getSmallButtonStyle()}
+                        btnTextStyle = {classes.btnSmallTextStyle}
+                        btnClickHandler = {() => {openFileSelector();}}
+                    />
+                </div>
             }
 
-           
-            
         </div>
        
         <div id='errMsgPlaceHolder'/>
@@ -636,7 +489,7 @@ return (
                 btnText={(props.formMode=='creation') ? 'Valider':'Modifier'} 
                 buttonStyle={getButtonStyle()}
                 btnTextStyle = {classes.btnTextStyle}
-                btnClickHandler={(isValid) ? props.actionHandler : null}
+                btnClickHandler={(isValid) ? actionHandler : null}
                 disable={!isValid}
             />
             
@@ -649,4 +502,11 @@ return (
  );
 }
  export default AddEtab;
+ 
+
+
+
+
+
+
  

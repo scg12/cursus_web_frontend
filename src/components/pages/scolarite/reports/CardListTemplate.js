@@ -90,10 +90,11 @@ function CardListTemplate(props){
 
         return (       
             <View size='A8' orientation='landscape' style={styles.cardPage} key={0}>
-                <Filigrane photoStyle={{width:"23vw", height:"20vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
+                <Filigrane photoStyle={{width:"16vw", height:"13vw"}} style={{zIndex:0, marginTop:"3vh"}} />                    
                 <View style={styles.header}>
                     <CardHeadLeft  style={styles.headerLeft}   page={props.page}   />
-                    <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.page.pageImages[0]}/>
+                    <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.page.pageImagesDefault[0]}/>
+                    <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.page.pageImages[0]}/>              
                     <CardHeadRight style={styles.headerRight}  page={props.page}  />                                     
                 </View>
                 <View style = {styles.drapeau}>
@@ -105,53 +106,53 @@ function CardListTemplate(props){
                 <CardHeadCenter style={styles.headerCenter} page={props.page}/>
                 
                 <View style={styles.main}>
-                    <CardPHOTO photoStyle={styles.photoStyle} imageSrc={'images/profile.png'}/>
+                    <CardPHOTO photoStyle={styles.photoStyle} imageSrc={props.eleve.photo_url.length>0? props.eleve.photo_url :'images/photo4Fois4P.png'}/>
 
                     <View style={styles.cardInfo}>
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
                                 <Text style={{fontSize:6, fontWeight:'black'}}>Nom/Name:</Text>
-                                <Text style={{fontSize:7.7, fontWeight:'heavy', color:'rgb(6, 83, 134)', textTransform:'uppercase', paddingBottom:'1px'}}>{props.eleve.nom}</Text>
+                                <Text style={{fontSize:7.7, fontFamily:'MyBold', color:'rgb(6, 83, 134)', textTransform:'uppercase', paddingBottom:'1px'}}>{props.eleve.nom}</Text>
                             </View>
                         </View>
 
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, fontWeight:'black'}}>Prenom/surname:</Text>
-                                <Text style={{fontSize:7.7, fontWeight:'heavy', color:'rgb(6, 83, 134)', textTransform:'uppercase', paddingBottom:'1px'}}>{props.eleve.prenom}</Text>
+                                <Text style={{fontSize:6, color:'black'}}>Prenom/surname:</Text>
+                                <Text style={{fontSize:7.7, fontFamily:'MyBold', color:'rgb(6, 83, 134)', textTransform:'uppercase', paddingBottom:'1px'}}>{props.eleve.prenom}</Text>
                             </View>
                         </View>
 
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, fontWeight:'black'}}>Ne(e) Le/Born on:</Text>
-                                <Text style={{fontSize:7, fontWeight:'heavy'}}>{props.eleve.date_naissance}</Text>
+                                <Text style={{fontSize:6, color:'black'}}>Ne(e) Le/Born on:</Text>
+                                <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)',}}>{props.eleve.date_naissance}</Text>
                             </View>
                         </View>
 
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                    <Text style={{fontSize:6, fontWeight:'black'}}>A/At:</Text>
-                                    <Text style={{fontSize:7, fontWeight:'heavy'}}>{props.eleve.lieu_naissance}</Text>
+                                    <Text style={{fontSize:6, color:'black'}}>A/At:</Text>
+                                    <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)'}}>{props.eleve.lieu_naissance}</Text>
                             </View>                           
                         </View>
 
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, fontWeight:'black'}}>Classe/Class:</Text>
-                                <Text style={{fontSize:7, fontWeight:'heavy'}}>{props.page.currentClasse}</Text>
+                                <Text style={{fontSize:6, color:'black'}}>Classe/Class:</Text>
+                                <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)'}}>{props.page.currentClasse}</Text>
                             </View>                            
                         </View>
 
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, fontWeight:'black'}}>Matricule:</Text>
-                                <Text style={{fontSize:7, fontWeight:'heavy'}}>{props.eleve.matricule}</Text>
+                                <Text style={{fontSize:6, color:'black'}}>Matricule:</Text>
+                                <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)'}}>{props.eleve.matricule}</Text>
                             </View>
                         </View>
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:7, fontWeight:'black', color:'red', paddingTop:'1px'}}>Annee:</Text>
+                                <Text style={{fontSize:7, color:'black', color:'red', paddingTop:'1px'}}>Annee:</Text>
                                 <Text style={{fontSize:8, fontWeight:'black', color:'red'}}>2022/2023</Text>
                             </View>
                         </View>
@@ -159,7 +160,7 @@ function CardListTemplate(props){
 
                     <View style={styles.fieldZone}>
                         <View style={styles.StampStyle}>
-                            <CardPHOTO photoStyle={styles.photoStyle} imageSrc={'images/cachet.png'}/>                        
+                            <CardPHOTO photoStyle={styles.cachetStyle} imageSrc={'images/cachet.png'}/>                        
                         </View>
                         
                         <View style={styles.signatureAndDate}>
@@ -170,7 +171,7 @@ function CardListTemplate(props){
                 </View>
               
                 <View style={styles.footer}>
-                    <Text style={styles.adresse}> BP/PO BOX : 125 YAOUNDE Telephone : 222 52 52 63  </Text>
+                    <Text style={styles.adresse}>{props.page.centerHeaders[2]} </Text>
                 </View>
 
             </View>
@@ -258,15 +259,38 @@ const styles = StyleSheet.create({
     },
 
     imagestyle:{
+        position:"absolute",
+        top:"-3.3vh",
+        left:0,
+        zIndex:3,       
         width:'6vw',
         height:'5vw',
-        alignSelf:'flex-end'
+        // alignSelf:'flex-end'
+        marginLeft:"2vw",
+    },
+
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-3.3vh",
+        left:0,
+        zIndex:0,       
+        width:'6vw',
+        height:'5vw',
+        // alignSelf:'flex-end',
+        marginLeft:"-3vw"
+    },
+
+    cachetStyle:{
+        width:'10vw',
+        height:'10vw',
+        borderRadius:"7vw"
     },
 
     photoStyle:{
-        width:'10vw',
-        height:'10vw',
-        borderRadius:3
+        width:'8.7vw',
+        height:'8.7vw',
+        borderRadius:"1.7vw",
+        marginRight:"1vw"
     },
 
     cardInfo:{

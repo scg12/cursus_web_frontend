@@ -10,6 +10,7 @@ import Notification from '../../../notification/Notification';
 import axiosInstance from '../../../../axios'; 
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n'
+import '../../../../store/SharedData/MarvinJ';
 
 import 'react-materialize';
 import 'materialize-css/dist/css/materialize.min.css';
@@ -136,8 +137,8 @@ function SideContent(props) {
         // console.log("currentYear: ",currentAppContext.currentYear," currentEtab: ", currentAppContext.currentEtab);
 
         //startnotifMotion();
-
-        console.log("notifs", currentAppContext.tabNotifs);
+        document.getElementById("logo_url").value = currentAppContext.currentEtabInfos.logo_url;
+        console.log("notifs", currentAppContext.currentEtabInfos,currentAppContext.tabNotifs,document.getElementById("logo_url").value);
     },[])
   
     function getSelectDropDownTextColr() {
@@ -354,7 +355,7 @@ function SideContent(props) {
         <div> 
             
             <CustomCalendar/>
-            <div className= {classes.mainInfosStyle}>
+            <div className= {classes.mainInfosStyle}>            
                 <div id="notifZone" className={classes.notifZone + " notifFrom"}>
                     {currentAppContext.tabNotifs.map((notif, index)=>{
                         return(
@@ -419,10 +420,12 @@ function SideContent(props) {
                             );
                         })}
                     </select>
-                </div> 
-                
+                </div>                
            
             </div>
+            <input id="logo_url" type ="hidden"/>
+            <canvas id="output" style={{display:'none'}}></canvas>
+            
         </div>
     );
 }

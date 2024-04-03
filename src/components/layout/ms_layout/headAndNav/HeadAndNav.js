@@ -294,7 +294,7 @@ function HeadAndNav(props) {
                 :
                 null
             }
-            <div className={classes.etabInfos}>
+            {/* <div className={classes.etabInfos}>
                 <div className={classes.logoStyle}> 
                     <Link to='/' onClick={backToHome}><img src='images/collegeVogt.png'  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img></Link>
                 </div>
@@ -305,6 +305,31 @@ function HeadAndNav(props) {
                     </div>
                     <div className= {classes.etabMotoStyle}> 
                         <i> {devise} </i> 
+                    </div>
+                </div>
+                
+            </div> */}
+
+            <div className={classes.etabInfos}>
+                <div className={classes.logoStyle}> 
+                    {/* <Link to='/' onClick={backToHome}><img src='images/collegeVogt.png'  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img></Link> */}
+                    <Link to='/' onClick={backToHome}>
+                        {(currentAppContext.currentEtabInfos.logo_url.length==0)?
+                            <img id="etab_logo" src= "images/logoDefault.png"  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img>
+                            :
+                            <img id="etab_logo" src={ currentAppContext.currentEtabInfos.logo_url}  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img>
+                        }
+                        
+                    </Link>
+                    
+                </div>
+            
+                <div className= {classes.etabNameDisplayPos}> 
+                    <div id="etab_name" className= {classes.etabNameStyle}>
+                       {currentAppContext.currentEtabInfos.libelle}
+                    </div>
+                    <div id="etab_motto" className= {classes.etabMotoStyle}> 
+                        <i> {currentAppContext.currentEtabInfos.devise} </i> 
                     </div>
                 </div>
                 
@@ -369,13 +394,13 @@ function HeadAndNav(props) {
 
                     <div className={classes.divider}/>
 
-                    {(currentUiContext.photo_url=="")?
+                    {(currentAppContext.infoUser.photo_url=="")?
                     <div className={classes.langButton}>
                         < img src="images/profile.png" className={classes.widgetIcon} alt="my image"/>  
                     </div>
                     :
                     <div className={classes.langButton}>
-                        < img src={currentUiContext.photo_url}  className={classes.widgetIcon} alt="my image" />  
+                        < img src={currentAppContext.infoUser.photo_url}  className={classes.widgetIcon} alt="my image" />  
                     </div>
                 }
 

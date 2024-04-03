@@ -2,6 +2,7 @@ import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
+import Filigrane from "../../../filigrane/Filigrane";
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n';
 
@@ -87,7 +88,7 @@ function StudentCursus(props){
     const EleveInfo = (props) =>{
         return(
             <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-start",marginBottom:"3vh", width:'100%'}}>
-                <Photo photoStyle ={{...styles.photoStyle,alignSelf:"center", borderStyle:"solid", borderWidth:"1px", marginRight:"2vw", borderRadius:3}} imageSrc={'images/profile.png'}/>
+                <Photo photoStyle ={{...styles.photoStyle,alignSelf:"center", borderStyle:"solid", borderWidth:"1px", marginRight:"2vw", borderRadius:3}} imageSrc={props.eleve.photo_url.length>0? props.eleve.photo_url : 'images/photo4Fois4P.png'}/>
                 
                 <View style={{display:"flex", flexDirection:"row", backgroundColor:"lightgray", padding:7, borderRadius:3, width:"100%", marginRight:"3vw", paddingBottom:"3vh"}}> 
                     <View style={{display:"flex", flexDirection:"column", height:"5vh"}}>
@@ -163,7 +164,7 @@ function StudentCursus(props){
                     </View>                    
                 </View>
 
-                <View style={{display:"flex", fontSize:"1vh", flexDirection:"row", width:"100%", height:"2.5vh", width:"100%", backgroundColor:"white", borderColor:"black", borderWidth:"1px", borderStyle:"solid"}}>
+                <View style={{display:"flex", fontSize:"1vh", flexDirection:"row", width:"100%", height:"2.5vh", width:"100%", /*backgroundColor:"white",*/ borderColor:"black", borderWidth:"1px", borderStyle:"solid"}}>
                     <View style={{display:"flex", flexDirection:"row", width:"50%"}}>
                         <View style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center", width:"50%"}}><Text style={{fontWeight:'heavy'}}>{props.row.resultat_annuel}</Text></View>
                         <View style={{width:"0vw", height:"100%", borderColor:"black", borderWidth:"1px", borderStyle:"solid"}}></View>
@@ -200,9 +201,11 @@ function StudentCursus(props){
         <Document>
         
             <Page size="A4"  style={styles.page} key={1}>
+                <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}}/>                    
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}  data={props.pageSet}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.pageSet.pageImagesDefault[0]}/>
                     <PageHeadRight style={styles.headerRight} data={props.pageSet}  />                                     
                 </View>
                 
@@ -298,9 +301,24 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-9.7vh",
+        left:0,
+        zIndex:2,       
+        width :'14vw',
+        height:'13vw',
+        borderRadius:3,
+        marginLeft:"-7vw"
+    },
+
     imagestyle:{
-        width:'12vw',
-        height:'11vw',
+        position:"absolute",
+        top:"-9.7vh",
+        left:30,
+        zIndex:3,       
+        width :'14vw',
+        height:'13vw',
         borderRadius:3
     },
 
@@ -329,8 +347,8 @@ const styles = StyleSheet.create({
     }, 
 
     photoStyle:{
-        width:'13vw',
-        height:'10vw',
+        width:'15vw',
+        height:'13vw',
         borderRadius:3
     },
 
@@ -414,7 +432,7 @@ const styles = StyleSheet.create({
         display:"flex",
         flexDirection:"column",
         textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "70%",
         width: "97%",
         color:'black',

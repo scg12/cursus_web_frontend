@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
 
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -27,31 +27,7 @@ var selectedElevesIds = new Array();
 var currentTeacherLabel = undefined;
 var printedETFileName='';
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"",
-    displayedName:'',
-    nom: '',
-    prenom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    nom_mere : '',
-    tel_pere : '',
-    tel_mere : '',
-    email_pere : '',
-    email_mere : '',
-    etab_provenance:'',
-    id:1,
-    redouble: '',
-    sexe:'M', 
-    
-    nom_parent      : '', 
-    tel_parent      : '', 
-    email_parent    : '',   
-}
+var listElt ={}
 
 
 var pageSet = [];
@@ -77,6 +53,7 @@ function CertificatScolarite(props) {
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
+    const[imageUrl, setImageUrl] = useState('');
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -85,9 +62,19 @@ function CertificatScolarite(props) {
             CURRENT_CLASSE_ID = undefined;
         }
 
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabListClasses();
         
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
 
     const getEtabListClasses=()=>{
         var tempTable=[
@@ -766,27 +753,27 @@ const columnsFr = [
         }).then((res)=>{
           
             if(CURRENT_CLASSE_ID != undefined){
-                var PRINTING_DATA ={
-                    currentClasse: CURRENT_CLASSE_LABEL,
-                    anneeScolaire:"2022-2023",
-                    nomDirecteur:"ABENA Luc",
-                    qualite: "Directeur",
-                    schoolName:"College Francois Xavier VOGT",
-                    dateText:'Yaounde, le 14/03/2023',
-                    leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                    centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
-                    rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                    pageImages:["images/collegeVogt.png"],
-                    pageTitle: "CERTIFICAT DE SCOLARITE",
-                    //tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                    tableData :[...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
-                    numberEltPerPage:ROWS_PER_PAGE 
+              
+                var PRINTING_DATA = {
+                    currentClasse        : CURRENT_CLASSE_LABEL,
+                    anneeScolaire        : currentAppContext.activatedYear.libelle,
+                    nomDirecteur         : "ABENA Luc",
+                    qualite              : "Directeur",
+                    schoolName           : currentAppContext.currentEtabInfos.libelle,
+                    dateText             : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                    leftHeaders          : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    centerHeaders        : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                    rightHeaders         : ["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    pageImages           : [imgUrl],
+                    pageImagesDefault    : [imgUrlDefault],
+                    pageTitle            : t("school_certificate_M"),
+                    tableData            : [...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
+                    numberEltPerPage     : ROWS_PER_PAGE 
                 };
-                printedETFileName ='certificat_scolarite.pdf'
+                printedETFileName        = 'certificat_scolarite.pdf'
                 setModalOpen(4);
-                ElevePageSet={};
-                //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-                ElevePageSet = {...PRINTING_DATA};
+                ElevePageSet             = {};
+                ElevePageSet             = {...PRINTING_DATA};
                 document.getElementById("btnGen").classList.add("disable");
                 console.log("ici la",ElevePageSet);                    
             } else{

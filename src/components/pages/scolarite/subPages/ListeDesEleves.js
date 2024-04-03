@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -46,6 +46,7 @@ var ElevePageSet=[];
 var printedETFileName ='';
 
 
+
 function ListeDesEleves(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
@@ -55,6 +56,7 @@ function ListeDesEleves(props) {
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
+    const[imageUrl, setImageUrl] = useState('');
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -63,9 +65,19 @@ function ListeDesEleves(props) {
             CURRENT_CLASSE_ID = undefined;
         }
 
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabListClasses();
         
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
@@ -829,24 +841,24 @@ const columnsFr = [
     }
 
     const printStudentList=()=>{
-        
+       
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL,
-                tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                tableData :[...gridRows],
-                numberEltPerPage:ROWS_PER_PAGE  
+                dateText         : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders     : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages       : [imgUrl], 
+                pageImagesDefault: [imgUrlDefault],
+                pageTitle        : t("studentList_of")+' '+ CURRENT_CLASSE_LABEL,
+                tableHeaderModel : [t("matricule_short"), t('displayedName_M'), t("form_dateNaiss"), t("form_lieuNaiss"), t("enrole en"), t("nom_parent"), t("nouveau")],
+                tableData        : [...gridRows],
+                numberEltPerPage : ROWS_PER_PAGE  
             };
-            printedETFileName = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
+            printedETFileName    = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4);
-            ElevePageSet=[];
-            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet         = [];
+            ElevePageSet         = createPrintingPages(PRINTING_DATA);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING;

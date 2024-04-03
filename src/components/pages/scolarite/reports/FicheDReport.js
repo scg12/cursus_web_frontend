@@ -2,6 +2,7 @@ import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
+import Filigrane from "../../../filigrane/Filigrane";
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n';
 
@@ -132,7 +133,7 @@ function FicheDReport(props){
     const EleveInfo = (props) =>{
         return(
             <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-start",marginBottom:"3vh", width:'100%'}}>
-                <Photo photoStyle ={{...styles.photoStyle,borderStyle:"solid", borderWidth:"1px", marginRight:"2vw", borderRadius:3}} imageSrc={'images/profile.png'}/>
+                <Photo photoStyle ={{...styles.photoStyle,borderStyle:"solid", borderWidth:"1px", marginRight:"2vw", borderRadius:3}} imageSrc={props.eleve.photo_url.length>0? props.eleve.photo_url : 'images/photo4Fois4P.png'}/>
                 
                 <View style={{display:"flex", flexDirection:"row", backgroundColor:"lightgray", padding:7, borderRadius:3, width:"100%", marginRight:"3vw"}}> 
                     <View style={{display:"flex", flexDirection:"column", height:"5vh"}}>
@@ -175,9 +176,11 @@ function FicheDReport(props){
         <Document>
         
             <Page size="A4"  style={styles.page} key={1}>
+                <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}}/>                    
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}  data={props.pageSet}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.pageSet.pageImagesDefault[0]}/>
                     <PageHeadRight style={styles.headerRight} data={props.pageSet}  />                                     
                 </View>
                 
@@ -284,12 +287,26 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
-    imagestyle:{
-        width:'12vw',
-        height:'11vw',
-        borderRadius:3
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-9.7vh",
+        left:0,
+        zIndex:2,       
+        width :'14vw',
+        height:'13vw',
+        borderRadius:3,
+        marginLeft:"-7vw"
     },
 
+    imagestyle:{
+        position:"absolute",
+        top:"-9.7vh",
+        left:30,
+        zIndex:3,       
+        width :'14vw',
+        height:'13vw',
+        borderRadius:3
+    },
     headerCenter:{
         display: "flex",
         flexDirection: "column",
@@ -352,7 +369,8 @@ const styles = StyleSheet.create({
         alignItems:'center',
         width:'97%',
         height:'2.3vh',
-        backgroundColor:'rgb(6, 83, 134)',
+       // backgroundColor:'rgb(6, 83, 134)',
+        backgroundColor:'black',
         textTransform:'uppercase',
         fontSize:8,
         fontWeight:'heavy',
@@ -400,7 +418,7 @@ const styles = StyleSheet.create({
         display:"flex",
         flexDirection:"column",
         textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "70%",
         width: "97%",
         color:'black',

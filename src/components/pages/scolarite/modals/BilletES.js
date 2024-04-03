@@ -766,6 +766,8 @@ function BilletES(props) {
                                 />
                             }
 
+                            
+
                         </div>
                       
                         :                    
@@ -777,6 +779,15 @@ function BilletES(props) {
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={cancelHandler}
                             />
+
+                           
+                            <CustomButton
+                                btnText={t("imprimer")}
+                                buttonStyle={getGridButtonStyle()}
+                                btnTextStyle = {classes.btnTextStyle}
+                                btnClickHandler={updateBilletHandler}
+                            />
+                            
                         </div>
 
                     }                 

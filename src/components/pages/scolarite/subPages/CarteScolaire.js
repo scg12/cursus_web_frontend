@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,getTodayDate,grey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -55,6 +55,7 @@ function CarteScolaire(props) {
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
+    const[imageUrl, setImageUrl] = useState('');
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -63,9 +64,20 @@ function CarteScolaire(props) {
             CURRENT_CLASSE_ID = undefined;
         }
 
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
+
         getEtabListClasses();
         
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
 
     const getEtabListClasses=()=>{
         var tempTable=[
@@ -110,30 +122,31 @@ function CarteScolaire(props) {
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
-            listElt={};
-            listElt.id = elt.id;
-            listElt.displayedName  = elt.nom +' '+elt.prenom;
-            listElt.nom = elt.nom;
-            listElt.prenom = elt.prenom;
-            listElt.rang = rang; 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
-            listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
-            listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = elt.date_entree;
-            listElt.nom_pere = elt.nom_pere;
-            listElt.tel_pere = elt.tel_pere;    
-            listElt.email_pere = elt.email_pere;
-            listElt.nom_mere = elt.nom_mere;
-            listElt.tel_mere = elt.tel_mere;   
-            listElt.email_mere = elt.email_mere;
+            listElt                 = {};
+            listElt.id              = elt.id;
+            listElt.displayedName   = elt.nom +' '+elt.prenom;
+            listElt.nom             = elt.nom;
+            listElt.prenom          = elt.prenom;
+            listElt.rang            = rang; 
+            listElt.presence        = 1; 
+            listElt.matricule       = elt.matricule;
+            listElt.photo_url       = elt.photo_url;
+            listElt.date_naissance  = convertDateToUsualDate(elt.date_naissance);
+            listElt.lieu_naissance  = elt.lieu_naissance;
+            listElt.date_entree     = elt.date_entree;
+            listElt.nom_pere        = elt.nom_pere;
+            listElt.tel_pere        = elt.tel_pere;    
+            listElt.email_pere      = elt.email_pere;
+            listElt.nom_mere        = elt.nom_mere;
+            listElt.tel_mere        = elt.tel_mere;   
+            listElt.email_mere      = elt.email_mere;
             listElt.etab_provenance = elt.etab_provenance;
-            listElt.sexe = elt.sexe;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant";
+            listElt.sexe            = elt.sexe;
+            listElt.redouble        = (elt.redouble == false) ? "nouveau" : "Redoublant";
 
-            listElt.nom_parent = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
-            listElt.tel_parent = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
-            listElt.email_parent = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
+            listElt.nom_parent      = (elt.nom_pere.length>0) ? elt.nom_pere:elt.nom_mere ;
+            listElt.tel_parent      = (elt.nom_pere.length>0) ? elt.tel_pere : elt.tel_mere;    
+            listElt.email_parent    = (elt.nom_pere.length>0) ? elt.email_pere : elt.email_mere;
 
             
             formattedList.push(listElt);
@@ -747,20 +760,20 @@ const columnsFr = [
             if(CURRENT_CLASSE_ID != undefined){
                 var PRINTING_DATA ={
                     currentClasse: CURRENT_CLASSE_LABEL,
-                    dateText:'Yaounde, le 14/03/2023',
-                    leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                    centerHeaders:["College francois xavier vogt", "Carte d'identite scolaire/school identity card"],
-                    rightHeaders:["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
-                    pageImages:["images/collegeVogt.png"],
-                    pageTitle: "",
-                    tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                    tableData :[...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
-                    numberEltPerPage:ROWS_PER_PAGE 
+                    dateText         : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                    leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                    rightHeaders     : ["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                    pageImages       : [imgUrl],
+                    pageImagesDefault: [imgUrlDefault],
+                    pageTitle        : "",
+                    tableHeaderModel : ["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
+                    tableData        : [...gridRows.filter((elt)=>selectedElevesIds[0].includes(elt.id))],
+                    numberEltPerPage : ROWS_PER_PAGE 
                 };
-                printedETFileName = "carte_scolaires.pdf";
+                printedETFileName    = "carte_scolaires.pdf";
                 setModalOpen(4);
                 ElevePageSet=[];
-                //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
                 ElevePageSet = createPrintingPages(PRINTING_DATA);
                 document.getElementById("btnGen").classList.add("disable");
                 console.log("ici la",ElevePageSet,PRINTING_DATA);                    

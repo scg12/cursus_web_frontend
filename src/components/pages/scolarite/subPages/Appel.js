@@ -59,7 +59,7 @@ function Appel(props) {
     
 
     useEffect(()=> {
-        currentUiContext.setIsParentMsgBox(false);
+        currentUiContext.setIsParentMsgBox(true);
 
         if(gridRows.length ==0){
             CURRENT_CLASSE_ID = undefined;
@@ -67,9 +67,7 @@ function Appel(props) {
         getEtabListClasses();  
         getCoursClasse(currentAppContext.currentEtab, 0);  
         console.log(currentUiContext.emploiDeTemps);
-        console.log(currentAppContext.infoUser);
-       
-      
+        console.log(currentAppContext.infoUser);      
     },[]);
 
     const getEtabListClasses=()=>{
@@ -152,7 +150,7 @@ function Appel(props) {
     }
 
     function classeChangeHandler(e){  
-        currentUiContext.setIsParentMsgBox(false);     
+        // currentUiContext.setIsParentMsgBox(false);     
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value;
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
@@ -443,7 +441,7 @@ function Appel(props) {
     
 
     function savePresenceHandler(e){
-        currentUiContext.setIsParentMsgBox(false);
+        //currentUiContext.setIsParentMsgBox(false);
         console.log("absents",ELEVES_ABSENTS);
         //Obtenir la date d'aujourd'hui
         var todayDate = getTodaysDate();
@@ -491,8 +489,8 @@ function Appel(props) {
             currentUiContext.showMsgBox({
                 visible:true, 
                 msgType:"info", 
-                msgTitle:t("ERROR"), 
-                message:t("day not matching")
+                msgTitle:t("error_M"), 
+                message:t("day_not_matching")
             })   
                
         }
@@ -551,7 +549,7 @@ function Appel(props) {
                     msgTitle:"", 
                     message:""
                 }) 
-                currentUiContext.setIsParentMsgBox(true);
+                //currentUiContext.setIsParentMsgBox(true);
                 return 1;
                 
             }
@@ -563,7 +561,7 @@ function Appel(props) {
                     msgTitle:"", 
                     message:""
                 })  
-                currentUiContext.setIsParentMsgBox(true);
+                //currentUiContext.setIsParentMsgBox(true);
                 setGridRows([]);
                 setPresent(0);
                 setAbsent(0);
@@ -662,7 +660,7 @@ function Appel(props) {
     return (
         <div className={classes.formStyleP}>
             {(currentUiContext.msgBox.visible == true) && <BackDrop/>}
-            {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
+            {(currentUiContext.msgBox.visible == true) && /*!currentUiContext.isParentMsgBox &&*/
                 <MsgBox 
                     msgTitle = {currentUiContext.msgBox.msgTitle} 
                     msgType  = {currentUiContext.msgBox.msgType} 

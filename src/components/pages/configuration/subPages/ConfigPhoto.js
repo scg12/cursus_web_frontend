@@ -122,13 +122,13 @@ function ConfigPhoto(props) {
            
             {(filesContent.length==0) ?        
                 <div className={classes.photoZone}>
-                    {(currentUiContext.photo_url=="")?       
+                    {(currentAppContext.infoUser.photo_url=="")?       
                         <div className={classes.photoStyle}>
                             <img src="images/profile.png"  className={classes.widgetIcon} alt="my image"/>
                         </div>
                         :
                         <div className={classes.photoStyle}>
-                            <img src={currentUiContext.photo_url} className={classes.widgetIcon} alt="my image"/>
+                            <img src={currentAppContext.infoUser.photo_url} className={classes.widgetIcon} alt="my image"/>
                         </div>
                     }   
                 </div>

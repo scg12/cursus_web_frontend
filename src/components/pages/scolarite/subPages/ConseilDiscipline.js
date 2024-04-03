@@ -12,7 +12,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import LoadingView from '../../../loadingView/LoadingView';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, grey} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -91,6 +91,7 @@ function ConseilDiscipline(props) {
     const [listClasses, setListClasses] = useState([]);
     const[isLoading,setIsloading] = useState(false);
     // const[LoadingVisible,setLoadingVisible] = useState(false);
+    const[imageUrl, setImageUrl] = useState('');
     const selectedTheme = currentUiContext.theme;
 
     
@@ -100,7 +101,16 @@ function ConseilDiscipline(props) {
         getEtabListClasses();
         getMotifConvocation();
         getTypeSAnction();
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
     function getDisciplinMeetingData(classId){
         var listConseils = [];
@@ -1239,30 +1249,29 @@ function setEditMeetingGlobalData(meeting){
 
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
-                date:'27/04/2023',
-                time:'17h45',
-                schoolName:'College FX Vogt',
-                quartier:'Mvolye',
-                ville:'Yaounde',
+                date                : CURRENT_MEETING.date,
+                time                : CURRENT_MEETING.heure,
+                schoolName          : currentAppContext.currentEtabInfos.libelle,
+                quartier            : 'Mvolye',
+                ville               : 'Yaounde',
                 
-                typeMeeting : CURRENT_MEETING.objetLabel,
-                compteRendu: CURRENT_MEETING.decision,
-                //successMark:CURRENT_MEETING.note_passage,
-                //exclusionMark:CURRENT_MEETING.note_exclusion,
-                eleveConvoques:  [...CURRENT_MEETING.listConvoques],
-                elevesDecisions: [...CURRENT_MEETING.listCaspasCas],
-                participants:    [...CURRENT_MEETING.listParticipants],
-
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,
+                typeMeeting         : CURRENT_MEETING.objetLabel,
+                compteRendu         : CURRENT_MEETING.decision,
                
-                numberEltPerPage:ROWS_PER_PAGE  
+                eleveConvoques      : [...CURRENT_MEETING.listConvoques],
+                elevesDecisions     : [...CURRENT_MEETING.listCaspasCas],
+                participants        : [...CURRENT_MEETING.listParticipants],
+
+                leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders       : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages          : [imgUrl],
+                pageImagesDefault   : [imgUrlDefault],
+                pageTitle           : "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,               
+                numberEltPerPage    : ROWS_PER_PAGE  
             };
-            printedETFileName = "PV_Conseil_discipline("+CURRENT_CLASSE_LABEL+").pdf";
-            
+
+            printedETFileName = "PV_Conseil_discipline("+CURRENT_CLASSE_LABEL+").pdf";            
             setModalOpen(4);
             CCPageSet={...PRINTING_DATA};
             console.log("ici la",CCPageSet);                    

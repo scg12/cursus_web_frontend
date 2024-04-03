@@ -12,7 +12,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {isMobile} from 'react-device-detect';
-import {convertDateToUsualDate, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer,PDFDownloadLink } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
@@ -68,6 +68,7 @@ function Studentprofile(props) {
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
     const selectedTheme = currentUiContext.theme;
+    const[imageUrl, setImageUrl] = useState('');
    
 
     const tabPeriode =[
@@ -83,7 +84,17 @@ function Studentprofile(props) {
             CURRENT_CLASSE_ID = undefined;
         }
         getEtabListClasses();
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
     const getEtabListClasses=()=>{
        var tempTable=[{value: '0',      label: (i18n.language=='fr') ? '  Choisir une classe  ' : '  Select Class  '  }]
@@ -724,20 +735,21 @@ const columnsFr = [
     
     const printStudentProfille=()=>{       
         var PRINTING_DATA ={
-            dateText            :'Yaounde, le 14/03/2023',
-            leftHeaders         :["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-            centerHeaders       :["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-            rightHeaders        :["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-            pageImages          :["images/collegeVogt.png"],
-            pageTitle           : "Fiche disciplinaire",            
-            absencesHeaderModel :[t('date'), t('nbre_hour'), t('justify'), t('not_justify')],
-            absencesData        :[...ELEVE_ABSENCES],
-            sanctionsHeaderModel:[t('date'), t('libelle'), t('duree')],
-            sanctionsData       :[...ELEVE_SANCTIONS],
-            eleveInfo           :SELECTED_ELEVE,
-            classeLabel         :CURRENT_CLASSE_LABEL,
-            date_debut          :DATE_DEBUT,
-            date_fin            :DATE_FIN,
+            dateText            :'Yaounde, '+ t('le')+ ' '+ getTodayDate(),
+            leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders       : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+', Telephone:'+ currentAppContext.currentEtabInfos.tel],
+            rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+            pageImages          : [imgUrl],
+            pageImagesDefault   : [imgUrlDefault],
+            pageTitle           : t("fiche_disciplinaire_M"),            
+            absencesHeaderModel : [t('date'), t('nbre_hour'), t('justify'), t('not_justify')],
+            absencesData        : [...ELEVE_ABSENCES],
+            sanctionsHeaderModel: [t('date'), t('libelle'), t('duree')],
+            sanctionsData       : [...ELEVE_SANCTIONS],
+            eleveInfo           : SELECTED_ELEVE,
+            classeLabel         : CURRENT_CLASSE_LABEL,
+            date_debut          : DATE_DEBUT,
+            date_fin            : DATE_FIN,
 
             numberEltPerPage:ROWS_PER_PAGE  
         };
@@ -753,9 +765,10 @@ const columnsFr = [
             var PRINTING_DATA ={
                 dateText:'Yaounde, le 14/03/2023',
                 leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                centerHeaders:[currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
                 rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
+                pageImages:[imgUrl],
+                pageImagesDefault:[imgUrlDefault],
                 pageTitle: "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL,
                 tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
                 tableData :[...gridRows],

@@ -27,6 +27,7 @@ let CURRENT_CLASSE_LABEL;
 let CURRENT_PAIEMENT;
 var ROW_TO_DELETE_ID = undefined;
 
+
 var listElt ={}
 
 
@@ -558,7 +559,7 @@ const columnsFr = [
             // console.log(type_payements);
             // var elevesPaiment = [...formatList(eleves,type_payements)];
             // setGridRows(elevesPaiment);
-
+            CURRENT_PAIEMENT.numeroRecu = res.data.numeroRecu;
             type_payements = [];
             eleves = [];
             axiosInstance
