@@ -1,4 +1,8 @@
-{   "enrole_en"                   : "Enrole en",
+{   
+    "justify_absence"             : "Justificatif de l'absence du",
+    "justify_exit_permission"     : "Justificatif de la sortie allant du",
+    "to_a"                        : "A",
+    "enrole_en"                   : "Enrole en",
     "studentList_of"              : "Liste des eleves de la classe de",
     "le"                          : "le",
     "depot_fiches"                : "Dépôt de Fiche de Progression",
@@ -409,6 +413,8 @@
     "convoque_par":"Convoqué par",
     "exit_entry_ticket":"Autorisation d'entrée/sortie",
     "exit_entry_ticket_M":"AUTORISATION D'ENTREE/SORTIE",
+    "exit_ticket_M" :"AUTORISATION DE SORTIE",
+    "entry_ticket_M":"AUTORISATION D' ENTREE",
     "conseil_anuuel":"Conseil annuel",
     "annee":"Année",
     "periode_associee":"Période associée",

@@ -5,19 +5,25 @@ import UiContext from "../../../../store/UiContext";
 import AppContext from '../../../../store/AppContext';
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
+import {isMobile} from 'react-device-detect';
 import BilletES from "../modals/BilletES";
+import Billet_ES from "../reports/Billet_ES";
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,ajouteZeroAuCasOu, grey, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
+
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
+import PDFTemplate from '../reports/PDFTemplate'
 
 
 var JOUR_DEB, MOIS_DEB, YEAR_DEB, DATEDEB_VERIF='';
 var JOUR_FIN, MOIS_FIN, YEAR_FIN, DATEFIN_VERIF='';
 let CURRENT_CLASSE_ID;
-let CURRRENT_COURS_ID;
+let CURRENT_CLASSE_LABEL;
 let SELECTED_DATE;
 var CURRENT_AUTORISATION_ID;
 
@@ -25,11 +31,13 @@ var CURRENT_AUTORISATION_ID;
 
 
 var listElt ={};
+var ElevePageSet={};
 
 var JOUR, MOIS, YEAR, DATE_VERIF;
 var tabAbsenceCours;
 var listAutorisations;
 var eleves_data;
+
 
 var BILLET_SORTIE ={}
 var modalMode = 'creation';
@@ -38,7 +46,7 @@ var chosenMsgBox;
 const MSG_SUCCESS_BS  = 1;
 const MSG_WARNING_BS  = 2;
 const MSG_QUESTION_BS = 3;
-
+var printedETFileName='';
 
 
 function BilletEntreeSortie(props) {
@@ -59,6 +67,7 @@ function BilletEntreeSortie(props) {
     const [isDateFull, setIsDateFull]=useState(false);
     const[courseSelected, setCourseSelected] = useState(false);
     const[modalMode, setModalMode]= useState("creation");
+    const[imageUrl, setImageUrl] = useState('');
     
 
     useEffect(()=> {
@@ -66,8 +75,19 @@ function BilletEntreeSortie(props) {
         if(gridRows.length ==0){
             CURRENT_CLASSE_ID = undefined;
         }    
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabListClasses();    
     },[]);
+
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
 
 
@@ -173,12 +193,14 @@ function BilletEntreeSortie(props) {
     function classeChangeHandler(e){       
         if(e.target.value != optClasse[0].value){
             CURRENT_CLASSE_ID = e.target.value;
+            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getStudentAuthSortie(CURRENT_CLASSE_ID);
             getClassStudentList(CURRENT_CLASSE_ID);
             initDatefields();
             setIsValid(true);
         }else{
             CURRENT_CLASSE_ID = undefined;
+            CURRENT_CLASSE_LABEL='';
             listAutorisations = [];
             initDatefields();
             setIsValid(false);
@@ -213,7 +235,9 @@ function BilletEntreeSortie(props) {
             listElt.id_billet   = elt.id_billet;
             listElt.id          = rang; 
             listElt.idEleve     = elt.id;
-            listElt.matricule   = elt.matricule;
+            listElt.matricule   = elt.matricule;  
+            listElt.nom_only    = elt.nom_only;
+            listElt.prenom_only = elt.prenom_only;
             listElt.nom         = elt.nom;
             listElt.rang        = ajouteZeroAuCasOu(rang); 
             listElt.type_duree  = elt.type_duree;
@@ -246,6 +270,9 @@ function BilletEntreeSortie(props) {
         if (elevData == undefined) return false;
         else return true;        
     }
+
+
+    
     
 /*************************** DataGrid Declaration ***************************/    
 const columnsFr = [
@@ -272,6 +299,25 @@ const columnsFr = [
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
+
+    {
+        field: 'nom_only',
+        headerName: 'NOM ET PRENOM(S)',
+        width: 200,
+        editable: false,
+        hide:true,
+        headerClassName:classes.GridColumnStyle
+    },
+
+    {
+        field: 'prenom_only',
+        headerName: 'NOM ET PRENOM(S)',
+        width: 200,
+        editable: false,
+        hide:true,
+        headerClassName:classes.GridColumnStyle
+    },
+
     {
         field: 'dateJour_deb',
         headerName: 'DATE DEBUT',
@@ -345,45 +391,76 @@ const columnsFr = [
     {
         field: '',
         headerName: 'ACTIONS',
-        width: 80,
+        width: 120,
         editable: false,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
             return(
-               (params.row.status == false) &&
-                    <div className={classes.inputRow}>
-                        <img src="icons/baseline_edit.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            style={{marginRight:'0.5vw'}}
-                            onClick={(event)=> {
-                                event.ignore = true;
-                            }}
-                            alt=''
-                        />
+               (params.row.status == false) ?
+               <div className={classes.inputRow}>
+                    <img src="icons/baseline_edit.png"  
+                        width={20} 
+                        height={20} 
+                        className={classes.cellPointer} 
+                        style={{marginRight:'0.5vw',  cursor:"pointer"}}
+                        onClick={(event)=> {
+                            event.ignore = true;
+                        }}
+                        alt=''
+                    />
 
-                        |
-                        
-                        <img src="images/validateAuthSortie.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
-                            style={{marginLeft:'0.5vw'}}
-                            onClick={(event)=> {
-                                //event.ignore = true;
-                                CURRENT_AUTORISATION_ID = params.row.id_billet;
-                                chosenMsgBox = MSG_QUESTION_BS;
-                                currentUiContext.showMsgBox({
-                                    visible:true, 
-                                    msgType:"question", 
-                                    msgTitle:t("justyfy_authorization_M"), 
-                                    message:t("justify_authorization")
-                                })
-                            }}
-                            alt=''
-                        />
-                    </div>
+                    |
+               
+                    <img src="images/validateAuthSortie.png"  
+                        width={17} 
+                        height={17} 
+                        className={classes.cellPointer} 
+                        style={{marginLeft:'0.5vw', marginRight:'0.5vw', cursor:"pointer"}}
+                        onClick={(event)=> {
+                            //event.ignore = true;
+                            CURRENT_AUTORISATION_ID = params.row.id_billet;
+                            chosenMsgBox = MSG_QUESTION_BS;
+                            currentUiContext.showMsgBox({
+                                visible:true, 
+                                msgType:"question", 
+                                msgTitle:t("justyfy_authorization_M"), 
+                                message:t("justify_authorization")
+                            })
+                        }}
+                        alt=''
+                    />
+
+               
+                    |
+
+
+                    <img src="images/print.png"  
+                        width={23} 
+                        height={23} 
+                        className={classes.cellPointer} 
+                        style={{marginLeft:'0.5vw', cursor:"pointer"}}
+                        onClick={(event)=> {
+                            event.ignore = false;
+                            printBillet(params.row)
+                        }}
+                        alt=''
+                    />
+                </div>
+            :
+
+                <div className={classes.inputRow}>               
+                    <img src="images/print.png"  
+                        width={23} 
+                        height={23} 
+                        className={classes.cellPointer} 
+                        style={{marginRight:'0.5vw', cursor:"pointer"}}
+                        onClick={(event)=> {
+                            event.ignore = false;
+                            printBillet(params.row)
+                        }}
+                        alt=''
+                    />
+                </div>
             )}           
             
         },
@@ -413,6 +490,25 @@ const columnsFr = [
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'nom_only',
+            headerName: 'NOM ET PRENOM(S)',
+            width: 200,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+    
+        {
+            field: 'prenom_only',
+            headerName: 'NOM ET PRENOM(S)',
+            width: 200,
+            editable: false,
+            hide:true,
+            headerClassName:classes.GridColumnStyle
+        },
+
         {
             field: 'dateJour_deb',
             headerName: 'DATE DEBUT',
@@ -487,46 +583,77 @@ const columnsFr = [
         {
             field: '',
             headerName: 'ACTIONS',
-            width: 80,
+            width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
                 return(
-                    (params.row.status == false) &&
-                         <div className={classes.inputRow}>
-                            <img src="icons/baseline_edit.png"  
-                                width={17} 
-                                height={17} 
-                                className={classes.cellPointer} 
-                                style={{marginRight:'0.5vw'}}
-                                onClick={(event)=> {
-                                    event.ignore = true;
-                                }}
-                                alt=''
-                            />
-     
-                            |
-                             
-                            <img src="images/validateAuthSortie.png"  
-                                width={17} 
-                                height={17} 
-                                className={classes.cellPointer} 
-                                style={{marginLeft:'0.5vw'}}
-                                onClick={(event)=> {
-                                    //event.ignore = true;
-                                    CURRENT_AUTORISATION_ID = params.row.id_billet;
-                                    chosenMsgBox = MSG_QUESTION_BS;
-                                    currentUiContext.showMsgBox({
-                                        visible:true, 
-                                        msgType:"question", 
-                                        msgTitle:t("justyfy_authorization_M"), 
-                                        message:t("justify_authorization")
-                                    })
-                                }}
-                                alt=''
-                            />
-                         </div>
-                )}           
+                    (params.row.status == false) ?
+                    <div className={classes.inputRow}>
+                        <img src="icons/baseline_edit.png"  
+                            width={23} 
+                            height={23} 
+                            className={classes.cellPointer} 
+                            style={{marginRight:'0.5vw', cursor:"pointer"}}
+                            onClick={(event)=> {
+                                event.ignore = true;
+                            }}
+                            alt=''
+                        />
+
+                        |
+                        
+                        <img src="images/validateAuthSortie.png"  
+                            width={17} 
+                            height={17} 
+                            className={classes.cellPointer} 
+                            style={{marginLeft:'0.5vw', marginRight:'0.5vw', cursor:"pointer"}}
+                            onClick={(event)=> {
+                                event.ignore = false;
+                                CURRENT_AUTORISATION_ID = params.row.id_billet;
+                                chosenMsgBox = MSG_QUESTION_BS;
+                                currentUiContext.showMsgBox({
+                                    visible:true, 
+                                    msgType:"question", 
+                                    msgTitle:t("justyfy_authorization_M"), 
+                                    message:t("justify_authorization")
+                                })
+                            }}
+                            alt=''
+                        />
+
+                        
+                        |
+
+
+                        <img src="images/print.png"  
+                            width={23} 
+                            height={23} 
+                            className={classes.cellPointer} 
+                            style={{marginLeft:'0.5vw', cursor:"pointer"}}
+                            onClick={(event)=> {
+                                event.ignore = false;
+                                printBillet(params.row)
+                            }}
+                            alt=''
+                        />
+                    </div>
+                :
+
+                    <div className={classes.inputRow}>               
+                        <img src="images/print.png"  
+                            width={23} 
+                            height={23} 
+                            className={classes.cellPointer} 
+                            style={{marginRight:'0.5vw', cursor:"pointer"}}
+                            onClick={(event)=> {
+                                event.ignore = false;
+                                printBillet(params.row)
+                            }}
+                            alt=''
+                        />
+                    </div>
+            )}          
                 
         },        
          
@@ -585,6 +712,42 @@ const columnsFr = [
         setModalMode('modif');
         setModalOpen(3);
     }
+
+    function printBillet(row){
+       
+        if(CURRENT_CLASSE_ID != undefined){
+            var PRINTING_DATA ={
+                currentClasse    : CURRENT_CLASSE_LABEL,
+                dateText         : getTodayDate(),
+                leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders     : ["Republic Of Cameroon", "Peace-Work-Fatherland","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
+                pageImages       : [imgUrl],
+                pageImagesDefault: [imgUrlDefault],
+                pageTitle        : (row.status == false) ? t("exit_ticket_M") : t("entry_ticket_M"),
+                billetInfos      : row                
+            };
+
+            printedETFileName    = (row.status == false) ? "billet_sortie.pdf" : "billet_entree.pdf";           
+            setModalOpen(4);
+            ElevePageSet         = {...PRINTING_DATA};
+            console.log("ici la",ElevePageSet,PRINTING_DATA);                    
+        } else{
+            chosenMsgBox = MSG_WARNING_BS;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "warning", 
+                msgTitle : t("ATTENTION!"), 
+                message  : t("must_select_class")
+            })            
+        } 
+    }
+
+        
+    const closePreview =()=>{
+        setModalOpen(0);
+    }
+    
 
     
     function quitForm() {
@@ -899,7 +1062,7 @@ const columnsFr = [
 
     return (
         <div className={classes.formStyleP}>
-            {(modalOpen==3) && <BackDrop/>}
+            {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen==3) && 
                 <BilletES 
                     formMode={modalMode} 
@@ -910,6 +1073,21 @@ const columnsFr = [
                     ModifyEltHandler={MofifyAutSortie} 
                 />            
             }
+
+            {(modalOpen==4) &&              
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    {isMobile?
+                        <PDFDownloadLink  document ={<Billet_ES pageSet={ElevePageSet}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            <Billet_ES pageSet={ElevePageSet}/>
+                        </PDFViewer>
+                    }
+                </PDFTemplate>
+            } 
+
             {(currentUiContext.msgBox.visible == true) && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
                 <MsgBox 

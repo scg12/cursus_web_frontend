@@ -759,7 +759,8 @@ const columnsFr = [
 
             if(CURRENT_CLASSE_ID != undefined){
                 var PRINTING_DATA ={
-                    currentClasse: CURRENT_CLASSE_LABEL,
+                    currentClasse    : CURRENT_CLASSE_LABEL,
+                    anneeScolaire    : currentAppContext.activatedYear.libelle,
                     dateText         : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
                     leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
                     centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],

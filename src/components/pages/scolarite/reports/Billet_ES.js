@@ -11,17 +11,19 @@ Font.register({
     family: "MyBold",
     // fontWeight: '1200', 
     src: fontBold 
-  });
-  Font.register({
+});
+
+Font.register({
     family: "MyItalic",
     src: fontItalic 
-  });
+});
 
 
 
+function Billet_ES(props) {
 
-function CardListTemplate(props){
     const { t, i18n } = useTranslation();
+
 
     const CardHeadLeft = (props) =>{
         return(
@@ -47,12 +49,12 @@ function CardListTemplate(props){
         );
     }
 
-    
+
     const CardHeadCenter = (props) =>{
         return(
             <View style={props.style}>
-                <Text style={{fontSize:9, fontFamily:"MyBold", textTransform:'uppercase', fontWeight:'ultrabold', color:'rgb(6, 83, 134)'}}>{props.page.centerHeaders[0]}</Text>
-                <Text style={{fontSize:7, fontWeight:'heavy'}}>{props.page.centerHeaders[1]}</Text>
+                <Text style={{fontSize:9, fontFamily:"MyBold", textTransform:'uppercase', fontWeight:'ultrabold', color:'black'}}>{props.page.pageTitle}</Text>
+                {/* <Text style={{fontSize:7, fontWeight:'heavy'}}>{props.page.pageTitle}</Text> */}
             </View>
         );
     }
@@ -66,121 +68,143 @@ function CardListTemplate(props){
         );
     }
 
-    
+
     const CardPHOTO = (props) =>{
         return(            
             <Image style={props.photoStyle} src={props.imageSrc}/>                                    
         );
     }
-   
-    const CardTemplate = (props) =>{
+
+    const BilletTemplate = (props) =>{
 
         return (       
             <View size='A8' orientation='landscape' style={styles.cardPage} key={0}>
-                <Filigrane photoStyle={{width:"16vw", height:"13vw"}} style={{zIndex:0, marginTop:"3vh"}} />                    
-                <View style={styles.header}>
-                    <CardHeadLeft  style={styles.headerLeft}   page={props.page}   />
-                    <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.page.pageImagesDefault[0]}/>
-                    <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.page.pageImages[0]}/>              
-                    <CardHeadRight style={styles.headerRight}  page={props.page}  />                                     
-                </View>
-                <View style = {styles.drapeau}>
-                    <View style={styles.green}></View>
-                    <View style={styles.red}> <Image style={styles.etoile} src={'images/etoile.png'}/> </View>
-                    <View style={styles.yellow}></View>
-                </View>
+                <Filigrane photoStyle={{width:"26vw", height:"23vw"}} style={{zIndex:0, marginTop:"0vh",overflowY:"clip"}} />                    
+                
                 
                 <CardHeadCenter style={styles.headerCenter} page={props.page}/>
                 
                 <View style={styles.main}>
-                    <CardPHOTO photoStyle={styles.photoStyle} imageSrc={props.eleve.photo_url.length>0? props.eleve.photo_url :'images/photo4Fois4P.png'}/>
-
                     <View style={styles.cardInfo}>
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, fontWeight:'black'}}>Nom/Name:</Text>
-                                <Text style={{fontSize:7.7, fontFamily:'MyBold', color:'rgb(6, 83, 134)', textTransform:'uppercase', paddingBottom:'1px'}}>{props.eleve.nom}</Text>
+                                <Text style={{fontSize:8, fontWeight:'black', textTransform:'uppercase',}}>{t("form_nom")} :</Text>
+                                <Text style={{fontSize:8, fontFamily:'MyBold', color:'black', textTransform:'uppercase', paddingBottom:'1px'}}>{props.page.billetInfos.nom_only}</Text>
                             </View>
                         </View>
 
-                        <View style={styles.fieldZone}>
-                            <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, color:'black'}}>Prenom/surname:</Text>
-                                <Text style={{fontSize:7.7, fontFamily:'MyBold', color:'rgb(6, 83, 134)', textTransform:'uppercase', paddingBottom:'1px'}}>{props.eleve.prenom}</Text>
-                            </View>
-                        </View>
 
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, color:'black'}}>Ne(e) Le/Born on:</Text>
-                                <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)',}}>{props.eleve.date_naissance}</Text>
+                                <Text style={{fontSize:8, fontWeight:'black', textTransform:'uppercase',}}>{t("form_prenom")} :</Text>
+                                <Text style={{fontSize:8, fontFamily:'MyBold', color:'black', textTransform:'uppercase', paddingBottom:'1px'}}>{props.page.billetInfos.prenom_only}</Text>
                             </View>
                         </View>
+  
 
                         <View style={styles.fieldZone}>
                             <View style={styles.fieldZoneFrench}>
-                                    <Text style={{fontSize:6, color:'black'}}>A/At:</Text>
-                                    <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)'}}>{props.eleve.lieu_naissance}</Text>
-                            </View>                           
-                        </View>
-
-                        <View style={styles.fieldZone}>
-                            <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, color:'black'}}>Classe/Class:</Text>
-                                <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)'}}>{props.page.currentClasse}</Text>
-                            </View>                            
-                        </View>
-
-                        <View style={styles.fieldZone}>
-                            <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:6, color:'black'}}>Matricule:</Text>
-                                <Text style={{fontSize:7, fontFamily:'MyBold', color:'rgb(6, 83, 134)'}}>{props.eleve.matricule}</Text>
+                                <Text style={{fontSize:8, color:'black', textTransform:'uppercase',}}>{t("class")} :</Text>
+                                <Text style={{fontSize:9, fontFamily:'MyBold', color:'black'}}> {props.page.currentClasse}</Text>
                             </View>
                         </View>
-                        <View style={styles.fieldZone}>
-                            <View style={styles.fieldZoneFrench}>
-                                <Text style={{fontSize:7, color:'black', color:'red', paddingTop:'1px'}}>Annee:</Text>
-                                <Text style={{fontSize:8, fontWeight:'black', color:'red'}}>{props.page.anneeScolaire}</Text>
+
+
+                        
+
+                        {(props.page.billetInfos.status == false) ?
+
+                            (props.page.billetInfos.type_duree=="jour") ?
+                                <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+                                    
+                                    <View style={styles.fieldZone}>
+                                        <View style={styles.fieldZoneFrench}>
+                                                <Text style={{fontSize:8, color:'black', textTransform:'uppercase',}}>{t("date_deb")}:</Text>
+                                                <Text style={{fontSize:8, fontFamily:'MyBold', color:'black'}}>{props.page.billetInfos.date_deb}</Text>
+                                        </View>                           
+                                    </View>
+
+                                    <View style={styles.fieldZone}>
+                                        <View style={styles.fieldZoneFrench}>
+                                                <Text style={{fontSize:8, color:'black', textTransform:'uppercase',}}>{t("date_fin")}:</Text>
+                                                <Text style={{fontSize:8, fontFamily:'MyBold', color:'black'}}>{props.page.billetInfos.date_fin}</Text>
+                                        </View>                           
+                                    </View>
+
+                                </View>
+                                :
+                                <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+                                    
+                                    <View style={styles.fieldZone}>
+                                        <View style={styles.fieldZoneFrench}>
+                                                <Text style={{fontSize:8, color:'black', textTransform:'uppercase',}}>{t("heure_deb")}:</Text>
+                                                <Text style={{fontSize:8, fontFamily:'MyBold', color:'black'}}>{props.page.billetInfos.date_deb}</Text>
+                                        </View>                           
+                                    </View>
+
+                                    <View style={styles.fieldZone}>
+                                        <View style={styles.fieldZoneFrench}>
+                                                <Text style={{fontSize:8, color:'black', textTransform:'uppercase',}}>{t("heure_deb")}:</Text>
+                                                <Text style={{fontSize:8, fontFamily:'MyBold', color:'black'}}>{props.page.billetInfos.date_fin}</Text>
+                                        </View>                           
+                                    </View>
+
+                                </View>
+                            
+                            :                            
+
+                            (props.page.billetInfos.type_duree=="jour") ?
+                                <View style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start"}}>
+                                    <View>
+                                        <Text style={{fontSize:9, fontFamily:'MyBold', marginBottom:"1vh"}}> {t('justify_exit_permission')} </Text>
+                                    </View>
+                                    <View>
+                                        <Text style={{fontSize:9, fontFamily:'MyBold',}}> {props.page.billetInfos.date_deb} {t("to")} : {props.page.billetInfos.date_fin}</Text>
+                                    </View>
+                                </View>
+                                :
+                                <View style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start"}}>
+                                    <View>
+                                        <Text style={{fontSize:10, fontFamily:'MyBold', marginBottom:"1vh"}}>{t('justify_absence')} : {props.page.billetInfos.date_jour} </Text>
+                                    </View> 
+                                    <View>
+                                        <Text style={{fontSize:10, fontFamily:'MyBold',}}>{t('from')} : {props.page.billetInfos.date_deb} {t("to_a")} : {props.page.billetInfos.date_fin}</Text>
+                                    </View>                                    
+                                
+                                </View>
+
+                        }
+
+                        <View style={{...styles.fieldZoneP,}}>
+                            <View style={styles.StampStyle}>
+                                <CardPHOTO photoStyle={styles.cachetStyle} imageSrc={'images/cachet.png'}/>                        
                             </View>
-                        </View>
+                            
+                            <View style={styles.signatureAndDate}>
+                                <Text style={{fontSize:8, fontWeight:'black'}}>{props.page.dateText}</Text>
+                            </View>
+                        </View> 
+
                     </View>
 
-                    <View style={styles.fieldZone}>
-                        <View style={styles.StampStyle}>
-                            <CardPHOTO photoStyle={styles.cachetStyle} imageSrc={'images/cachet.png'}/>                        
-                        </View>
-                        
-                        <View style={styles.signatureAndDate}>
-                            <Text style={{fontSize:5, fontWeight:'black'}}>{props.page.dateText}</Text>
-                        </View>
-                    </View> 
-
-                </View>
-              
-                <View style={styles.footer}>
-                    <Text style={styles.adresse}>{props.page.centerHeaders[2]} </Text>
                 </View>
 
-            </View>
-       
+            </View>               
+ 
         );
     }
 
     return (
         <Document>
-         { Array.from(props.pageSet,
-          (el, index) => (
-            <Page size="A4"  style={styles.page} key={index}>
-                { Array.from(el.pageRows,
-                    (row, index) => (
-                        <CardTemplate page={el} eleve={row}/>
-                    ))
-                }                                
+         <Page size="A4"  style={styles.page} key={0}>
+                <BilletTemplate page={props.pageSet} />                          
             </Page>
-          ))}
         </Document>
     );
+
 }
+    
+
 
 const styles = StyleSheet.create({
     page: {
@@ -199,13 +223,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap:'wrap',
         justifyContent:'center',
-        width: "40vw",
-        height: "17.7vh",
+        width: "43vw",
+        height: "18.7vh",
         border: "1.5px solid black",
-        borderRadius:7,
+        borderRadius:3,
         marginLeft:'1.3vw',
-        marginBottom:'2vh'
-
+        marginBottom:'2vh',
     },
 
     header: {
@@ -270,7 +293,8 @@ const styles = StyleSheet.create({
     cachetStyle:{
         width:'10vw',
         height:'10vw',
-        borderRadius:"7vw"
+        borderRadius:"7vw",
+        marginTop:"-3.7vh"
     },
 
     photoStyle:{
@@ -284,7 +308,8 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         justifyContent:'flex-start',
-        alignSelf:"flex-start",        
+        alignSelf:"flex-start",   
+         width :"90%"     
     },
 
     fieldZone:{
@@ -292,7 +317,17 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent:"center",
         alignItems:"flex-start",
-        marginBottom:'2px',
+        marginBottom:'1.3vh',
+        position:'relative',
+        zIndex:2,
+    },
+
+    fieldZoneP:{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent:"center",
+        alignItems:"flex-end",
+        marginBottom:'1.3vh',
         position:'relative',
         zIndex:2,
     },
@@ -343,11 +378,11 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent:'center',
         alignItems:'center',
-        marginBottom:"3.3px",
+        marginBottom:"1.3vh",
         height:"12%",
         paddingTop:"1px",
-        width:'100%',
-        borderTop: "1px solid black",               
+        width:'50%',
+        borderBottom: "2px solid black",              
     },
 
     dateContainer:{
@@ -432,8 +467,13 @@ const styles = StyleSheet.create({
     etoile:{
         width:'1.5vw',
         height:'1.5vw'
+    },
+
+    signatureAndDate:{
+        marginLeft:"2vh",
+        marginTop:"-3vh"
     }
 
 });
 
-export default CardListTemplate;
+export default Billet_ES;

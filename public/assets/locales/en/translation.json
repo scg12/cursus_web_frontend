@@ -1,5 +1,9 @@
                      
-{   "enrole_en"                   : "Entry",
+{   
+    "justify_absence"             : "Absence proof for the date",
+    "justify_exit_permission"     : "Exit permission proof for the period starting from",
+    "to_a"                        : "To",
+    "enrole_en"                   : "Entry",
     "studentList_of"              : "List of student for the class of",
     "le"                          : "on the",
     "depot_fiches"                : "Progress Sheet Submission",
@@ -410,6 +414,8 @@
     "convoque_par":"convocated by",
     "exit_entry_ticket":"Entry and exit autorization",
     "exit_entry_ticket_M":"ENTRY AND EXIT PERMISSION",
+    "exit_ticket_M"      :"EXIT TICKET",
+    "entry_ticket_M"     :"ENTRY TICKET",
     "conseil_anuuel":"Annual meeting",
     "annee":"Year",
     "periode_associee":"Related period",
