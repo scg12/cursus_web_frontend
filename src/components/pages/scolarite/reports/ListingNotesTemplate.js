@@ -119,7 +119,7 @@ function ListingNotesTemplate(props){
          { Array.from(props.pageSet,
           (el, index) => (
             <Page size="A4"  orientation="landscape" style={styles.page} key={index}>
-                <Filigrane photoStyle ={{width:"53vw", height:"47vw"}} style={{zIndex:0}} />
+                <Filigrane photoStyle ={{width:"77vw", height:"70vw"}} style={{zIndex:0}} />
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>

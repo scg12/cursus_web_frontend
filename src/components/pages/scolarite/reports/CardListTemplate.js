@@ -77,7 +77,7 @@ function CardListTemplate(props){
 
         return (       
             <View size='A8' orientation='landscape' style={styles.cardPage} key={0}>
-                <Filigrane photoStyle={{width:"16vw", height:"13vw"}} style={{zIndex:0, marginTop:"3vh"}} />                    
+                <Filigrane photoStyle={{width:"20vw", height:"17vw"}} style={{zIndex:0, marginTop:"1vh"}} />                    
                 <View style={styles.header}>
                     <CardHeadLeft  style={styles.headerLeft}   page={props.page}   />
                     <CardLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.page.pageImagesDefault[0]}/>

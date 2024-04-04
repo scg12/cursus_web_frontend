@@ -10,10 +10,12 @@ export function grey(imgPath,cnv,cnx) {
     cnv.width  = input.width;
     cnv.height = input.height;
 
+    cnx.globalAlpha = 0.3;
     cnx.drawImage(input, 0 , 0);
     var width = input.width;
     var height = input.height;
-    var imgPixels = cnx.getImageData(0, 0, width, height);
+   
+    var imgPixels   = cnx.getImageData(0, 0, width, height);
 
     for(var y = 0; y < imgPixels.height; y++){
         for(var x = 0; x < imgPixels.width; x++){
@@ -26,9 +28,12 @@ export function grey(imgPath,cnv,cnx) {
     }
 
     cnx.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height);
+    //cnx.globalAlpha = 0.007;
+    //cnx.globalCompositeOperation = "lighter"
 
-    var dataUrl = cnv.toDataURL();
+    var dataUrl = cnv.toDataURL();  
     var newImg  = dataUrl;
+
     console.log("convert",newImg,width,height);
     return newImg;
 }
