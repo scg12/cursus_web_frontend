@@ -119,10 +119,11 @@ function ListingNotesTemplate(props){
          { Array.from(props.pageSet,
           (el, index) => (
             <Page size="A4"  orientation="landscape" style={styles.page} key={index}>
-                <Filigrane photoStyle ={{width:"77vw", height:"70vw"}} style={{zIndex:0}} />
+                <Filigrane photoStyle ={{width:"53vw", height:"46vw"}} style={{zIndex:0, marginBottom:"-13vh"}} />
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={el.pageImagesDefault[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={el}  />                                     
                 </View>
                 
@@ -212,12 +213,26 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
-    imagestyle:{
-        width:'13vh',
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-12vh",
+        left:0,
+        zIndex:2,       
+        width :'13vh',
         height:'12vh',
         borderRadius:3,
+        marginLeft:"-7vw"
     },
 
+    imagestyle:{
+        position:"absolute",
+        top:"-12vh",
+        left:30,
+        zIndex:3,       
+        width :'13vh',
+        height:'12vh',
+        borderRadius:3
+    },
 
     headerCenter:{
         display: "flex",
