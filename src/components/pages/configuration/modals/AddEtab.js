@@ -322,7 +322,7 @@ return (
            
            {(filesContent.length==0) ? 
                 <div className={classes.etabLogo}>
-                    {(currentUiContext.formInputs[11]!==undefined && currentUiContext.formInputs[11] !== null )?
+                    {(currentUiContext.formInputs[11]!= undefined && currentUiContext.formInputs[11] != null && currentUiContext.formInputs[11] !="")?
                     < img src={currentUiContext.formInputs[11]} className={classes.logoImg} alt="my image"/>:
                     < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image"/>}
                     {/* <input type="file" onChange={handleFileUpload} /> */}

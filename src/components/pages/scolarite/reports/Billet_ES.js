@@ -156,19 +156,19 @@ function Billet_ES(props) {
                             (props.page.billetInfos.type_duree=="jour") ?
                                 <View style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start"}}>
                                     <View>
-                                        <Text style={{fontSize:9, fontFamily:'MyBold', marginBottom:"1vh"}}> {t('justify_exit_permission')} </Text>
+                                        <Text style={{fontSize:"1.7vw", fontFamily:'MyBold', marginBottom:"1vh"}}> {t('justify_exit_permission')} </Text>
                                     </View>
                                     <View>
-                                        <Text style={{fontSize:9, fontFamily:'MyBold',}}> {props.page.billetInfos.date_deb} {t("to")} : {props.page.billetInfos.date_fin}</Text>
+                                        <Text style={{fontSize:"1.7vw", fontFamily:'MyBold',}}> {props.page.billetInfos.date_deb} {t("to")} : {props.page.billetInfos.date_fin}</Text>
                                     </View>
                                 </View>
                                 :
                                 <View style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start"}}>
                                     <View>
-                                        <Text style={{fontSize:10, fontFamily:'MyBold', marginBottom:"1vh"}}>{t('justify_absence')} : {props.page.billetInfos.date_jour} </Text>
+                                        <Text style={{fontSize:"1.7vw", fontFamily:'MyBold', marginBottom:"1vh"}}>{t('justify_absence')} : {props.page.billetInfos.date_jour} </Text>
                                     </View> 
                                     <View>
-                                        <Text style={{fontSize:10, fontFamily:'MyBold',}}>{t('from')} : {props.page.billetInfos.date_deb} {t("to_a")} : {props.page.billetInfos.date_fin}</Text>
+                                        <Text style={{fontSize:"1.7vw", fontFamily:'MyBold',}}>{t('from_de')} : {props.page.billetInfos.date_deb} {t("to_a")} : {props.page.billetInfos.date_fin}</Text>
                                     </View>                                    
                                 
                                 </View>

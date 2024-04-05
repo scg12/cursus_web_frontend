@@ -14,7 +14,7 @@ import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {createPrintingPages} from '../reports/PrintingModule';
-import {convertDateToUsualDate, ajouteZeroAuCasOu, getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -81,7 +81,7 @@ function ListingNotes(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
         getEtabListClasses();    

@@ -13,6 +13,7 @@ var PRINTING_DATA ={
 
 //------------------- Fonction qui ajoute un suffixe au titre de la page (debut, suit, fin) ---------------
 const getTitleSuffix=(index, rowsPerPage, tabCount)=>{
+    if (index==0 && (index + rowsPerPage) > tabCount) return "";
     if (index==0) return " (debut)";
     else{
         if(index + rowsPerPage < tabCount) return " (suite)" ;

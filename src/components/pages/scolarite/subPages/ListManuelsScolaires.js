@@ -11,14 +11,13 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import PDFTemplate from '../reports/PDFTemplate';
 import {isMobile} from 'react-device-detect';
-import StudentList from '../reports/StudentList';
-import StudentListTemplate from '../reports/StudentListTemplate';
+import ListManuels from '../reports/ListManuels';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 import AddManuel from '../modals/AddManuel';
@@ -45,21 +44,33 @@ var ROW_TO_DELETE_ID;
 
 function ListManuelsScolaires(props) {
     const { t, i18n } = useTranslation();
-    const currentUiContext  = useContext(UiContext);
-    const currentAppContext = useContext(AppContext);
+    const currentUiContext   = useContext(UiContext);
+    const currentAppContext  = useContext(AppContext);
+    const selectedTheme      = currentUiContext.theme;
 
-    const [isValid, setIsValid]     = useState(false);
-    const [gridRows, setGridRows]   = useState([]);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
+    const [isValid, setIsValid]      = useState(false);
+    const [gridRows, setGridRows]    = useState([]);
+    const [modalOpen, setModalOpen]  = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optNiveau, setOptNiveau]  = useState([]);
-    const selectedTheme = currentUiContext.theme;
+    const [imageUrl, setImageUrl]    = useState('');
+    
 
     useEffect(()=> {        
         if(gridRows.length==0){
             CURRENT_NIVEAU_ID = undefined;
         }
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabNiveaux();        
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
     function getEtabNiveaux(){
         var tempTable=[]
@@ -586,20 +597,21 @@ const columnsEn = [
         
         if(CURRENT_NIVEAU_ID != undefined){
             var PRINTING_DATA ={
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: "Liste des eleves de la classe de " + CURRENT_NIVEAU_LABEL,
-                tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-                tableData :[...gridRows],
-                numberEltPerPage:ROWS_PER_PAGE  
+                dateText          : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                leftHeaders       : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders     : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders      : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages        : [imgUrl], 
+                pageImagesDefault : [imgUrlDefault],
+                pageTitle         : t("list_manuels")+ ' ' + t('for') +' '+ CURRENT_NIVEAU_LABEL,
+                tableHeaderModel  : ["N°", t("manual_name"), t("description"), t("prix"), t("classes")],
+                tableData         : [...gridRows],
+                numberEltPerPage  : ROWS_PER_PAGE  
             };
-            printedETFileName = 'Liste_eleves('+CURRENT_NIVEAU_LABEL+').pdf';
+            printedETFileName = 'Liste_manuels('+CURRENT_NIVEAU_LABEL+').pdf';
             setModalOpen(4);
             ElevePageSet=[];
-            //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_NIVEAU_LABEL, ROWS_PER_PAGE)];          
+           
             ElevePageSet = createPrintingPages(PRINTING_DATA);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
@@ -671,12 +683,12 @@ const columnsEn = [
             {(modalOpen==4) &&              
                 <PDFTemplate previewCloseHandler={closePreview}>
                     {isMobile?
-                        <PDFDownloadLink  document ={<StudentListTemplate pageSet={ElevePageSet}/>} fileName={printedETFileName}>
+                        <PDFDownloadLink  document ={<ListManuels pageSet={ElevePageSet}/>} fileName={printedETFileName}>
                             {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
                         </PDFDownloadLink>
                         :
                         <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
-                            <StudentListTemplate pageSet={ElevePageSet}/>
+                            <ListManuels pageSet={ElevePageSet}/>
                         </PDFViewer>
                     }
                 </PDFTemplate>

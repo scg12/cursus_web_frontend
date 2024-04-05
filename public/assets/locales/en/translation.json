@@ -1,5 +1,8 @@
                      
-{   
+{   "prix"                       : "Price",
+    "manual_name"                 : "Manual Name",
+    "for"                         : "For",
+    "list_manuels"                : "List Of Current manuals",
     "justify_absence"             : "Absence proof for the date",
     "justify_exit_permission"     : "Exit permission proof for the period starting from",
     "to_a"                        : "To",
@@ -347,6 +350,7 @@
     "sanction_list":"Sanctions List",
     "to" : "To",
     "from" : "From",
+    "from_de" : "From",
     "rechercher":"Search",
     "dateFin_M":"END DATE",
     "dateDeb_M":"START DATE",

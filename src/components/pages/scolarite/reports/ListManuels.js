@@ -32,7 +32,7 @@ var page = {
     pageNumber:0,
 };
 
-function StudentListTemplate(props){
+function ListManuels(props){
     const { t, i18n } = useTranslation();
 
 
@@ -81,11 +81,9 @@ function StudentListTemplate(props){
             <View style={props.style}>
                 <View style={{width:'8vw',  justifyContent:'center',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[0]}</Text></View>
                 <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[1]}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[2]}</Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[2]}</Text></View>
                 <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[3]}</Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.headercell}}>       <Text>{props.page.tableHeaderModel[4]}</Text></View>
-                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.headercell}}> <Text>{props.page.tableHeaderModel[5]}</Text></View>
-                <View style={{width:'7vw',  justifyContent:'center',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[6]}</Text></View>
+                <View style={{width:'20vw', justifyContent:'center',...styles.headercell}}>       <Text>{props.page.tableHeaderModel[4]}</Text></View>
             </View>
         );
     }
@@ -93,13 +91,11 @@ function StudentListTemplate(props){
     const TableRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.matricule}               </Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.eleve.nom}           </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.eleve.date_naissance} </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.lieu_naissance} </Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.date_entree}    </Text></View>
-                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.cell}}> <Text>{props.eleve.nom_pere}       </Text></View>
-                <View style={{width:'7vw',  justifyContent:'center',...styles.cell}}>  <Text>{(props.eleve.redouble=='nouveau') ? "non" :"oui"}</Text></View>
+                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.manuel.rang}               </Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.manuel.livre}           </Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.manuel.description} </Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.manuel.prix} </Text></View>
+                <View style={{width:'20vw', justifyContent:'center',...styles.cell}}>       <Text>{props.manuel.libelle_classes}    </Text></View>
            </View>
         );        
 
@@ -134,7 +130,7 @@ function StudentListTemplate(props){
                 <View style={styles.main}>
                    { Array.from(el.pageRows,
                         (row, index) => (
-                            <TableRow style={styles.row} eleve={row}/>
+                            <TableRow style={styles.row} manuel={row}/>
                         ))
                    } 
                 </View>
@@ -345,4 +341,4 @@ const styles = StyleSheet.create({
   
   });
 
-export default StudentListTemplate;
+export default ListManuels;

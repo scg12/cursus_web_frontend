@@ -1,4 +1,7 @@
-{   
+{   "prix"                       : "Prix",
+    "manual_name"                 : "Nom Du Manuel",
+    "for"                         : "Pour",
+    "list_manuels"                : "Liste Des Manuels En vigueur",
     "justify_absence"             : "Justificatif de l'absence du",
     "justify_exit_permission"     : "Justificatif de la sortie allant du",
     "to_a"                        : "A",
@@ -346,6 +349,7 @@
     "sanction_list":"Liste des sanctions",
     "to" : "Au",
     "from" : "Du",
+    "from_de" : "De",
     "rechercher":"Rechercher",
     "dateFin_M":"DATE FIN",
     "dateDeb_M":"DATE DEBUT",

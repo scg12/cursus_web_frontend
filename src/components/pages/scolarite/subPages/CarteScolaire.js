@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate,getTodayDate,grey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,getTodayDate,darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -67,7 +67,7 @@ function CarteScolaire(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
 

@@ -10,7 +10,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import LoadingView from '../../../loadingView/LoadingView';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames, ajouteZeroAuCasOu, grey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames, ajouteZeroAuCasOu, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -123,7 +123,7 @@ function PrintStudentReport(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
         
     },[]);

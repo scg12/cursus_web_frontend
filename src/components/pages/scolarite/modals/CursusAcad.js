@@ -16,7 +16,7 @@ import UiContext from "../../../../store/UiContext";
 import { useTranslation } from "react-i18next";
 import { useFilePicker } from 'use-file-picker';
 import {isMobile} from 'react-device-detect';
-import {getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
+import {getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 
 
@@ -67,7 +67,7 @@ function CursusAcad(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
       
     },[]);
