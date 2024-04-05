@@ -775,7 +775,7 @@ const columnsFr = [
                 printedETFileName    = "carte_scolaires.pdf";
                 setModalOpen(4);
                 ElevePageSet=[];
-                ElevePageSet = createPrintingPages(PRINTING_DATA);
+                ElevePageSet = createPrintingPages(PRINTING_DATA,i18n.language);
                 document.getElementById("btnGen").classList.add("disable");
                 console.log("ici la",ElevePageSet,PRINTING_DATA);                    
             } else{

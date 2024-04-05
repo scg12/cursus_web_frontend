@@ -779,7 +779,7 @@ const columnsFr = [
             setModalOpen(4);
             ElevePageSet=[];
             //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet = createPrintingPages(PRINTING_DATA,i18n.language);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING_FD;

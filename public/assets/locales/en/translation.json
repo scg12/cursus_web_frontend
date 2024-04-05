@@ -1,5 +1,8 @@
                      
-{   "prix"                       : "Price",
+{   "debut"                      : "Début",
+    "suite"                       : "Continuation",
+    "fin"                         : "End",
+    "prix"                        : "Price",
     "manual_name"                 : "Manual Name",
     "for"                         : "For",
     "list_manuels"                : "List Of Current manuals",

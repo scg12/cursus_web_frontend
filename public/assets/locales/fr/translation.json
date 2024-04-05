@@ -1,4 +1,8 @@
-{   "prix"                       : "Prix",
+{   
+    "debut"                       : "Début",
+    "suite"                       : "Suite",
+    "fin"                         : "Fin",
+    "prix"                        : "Prix",
     "manual_name"                 : "Nom Du Manuel",
     "for"                         : "Pour",
     "list_manuels"                : "Liste Des Manuels En vigueur",
@@ -6,7 +10,7 @@
     "justify_exit_permission"     : "Justificatif de la sortie allant du",
     "to_a"                        : "A",
     "enrole_en"                   : "Enrole en",
-    "studentList_of"              : "Liste des eleves de la classe de",
+    "studentList_of"              : "Liste des éleves de la classe de",
     "le"                          : "le",
     "depot_fiches"                : "Dépôt de Fiche de Progression",
     "fiches_progression_attendues": "Certaines de vos fiches de progressions sont encore attendue !!",

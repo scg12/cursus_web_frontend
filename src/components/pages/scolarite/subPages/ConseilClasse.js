@@ -81,18 +81,18 @@ var CCPageSet=[];
 
 
 function ConseilClasse(props) {
-    const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
-    const currentAppContext = useContext(AppContext);
+    const { t, i18n }                   = useTranslation();
+    const currentUiContext              = useContext(UiContext);
+    const currentAppContext             = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
-    const [gridMeeting, setGridMeeting]= useState([]);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optClasse, setOpClasse]  = useState([]);
-    const [isLoading, setIsloading] = useState(false);
+    const [isValid, setIsValid]         = useState(false);
+    const [gridMeeting, setGridMeeting] = useState([]);
+    const [modalOpen, setModalOpen]     = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
+    const [optClasse, setOpClasse]      = useState([]);
+    const [isLoading, setIsloading]     = useState(false);
     const[LoadingVisible,setLoadingVisible] = useState(false);
-    const[imageUrl, setImageUrl] = useState('');
-    const selectedTheme = currentUiContext.theme;
+    const[imageUrl, setImageUrl]        = useState('');
+    const selectedTheme                 = currentUiContext.theme;
 
     useEffect(()=> {
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;

@@ -612,7 +612,7 @@ const columnsEn = [
             setModalOpen(4);
             ElevePageSet=[];
            
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet = createPrintingPages(PRINTING_DATA, i18n.language);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING;

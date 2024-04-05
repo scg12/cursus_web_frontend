@@ -404,7 +404,7 @@ function ListingNotes(props) {
             printedETFileName = 'ListingNotes_' +'('+ CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4);
             ElevePageSet=[];           
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet = createPrintingPages(PRINTING_DATA, i18n.language);
             console.log("ici la",ElevePageSet);                    
         } else{
             chosenMsgBox = MSG_WARNING_NOTES;
