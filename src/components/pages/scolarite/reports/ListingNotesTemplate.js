@@ -78,11 +78,12 @@ function ListingNotesTemplate(props){
     }
 
     const TableHeader = (props) =>{
+        var width = ["5.7vw","10vw", "37vw"];
         return(
             <View style={props.style}>
                 { Array.from(props.listCours,
                     (el, index) => (
-                        <View style={{width:'10vw', justifyContent:'flex-start',...styles.headercell}}>   
+                        <View style={{width:index<3? width[index]:"8vw", paddingLeft:index==0?'1vw':"0vw", justifyContent:'flex-start',...styles.headercell}}>   
                             <Text>{el.split('*')[0]}</Text>
                         </View>
                     ))
@@ -96,9 +97,9 @@ function ListingNotesTemplate(props){
     const TableRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'5.7vw',  paddingLeft:'1.3vw', justifyContent:'center',...styles.cell}}>  <Text>{props.eleve.rang}      </Text></View>
-                <View style={{width:'10vw', justifyContent:'center',...styles.cell}}>                         <Text>{props.eleve.matricule} </Text></View>
-                <View style={{width:'37vw', justifyContent:'flex-start',...styles.cell}}>                     <Text>{props.eleve.nom}       </Text></View>
+                <View style={{width:'5.7vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.rang}      </Text></View>
+                <View style={{width:'10vw', justifyContent:'flex-start',...styles.cell}}>                         <Text>{props.eleve.matricule} </Text></View>
+                <View style={{width:'37vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.eleve.nom}       </Text></View>
                 { Array.from(props.listCours,
                     (el, index) => ((index>=3)&&
                         <View style={{width:'8vw',  justifyContent:'flex-start',...styles.cell}}>                     
@@ -119,11 +120,12 @@ function ListingNotesTemplate(props){
          { Array.from(props.pageSet,
           (el, index) => (
             <Page size="A4"  orientation="landscape" style={styles.page} key={index}>
-                <Filigrane photoStyle ={{width:"53vw", height:"46vw"}} style={{zIndex:0, marginBottom:"-13vh"}} />
+                <Filigrane photoStyle ={{width:"57vw", height:"48vw"}} style={{zIndex:0, marginBottom:"-13vh"}} />
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
-                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={el.pageImagesDefault[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
+                    
                     <PageHeadRight style={styles.headerRight}  page={el}  />                                     
                 </View>
                 
@@ -165,7 +167,8 @@ const styles = StyleSheet.create({
       justifyContent:'center',
       alignItems:'center',
       width: "98vw",
-      height: "100%",      
+      height: "100%", 
+      paddingTop:"3vh"     
     },
 
     header: {
@@ -213,7 +216,7 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
-    imagestyleDefault:{
+    imagestyle:{
         position:"absolute",
         top:"-12vh",
         left:0,
@@ -221,17 +224,18 @@ const styles = StyleSheet.create({
         width :'13vh',
         height:'12vh',
         borderRadius:3,
-        marginLeft:"-7vw"
+        marginLeft:"-4.3vw"
     },
 
-    imagestyle:{
+    imagestyleDefault:{
         position:"absolute",
         top:"-12vh",
         left:30,
         zIndex:3,       
         width :'13vh',
         height:'12vh',
-        borderRadius:3
+        borderRadius:3,
+        marginLeft:"4.7vw"
     },
 
     headerCenter:{

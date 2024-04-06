@@ -94,7 +94,7 @@ function ListPresence(props){
         return(
             <View style={props.style}>
                 <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.rang}               </Text></View>
-                <View style={{width:'10vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.eleve.presence==1? t("yes"):t("no")}           </Text></View>
+                <View style={{width:'10vw', justifyContent:'flex-start',...styles.cell, fontFamily: props.eleve.presence==0? "MyBold":null}}>  <Text >{props.eleve.presence==1? t("yes"):t("no")}           </Text></View>
                 <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.eleve.matricule} </Text></View>
                 <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.nom} </Text></View>
                 <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.date_naissance}    </Text></View>
