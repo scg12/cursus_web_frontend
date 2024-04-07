@@ -314,7 +314,8 @@ function HeadAndNav(props) {
                 <div className={classes.logoStyle}> 
                     {/* <Link to='/' onClick={backToHome}><img src='images/collegeVogt.png'  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img></Link> */}
                     <Link to='/' onClick={backToHome}>
-                        {(currentAppContext.currentEtabInfos.logo_url.length==0)?
+                   
+                        {(currentAppContext.currentEtabInfos==undefined || currentAppContext.currentEtabInfos.logo_url==undefined || currentAppContext.currentEtabInfos.logo_url.length==0)?
                             <img id="etab_logo" src= "images/logoDefault.png"  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img>
                             :
                             <img id="etab_logo" src={ currentAppContext.currentEtabInfos.logo_url}  width='100px' height='90px' alt='AppLogo' className= {classes.logoStyle}></img>

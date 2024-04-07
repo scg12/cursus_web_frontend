@@ -46,7 +46,6 @@ var ElevePageSet=[];
 var printedETFileName ='';
 
 
-
 function ListeDesEleves(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
