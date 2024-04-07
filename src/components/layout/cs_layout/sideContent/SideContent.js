@@ -141,14 +141,14 @@ function SideContent(props) {
 
         //startnotifMotion();
 
-        if(currentAppContext.currentEtabInfos != null && currentAppContext.currentEtabInfos != undefined && currentAppContext.currentEtabInfos.logo_url != ""){
+        if(currentAppContext.currentEtabInfos != null && currentAppContext.currentEtabInfos != undefined && currentAppContext.currentEtabInfos.logo_url != null && currentAppContext.currentEtabInfos.logo_url != undefined && currentAppContext.currentEtabInfos.logo_url != ""){
             document.getElementById("logo_url").value = currentAppContext.currentEtabInfos.logo_url;
         } else {
             document.getElementById("logo_url").value = DEFAULT_IMAGE_URL;
         }  
 
         console.log("notifs", currentAppContext.currentEtabInfos,currentAppContext.tabNotifs,document.getElementById("logo_url").value);
-        
+
     },[])
   
     function getSelectDropDownTextColr() {

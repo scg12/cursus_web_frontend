@@ -86,11 +86,11 @@ function SideContent(props) {
         setChangeNiveauSelected(createOption(currentAppContext.infoNiveaux.filter((nivo)=>nivo.id_setab == id_etab_init),'id_cycle','libelle')[0]);
         // console.log("currentYear: ",currentAppContext.currentYear," currentEtab: ", currentAppContext.currentEtab);
 
-        if(currentAppContext.currentEtabInfos != null && currentAppContext.currentEtabInfos != undefined && currentAppContext.currentEtabInfos.logo_url!=""){
+        if(currentAppContext.currentEtabInfos != null && currentAppContext.currentEtabInfos != undefined && currentAppContext.currentEtabInfos.logo_url != null && currentAppContext.currentEtabInfos.logo_url != undefined && currentAppContext.currentEtabInfos.logo_url != ""){
             document.getElementById("logo_url").value = currentAppContext.currentEtabInfos.logo_url;
         } else {
             document.getElementById("logo_url").value = DEFAULT_IMAGE_URL;
-        }  
+        }   
         
         console.log("Etab en cours", currentAppContext.currentEtabInfos);
         
