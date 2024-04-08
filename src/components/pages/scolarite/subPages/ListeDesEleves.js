@@ -843,6 +843,7 @@ const columnsFr = [
        
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
+                libelleClasse    : CURRENT_CLASSE_LABEL,
                 dateText         : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
                 leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
                 centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],

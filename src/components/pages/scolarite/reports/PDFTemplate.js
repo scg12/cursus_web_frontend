@@ -30,7 +30,7 @@ function PDFTemplate(props) {
    
    
     function handleImageLoad(e){
-        e.target.src ="images/loading2.gif";
+        e.target.src ="images/Loading2.gif";
     }
 
     /************************************ JSX Code ************************************/
