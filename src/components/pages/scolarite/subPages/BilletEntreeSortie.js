@@ -1164,12 +1164,18 @@ const columnsFr = [
                     <div className={classes.gridAction}> 
                         
                         <CustomButton
-                            btnText={t('New_one')}
-                            hasIconImg= {false}
-                            //imgSrc='images/addNewUserOrg.png'
-                            //imgStyle = {classes.grdBtnImgStyle}  
+                            btnText={t('new_authorisation')}
+                            hasIconImg= {true}
+                            imgSrc='images/BilletEntreeSortie.png'
+                            // imgStyle = {classes.grdBtnImgStyle}  
+                            // buttonStyle={getGridButtonStyle()}
+                            // btnTextStyle = {classes.gridBtnTextStyleP}
+
+                            imgStyle = {classes.grdBtnImgStyleP}  
                             buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyleP}
+                            style={{width:"12.3vw", height:"4.3vh"}}
+                            btnTextStyle = {classes.gridBtnTextStyle}
+                            
                             btnClickHandler={AddNewBilletHandler}
                             disable={(isValid==false)}   
                         />

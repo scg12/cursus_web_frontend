@@ -1,5 +1,6 @@
                      
-{   "debut"                      : "Début",
+{   "new_authorisation"           : "New Exit Permission",
+    "debut"                       : "Début",
     "suite"                       : "Continuation",
     "fin"                         : "End",
     "prix"                        : "Price",

@@ -59,7 +59,7 @@ function PDFTemplate(props) {
                 overflow: 'hidden'
             }}
             >
-                <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                <img src='images/loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
             </div>   
 
             <div style={{position:"relative", zIndex:1207}}>
