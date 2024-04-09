@@ -624,7 +624,7 @@ function LoginForm(props){
                     < img src="images/drapeauAnglais.png" id='en'  alt="my image" className={classes.widgetIcon}  onClick={changeLanguage}/>  
                 </div> 
             </div>
-            <div className= {classes.cardAndCreator}>
+           {/* <div className= {classes.cardAndCreator}>*/}
                 <div className= {classes.loginMainContent}>
                     <div className={'card ' + ' '+ getCurrentContentTheme()}>
                         
@@ -652,9 +652,10 @@ function LoginForm(props){
                             }
                         </form>
 
-                        <div class="input-field center" style={{marginTop:passWordError ? "-4.7vh": isLoading ? "-0.8vh": null}}>
+                        <div class="input-field center" style={{marginTop:passWordError ? "2vh": isLoading ? "-0.8vh": null}}>
                             <button class="btn-small button" style={{fontSize:'1vw', fontWeight:555, width:'10vw', height:'5.3vh', borderRadius:3}} onClick={connectHandler}>{t("Connexion")}</button>
                         </div>
+
                         {isLoading && 
                             <div style={{display:"flex", flexDirection:'column', justifyContent:'center', alignItems:"center", width:"100%", height:"3vw", overflow:'hidden'}}>
                                 <img alt="Loading..." src="images/Loading_icon.gif" style={{height:"7vw"}}/>
@@ -662,7 +663,7 @@ function LoginForm(props){
                         } 
                         
                     </div>
-                </div>
+                {/*</div>*/}
 
 
 
