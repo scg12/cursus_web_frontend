@@ -24,6 +24,7 @@ import ListPresence from '../reports/ListPresence';
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
 let CURRRENT_COURS_ID;
+let CURRRENT_COURS_LABEL;
 let SELECTED_DATE;
 
 var listElt ={}
@@ -195,11 +196,13 @@ function LookStudentPresence(props) {
 
     function classeChangeHandler(e){       
         if(e.target.value != optClasse[0].value){
-            CURRENT_CLASSE_ID = e.target.value;
+            CURRENT_CLASSE_ID    = e.target.value;
+            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
            
         }else{
-            CURRENT_CLASSE_ID = undefined;
+            CURRENT_CLASSE_ID    = undefined;
+            CURRENT_CLASSE_LABEL = "";
             getCoursClasse(currentAppContext.currentEtab, 0);
             getAbsenceCours(0,CURRENT_CLASSE_ID);
 
@@ -213,13 +216,14 @@ function LookStudentPresence(props) {
    
     function coursChangeHandler(e){
         if(e.target.value != optCours[0].value){
-            CURRRENT_COURS_ID = e.target.value;
+            CURRRENT_COURS_ID    = e.target.value;
+            CURRRENT_COURS_LABEL = optCours.find((cours)=>cours.value==CURRRENT_COURS_ID).label
             getAbsenceCours(CURRRENT_COURS_ID, CURRENT_CLASSE_ID);  
             setCourseSelected(true);                     
             
         } else {
-            CURRRENT_COURS_ID = undefined;
-            //document.getElementById('optClasse').options[0].selected=true;
+            CURRRENT_COURS_ID    = undefined;
+            CURRRENT_COURS_LABEL = '';
             setCourseSelected(false)
             setIsDateFull(false); 
             JOUR = ''; MOIS = ''; YEAR =''; DATE_VERIF='';
@@ -625,7 +629,7 @@ function LookStudentPresence(props) {
                 rightHeaders     : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
                 pageImages       : [imgUrl], 
                 pageImagesDefault: [imgUrlDefault],
-                pageTitle        : t("studentList_of")+' '+ CURRENT_CLASSE_LABEL,
+                pageTitle        : t("student_presence_for_the_course")+' '+ CURRRENT_COURS_LABEL +' '+t('from_the')+' '+ convertDateToUsualDate(DATE_VERIF)+' : '+ CURRENT_CLASSE_LABEL,
                 tableHeaderModel : ["N°", t("present")+" ?", t("matricule_short"), t('displayedName_M'), t("form_dateNaiss"), t("form_lieuNaiss"), t("enrole en")],
                 tableData        : [...gridRows],
                 numberEltPerPage : ROWS_PER_PAGE  

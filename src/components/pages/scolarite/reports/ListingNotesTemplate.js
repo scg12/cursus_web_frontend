@@ -113,6 +113,27 @@ function ListingNotesTemplate(props){
 
     }
 
+
+    function getMainTitle(title){
+        var pos   = title.search(/\:/); 
+        return title.substr(0,pos+1)
+    }
+
+    function getSuffixe(title){
+        var pos   = title.search(/\(/); 
+        if (pos != -1)  return title.substr(pos);
+        else return "";     
+        
+    }
+
+    function getClassabel(title){
+        var pos1   = title.search(/\:/); 
+        var pos2   = title.search(/\(/);  
+        if(pos2!=-1)  return title.substr(pos1+1,pos2-pos1-1);
+        else  return title.substr(pos1+1); 
+    }
+
+
    
 
     return (
@@ -135,7 +156,9 @@ function ListingNotesTemplate(props){
                 </View>
                 
                 <View style={styles.pageTitleContainer}>
-                    <Text style={styles.titleStyle}>{el.pageTitle}</Text>
+                    <Text style={styles.titleStyle}>{getMainTitle(el.pageTitle)} </Text>
+                    <Text style={{fontSize:13, fontFamily:"Times-Roman", fontFamily:"MyBold",marginLeft:"0.1vw"}}>{getClassabel(el.pageTitle)}</Text>
+                    <Text style={{fontSize:10,marginLeft:"-0.5vw", fontFamily:"Times-Roman", fontFamily:"MyItalic"}}>{getSuffixe(el.pageTitle)}</Text>
                 </View>
 
                <TableHeader style={styles.headerColumnStyle} listCours={el.tableHeaderModel}/>
@@ -279,7 +302,7 @@ const styles = StyleSheet.create({
    
     pageTitleContainer:{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent:'center',
         alignItems:'center',
         width:'auto',

@@ -1,5 +1,8 @@
                      
-{   "new_authorisation"           : "New Exit Permission",
+{   "from_the"                        : "From the",
+    "student_presence_for_the_course" : "Student's presence to the course",
+    "note_recap"                  : "Student's notes summary for",
+    "new_authorisation"           : "New Exit Permission",
     "debut"                       : "Début",
     "suite"                       : "Continuation",
     "fin"                         : "End",

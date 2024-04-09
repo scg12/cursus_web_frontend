@@ -1,4 +1,7 @@
 {   
+    "from_the"                        : "Du",
+    "student_presence_for_the_course" : "presence des eleves pour le cours",
+    "note_recap"                  : "Recapitulatif des note pour la",
     "new_authorisation"           : "Nouvelle Autorisation",
     "debut"                       : "Début",
     "suite"                       : "Suite",

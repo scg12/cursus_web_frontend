@@ -396,7 +396,7 @@ function ListingNotes(props) {
                 rightHeaders      : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
                 pageImages        : [imgUrl], 
                 pageImagesDefault : [imgUrlDefault],
-                pageTitle         : "Recapitulatif des note pour la periode "+ CURRENT_SEQUENCE_LABEL+" classe " + CURRENT_CLASSE_LABEL,
+                pageTitle         : t("note_recap")+' '+ CURRENT_SEQUENCE_LABEL+" classe : " + CURRENT_CLASSE_LABEL,
                 tableHeaderModel  : [...listCoursTitle],
                 tableData         : [...gridRows],
                 numberEltPerPage  : ROWS_PER_PAGE 
