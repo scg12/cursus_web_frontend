@@ -3,6 +3,7 @@ import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/r
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 import { useTranslation } from "react-i18next";
+import Filigrane from "../../../filigrane/Filigrane";
 import '../../../../translation/i18n';
 
 
@@ -77,11 +78,12 @@ function ListingNotesTemplate(props){
     }
 
     const TableHeader = (props) =>{
+        var width = ["5.7vw","10vw", "37vw"];
         return(
             <View style={props.style}>
                 { Array.from(props.listCours,
                     (el, index) => (
-                        <View style={{width:'10vw', justifyContent:'flex-start',...styles.headercell}}>   
+                        <View style={{width:index<3? width[index]:"8vw", paddingLeft:index==0?'1vw':"0vw", justifyContent:'flex-start',...styles.headercell}}>   
                             <Text>{el.split('*')[0]}</Text>
                         </View>
                     ))
@@ -95,9 +97,9 @@ function ListingNotesTemplate(props){
     const TableRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'5.7vw',  paddingLeft:'1.3vw', justifyContent:'center',...styles.cell}}>  <Text>{props.eleve.rang}      </Text></View>
-                <View style={{width:'10vw', justifyContent:'center',...styles.cell}}>                         <Text>{props.eleve.matricule} </Text></View>
-                <View style={{width:'37vw', justifyContent:'flex-start',...styles.cell}}>                     <Text>{props.eleve.nom}       </Text></View>
+                <View style={{width:'5.7vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.rang}      </Text></View>
+                <View style={{width:'10vw', justifyContent:'flex-start',...styles.cell}}>                         <Text>{props.eleve.matricule} </Text></View>
+                <View style={{width:'37vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.eleve.nom}       </Text></View>
                 { Array.from(props.listCours,
                     (el, index) => ((index>=3)&&
                         <View style={{width:'8vw',  justifyContent:'flex-start',...styles.cell}}>                     
@@ -111,6 +113,27 @@ function ListingNotesTemplate(props){
 
     }
 
+
+    function getMainTitle(title){
+        var pos   = title.search(/\:/); 
+        return title.substr(0,pos+1)
+    }
+
+    function getSuffixe(title){
+        var pos   = title.search(/\(/); 
+        if (pos != -1)  return title.substr(pos);
+        else return "";     
+        
+    }
+
+    function getClassabel(title){
+        var pos1   = title.search(/\:/); 
+        var pos2   = title.search(/\(/);  
+        if(pos2!=-1)  return title.substr(pos1+1,pos2-pos1-1);
+        else  return title.substr(pos1+1); 
+    }
+
+
    
 
     return (
@@ -118,9 +141,12 @@ function ListingNotesTemplate(props){
          { Array.from(props.pageSet,
           (el, index) => (
             <Page size="A4"  orientation="landscape" style={styles.page} key={index}>
+                <Filigrane photoStyle ={{width:"57vw", height:"48vw"}} style={{zIndex:0, marginBottom:"-13vh"}} />
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={el.pageImagesDefault[0]}/>
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
+                    
                     <PageHeadRight style={styles.headerRight}  page={el}  />                                     
                 </View>
                 
@@ -130,7 +156,9 @@ function ListingNotesTemplate(props){
                 </View>
                 
                 <View style={styles.pageTitleContainer}>
-                    <Text style={styles.titleStyle}>{el.pageTitle}</Text>
+                    <Text style={styles.titleStyle}>{getMainTitle(el.pageTitle)} </Text>
+                    <Text style={{fontSize:13, fontFamily:"Times-Roman", fontFamily:"MyBold",marginLeft:"0.1vw"}}>{getClassabel(el.pageTitle)}</Text>
+                    <Text style={{fontSize:10,marginLeft:"-0.5vw", fontFamily:"Times-Roman", fontFamily:"MyItalic"}}>{getSuffixe(el.pageTitle)}</Text>
                 </View>
 
                <TableHeader style={styles.headerColumnStyle} listCours={el.tableHeaderModel}/>
@@ -162,7 +190,8 @@ const styles = StyleSheet.create({
       justifyContent:'center',
       alignItems:'center',
       width: "98vw",
-      height: "100%",      
+      height: "100%", 
+      paddingTop:"3vh"     
     },
 
     header: {
@@ -211,11 +240,26 @@ const styles = StyleSheet.create({
     },
 
     imagestyle:{
-        width:'13vh',
+        position:"absolute",
+        top:"-12vh",
+        left:0,
+        zIndex:2,       
+        width :'13vh',
         height:'12vh',
         borderRadius:3,
+        marginLeft:"-4.3vw"
     },
 
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-12vh",
+        left:30,
+        zIndex:3,       
+        width :'13vh',
+        height:'12vh',
+        borderRadius:3,
+        marginLeft:"4.7vw"
+    },
 
     headerCenter:{
         display: "flex",
@@ -258,7 +302,7 @@ const styles = StyleSheet.create({
    
     pageTitleContainer:{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent:'center',
         alignItems:'center',
         width:'auto',
@@ -325,7 +369,7 @@ const styles = StyleSheet.create({
 
     main: {
         textAlign: "center",
-        backgroundColor: "white",
+        // backgroundColor: "white",
         height: "70%",
         width: "97%",
         color:'black',

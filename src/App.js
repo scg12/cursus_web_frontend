@@ -9,15 +9,9 @@ import CommParentPage from './components/pages/commAvecParent/CommParentPage';
 import ConfigPage from './components/pages/configuration/ConfigPage';
 import EconomatEtFinancePage from './components/pages/economatEtFinance/EconomatEtFinancePage';
 import ExtrasPages from './components/pages/extras/ExtrasPages';
-import ImpressionPage from './components/pages/impression/ImpressionPage';
 import DashBoardPage from './components/pages/dashBoard/DashBoardPage';
 import ScolaritePage from './components/pages/scolarite/ScolaritePage';
 import StatsEtMonitoringPage from './components/pages/statEtMonitoring/StatsEtMonitoringPage';
-
-
-
-
-
 
 import { useState,useContext } from "react";
 import { useHistory } from 'react-router-dom';

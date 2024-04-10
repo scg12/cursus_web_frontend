@@ -32,7 +32,7 @@ var page = {
     pageNumber:0,
 };
 
-function StudentListTemplate(props){
+function ListManuels(props){
     const { t, i18n } = useTranslation();
 
 
@@ -81,11 +81,9 @@ function StudentListTemplate(props){
             <View style={props.style}>
                 <View style={{width:'8vw',  justifyContent:'center',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[0]}</Text></View>
                 <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[1]}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[2]}</Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[2]}</Text></View>
                 <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[3]}</Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.headercell}}>       <Text>{props.page.tableHeaderModel[4]}</Text></View>
-                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.headercell}}> <Text>{props.page.tableHeaderModel[5]}</Text></View>
-                <View style={{width:'7vw',  justifyContent:'center',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[6]}</Text></View>
+                <View style={{width:'20vw', justifyContent:'center',...styles.headercell}}>       <Text>{props.page.tableHeaderModel[4]}</Text></View>
             </View>
         );
     }
@@ -93,36 +91,14 @@ function StudentListTemplate(props){
     const TableRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.matricule}               </Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.eleve.nom}           </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.eleve.date_naissance} </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.lieu_naissance} </Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.date_entree}    </Text></View>
-                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.cell}}> <Text>{props.eleve.nom_pere}       </Text></View>
-                <View style={{width:'7vw',  justifyContent:'center',...styles.cell}}>  <Text>{(props.eleve.redouble=='nouveau') ? "non" :"oui"}</Text></View>
+                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.manuel.rang}               </Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.manuel.livre}           </Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.manuel.description} </Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.manuel.prix} </Text></View>
+                <View style={{width:'20vw', justifyContent:'center',...styles.cell}}>       <Text>{props.manuel.libelle_classes}    </Text></View>
            </View>
         );        
 
-    }
-
-
-    function getMainTitle(title){
-        var pos   = title.search(/\:/); 
-        return title.substr(0,pos+1)
-    }
-
-    function getSuffixe(title){
-        var pos   = title.search(/\(/); 
-        if (pos != -1)  return title.substr(pos);
-        else return "";     
-        
-    }
-
-    function getClassabel(title){
-        var pos1   = title.search(/\:/); 
-        var pos2   = title.search(/\(/);  
-        if(pos2!=-1)  return title.substr(pos1+1,pos2-pos1-1);
-        else  return title.substr(pos1+1); 
     }
 
    
@@ -146,9 +122,7 @@ function StudentListTemplate(props){
                 </View>
                 
                 <View style={styles.pageTitleContainer}>
-                    <Text style={styles.titleStyle}>{getMainTitle(el.pageTitle)} </Text>
-                    <Text style={{fontSize:13, fontFamily:"Times-Roman", fontFamily:"MyBold",marginLeft:"0.1vw"}}>{getClassabel(el.pageTitle)}</Text>
-                    <Text style={{fontSize:10,marginLeft:"-0.5vw", fontFamily:"Times-Roman", fontFamily:"MyItalic"}}>{getSuffixe(el.pageTitle)}</Text>
+                    <Text style={styles.titleStyle}>{el.pageTitle}</Text>
                 </View>
 
                 <TableHeader style={styles.headerColumnStyle} page={el}/>
@@ -156,7 +130,7 @@ function StudentListTemplate(props){
                 <View style={styles.main}>
                    { Array.from(el.pageRows,
                         (row, index) => (
-                            <TableRow style={styles.row} eleve={row}/>
+                            <TableRow style={styles.row} manuel={row}/>
                         ))
                    } 
                 </View>
@@ -276,7 +250,7 @@ const styles = StyleSheet.create({
    
     pageTitleContainer:{
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
         justifyContent:'center',
         alignItems:'center',
         width:'auto',
@@ -367,4 +341,4 @@ const styles = StyleSheet.create({
   
   });
 
-export default StudentListTemplate;
+export default ListManuels;

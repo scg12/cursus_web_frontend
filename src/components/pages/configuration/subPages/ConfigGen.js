@@ -5,7 +5,6 @@ import UiContext from "../../../../store/UiContext";
 import AppContext from "../../../../store/AppContext";
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
-import {Grid, GridColumn} from "@progress/kendo-react-grid";
 
 import AddEtab from "../modals/AddEtab";
 import { alpha, styled } from '@mui/material/styles';
@@ -358,22 +357,23 @@ function ConfigGen(props) {
 
     function handleEditRow(row){       
         var inputs=[];
-        inputs[0]= row.libelle;
-        inputs[1]= row.date_creation;
-        inputs[2]= row.nom_fondateur;
-        inputs[3]= row.devise;
-        inputs[4]= row.localisation;
-        inputs[5]= row.bp;
-        inputs[6]= row.email;
-        inputs[7]= row.tel;
-        inputs[8]= row.langue;
-        inputs[9]= row.site_web;
+        inputs[0] = row.libelle;
+        inputs[1] = row.date_creation;
+        inputs[2] = row.nom_fondateur;
+        inputs[3] = row.devise;
+        inputs[4] = row.localisation;
+        inputs[5] = row.bp;
+        inputs[6] = row.email;
+        inputs[7] = row.tel;
+        inputs[8] = row.langue;
+        inputs[9] = row.site_web;
         inputs[10]= row.id;
         inputs[11]= row.logo_url;
         inputs[12]= row.type_sousetab;
         currentUiContext.setFormInputs(inputs)
         setModalOpen(2);
 
+        console.log("rowSelected",row);
     }
 
     function listEtabs(){

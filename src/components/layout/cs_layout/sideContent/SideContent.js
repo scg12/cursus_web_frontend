@@ -16,6 +16,9 @@ import 'react-materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import classes from './SideContent.module.css';
 
+
+const DEFAULT_IMAGE_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJIAAAA9CAIAAADJU6fiAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASOSURBVHhe7Zq7UuwwEETv/3/ITTYgICChioSAgISEiIiQlA+ALtTrkqVpPdb2LKJ0olve0aOnRw+b++9rMiDTtiGZtg3JtG1Ipm1DMm0bkmnbkEzbhmTaNiTTtiGZtg3JtG1IbNuenp7+t4FIttmDj4+Pl5eXh4eHu7s7DnAGT+7v75+fn9/f3xm9B+gNfaLnfMTT6YSHABoxqy3j7q7Ltg1jsNcaiGSbbby9veWSFDc3N9vHRQ/ohz22ASORYrZv4yBdcpP8/PxEdbA/C/yKGEZvAJXYLiwGIpEU9tIDWvUaFsNeahyqq3K2KXl4zohtYGdACbPTCNTEMvWww6iZ9C67x8dHtlyDFL++vi6FGDZPc24hoMzRuiq2qXrp3StMTG14Yu7yhdXf7pzZA0aEYYxYg0Fvb28Zd4a/aRx0XWjb9psIai3XBgr7g5nEgJmRBJWdclvMk3Fn+IPAR9fVbDN7Rmb5swDiGboGshkhwHpi6JoWIYnffCrw0XUd27D82dEalCojNGpKhS0F5WyugMYTGiXPBj/wqYWbruvYZp7D1RUTUKkpNMdsGbSm4HRCPGE+snDTdQXb1IbQ2CeWDhtkqKI2lxpAV4zYA09dV7BNXQ0Kh3YCCpBt1uDKzogIdapBGiN2wlPXFWxTbyrttY/XD7ZZY76WqGxukWDiqcvbNqx3dpHBiAYwOtusQeIYEaGyqd7VLsNZl7dtassyM65QpzdgxJnCgdHyqteOsy5v21RBdZ006vAHyeldiGTETjjr+mu2Jed/e/1uxFmXt23q1D1InsomYMROOOvytk11OLptzrqmbfswbatzqG2FzhPY4Ic/bpt6+d1LXnKtv8C25MOxIrnZO+vytk3lcS95jDhz2U0Sb3vKhkD+tclZ12+xDTCiASXvdDox4kwhEdVvTuoLoflJ3lmXt23tBVUAxc42a/LSLnxzwkwYJFD/68TU7qzL27bC16ZqHhdUaZuzUn+1wf7JCEHXKM66jrItnkEyb/Vtt5rHBTUr8zOjehHGYmKEoD2JAU9dR9kWJyuxTW0+uAUwokbX/zBQO495RMX02uap6yjb4hkkn0HVDTs/eE1UczWlwvFWvpX02uap6xDbkhnwaYTqtuVvYObVHKkpeKD2yfweH9NrG3DTdYhtyQz4NELduzAcIwTQEK/jhbIBqpDVvhq4QLubrv1ty2fAH9aYxQXKBpjrppoU0HWbByqPoKtkF/bVtb9t+Qz4wxrkRb3PqquXmRF0gq4YoekdDgL5c0bZNh9dFdu6Kg47eG4zhufPGQWF8H45DxBm9gzK2hIKwyFx2EhDGP6hVkygbBtw0CVtQ7Py7BsprHSAUdT2VaWavpwtwy20jHu0Lts2LGf2sZmybQHc0dtLBBsAgpOXii5wcTDPkhzcWfIF0V4ux+mybcPM2NlmWmwLoEJRLihSNEk2Z2waeIhZLTvMdsJwyFQyHP4dxlq2TURiAgDBaNJbMUfoqpxtk9/JtG1Ipm1DMm0bkmnbkEzbhmTaNiTTtiGZtg3JtG1Ipm1DMm0bkmnbgHx9fQNo/2b1E9/GYQAAAABJRU5ErkJggg==";
+
 //Necessaire pour l'emploi de temps
 let listMatieres = [];
 let matieres = [];
@@ -137,8 +140,15 @@ function SideContent(props) {
         // console.log("currentYear: ",currentAppContext.currentYear," currentEtab: ", currentAppContext.currentEtab);
 
         //startnotifMotion();
-        document.getElementById("logo_url").value = currentAppContext.currentEtabInfos.logo_url;
+
+        if(currentAppContext.currentEtabInfos != null && currentAppContext.currentEtabInfos != undefined && currentAppContext.currentEtabInfos.logo_url != null && currentAppContext.currentEtabInfos.logo_url != undefined && currentAppContext.currentEtabInfos.logo_url != ""){
+            document.getElementById("logo_url").value = currentAppContext.currentEtabInfos.logo_url;
+        } else {
+            document.getElementById("logo_url").value = DEFAULT_IMAGE_URL;
+        }  
+
         console.log("notifs", currentAppContext.currentEtabInfos,currentAppContext.tabNotifs,document.getElementById("logo_url").value);
+
     },[])
   
     function getSelectDropDownTextColr() {
@@ -349,6 +359,16 @@ function SideContent(props) {
             //currentAppContext.setTabNotifs((notifs));
         });        
     }
+
+    function getLogoUrl(){
+        if(currentAppContext.currentEtabInfos != null && currentAppContext.currentEtabInfos != undefined && currentAppContext.currentEtabInfos.logo_url != ""){
+            console.log("ici 1er cas",currentAppContext.currentEtabInfos.logo_url)
+            return currentAppContext.currentEtabInfos.logo_url;
+        } else {
+            console.log("ici 2eme cas")
+            return DEFAULT_IMAGE_URL;
+        }  
+    }
           
     return (
 
@@ -424,7 +444,7 @@ function SideContent(props) {
            
             </div>
             <input id="logo_url" type ="hidden"/>
-            <canvas id="output" style={{display:'none'}}></canvas>
+            <canvas id="output" style={{display:'none'}}><img src={getLogoUrl()}/></canvas>
             
         </div>
     );

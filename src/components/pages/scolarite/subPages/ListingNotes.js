@@ -14,7 +14,7 @@ import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {createPrintingPages} from '../reports/PrintingModule';
-import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 import { useTranslation } from "react-i18next";
 
 
@@ -60,15 +60,16 @@ function ListingNotes(props) {
     const currentAppContext= useContext(AppContext);
 
     const selectedTheme = currentUiContext.theme;
-    const [isValid, setIsValid] = useState(false);
-    const [gridRows, setGridRows] = useState([]);
-    const [present, setPresent]= useState(0);
-    const [absent, setAbsent]= useState(0);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
-    const [optClasse, setOpClasse] = useState([]);
+    const [isValid, setIsValid]       = useState(false);
+    const [gridRows, setGridRows]     = useState([]);
+    const [present, setPresent]       = useState(0);
+    const [absent, setAbsent]         = useState(0);
+    const [modalOpen, setModalOpen]   = useState(0); //0 = close, 1=creation, 2=modif
+    const [optClasse, setOpClasse]    = useState([]);
     const [optPeriode, setOptPeriode] = useState([]);
-    const [tabCours, setTabCours] = useState([]);
-    const [grdCols, setGrdCols] = useState([]);
+    const [tabCours, setTabCours]     = useState([]);
+    const [grdCols, setGrdCols]       = useState([]);
+    const[imageUrl, setImageUrl] = useState('');
    
     
 
@@ -76,10 +77,20 @@ function ListingNotes(props) {
         if(gridRows.length ==0){
             CURRENT_CLASSE_ID = undefined;
         }    
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabListClasses();    
         getActivatedEvalPeriods(0);
         setGrdCols(columns);
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
     
     const columns = [
@@ -272,9 +283,11 @@ function ListingNotes(props) {
         if(e.target.value != optPeriode[0].value){
             CURRENT_SEQUENCE_ID = e.target.value;
             CURRENT_SEQUENCE_LABEL = optPeriode[optPeriode.findIndex((period)=>(period.value == CURRENT_SEQUENCE_ID))].label;
-            getStudentsNotes(CURRENT_CLASSE_ID, CURRENT_SEQUENCE_ID);            
+            getStudentsNotes(CURRENT_CLASSE_ID, CURRENT_SEQUENCE_ID); 
+            setIsValid(true);           
         } else {
             CURRENT_SEQUENCE_ID = undefined;
+            setIsValid(false);
             updateStudentsNote([]);
         }
     }
@@ -377,20 +390,21 @@ function ListingNotes(props) {
     const printStudentListingNotes=()=>{
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:  ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders: ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:   ["images/collegeVogt.png"],
-                pageTitle: "Recapitulatif des note pour la periode "+ CURRENT_SEQUENCE_LABEL+" classe " + CURRENT_CLASSE_LABEL,
-                tableHeaderModel:[...listCoursTitle],
-                tableData :[...gridRows],
-                numberEltPerPage:ROWS_PER_PAGE 
+                dateText          : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                leftHeaders       : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders     : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders      : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages        : [imgUrl], 
+                pageImagesDefault : [imgUrlDefault],
+                pageTitle         : t("note_recap")+' '+ CURRENT_SEQUENCE_LABEL+" classe : " + CURRENT_CLASSE_LABEL,
+                tableHeaderModel  : [...listCoursTitle],
+                tableData         : [...gridRows],
+                numberEltPerPage  : ROWS_PER_PAGE 
             };
             printedETFileName = 'ListingNotes_' +'('+ CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4);
             ElevePageSet=[];           
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet = createPrintingPages(PRINTING_DATA, i18n.language);
             console.log("ici la",ElevePageSet);                    
         } else{
             chosenMsgBox = MSG_WARNING_NOTES;
@@ -546,7 +560,7 @@ function ListingNotes(props) {
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={printStudentListingNotes}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            disable={isValid==false}   
                         />
 
                     </div>
@@ -555,49 +569,46 @@ function ListingNotes(props) {
                     
                 
 
-                {(modalOpen==0) ?
-                    <div className={classes.gridDisplay} >
-                        <StripedDataGrid
-                            rows={gridRows}
-                            columns={(grdCols.length==0)? columns:grdCols}
-                            getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : (!isNaN(params.value) && (params.field != 'rang'))?  params.value < 10 ? classes.gridNoteRedRowStyle : classes.gridNoteRowStyle : classes.gridRowStyle }
-                            
-                            /*onCellClick={(params,event)=>{
-                                if(event.ignore) {
-                                    //console.log(params.row);
-                                    handlePresence(params.row)
-                                }
-                            }}*/  
-                            
-                          /* onRowDoubleClick ={(params, event) => {
-                               if(!event.ignore){
-                                    event.defaultMuiPrevented = true;
-                                    consultRowData(params.row);
-                                }
-                            }}*/
-                            
-                            //loading={loading}
-                            //{...data}
-                            sx={{
-                                //boxShadow: 2,
-                                //border: 2,
-                                //borderColor: 'primary.light',
-                                '& .MuiDataGrid-cell:hover': {
-                                  color: 'primary.main',
-                                  border:0,
-                                  borderColor:'none'
-                                },
-                              
-                            }}
-                            getRowClassName={(params) =>
-                                params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+                
+                <div className={classes.gridDisplay} >
+                    <StripedDataGrid
+                        rows={gridRows}
+                        columns={(grdCols.length==0)? columns:grdCols}
+                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : (!isNaN(params.value) && (params.field != 'rang'))?  params.value < 10 ? classes.gridNoteRedRowStyle : classes.gridNoteRowStyle : classes.gridRowStyle }
+                        
+                        /*onCellClick={(params,event)=>{
+                            if(event.ignore) {
+                                //console.log(params.row);
+                                handlePresence(params.row)
                             }
-                        />
-                    </div>
-                    :
-                    null
-                }
-            
+                        }}*/  
+                        
+                        /* onRowDoubleClick ={(params, event) => {
+                            if(!event.ignore){
+                                event.defaultMuiPrevented = true;
+                                consultRowData(params.row);
+                            }
+                        }}*/
+                        
+                        //loading={loading}
+                        //{...data}
+                        sx={{
+                            //boxShadow: 2,
+                            //border: 2,
+                            //borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                                color: 'primary.main',
+                                border:0,
+                                borderColor:'none'
+                            },
+                            
+                        }}
+                        getRowClassName={(params) =>
+                            params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+                        }
+                    />
+                </div>
+                  
             </div>
           
         </div>

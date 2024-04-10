@@ -12,7 +12,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, ajouteZeroAuCasOu, grey, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, darkGrey, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -81,18 +81,18 @@ var CCPageSet=[];
 
 
 function ConseilClasse(props) {
-    const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
-    const currentAppContext = useContext(AppContext);
+    const { t, i18n }                   = useTranslation();
+    const currentUiContext              = useContext(UiContext);
+    const currentAppContext             = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
-    const [gridMeeting, setGridMeeting]= useState([]);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optClasse, setOpClasse]  = useState([]);
-    const [isLoading, setIsloading] = useState(false);
+    const [isValid, setIsValid]         = useState(false);
+    const [gridMeeting, setGridMeeting] = useState([]);
+    const [modalOpen, setModalOpen]     = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
+    const [optClasse, setOpClasse]      = useState([]);
+    const [isLoading, setIsloading]     = useState(false);
     const[LoadingVisible,setLoadingVisible] = useState(false);
-    const[imageUrl, setImageUrl] = useState('');
-    const selectedTheme = currentUiContext.theme;
+    const[imageUrl, setImageUrl]        = useState('');
+    const selectedTheme                 = currentUiContext.theme;
 
     useEffect(()=> {
         CURRENT_ANNEE_SCOLAIRE = document.getElementById("activated_annee").options[0].label;
@@ -101,7 +101,7 @@ function ConseilClasse(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
         getEtabListClasses();

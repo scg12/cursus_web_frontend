@@ -308,9 +308,12 @@ function AddEtab(props) {
     //          });
     //      };
 
-    /************************************ JSX Code ************************************/
+    function handleImageLoad(e){
+        e.target.src ="images/logoDefault.png";
+    }
 
-
+   
+/************************************ JSX Code ************************************/
 return (
     <div className={classes.formStyle}>
         <div className={classes.inputRow}> 
@@ -322,23 +325,20 @@ return (
            
            {(filesContent.length==0) ? 
                 <div className={classes.etabLogo}>
-                    {(currentUiContext.formInputs[11]!==undefined && currentUiContext.formInputs[11] !== null )?
-                    < img src={currentUiContext.formInputs[11]} className={classes.logoImg} alt="my image"/>:
-                    < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image"/>}
-                    {/* <input type="file" onChange={handleFileUpload} /> */}
+                    {(currentUiContext.formInputs[11]!= undefined && currentUiContext.formInputs[11] != null && currentUiContext.formInputs[11] !="")?
+                    < img src={currentUiContext.formInputs[11]} className={classes.logoImg} alt="my image" onError={handleImageLoad}/>:
+                    < img src="images/logoDefault.png" id='en'  className={classes.logoImg} alt="my image" onError={handleImageLoad}/>}
+                   
                     <CustomButton
                         btnText='Choisir Logo' 
                         buttonStyle={getSmallButtonStyle()}
                         btnTextStyle = {classes.btnSmallTextStyle}
                         btnClickHandler = {() => {openFileSelector();}}
-                        //btnClickHandler = {handleUpload}
-                        
                     />
                 </div>                      
                 :                
                 <div className={classes.etabLogo}>
                     <img id="logo" alt={filesContent[0].name} className={classes.logoImg} src={filesContent[0].content}/>
-                    <input type="hidden"  id ="logo_info" value={filesContent[0].lastModified}/>
                     <CustomButton
                         btnText='Choisir Logo' 
                         buttonStyle={getSmallButtonStyle()}
@@ -347,6 +347,8 @@ return (
                     />
                 </div>
             }
+
+            <input type="hidden"  id ="logo_info" value={filesContent.length==0 ? "images/logoDefault.png" : filesContent[0].lastModified} />
 
         </div>
        

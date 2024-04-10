@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -46,7 +46,6 @@ var ElevePageSet=[];
 var printedETFileName ='';
 
 
-
 function ListeDesEleves(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
@@ -68,7 +67,7 @@ function ListeDesEleves(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
         getEtabListClasses();
@@ -850,7 +849,7 @@ const columnsFr = [
                 rightHeaders     : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
                 pageImages       : [imgUrl], 
                 pageImagesDefault: [imgUrlDefault],
-                pageTitle        : t("studentList_of")+' '+ CURRENT_CLASSE_LABEL,
+                pageTitle        : t("studentList_of")+' : '+ CURRENT_CLASSE_LABEL,
                 tableHeaderModel : [t("matricule_short"), t('displayedName_M'), t("form_dateNaiss"), t("form_lieuNaiss"), t("enrole en"), t("nom_parent"), t("nouveau")],
                 tableData        : [...gridRows],
                 numberEltPerPage : ROWS_PER_PAGE  
@@ -858,7 +857,7 @@ const columnsFr = [
             printedETFileName    = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(4);
             ElevePageSet         = [];
-            ElevePageSet         = createPrintingPages(PRINTING_DATA);
+            ElevePageSet         = createPrintingPages(PRINTING_DATA,i18n.language);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING;

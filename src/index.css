@@ -177,9 +177,11 @@ and (-webkit-min-device-pixel-ratio: 1) {
   }
   .sidenav.side-menu.right-aligned{
     width: 81vw;
+    height: fit-content;
   }
 
 }
+
 
 /* ----------- Retina Screens ----------- */
 @media screen 
@@ -192,6 +194,7 @@ and (min-resolution: 192dpi) {
   }
   .sidenav.side-menu.right-aligned{
     width: 81vw;
+    height: fit-content;
   }
 
 }
@@ -306,29 +309,61 @@ div#elev-non-classe  .MuiDataGrid-footerContainer.css-17jjc08-MuiDataGrid-footer
   background-color: #d0290c;
 }
 
+/*---------------CHECKBOXES DES GRILLES-----------*/
 
-.css-i4bv87-MuiSvgIcon-root{
-  display: none !important;
+/* .css-i4bv87-MuiSvgIcon-root{
+   display: none !important;
 
-}
+} */
 
-
-/*les checkbox des tableaux*/
 .css-i4bv87-MuiSvgIcon-root{  
   width: 0.7em !important;
   height: 0.7em !important;
 }
 
+/* svg[class*="MuiSvgIcon-root"]{
+  display: none !important;
+} */
+
+/* input[class^="PrivateSwitchBase-input"]{
+  width: 1.3em !important;
+  height: 1.3em !important;
+}  
+ */
+
+ span[class^="MuiButtonBase-root"] svg[class^="MuiSvgIcon-root"]{
+    display: none !important;
+  }
+
+ div[class^="MuiDataGrid-columnSeparator"] svg[class^="MuiSvgIcon-root"]{
+    display: none !important;
+  }
+
+
+/*---------------FIN CHECKBOXES -----------*/
 
 div.MuiDataGrid-main.css-204u17-MuiDataGrid-main{
  overflow-y: scroll !important;
 }
+
+div[class^="MuiDataGrid-main"]{
+  overflow-y: scroll !important;
+}
+
+
 div.MuiDataGrid-columnHeaders.css-f3jnds-MuiDataGrid-columnHeaders {
   min-width: 5vh   !important;
   min-height: 5vh  !important;
   line-height: 5vh !important;
   background-color: rgb(6, 83, 134);
  
+}
+
+div[class^="MuiDataGrid-main"]  div[class^="MuiDataGrid-columnHeaders"]:first-child{
+  min-width: 5vh   !important;
+  min-height: 5vh  !important;
+  line-height: 5vh !important;
+  background-color: rgb(6, 83, 134);
 }
 
 div.MuiDataGrid-virtualScroller.css-1w5m2wr-MuiDataGrid-virtualScroller {
@@ -341,6 +376,17 @@ div.MuiDataGrid-footerContainer.css-17jjc08-MuiDataGrid-footerContainer {
   color:white;
   min-height: 5vh !important;
   height: 5vh;
+}
+
+div[class^="MuiDataGrid-footerContainer"]{
+  background-color: rgb(6, 83, 134);
+  color:white;
+  min-height: 5vh !important;
+  height: 5vh;
+}
+
+div[class^="MuiDataGrid-columnHeadersInner"]{
+  width:100% !important;
 }
 
 .css-zylse7-MuiButtonBase-root-MuiIconButton-root.Mui-disabled{
@@ -362,25 +408,22 @@ div.MuiDataGrid-footerContainer.css-17jjc08-MuiDataGrid-footerContainer {
 
 }
 
-/*
-.css-1w5m2wr-MuiDataGrid-virtualScroller {
-  margin-top :4vh;
-}
-.css-f3jnds-MuiDataGrid-columnHeaders{
-  min-height: 5vh !important;
-  max-height: 5vh !important;
-  line-height: 56px;
-  background-color: rgb(100, 104, 100);
-  color: white;
-  font-size: 1vw;
-  font-weight: 800;
+
+div[class^="MuiTablePagination-root"]{
+  color: white !important; 
 }
 
-.MuiDataGrid-row{
-  min-height: 4.7vh !important;
-  max-height: 4.7vh !important;
 
-}*/
+button[class^="MuiButtonBase-root"]{
+  background-color: transparent;
+  color : white !important;
+}
+
+svg[class^="MuiSvgIcon-root"]{
+  width : 0.7em !important;
+  height: 0.7em !important;
+  color : white !important;
+}
 
 
 

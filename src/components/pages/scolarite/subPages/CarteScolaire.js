@@ -11,7 +11,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate,getTodayDate,grey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate,getTodayDate,darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -67,7 +67,7 @@ function CarteScolaire(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
 
@@ -759,7 +759,8 @@ const columnsFr = [
 
             if(CURRENT_CLASSE_ID != undefined){
                 var PRINTING_DATA ={
-                    currentClasse: CURRENT_CLASSE_LABEL,
+                    currentClasse    : CURRENT_CLASSE_LABEL,
+                    anneeScolaire    : currentAppContext.activatedYear.libelle,
                     dateText         : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
                     leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire","Delegation Regionale du centre", "Delegation Departementale du Mfoundi"],
                     centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
@@ -774,7 +775,7 @@ const columnsFr = [
                 printedETFileName    = "carte_scolaires.pdf";
                 setModalOpen(4);
                 ElevePageSet=[];
-                ElevePageSet = createPrintingPages(PRINTING_DATA);
+                ElevePageSet = createPrintingPages(PRINTING_DATA,i18n.language);
                 document.getElementById("btnGen").classList.add("disable");
                 console.log("ici la",ElevePageSet,PRINTING_DATA);                    
             } else{

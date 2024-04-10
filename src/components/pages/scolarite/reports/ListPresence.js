@@ -32,7 +32,7 @@ var page = {
     pageNumber:0,
 };
 
-function StudentListTemplate(props){
+function ListPresence(props){
     const { t, i18n } = useTranslation();
 
 
@@ -80,9 +80,9 @@ function StudentListTemplate(props){
         return(
             <View style={props.style}>
                 <View style={{width:'8vw',  justifyContent:'center',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[0]}</Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[1]}</Text></View>
+                <View style={{width:'10vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[1]}</Text></View>
                 <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[2]}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[3]}</Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[3]}</Text></View>
                 <View style={{width:'8vw', justifyContent:'center',...styles.headercell}}>       <Text>{props.page.tableHeaderModel[4]}</Text></View>
                 <View style={{width:'14vw', justifyContent:'flex-start', ...styles.headercell}}> <Text>{props.page.tableHeaderModel[5]}</Text></View>
                 <View style={{width:'7vw',  justifyContent:'center',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[6]}</Text></View>
@@ -93,13 +93,13 @@ function StudentListTemplate(props){
     const TableRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.matricule}               </Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.eleve.nom}           </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.eleve.date_naissance} </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.lieu_naissance} </Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.date_entree}    </Text></View>
-                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.cell}}> <Text>{props.eleve.nom_pere}       </Text></View>
-                <View style={{width:'7vw',  justifyContent:'center',...styles.cell}}>  <Text>{(props.eleve.redouble=='nouveau') ? "non" :"oui"}</Text></View>
+                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.rang}               </Text></View>
+                <View style={{width:'10vw', justifyContent:'flex-start',...styles.cell, fontFamily: props.eleve.presence==0? "MyBold":null}}>  <Text >{props.eleve.presence==1? t("yes"):t("no")}           </Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.eleve.matricule} </Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.nom} </Text></View>
+                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.date_naissance}    </Text></View>
+                <View style={{width:'14vw', justifyContent:'flex-start', ...styles.cell}}> <Text>{props.eleve.lieu_naissance}       </Text></View>
+                <View style={{width:'7vw',  justifyContent:'center',...styles.cell}}>  <Text>{props.eleve.date_entree}</Text></View>
            </View>
         );        
 
@@ -147,7 +147,7 @@ function StudentListTemplate(props){
                 
                 <View style={styles.pageTitleContainer}>
                     <Text style={styles.titleStyle}>{getMainTitle(el.pageTitle)} </Text>
-                    <Text style={{fontSize:13, fontFamily:"Times-Roman", fontFamily:"MyBold",marginLeft:"0.1vw"}}>{getClassabel(el.pageTitle)}</Text>
+                    <Text style={{fontSize:11, fontFamily:"Times-Roman", fontFamily:"MyBold",marginLeft:"0.1vw"}}>{getClassabel(el.pageTitle)}</Text>
                     <Text style={{fontSize:10,marginLeft:"-0.5vw", fontFamily:"Times-Roman", fontFamily:"MyItalic"}}>{getSuffixe(el.pageTitle)}</Text>
                 </View>
 
@@ -282,11 +282,15 @@ const styles = StyleSheet.create({
         width:'auto',
         height:'2%',
         borderBottom: "1.3px solid black",
-        marginBottom:"3vh",       
+        marginBottom:"2vh",
+        marginTop:"1.7vh"
+        
     },
 
+    
+
     titleStyle:{
-        fontSize:12,
+        fontSize:10,
         fontWeight:'ultrabold',
         textTransform:'uppercase',
         fontFamily:"Times-Roman",
@@ -367,4 +371,4 @@ const styles = StyleSheet.create({
   
   });
 
-export default StudentListTemplate;
+export default ListPresence;

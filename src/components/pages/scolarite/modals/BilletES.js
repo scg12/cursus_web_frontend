@@ -781,12 +781,12 @@ function BilletES(props) {
                             />
 
                            
-                            <CustomButton
+                            {/* <CustomButton
                                 btnText={t("imprimer")}
                                 buttonStyle={getGridButtonStyle()}
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={updateBilletHandler}
-                            />
+                            /> */}
                             
                         </div>
 

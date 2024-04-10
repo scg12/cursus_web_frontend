@@ -12,7 +12,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {isMobile} from 'react-device-detect';
-import {convertDateToUsualDate, getTodayDate, grey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer,PDFDownloadLink } from '@react-pdf/renderer';
 import PDFTemplate from '../reports/PDFTemplate';
@@ -88,7 +88,7 @@ function Studentprofile(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
     },[]);
@@ -779,7 +779,7 @@ const columnsFr = [
             setModalOpen(4);
             ElevePageSet=[];
             //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet = createPrintingPages(PRINTING_DATA,i18n.language);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING_FD;

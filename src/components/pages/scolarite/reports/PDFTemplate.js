@@ -29,6 +29,10 @@ function PDFTemplate(props) {
     }
    
    
+    function handleImageLoad(e){
+        e.target.src ="images/Loading2.gif";
+    }
+
     /************************************ JSX Code ************************************/
 
     return (
@@ -45,26 +49,27 @@ function PDFTemplate(props) {
             }                       
         
             <div style={{   
-                alignSelf: 'center',
-                borderRadius: '8px',
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '13vw',
-                height: '3.13vh',
-                position: 'absolute',
-                top:'50%',
-                zIndex: '1200',
-                overflow: 'hidden'
+                alignSelf      : 'center',
+                borderRadius   : '8px',
+                display        : 'flex',
+                flexDirection  : 'row',
+                justifyContent : 'center',
+                alignItems     : 'center',
+                width          : '13vw',
+                height         : '3.13vh',
+                position       : 'absolute',
+                top            : '50%',
+                zIndex         : '1200',
+                overflow       : 'hidden'
             }}
             >
-                <img src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
+                <img src="images/Loading2.gif" alt="loading..." style={{width:'24.1vw'}}  onError={handleImageLoad}/>
             </div>   
 
             <div style={{position:"relative", zIndex:1207}}>
                 {props.children}
             </div>
+            
             <div style={{height: "7vh", width: "100%", display:'flex', flexDirection:'row', justifyContent:'center', marginTop:'1vh', position: isMobile?'absolute':null, bottom:isMobile ? 2:null}}>
                 <CustomButton
                     btnText={t('close_preview')}

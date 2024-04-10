@@ -10,26 +10,24 @@ import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, darkGrey, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
+import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
+
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
+import PDFTemplate from '../reports/PDFTemplate';
+import {isMobile} from 'react-device-detect';
+import ListPresence from '../reports/ListPresence';
 
 
 let CURRENT_CLASSE_ID;
+let CURRENT_CLASSE_LABEL;
 let CURRRENT_COURS_ID;
+let CURRRENT_COURS_LABEL;
 let SELECTED_DATE;
 
-var listElt ={
-    rang:1, 
-    presence:1, 
-    matricule:"", 
-    nom: '', 
-    date_naissance: '', 
-    lieu_naissance:'', 
-    date_entree:'', 
-    nom_pere: '',  
-    redouble: '',  
-    id:1,
-}
+var listElt ={}
 
 var JOUR, MOIS, YEAR, DATE_VERIF;
 var tabAbsenceCours;
@@ -39,6 +37,10 @@ var chosenMsgBox;
 const MSG_SUCCESS_APPEL =11;
 const MSG_WARNING_APPEL =12;
 const MSG_ERROR_APPEL   =13;
+
+const ROWS_PER_PAGE= 40;
+var ElevePageSet=[];
+var printedETFileName ='';
 
 
 
@@ -58,6 +60,7 @@ function LookStudentPresence(props) {
     const [optCours, setOpCours] = useState([]);
     const [optDate, setOpDate] = useState([]);
     const [isDateFull, setIsDateFull]=useState(false);
+    const[imageUrl, setImageUrl] = useState('');
     const[courseSelected, setCourseSelected] = useState(false);
     
 
@@ -66,10 +69,22 @@ function LookStudentPresence(props) {
         if(gridRows.length ==0){
             CURRENT_CLASSE_ID = undefined;
         }    
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabListClasses();    
         getCoursClasse(currentAppContext.currentEtab, 0);
         //getDateCours(0);
     },[]);
+
+    
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
 
 
 
@@ -158,7 +173,7 @@ function LookStudentPresence(props) {
             console.log(res.data);
             listEleves = [...formatList(res.data.eleves)]
             tabAbsenceCours = [...res.data.absences_eleves]
-            console.log(listEleves);
+            console.log("Present",listEleves);
             // setGridRows(listEleves);
             // setPresent(listEleves.length)
             console.log(gridRows);
@@ -181,11 +196,13 @@ function LookStudentPresence(props) {
 
     function classeChangeHandler(e){       
         if(e.target.value != optClasse[0].value){
-            CURRENT_CLASSE_ID = e.target.value;
+            CURRENT_CLASSE_ID    = e.target.value;
+            CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
            
         }else{
-            CURRENT_CLASSE_ID = undefined;
+            CURRENT_CLASSE_ID    = undefined;
+            CURRENT_CLASSE_LABEL = "";
             getCoursClasse(currentAppContext.currentEtab, 0);
             getAbsenceCours(0,CURRENT_CLASSE_ID);
 
@@ -199,13 +216,14 @@ function LookStudentPresence(props) {
    
     function coursChangeHandler(e){
         if(e.target.value != optCours[0].value){
-            CURRRENT_COURS_ID = e.target.value;
+            CURRRENT_COURS_ID    = e.target.value;
+            CURRRENT_COURS_LABEL = optCours.find((cours)=>cours.value==CURRRENT_COURS_ID).label
             getAbsenceCours(CURRRENT_COURS_ID, CURRENT_CLASSE_ID);  
             setCourseSelected(true);                     
             
         } else {
-            CURRRENT_COURS_ID = undefined;
-            //document.getElementById('optClasse').options[0].selected=true;
+            CURRRENT_COURS_ID    = undefined;
+            CURRRENT_COURS_LABEL = '';
             setCourseSelected(false)
             setIsDateFull(false); 
             JOUR = ''; MOIS = ''; YEAR =''; DATE_VERIF='';
@@ -219,17 +237,17 @@ function LookStudentPresence(props) {
         var rang = 1;
         var formattedList =[]
         list.map((elt)=>{
-            listElt={};
-            listElt.id = elt.id;
-            listElt.nom  = elt.nom +' '+elt.prenom;
-            listElt.rang = ajouteZeroAuCasOu(rang); 
-            listElt.presence = 1; 
-            listElt.matricule = elt.matricule;
+            listElt                = {};
+            listElt.id             = elt.id;
+            listElt.nom            = elt.nom +' '+elt.prenom;
+            listElt.rang           = ajouteZeroAuCasOu(rang); 
+            listElt.presence       = 1; 
+            listElt.matricule      = elt.matricule;
             listElt.date_naissance = convertDateToUsualDate(elt.date_naissance);
             listElt.lieu_naissance = elt.lieu_naissance;
-            listElt.date_entree = convertDateToUsualDate(elt.date_entree);
-            listElt.nom_pere = elt.nom_pere;
-            listElt.redouble = (elt.redouble == false) ? "nouveau" : "Redoublant"; 
+            listElt.date_entree    = convertDateToUsualDate(elt.date_entree);
+            listElt.nom_pere       = elt.nom_pere;
+            listElt.redouble       = (elt.redouble == false) ? "nouveau" : "Redoublant"; 
             formattedList.push(listElt);
             rang ++;
         })
@@ -601,6 +619,43 @@ function LookStudentPresence(props) {
     }
 
 
+    const printStudentList=()=>{
+       
+        if(CURRENT_CLASSE_ID != undefined){
+            var PRINTING_DATA ={
+                dateText         : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders     : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages       : [imgUrl], 
+                pageImagesDefault: [imgUrlDefault],
+                pageTitle        : t("student_presence_for_the_course")+' '+ CURRRENT_COURS_LABEL +' '+t('from_the')+' '+ convertDateToUsualDate(DATE_VERIF)+' : '+ CURRENT_CLASSE_LABEL,
+                tableHeaderModel : ["N°", t("present")+" ?", t("matricule_short"), t('displayedName_M'), t("form_dateNaiss"), t("form_lieuNaiss"), t("enrole en")],
+                tableData        : [...gridRows],
+                numberEltPerPage : ROWS_PER_PAGE  
+            };
+            printedETFileName    = 'Liste_eleves('+CURRENT_CLASSE_LABEL+').pdf';
+            setModalOpen(4);
+            ElevePageSet         = [];
+            ElevePageSet         = createPrintingPages(PRINTING_DATA,i18n.language);
+            console.log("ici la",ElevePageSet,gridRows);                    
+        } else{
+            chosenMsgBox = MSG_WARNING_APPEL;
+            currentUiContext.showMsgBox({
+                visible  : true, 
+                msgType  : "warning", 
+                msgTitle : t("warning_M"), 
+                message  : t("must_select_class")
+            })            
+        }      
+    }
+
+    
+    const closePreview =()=>{
+        setModalOpen(0);
+    }
+
+
     /********************************** JSX Code **********************************/   
     const ODD_OPACITY = 0.2;
     
@@ -639,8 +694,7 @@ function LookStudentPresence(props) {
 
     return (
         <div className={classes.formStyleP}>
-            {(modalOpen==3) && <BackDrop/>}
-            {(modalOpen==3) && <AddStudent formMode='consult' cancelHandler={quitForm} />}
+            {(modalOpen!=0) && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) && <BackDrop/>}
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox &&
                 <MsgBox 
@@ -657,6 +711,21 @@ function LookStudentPresence(props) {
                     buttonRejectHandler = {rejectHandler}            
                 />                 
             }
+
+
+            {(modalOpen==4) &&              
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    {isMobile?
+                        <PDFDownloadLink  document ={<ListPresence pageSet={ElevePageSet}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height: "80vh" , width: "100%" , display:'flex', flexDirection:'column', justifyContent:'center',  display: "flex"}}>
+                            <ListPresence pageSet={ElevePageSet}/>
+                        </PDFViewer>
+                    }
+                </PDFTemplate>
+            } 
             <div className={classes.inputRow}>               
                 <div className={classes.formTitle}>
                     {t('look_students_presence_M')}  
@@ -749,7 +818,7 @@ function LookStudentPresence(props) {
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
+                            btnClickHandler={printStudentList}
                             disable={(isValid == false)}   
                         />
 
@@ -759,49 +828,47 @@ function LookStudentPresence(props) {
                     
                 
 
-                {(modalOpen==0) ?
-                    <div className={classes.gridDisplay} >
-                        <StripedDataGrid
-                            rows={gridRows}
-                            columns={columns}
-                            getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
-                            
-                            onCellClick={(params,event)=>{
-                                if(event.ignore) {
-                                    //console.log(params.row);
-                                    handlePresence(params.row)
-                                }
-                            }}  
-                            
-                           onRowDoubleClick ={(params, event) => {
-                               if(!event.ignore){
-                                    event.defaultMuiPrevented = true;
-                                    consultRowData(params.row);
-                                }
-                            }}
-                            
-                            //loading={loading}
-                            //{...data}
-                            sx={{
-                                //boxShadow: 2,
-                                //border: 2,
-                                //borderColor: 'primary.light',
-                                '& .MuiDataGrid-cell:hover': {
-                                  color: 'primary.main',
-                                  border:0,
-                                  borderColor:'none'
-                                },
-                              
-                            }}
-                            getRowClassName={(params) =>
-                                params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+              
+                <div className={classes.gridDisplay} >
+                    <StripedDataGrid
+                        rows={gridRows}
+                        columns={columns}
+                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : classes.gridRowStyle }
+                        
+                        onCellClick={(params,event)=>{
+                            if(event.ignore) {
+                                //console.log(params.row);
+                                handlePresence(params.row)
                             }
-                        />
-                    </div>
-                    :
-                    null
-                }
-            
+                        }}  
+                        
+                        onRowDoubleClick ={(params, event) => {
+                            if(!event.ignore){
+                                event.defaultMuiPrevented = true;
+                                consultRowData(params.row);
+                            }
+                        }}
+                        
+                        //loading={loading}
+                        //{...data}
+                        sx={{
+                            //boxShadow: 2,
+                            //border: 2,
+                            //borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                                color: 'primary.main',
+                                border:0,
+                                borderColor:'none'
+                            },
+                            
+                        }}
+                        getRowClassName={(params) =>
+                            params.indexRelativeToCurrentPage % 2 === 0 ? 'even ' + classes.gridRowStyle : 'odd '+ classes.gridRowStyle
+                        }
+                    />
+                </div>
+                  
+               
             </div>
             <div className={classes.infoPresence}>
                 <div className={classes.presentZone}>

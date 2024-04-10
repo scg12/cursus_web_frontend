@@ -249,12 +249,11 @@ function ETTemplate(props){
     return (
         <Document>        
             <Page size="A4"  orientation='landscape' style={styles.page} >
-                <Filigrane photoStyle ={{width:"67vw", height:"63vw"}} style={{zIndex:9999}} /*imageSrc="images/collegeVogt_fil.png"*//>
+                <Filigrane photoStyle ={{width:"57vw", height:"48vw"}} style={{zIndex:9999}} /*imageSrc="images/collegeVogt_fil.png"*//>
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={props.pageSet}   />
-                    {/* <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/> */}
-                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={props.pageSet.pageImagesDefault[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={props.pageSet.pageImages[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={props.pageSet}  />                                     
                 </View>
                 
@@ -341,7 +340,7 @@ const styles = StyleSheet.create({
       alignItems:'center',
       width: "98vw",
       height: "100%",  
-     
+      paddingTop:"3vh"    
     },
 
     header: {
@@ -388,31 +387,26 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
-    // imagestyle:{
-    //     width:'13vh',
-    //     height:'12vh',
-    //     borderRadius:3
-    // },
-
-    imagestyleDefault:{
+    imagestyle:{
         position:"absolute",
-        top:"-9.7vh",
+        top:"-12vh",
         left:0,
         zIndex:2,       
         width :'13vh',
         height:'12vh',
         borderRadius:3,
-        marginLeft:"-7vw"
+        marginLeft:"-4.3vw"
     },
 
-    imagestyle:{
+    imagestyleDefault:{
         position:"absolute",
-        top:"-9.7vh",
+        top:"-12vh",
         left:30,
         zIndex:3,       
         width :'13vh',
         height:'12vh',
-        borderRadius:3
+        borderRadius:3,
+        marginLeft:"4.7vw"
     },
 
     headerCenter:{
@@ -677,6 +671,7 @@ const styles = StyleSheet.create({
     pauseZone :{
         //backgroundColor:'#ee2929',
         backgroundColor:'lightgrey',  
+        opacity:0.7,
         //background:'repeating-linear-gradient( 45deg,white 0px,white 2px, #ee2929 2px,#ee2929  4px )' ,
         height:'100%',
         width:'100%',

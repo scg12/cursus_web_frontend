@@ -29,7 +29,7 @@ import PDFTemplate from '../pages/scolarite/reports/PDFTemplate';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import ETTemplate from '../pages/scolarite/reports/ETTemplate';
 import {createPrintingPages} from '../pages/scolarite/reports/PrintingModule';
-import { grey, getTodayDate } from '../../store/SharedData/UtilFonctions';
+import { darkGrey, getTodayDate } from '../../store/SharedData/UtilFonctions';
 
 
 
@@ -115,7 +115,7 @@ function GrilleEmploiTemps(props) {
         var cnv = document.getElementById('output');
         while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
         var cnx = cnv.getContext('2d');
-        var url = grey(document.getElementById("logo_url").value,cnv,cnx);
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
        // if((currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID) || (currentUiContext.previousSelectedMenuID=='0' && currentUiContext.currentSelectedMenuID=='0')){
