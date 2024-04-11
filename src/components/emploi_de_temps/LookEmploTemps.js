@@ -29,7 +29,7 @@ import DownloadTemplate from '../../components/downloadTemplate/DownloadTemplate
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import ETTemplate from '../pages/scolarite/reports/ETTemplate';
 import {createPrintingPages} from '../pages/scolarite/reports/PrintingModule';
-
+import { getTodayDate,darkGrey } from '../../store/SharedData/UtilFonctions';
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -70,6 +70,7 @@ function LookEmploTemps(props) {
     const [byClassEnable, setByClassEnable] = useState(true);
     const { t, i18n } = useTranslation();
     const [currentPP, setCurrentPP] = useState({});
+    const[imageUrl, setImageUrl] = useState('');
     
     
     const changeLanguage = (event) => {
@@ -127,6 +128,12 @@ function LookEmploTemps(props) {
 
     useEffect(()=> {
         if(currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID){
+            var cnv = document.getElementById('output');
+            while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+            var cnx = cnv.getContext('2d');
+            var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+            setImageUrl(url);
+
             if(currentUiContext.TAB_CRENEAU_PAUSE.length>0)
             {   
                 let prof_list;
@@ -236,6 +243,10 @@ function LookEmploTemps(props) {
         }
 
     },[currentUiContext.TAB_CRENEAU_PAUSE]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
 
 
     /*************************** <Managing Theme> ****************************/
@@ -1353,28 +1364,29 @@ function PrintEmploiDeTemps(){
   
     if(currentClasseId != undefined){      
         var PRINTING_DATA ={
-            dateText:'Yaounde, le 14/03/2023',
-            leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-            centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-            rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-            pageImages:["images/collegeVogt.png"],
-            pageTitle: getPrintedETTitleLabel(), //"Emploi de temps de la classe de " + currentClasseLabel,
-            tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-            tableData :[],
-            isClassET : byClassEnable,
-            tabCreneauPause :  currentUiContext.TAB_CRENEAU_PAUSE,
-            dureePause : currentUiContext.intervalleMaxTranche,
-            valeurHoraires : currentUiContext.TAB_VALEUR_HORAIRE,
-            ListeJours : currentUiContext.TAB_JOURS,
-            ListePeriodes : currentUiContext.TAB_PERIODES, 
-            intervalleMaxTranche:currentUiContext.intervalleMaxTranche,
-            numberEltPerPage:ROWS_PER_PAGE,
-            emploiDeTemps:getPrintedETData(),
-            matieres:  currentUiContext.CURRENT_MATIERE_LIST,
-            profs   :  currentUiContext.listProfs,
-            nbreHeures : getCourseCount(),  
-            classesET  : getETClasses(),    
-            profprincipal: (currentPP==undefined || currentPP == {}) ? '': (currentPP.sexe == 'M') ? 'Mr ' + currentPP.NomProf : 'Mme ' + currentPP.NomProf
+            dateText            : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+            leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders       : ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+            rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+            pageImages          : [imgUrl], 
+            pageImagesDefault   : [imgUrlDefault],
+            pageTitle           : getPrintedETTitleLabel(), //"Emploi de temps de la classe de " + currentClasseLabel,
+            tableHeaderModel    : ["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
+            tableData           : [],
+            isClassET           : byClassEnable,
+            tabCreneauPause     :  currentUiContext.TAB_CRENEAU_PAUSE,
+            dureePause          : currentUiContext.intervalleMaxTranche,
+            valeurHoraires      : currentUiContext.TAB_VALEUR_HORAIRE,
+            ListeJours          : currentUiContext.TAB_JOURS,
+            ListePeriodes       : currentUiContext.TAB_PERIODES, 
+            intervalleMaxTranche: currentUiContext.intervalleMaxTranche,
+            numberEltPerPage    : ROWS_PER_PAGE,
+            emploiDeTemps       : getPrintedETData(),
+            matieres            : currentUiContext.CURRENT_MATIERE_LIST,
+            profs               : currentUiContext.listProfs,
+            nbreHeures          : getCourseCount(),  
+            classesET           : getETClasses(),    
+            profprincipal       : (currentPP==undefined || currentPP == {}) ? '': (currentPP.sexe == 'M') ? 'Mr ' + currentPP.NomProf : 'Mme ' + currentPP.NomProf
         };
 
         console.log("iciPro",ETPageSet);       
