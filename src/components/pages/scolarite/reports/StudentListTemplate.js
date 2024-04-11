@@ -79,10 +79,10 @@ function StudentListTemplate(props){
     const TableHeader = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'8vw',  justifyContent:'center',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[0]}</Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[1]}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>      <Text>{props.page.tableHeaderModel[2]}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[3]}</Text></View>
+                <View style={{width:'10vw', justifyContent:'flex-start',...styles.headercell}}>             <Text style={{marginLeft:"1vw"}}>{props.page.tableHeaderModel[0]}</Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.headercell}}>              <Text>{props.page.tableHeaderModel[1]}</Text></View>
+                <View style={{width:'14vw', justifyContent:'flex-start',...styles.headercell}}>      <Text style={{marginLeft:(i18n.language=='fr') ?"-2.7vw":"-1.3vw"}}>{props.page.tableHeaderModel[2]}</Text></View>
+                <View style={{width:'14vw', justifyContent:'flex-start',...styles.headercell}}>  <Text style={{marginLeft:"-2.7vw"}}>{props.page.tableHeaderModel[3]}</Text></View>
                 <View style={{width:'8vw', justifyContent:'center',...styles.headercell}}>       <Text>{props.page.tableHeaderModel[4]}</Text></View>
                 <View style={{width:'14vw', justifyContent:'flex-start', ...styles.headercell}}> <Text>{props.page.tableHeaderModel[5]}</Text></View>
                 <View style={{width:'7vw',  justifyContent:'center',...styles.headercell}}>  <Text>{props.page.tableHeaderModel[6]}</Text></View>
@@ -93,11 +93,11 @@ function StudentListTemplate(props){
     const TableRow = (props) =>{
         return(
             <View style={props.style}>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text >{props.eleve.matricule}               </Text></View>
-                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>  <Text >{props.eleve.nom}           </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.eleve.date_naissance} </Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.lieu_naissance} </Text></View>
-                <View style={{width:'8vw', justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.date_entree}    </Text></View>
+                <View style={{width:'8vw',  justifyContent:'flex-start',...styles.cell}}><Text>{props.eleve.matricule}</Text></View>
+                <View style={{width:'23vw', justifyContent:'flex-start',...styles.cell}}>              <Text>{props.eleve.nom}           </Text></View>
+                <View style={{width:'14vw', justifyContent:'flex-start',...styles.cell}}>      <Text>{props.eleve.date_naissance} </Text></View>
+                <View style={{width:'14vw', justifyContent:'flex-start',...styles.cell}}>  <Text>{props.eleve.lieu_naissance} </Text></View>
+                <View style={{width:'8vw',  justifyContent:'center',...styles.cell}}>       <Text>{props.eleve.date_entree}    </Text></View>
                 <View style={{width:'14vw', justifyContent:'flex-start', ...styles.cell}}> <Text>{props.eleve.nom_pere}       </Text></View>
                 <View style={{width:'7vw',  justifyContent:'center',...styles.cell}}>  <Text>{(props.eleve.redouble=='nouveau') ? "non" :"oui"}</Text></View>
            </View>
@@ -332,6 +332,7 @@ const styles = StyleSheet.create({
         flexDirection:"row",                 
     },
 
+
     row:{
         display: "flex",
         flexDirection: "row",
@@ -356,6 +357,8 @@ const styles = StyleSheet.create({
         color: "black",
         fontSize:9
     },
+
+   
 
     
    /* text: {
