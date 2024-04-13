@@ -53,12 +53,12 @@ function LigneProfs(props) {
                     return (
                         <ProfDiv
                             id={"prof_"+prof.id}
-                            dragDivClassName= {null}
-                            profImgStyle = {null}
-                            profNameStyle = {null}
-                            title = ''
-                            imgSrc=""
-                            imgClass={classes.imgStyle}
+                            dragDivClassName = {null}
+                            profImgStyle     = {null}
+                            profNameStyle    = {null}
+                            title            = ''
+                            imgSrc           = ""
+                            imgClass         = {classes.imgStyle}
                         />
                     );
                 })

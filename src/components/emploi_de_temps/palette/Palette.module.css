@@ -58,6 +58,14 @@
     align-items: center;
 }
 
+.profImgStyle:hover{
+    display: flex;
+    flex-direction: column;
+    justify-content:space-around;
+    align-items: center;
+    cursor: pointer;
+}
+
 .btnTextStyle {
     font-size: 1.7vw;
     font-weight: 400;

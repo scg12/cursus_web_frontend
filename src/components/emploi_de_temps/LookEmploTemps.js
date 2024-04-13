@@ -29,7 +29,7 @@ import DownloadTemplate from '../../components/downloadTemplate/DownloadTemplate
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import ETTemplate from '../pages/scolarite/reports/ETTemplate';
 import {createPrintingPages} from '../pages/scolarite/reports/PrintingModule';
-
+import { getTodayDate,darkGrey } from '../../store/SharedData/UtilFonctions';
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -70,6 +70,7 @@ function LookEmploTemps(props) {
     const [byClassEnable, setByClassEnable] = useState(true);
     const { t, i18n } = useTranslation();
     const [currentPP, setCurrentPP] = useState({});
+    const[imageUrl, setImageUrl] = useState('');
     
     
     const changeLanguage = (event) => {
@@ -127,6 +128,12 @@ function LookEmploTemps(props) {
 
     useEffect(()=> {
         if(currentUiContext.previousSelectedMenuID != currentUiContext.currentSelectedMenuID){
+            var cnv = document.getElementById('output');
+            while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+            var cnx = cnv.getContext('2d');
+            var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+            setImageUrl(url);
+
             if(currentUiContext.TAB_CRENEAU_PAUSE.length>0)
             {   
                 let prof_list;
@@ -236,6 +243,10 @@ function LookEmploTemps(props) {
         }
 
     },[currentUiContext.TAB_CRENEAU_PAUSE]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
 
 
     /*************************** <Managing Theme> ****************************/
@@ -613,12 +624,12 @@ function initClassETGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeT
                         //container.addEventListener('click', () => {droppedProfClickHandler(droppedProfId)})
 
                         droppedMatiere.tabProfsID.push(droppedProfId);
-                        
+
+                      
                     
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
-                        // PROF_DATA.NomProf    = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
-                        PROF_DATA.NomProf    = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1];
+                        PROF_DATA.NomProf    = (sexe=="M") ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1]:emploiTemps[i].value.split("*")[2].split("%")[0].split("Mme.")[1];
                         PROF_DATA.idJour     = jour;
                         PROF_DATA.idMatiere  = idMatiereToDrop;
                         PROF_DATA.heureDeb   = periode.split('_')[0];
@@ -733,10 +744,16 @@ function initTeachersETGrille(id_teacher,emploiDeTemps,functionAppellante) {
                         // var droppedProfId = 'DP_'+ tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[1] + '_' + jour +'_' +  periode;
                         var droppedProfId = 'DP_prof_'+ emploiTemps[i].id_enseignants[j]+"_"+emploiTemps[i].id_jour+"_"+emploiTemps[i].libelle
                         
+                        
+
                         var droppedprofDiv = document.createElement('div');
                         droppedprofDiv.id = droppedProfId;
                         droppedprofDiv.className = classes.profDivStyle;
                         droppedprofDiv.textContent = classeLabel;
+
+                       
+                        var sexe = "M";
+                        if(emploiTemps[i].value.split(':')[1].split('*')[j+2].split('%')[0].includes('Mme.'))  sexe = "F";
                         
                         var container = document.getElementById('P_'+ jour + '_' +  periode);
                         container.appendChild(droppedprofDiv)
@@ -747,7 +764,7 @@ function initTeachersETGrille(id_teacher,emploiDeTemps,functionAppellante) {
                     
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
-                        PROF_DATA.NomProf    = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1];
+                        PROF_DATA.NomProf    = (sexe == "M") ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1] : emploiTemps[i].value.split("*")[2].split("%")[0].split("Mme.")[1];
                         PROF_DATA.idJour     = jour;
                         PROF_DATA.idMatiere  = idMatiereToDrop;
                         PROF_DATA.heureDeb   = periode.split('_')[0];
@@ -831,7 +848,7 @@ function matiereClickHandler(e){
                 periode = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].idMatiere;
                 tab_prof_id = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].tabProfsID;
                 tab_prof_id.forEach(prof => {
-                    liste_prof.push(parseInt(prof.split("DP_Prof_")[1].split("_")[0]))
+                    liste_prof.push(parseInt(prof.split("DP_prof_")[1].split("_")[0]))
                 });
                 console.log("liste_prof: ",liste_prof)
                 // console.log("2indexMatiere: ",CURRENT_DROPPED_MATIERE_LIST[indexMatiere]);             
@@ -1353,28 +1370,29 @@ function PrintEmploiDeTemps(){
   
     if(currentClasseId != undefined){      
         var PRINTING_DATA ={
-            dateText:'Yaounde, le 14/03/2023',
-            leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-            centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-            rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-            pageImages:["images/collegeVogt.png"],
-            pageTitle: getPrintedETTitleLabel(), //"Emploi de temps de la classe de " + currentClasseLabel,
-            tableHeaderModel:["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
-            tableData :[],
-            isClassET : byClassEnable,
-            tabCreneauPause :  currentUiContext.TAB_CRENEAU_PAUSE,
-            dureePause : currentUiContext.intervalleMaxTranche,
-            valeurHoraires : currentUiContext.TAB_VALEUR_HORAIRE,
-            ListeJours : currentUiContext.TAB_JOURS,
-            ListePeriodes : currentUiContext.TAB_PERIODES, 
-            intervalleMaxTranche:currentUiContext.intervalleMaxTranche,
-            numberEltPerPage:ROWS_PER_PAGE,
-            emploiDeTemps:getPrintedETData(),
-            matieres:  currentUiContext.CURRENT_MATIERE_LIST,
-            profs   :  currentUiContext.listProfs,
-            nbreHeures : getCourseCount(),  
-            classesET  : getETClasses(),    
-            profprincipal: (currentPP==undefined || currentPP == {}) ? '': (currentPP.sexe == 'M') ? 'Mr ' + currentPP.NomProf : 'Mme ' + currentPP.NomProf
+            dateText            : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+            leftHeaders         : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders       : ["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+            rightHeaders        : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+            pageImages          : [imgUrl], 
+            pageImagesDefault   : [imgUrlDefault],
+            pageTitle           : getPrintedETTitleLabel(), //"Emploi de temps de la classe de " + currentClasseLabel,
+            tableHeaderModel    : ["matricule", "nom et prenom(s)", "date naissance", "lieu naissance", "enrole en", "Nom Parent", "nouveau"],
+            tableData           : [],
+            isClassET           : byClassEnable,
+            tabCreneauPause     :  currentUiContext.TAB_CRENEAU_PAUSE,
+            dureePause          : currentUiContext.intervalleMaxTranche,
+            valeurHoraires      : currentUiContext.TAB_VALEUR_HORAIRE,
+            ListeJours          : currentUiContext.TAB_JOURS,
+            ListePeriodes       : currentUiContext.TAB_PERIODES, 
+            intervalleMaxTranche: currentUiContext.intervalleMaxTranche,
+            numberEltPerPage    : ROWS_PER_PAGE,
+            emploiDeTemps       : getPrintedETData(),
+            matieres            : currentUiContext.CURRENT_MATIERE_LIST,
+            profs               : currentUiContext.listProfs,
+            nbreHeures          : getCourseCount(),  
+            classesET           : getETClasses(),    
+            profprincipal       : (currentPP==undefined || currentPP == {}) ? '': (currentPP.sexe == 'M') ? 'Mr ' + currentPP.NomProf : 'Mme ' + currentPP.NomProf
         };
 
         console.log("iciPro",ETPageSet);       
@@ -1574,26 +1592,6 @@ const closePreview =()=>{
 
 
                 <div className={classes.buttonRow}>
-                    {/*(props.formMode!='consult')&&
-                        <CustomButton
-                            btnText={t('cancel')}  
-                            buttonStyle={getButtonStyle()}
-                            btnTextStyle = {classes.btnTextStyle}
-                            btnClickHandler={cancelHandler}
-                        />*/
-                    }
-                    
-                    {/*(props.formMode!='consult')&&
-                        <CustomButton
-                            btnText={t('save')} 
-                            buttonStyle={getButtonStyle()}
-                            btnTextStyle = {classes.btnTextStyle}
-                            btnClickHandler={UpdateEmploiDeTemps}
-                            //disable={(isValid==false)}
-                            // disable={(currentUiContext.CURRENT_DROPPED_MATIERE_LIST.length == 0)}
-                        />*/
-                    }
-
                     <CustomButton
                         btnText={t('imprimer')}
                         buttonStyle={getButtonStyle()}

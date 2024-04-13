@@ -667,7 +667,7 @@ function LoginForm(props){
 
 
 
-                <div className={classes.creatorZone}>
+                <div className={classes.creatorZone} style={{marginTop:isLoading ? "-3vh" :"0vh" }}>
                     <label className={classes.creatorName}>
                         BOGEDEV
                     </label>

@@ -365,7 +365,88 @@ div .Theme3_widget_content :hover {
   cursor: pointer;
   background-color: rgb(240, 242, 250);
   border-radius: 3px;
-  color:black;
-  
+  color:black; 
   
 } 
+
+
+/*-------------------- ecrans au dessus de 1300px -----------------------------*/
+@media screen 
+and (min-device-height: 800px) 
+and (max-device-height: 900px) { 
+  .Theme1_widget {
+    height: 30px;
+    border-radius: 0px 0px 10px 10px;
+    position : relative;
+    align-self: flex-end;
+    margin-right: 5vw;
+    z-index: 1;
+    top:13vh;
+    position:absolute
+  }
+
+  .Theme2_widget {
+    height: 30px;
+    border-radius: 0px 0px 10px 10px;
+    position : relative;
+    align-self: flex-end;
+    margin-right: 5vw;
+    z-index: 1;
+    top:13vh;
+    position:absolute
+  }
+
+  .Theme3_widget {
+    height: 30px;
+    border-radius: 0px 0px 10px 10px;
+    position : relative;
+    align-self: flex-end;
+    margin-right: 5vw;
+    z-index: 1;
+    top:13vh;
+    position:absolute
+  }
+
+}
+
+
+@media screen 
+and (min-device-height: 1000px) { 
+  .Theme1_widget {
+    height: 30px;
+    border-radius: 0px 0px 10px 10px;
+    position : relative;
+    align-self: flex-end;
+    margin-right: 5vw;
+    z-index: 1;
+    top:12.3vh;
+    position:absolute
+  }
+
+  .Theme2_widget {
+    height: 30px;
+    border-radius: 0px 0px 10px 10px;
+    position : relative;
+    align-self: flex-end;
+    margin-right: 5vw;
+    z-index: 1;
+    top:12.3vh;
+    position:absolute
+  }
+
+  .Theme3_widget {
+    height: 30px;
+    border-radius: 0px 0px 10px 10px;
+    position : relative;
+    align-self: flex-end;
+    margin-right: 5vw;
+    z-index: 1;
+    top:12.3vh;
+    position:absolute
+  }
+
+}
+
+
+
+

@@ -200,27 +200,8 @@
         border-radius: 3px;
     } 
 
-    /* ----------- Non-Retina Screens ----------- */
     @media screen 
-    and (min-device-width: 1400px) 
-    /*and (max-device-width: 1600px) */
-    /* and (-webkit-min-device-pixel-ratio: 1)*/{ 
-        .Theme1_loginHeader{
-            height: 14%;
-            border-bottom: solid 5px rgb(7, 75, 153);
-        }   
-
-        
-
-    }
-
-
-/* ----------- Retina Screens ----------- */
-    @media screen 
-    and (min-device-width: 1400px) 
-    /*and (max-device-width: 1600px) */
-    /*and (-webkit-min-device-pixel-ratio: 2)*/
-   /* and (min-resolution: 192dpi)*/ { 
+    and (min-device-height: 950px) { 
         .Theme1_loginHeader{
             height: 14%;
             border-bottom: solid 5px rgb(7, 75, 153);
@@ -299,25 +280,8 @@
         border-radius: 3px;
     } 
 
-    /* ----------- Non-Retina Screens ----------- */
     @media screen 
-    and (min-device-width: 1300px) 
-    /*and (max-device-width: 1600px) */
-    /*and (-webkit-min-device-pixel-ratio: 1)*/ { 
-        .Theme2_loginHeader{
-            height: 14%;
-            border-bottom: solid 5px rgb(60, 160, 21);
-        }    
-
-    }
-
-
-/* ----------- Retina Screens ----------- */
-    @media screen 
-    and (min-device-width: 1300px) 
-    /*and (max-device-width: 1600px) */
-    /*and (-webkit-min-device-pixel-ratio: 2)
-    and (min-resolution: 192dpi)*/ { 
+    and (min-device-height: 950px) { 
         .Theme2_loginHeader{
             height: 14%;
             border-bottom: solid 5px rgb(60, 160, 21);
@@ -383,11 +347,9 @@
         border-bottom: solid 5px rgb(64, 49, 165);
     }
 
-    /* ----------- Non-Retina Screens ----------- */
+   
     @media screen 
-    and (min-device-width: 100px) 
-    /*and (max-device-width: 1600px) */
-    /*and (-webkit-min-device-pixel-ratio: 1)*/ { 
+    and (min-device-height: 950px)  { 
         .Theme3_loginHeader{
             height: 14%;
             border-bottom: solid 5px rgb(64, 49, 165);
@@ -395,19 +357,6 @@
 
     }
 
-
-/* ----------- Retina Screens ----------- */
-    @media screen 
-    and (min-device-width: 1300px) 
-    /*and (max-device-width: 1600px) */
-    /*and (-webkit-min-device-pixel-ratio: 2)
-    and (min-resolution: 192dpi)*/ { 
-        .Theme3_loginHeader{
-            height: 14%;
-            border-bottom: solid 5px rgb(64, 49, 165);
-        }    
-
-    }
 
 /*-------------------- ecrans au dessus de 1300px -----------------------------*/
     @media screen 
@@ -435,47 +384,10 @@
             /*justify-content: flex-end;*/
             align-items: center;
             background-color:'white';
-        
-            /*background-color:rgb(232, 235, 230);*/
-            /*background-color:rgb(231, 238, 241);*/
-        
         }
 
     }
 
-
-/* ----------- Retina Screens ----------- */
-    @media screen 
-    and (min-device-width: 1400px) { 
-        .mainContentPosition {
-            width: 30vw;
-            height: 50vh;  
-            margin-top: 2vh;
-            font-size: 0.9rem;
-            border-radius: 10px;
-        
-            border-color: rgb(218, 214, 214);
-            border-width: 0.5px;
-            border-style: solid;
-        }
-
-        .loginMainContent{
-            height: fit-content;
-            /*padding-bottom: 2vh;*/
-           padding-top: 3.3vh;
-            height: 70vh;
-            display:flex;
-            flex-direction: column;
-            /*justify-content: flex-end;*/
-            align-items: center;
-            background-color:'white';
-        
-            /*background-color:rgb(232, 235, 230);*/
-            /*background-color:rgb(231, 238, 241);*/
-        
-        }
-        
-    }
 
 
 

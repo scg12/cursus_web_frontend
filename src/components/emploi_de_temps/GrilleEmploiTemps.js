@@ -308,9 +308,14 @@ function GrilleEmploiTemps(props) {
 
     // *activer
     function dropDownHandler(e){  
-        currentClasseId = e.target.value;
+        currentClasseId    = e.target.value;
         currentClasseLabel = optClasse.find((elt)=>elt.value == currentClasseId).label;
-        currentUiContext.setETDataChanged(false);
+        let indexClasse    = currentUiContext.classeEmploiTemps.findIndex(c=>c.id==currentClasseId);
+
+        //currentUiContext.setETDataChanged(false);
+        currentUiContext.setIndexClasse(indexClasse); 
+        currentUiContext.setCurrentIdClasseEmploiTemps(currentClasseId);
+
         loadClassesET(currentClasseId);
        
         //gerer le profs principaux
@@ -360,13 +365,16 @@ function GrilleEmploiTemps(props) {
         
         initGrille(ET_data,currentUiContext.matiereSousEtab,currentUiContext.listProfs,classId,currentUiContext.emploiDeTemps,"dropDownHandler");
        
-        currentUiContext.setIndexClasse(indexClasse); 
-        currentUiContext.setCurrentIdClasseEmploiTemps(classId);
+        // currentUiContext.setIndexClasse(indexClasse); 
+        // currentUiContext.setCurrentIdClasseEmploiTemps(classId);
         console.log("OLD_MATIERES: ",OLD_DROPPED_MATIERE);
+        
         console.log("**CURRENT_DROPPED_MATIERE_LIST: ",currentUiContext.CURRENT_DROPPED_MATIERE_LIST.filter(ce=>ce.idClasse==classId));
         let liste_dropped_matiere = currentUiContext.CURRENT_DROPPED_MATIERE_LIST.filter(ce=>ce.idClasse==classId).concat(OLD_DROPPED_MATIERE)
+        
         console.log("+++ liste_dropped_matiere: ",liste_dropped_matiere);
         CURRENT_DROPPED_MATIERE_LIST = liste_dropped_matiere;
+        
         currentUiContext.addMatiereToDroppedMatiereList(liste_dropped_matiere,-2);        
         console.log("currentUiContext.CURRENT_DROPPED_MATIERE_LIST: ",currentUiContext.CURRENT_DROPPED_MATIERE_LIST)        
     }
@@ -448,22 +456,20 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
     }
     else controleur = currentUiContext.nbRefreshEmpoiTemps;
 
-    if(controleur==0 ){
-        var tabMatiere = [];
+    if(controleur==0){
+        OLD_DROPPED_MATIERE = [];
         console.log("ET_data: ",ET_data," id_classe: ",id_classe);
+        
         i = 0;
         let emploiTemps = emploiDeTemps.filter(em=>!em.modify.includes("s")&&em.id_classe==id_classe)
-        console.log("emploiTemps: ",emploiTemps);
-        // console.log("initGrille :",matiereSousEtab);
         let cpte_emploiTemps = emploiTemps.length;
+       
         while(i < cpte_emploiTemps) {
             console.log("emploiTemps:[i] ",i,emploiTemps[i]);
-            // jour = tabMatiere[i].split(':')[0];
+            
             jour = emploiTemps[i].id_jour;
-            // periode = tabMatiere[i].split(':')[1].split('*')[0];
             periode = emploiTemps[i].libelle;
             id_tranche = emploiTemps[i].id_tranche;
-            // codeMatiere = tabMatiere[i].split(':')[1].split('*')[1];
             codeMatiere = emploiTemps[i].id_matiere;
             
             var idMatiereToDrop = 'DM_'+jour +'_' +  periode;
@@ -480,7 +486,7 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 droppedMatiere.heureDeb = periode.split('_')[0];
                 droppedMatiere.heureFin = periode.split('_')[1];
                 droppedMatiere.tabProfsID =[];
-                //droppedMatiere.tabProfsID.push(tabMatiere[i].split(':')[1].split('*')[2]);            
+                          
                 
                 //POSITIONNEMENT DE L'ELEMENT SUR LA GRILLE
                 var parentDiv = document.createElement('div');
@@ -495,23 +501,20 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 enfanDiv.textContent = droppedMatiere.libelleMatiere;
 
                 parentDiv.appendChild(enfanDiv);
-                // console.log("enfanDiv: ",enfanDiv);
-                // console.log("parentDiv: ",parentDiv);
-
+               
                 var idDropZone = jour +'_'+ periode;
-                console.log('zone de drop :', idDropZone)
                 var containerDiv = document.getElementById(idDropZone);
+               
                 containerDiv.appendChild(parentDiv);
                 parentDiv.addEventListener('click', (e) => {matiereClickHandler(e)})
                 
                 //S'IL YA UN OU DES PROFS, ON LES GERE
                 if(emploiTemps[i].value!="" && emploiTemps[i].value.split('*').length>2&& emploiTemps[i].value.split('*')[2].length>2) {
-                    // var countProf =  tabMatiere[i].split(':')[1].split('*').length-2;
+                   
                     var countProf =  emploiTemps[i].id_enseignants.length;
                     j = 0;
                     while(j<countProf){
                         console.log("emploiTemps[i].id_enseignants[j]: ",emploiTemps[i].id_enseignants[j])
-                        // var droppedProfId = 'DP_'+ tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[1] + '_' + jour +'_' +  periode;
                         var droppedProfId = 'DP_prof_'+ emploiTemps[i].id_enseignants[j]+"_"+emploiTemps[i].id_jour+"_"+emploiTemps[i].libelle
                         
                         var droppedprofImgDiv = document.createElement('div');
@@ -523,7 +526,6 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                         droppedprofImg.className = classes.imgStyle +' '+ classes.profImgStyle;
                         droppedprofImg.id = droppedProfId +'_img';
 
-                        // droppedprofImg.setAttribute('src', "images/maleTeacher.png");
                         var sexe = "M";
                         if(emploiTemps[i].value.split(':')[1].split('*')[j+2].split('%')[0].includes('Mr.'))
                             droppedprofImg.setAttribute('src', "images/maleTeacher.png");
@@ -531,48 +533,34 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                             sexe = "F";
                             droppedprofImg.setAttribute('src', "images/femaleTeacher.png");
                         }
-                            // droppedprofImg.setAttribute('src',(tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0].includes('Mme.'))? "images/femaleTeacher.png":"images/femaleTeacher.png");
+                
                         droppedprofImg.style.display = 'block';
-
                         droppedprofImg.addEventListener('click', (e) => {droppedProfClickHandler(e)})
 
                         
                         var droppedprofText = document.createElement('div');
                         droppedprofText.id = droppedProfId +'_sub';
                         droppedprofText.className = classes.profTextSyle;
-                        // droppedprofText.textContent = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
+                        
                         if(sexe=="M")
                             droppedprofText.textContent = emploiTemps[i].value.split("*")[2+j].split("%")[0].split("Mr.")[1];
                         else
                             droppedprofText.textContent = emploiTemps[i].value.split("*")[2+j].split("%")[0].split("Mme.")[1];
+                        
+                        
                         droppedprofText.addEventListener('click', (e) => {droppedProfClickHandler(e)})
-
-
-                    
                         droppedprofImgDiv.appendChild(droppedprofImg)
                         droppedprofImgDiv.appendChild(droppedprofText)
-                        //droppedprofImgDiv.addEventListener('click', (e) => {droppedProfClickHandler(e)})
-
-
+                        
                         var droppedprofDiv = document.createElement('div');
                         droppedprofDiv.id = droppedProfId;
                         droppedprofDiv.className = classes.profDivStyle;
                         droppedprofDiv.appendChild(droppedprofImgDiv);
-                        //droppedprofDiv.addEventListener('click', () => {droppedProfClickHandler(droppedProfId)})
                         
                         var container = document.getElementById('P_'+ jour + '_' +  periode);
                         container.appendChild(droppedprofDiv)
-                        //container.addEventListener('click', () => {droppedProfClickHandler(droppedProfId)})
                         droppedMatiere.tabProfsID.push(droppedProfId);
                         
-                        // let listProfs = currentUiContext.listProfs;
-                        // let nb = listProfs.length;
-                        // let nb_cours = 0;
-                        // for(let i=0;i<nb;i++){
-                        //     nb_cours = currentUiContext.emploiDeTemps.filter(item=>item.id_enseignants.includes(listProfs[i].id)).length;
-                        //     console.log("YOOOOOOO ",listProfs[i],nb_cours);
-                        // }
-
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
                         PROF_DATA.sexe       = sexe;
@@ -590,8 +578,6 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 }
                 
                 OLD_DROPPED_MATIERE.push(droppedMatiere);
-                //MISE A JOUR DES DONNEES GLOBALES
-                //AddValueToValueDroppedMatiereList(-1,droppedMatiere);          
             }  
             i++;         
         }
@@ -600,6 +586,8 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
  
     currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
     currentUiContext.setNbRefreshEmpoiTemps(0);
+
+    console.log("Old Matiere", OLD_DROPPED_MATIERE);
 }
 
 function matiereClickHandler(e){
@@ -631,42 +619,91 @@ function matiereClickHandler(e){
     var countSelected = getCountSelectedDroppedMatieres()
 
     if(countSelected==1){
+       
         var periode ; //ici il faudra initialiser la periode de la matiere selectionnee.
-        let liste_prof = [],tab_prof_id;
-        indexMatiere = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>(matiere.isSelected == true));
-        codeMatiere = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].codeMatiere;
-        // getProfsList(codeMatiere, periode);
-        periode = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].idMatiere;
-        tab_prof_id = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].tabProfsID;
-        console.log("tab_prof_id: ",tab_prof_id);
+        let liste_prof = [], tab_prof_id;
+        
+        indexMatiere  = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>(matiere.isSelected == true));
+        codeMatiere   = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].codeMatiere;
+      
+        periode       = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].idMatiere;
+        tab_prof_id   = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].tabProfsID;
+
+        
         tab_prof_id.forEach(prof => {console.log("$$ prof: ",prof,prof.split("DP_prof_")[1].split("_")[0]);
             liste_prof.push(parseInt(prof.split("DP_prof_")[1].split("_")[0]))
         });
-        console.log("liste_prof: ",liste_prof)
-        // console.log("1indexMatiere: ",CURRENT_DROPPED_MATIERE_LIST[indexMatiere]);             
-        getProfsList2(codeMatiere,periode,liste_prof);                      
+
+        console.log("data matiere",codeMatiere, periode, liste_prof,CURRENT_DROPPED_MATIERE_LIST,indexMatiere)
+
+        searchAndSetProfLibresInProfDiv(codeMatiere,periode,liste_prof);                                            
 
     } else {
         if(countSelected >1){
             
             if(selectedDroppedMatiereHaveSameCode()){
                 let liste_prof = [],tab_prof_id;
-                var listePeriode; //ici il faudra initialiser avec la liste des periodes des matieres selectionnees
-                indexMatiere = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>(matiere.isSelected == true));
-                codeMatiere = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].codeMatiere;
-                // getProfsList(codeMatiere, listePeriode);     
-                periode = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].idMatiere;
-                tab_prof_id = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].tabProfsID;
+                //On obtient le sous tab des matieres selected
+                var tabDroppedSelectedMatieres =  CURRENT_DROPPED_MATIERE_LIST.filter((matiere)=>(matiere.isSelected == true) && matiere.idClasse == currentClasseId);
+                
+                //On cherche la matiere qui le moins de profs dispo
+                var matiereWithLowestFreeProfs = tabDroppedSelectedMatieres[0];
+
+                tabDroppedSelectedMatieres.map((dropSelMat, index)=>{
+                    if(index>0){
+                        console.log("idMatieres", matiereWithLowestFreeProfs.codeMatiere, dropSelMat.codeMatiere);
+                        console.log("Prof Libres", getProfLibres(matiereWithLowestFreeProfs.codeMatiere, matiereWithLowestFreeProfs.idMatiere), getProfLibres(dropSelMat.codeMatiere, dropSelMat.idMatiere));
+                        if(getProfLibres(matiereWithLowestFreeProfs.codeMatiere, matiereWithLowestFreeProfs.idMatiere).length > getProfLibres(dropSelMat.codeMatiere, dropSelMat.idMatiere).length){
+                            matiereWithLowestFreeProfs = {...dropSelMat};
+                        }
+                    } 
+                })
+     
+                codeMatiere  = matiereWithLowestFreeProfs.codeMatiere;
+                periode      = matiereWithLowestFreeProfs.idMatiere;
+                tab_prof_id  = matiereWithLowestFreeProfs.tabProfsID;
+                console.log("prof",tab_prof_id);
+
                 tab_prof_id.forEach(prof => {
-                    liste_prof.push(parseInt(prof.split("DP_Prof_")[1].split("_")[0]))
+                    liste_prof.push(parseInt(prof.split("DP_prof_")[1].split("_")[0]))
                 });
                 console.log("liste_prof: ",liste_prof)
-                // console.log("2indexMatiere: ",CURRENT_DROPPED_MATIERE_LIST[indexMatiere]);             
-                getProfsList2(codeMatiere,periode,liste_prof);                    
-                    }
+                searchAndSetProfLibresInProfDiv(codeMatiere,periode,liste_prof);
+            }
         }
     }
 }
+
+function getProfLibres(codeMatiere, periode){
+        
+    console.log("periode la",periode);
+    let idjour  = periode.split("DM_")[1].split("_")[0];
+    let tranche = periode.split("DM_")[1].split("_")[1]+"_";
+    tranche += periode.split("DM_")[1].split("_")[2];
+
+    let listProfs     = currentUiContext.listProfs;
+    let emploiDeTemps = currentUiContext.emploiDeTemps;
+    var profOccupes   = [];
+    
+    //On obtient tous les enseignants de la matiere
+    let profsMatieres = listProfs.filter((prof)=>prof.id_spe1==codeMatiere||prof.id_spe2==codeMatiere||prof.id_spe3==codeMatiere);
+
+    //On obtient toutes les entree de l'ET qui correspondent au jour la et a la tranche la
+    let emploi_selected = emploiDeTemps.filter(e=>e.id_matiere==codeMatiere && e.id_jour==idjour && e.libelle==tranche);
+    console.log("ET selected", emploiDeTemps, emploi_selected, codeMatiere, idjour, tranche);
+   
+    //Les profs occupes seront tous les profs de ces entrees la.
+    for(let j=0; j<emploi_selected.length; j++){
+        emploi_selected[j].id_enseignants.forEach(prof => {
+            profOccupes.push(prof)
+        });
+    }
+     
+    //Les profs libres sont les autees profs de cette matiere qui ne sont pas occupes.
+    return profsMatieres.filter(p=>!profOccupes.includes(p.id));
+    
+}
+
 
 
 function initProfList(listProfs){
@@ -678,31 +715,17 @@ function initProfList(listProfs){
 
 
 function clearProflist(){
-    let listProfs = currentUiContext.listProfs;
-    var draggableSon, draggableSonText, draggableSonImg;
-    var PROFLIST_MAXSIZE =listProfs.length;
-    for (var i = 0; i < PROFLIST_MAXSIZE; i++) {
-        draggableSon =  document.getElementById('prof_' + listProfs[i].id);
-        draggableSonText = document.getElementById('prof_' + listProfs[i].id+'_sub');
-       
-        draggableSon.className = null;
-        draggableSon.title = '';
-        draggableSonText.textContent ='';
-        draggableSonText.className = null;
+    var draggableSon, draggableSonText, draggableSonImg;   
+    currentUiContext.listProfs.map((prof,index)=>{
+        draggableSon                  = document.getElementById('prof_' + prof.id);
+        draggableSonText              = document.getElementById('prof_' + prof.id+'_sub');
+        draggableSonImg               = document.getElementById('prof_' + prof.id + '_img');      
+        draggableSonImg               = document.querySelector('#prof_' + prof.id + '_img > img');
 
-        draggableSonImg =  document.getElementById('prof_' + listProfs[i].id + '_img');
-        draggableSonImg.className = null;
-
-        draggableSonImg = document.querySelector('#prof_' + listProfs[i].id + '_img > img');
-        draggableSonImg.style.display = 'none';
-    
-        // draggableSonImg.setAttribute('src','images/blank_prof.JPG');
-        // if (draggableSonImg.hasAttribute('src')) draggableSonImg.removeAttribute('src');
-        // draggableSonImg.setAttribute('src',null);  
-        // if (draggableSonImg!=null)
-            // while(draggableSonImg.firstChild) draggableSonImg.removeChild(draggableSonImg.firstChild);
-          
-    } 
+        draggableSon.style.display     = 'none';
+        draggableSonText.style.display = 'none';
+        draggableSonImg.style.display  = 'none';
+    }) 
     CURRENT_PROFS_LIST = [];
 }
 
@@ -807,6 +830,7 @@ function Evaluate(val){
     else return eval(val);
 
 }
+
 function droppedProfClickHandler(e){
     var droppedProfDiv = e.target.id;
     console.log(droppedProfDiv," ici") 
@@ -816,19 +840,26 @@ function droppedProfClickHandler(e){
     profZoneClickedHandler(droppedProfDiv);  
     console.log(droppedProfDiv) 
 }
+
+
 function  isCellSelected (cellId) {
-    console.log("isCellSelected-CURRENT_DROPPED_MATIERE_LIST: ",CURRENT_DROPPED_MATIERE_LIST);
-    var index = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == cellId)
-    console.log(CURRENT_DROPPED_MATIERE_LIST[index])
+
+    var index = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == cellId && matiere.idClasse == currentClasseId)
+    console.log("matiere",CURRENT_DROPPED_MATIERE_LIST, CURRENT_DROPPED_MATIERE_LIST.find((matiere)=>matiere.idMatiere == cellId),currentUiContext.currentIdClasseEmploiTemps)
     return (CURRENT_DROPPED_MATIERE_LIST[index].isSelected == true);
 }
+
+
 function getCountSelectedDroppedMatieres(){
     var count = 0;
     for(var i=0 ; i<CURRENT_DROPPED_MATIERE_LIST.length; i++){
-        if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true) count++;
+        if(CURRENT_DROPPED_MATIERE_LIST[i].idClasse == currentClasseId && CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true) count++;
     }
+    console.log("count selected",count,currentClasseId);
     return count;
 }
+
+
 function getCountSelectedDroppedProfs(){
     var count = 0;
     for(var i=0 ; i<CURRENT_DROPPED_PROFS_LIST.length; i++){
@@ -836,77 +867,63 @@ function getCountSelectedDroppedProfs(){
     }
     return count;
 }
+
 function selectedDroppedMatiereHaveSameCode(){
     var areSame = true;
     var i = 1;
-    var firstSelectedIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected==true);
+    var firstSelectedIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected==true && matiere.idClasse == currentClasseId);
     var codeMatiere = CURRENT_DROPPED_MATIERE_LIST[firstSelectedIndex].codeMatiere;
 
     while(i < CURRENT_DROPPED_MATIERE_LIST.length && areSame==true) {
-        if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected == true && CURRENT_DROPPED_MATIERE_LIST[i].codeMatiere != codeMatiere) areSame = false;
+        if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected == true && CURRENT_DROPPED_MATIERE_LIST[i].idClasse == currentClasseId && CURRENT_DROPPED_MATIERE_LIST[i].codeMatiere != codeMatiere) areSame = false;
         i++;       
     }
     return areSame;
 }
+
 function clearCellSelection(){
-    var countSelected = getCountSelectedDroppedMatieres()
-    if (countSelected >0) {
-        for(var i=0; i<CURRENT_DROPPED_MATIERE_LIST.length; i++){ 
-            if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected){
-                // disSelectCell(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere);
-                disSelectCell(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere);
-            }         
-           
-        }
-        //SELECTED_MATIERE_ID='';
-    }  
-}
-function selectCell(cellId){
-   
-    if(!isCellSelected(cellId)) {
-        var matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == cellId);
-        CURRENT_DROPPED_MATIERE_LIST[matiereIndex].isSelected = true;      
-        document.getElementById(cellId).style.borderColor ='red';
-        clearProflist();
-
-        //COUNT_SELECTED_MATIERES ++;
-        //SELECTED_MATIERE_TAB.push(cellId);
+       
+    for(var i=0; i<CURRENT_DROPPED_MATIERE_LIST.length; i++){ 
+        if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected){                
+            disSelectCell(CURRENT_DROPPED_MATIERE_LIST[i].idMatiere);
+        }         
         
-        //if (COUNT_SELECTED_MATIERES==1) SELECTED_MATIERE_ID = cellId;
-        //else SELECTED_MATIERE_ID = '';
-        // Vider la liste des profs
-         
     }
+     
 }
+
+function selectCell(cellId){  
+    var matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == cellId && matiere.idClasse == currentClasseId);
+
+    CURRENT_DROPPED_MATIERE_LIST[matiereIndex].isSelected = true;      
+    
+    document.getElementById(cellId).style.borderColor ='red';
+
+    console.log("etat", cellId, CURRENT_DROPPED_MATIERE_LIST[matiereIndex],CURRENT_DROPPED_MATIERE_LIST)
+    
+    clearProflist();
+}
+
+
 function disSelectCell(cellId) {
-    if(isCellSelected(cellId)) {
-        var matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=> matiere.idMatiere == cellId);
-        CURRENT_DROPPED_MATIERE_LIST[matiereIndex].isSelected = false;
-        if(document.getElementById(cellId).style.backgroundColor.length==0){
-            document.getElementById(cellId).style.borderColor = 'rgb(6, 83, 134)';
-        }else{
-            document.getElementById(cellId).style.borderColor = document.getElementById(cellId).style.backgroundColor;
-        }
-       //console.log(document.getElementById(cellId).style.backgroundColor);
-        clearProflist();
-
-       /* var index = SELECTED_MATIERE_TAB.findIndex((droppedMatierId)=>cellId == droppedMatierId);        
-        if(index>=0) {
-            
-            
-            SELECTED_MATIERE_TAB.splice(index,1);
-            COUNT_SELECTED_MATIERES --;
-
-            if(COUNT_SELECTED_MATIERES==1) SELECTED_MATIERE_ID = SELECTED_MATIERE_TAB[0];
-            else SELECTED_MATIERE_ID ='';
-
-            // Vider la liste des profs si elle ne l'est pas
-            clearProflist();
-        }*/
-      
+  
+    var matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=> matiere.idMatiere == cellId && matiere.idClasse == currentClasseId);
+    
+    CURRENT_DROPPED_MATIERE_LIST[matiereIndex].isSelected = false;
+    
+    if(document.getElementById(cellId).style.backgroundColor.length==0){
+        document.getElementById(cellId).style.borderColor = 'rgb(6, 83, 134)';
+    } else{
+        document.getElementById(cellId).style.borderColor = document.getElementById(cellId).style.backgroundColor;
     }
 
+    console.log("etat", cellId, CURRENT_DROPPED_MATIERE_LIST[matiereIndex],CURRENT_DROPPED_MATIERE_LIST)
+    
+    clearProflist();
+
 }
+
+
 function getProfsList(codeMatiere, periode){
 
 
@@ -1052,6 +1069,107 @@ function getProfs(codeMatiere){
     // }
   
 }
+
+function searchAndSetProfLibresInProfDiv(codeMatiere, periode, liste_prof_current_tranche){
+    let idjour  = periode.split("DM_")[1].split("_")[0];
+    let tranche = periode.split("DM_")[1].split("_")[1]+"_";
+
+    tranche += periode.split("DM_")[1].split("_")[2];
+    console.log("tranche: ",tranche)
+    console.log("y Periode: ",periode);
+
+    let listProfs     = currentUiContext.listProfs;
+    let emploiDeTemps = currentUiContext.emploiDeTemps;
+   
+    let profLibres    = [], profOccupes = [];
+
+    //On obtient tous les enseignants de la matiere
+    let profsMatieres = listProfs.filter((prof)=>prof.id_spe1==codeMatiere||prof.id_spe2==codeMatiere||prof.id_spe3==codeMatiere);
+    console.log("*** profsMatieres: ",profsMatieres)
+    console.log("*** emploiDeTemps: ",emploiDeTemps)
+    
+    //On obtient toutes les entree de l'ET qui correspondent au jour la et a la tranche la
+    let emploi_selected = emploiDeTemps.filter(e=>e.id_matiere==codeMatiere && e.id_jour==idjour && e.libelle==tranche);
+    console.log("emploi_selected: ",emploi_selected)
+   
+    //Les profs occupes seront tous les profs de ces entrees la.
+    for(let j=0; j<emploi_selected.length; j++){
+        emploi_selected[j].id_enseignants.forEach(prof => {
+            profOccupes.push(prof)
+        });
+    }
+
+    // profOccupes.forEach(p => {
+    //     if (!liste_prof_current_tranche.includes(p.id_enseignants))
+    //     profLibres.push(p)
+    // });
+
+    liste_prof_current_tranche.forEach(p => {
+       if(!profOccupes.includes(p))  profOccupes.push(p)               
+    });
+    
+    //Les profs libres sont les autees profs de cette matiere qui ne sont pas occupes.
+    profLibres = profsMatieres.filter(p=>!profOccupes.includes(p.id))
+
+
+    console.log("*** profLibres: ",profLibres);
+    console.log("*** profOccupes: ",profOccupes);
+    console.log("*** liste_prof_cureent_tranche: ",liste_prof_current_tranche);
+    initProfDivWithListProfs(profLibres);    
+}
+
+function initProfDivWithListProfs(listeProf){
+    var draggableSon, draggableSonText, draggableSonImg;   
+    let nb_cours = 0;
+    let nb_profs = listeProf.length;
+    
+    clearProflist();
+    
+    for (var i = 0; i < nb_profs; i++) {
+        nb_cours  = currentUiContext.emploiDeTemps.filter(item=>item.id_enseignants.includes(listeProf[i].id)).length;
+        var heure = "heure";
+        if (nb_cours==0) heure = '';
+        if (nb_cours>1)  heure = "heures";
+
+        PROF_DATA = {};
+        draggableSon                  = document.getElementById('prof_' + listeProf[i].id);
+        draggableSonText              = document.getElementById('prof_' + listeProf[i].id+'_sub');
+        
+        draggableSon.className        = classesP.profDivStyle;  
+        draggableSon.title            = listeProf[i].nom+" "+listeProf[i].prenom;       
+        
+        draggableSonText.textContent  = listeProf[i].nom+" ("+ nb_cours+"h)";
+        draggableSonText.className    = classesP.profTextSyle;            
+
+        draggableSonImg               = document.getElementById('prof_' + listeProf[i].id + '_img');
+        draggableSonImg.className     = classesP.profImgStyle;
+
+
+        draggableSonImg               = document.querySelector('#prof_' + listeProf[i].id + '_img > img')
+
+        if(listeProf[i].sexe=="F"){
+            draggableSonImg.setAttribute('src',"images/femaleTeacher.png");
+           
+        } else{
+            draggableSonImg.setAttribute('src',"images/maleTeacher.png");
+        }
+        
+        draggableSon.style.display     = 'block';
+        draggableSonText.style.display = 'block';
+        draggableSonImg.style.display  = 'block';
+       
+        PROF_DATA.idProf  = 'prof_' +listeProf[i].id;
+        PROF_DATA.NomProf = listeProf[i].nom;
+        PROF_DATA.sexe    = listeProf[i].sexe;
+        
+        CURRENT_PROFS_LIST.push(PROF_DATA);
+        currentUiContext.setCurrentProfList(CURRENT_PROFS_LIST);
+        PROF_DATA = {};                                     
+    }
+ 
+}
+
+
 function getProfsList2(codeMatiere,periode,liste_prof_current_tranche){
     let idjour = periode.split("DM_")[1].split("_")[0];
     let tranche = periode.split("DM_")[1].split("_")[1]+"_";
@@ -1074,14 +1192,17 @@ function getProfsList2(codeMatiere,periode,liste_prof_current_tranche){
             profOccupes.push( prof)
         });
     }
+
     profOccupes.forEach(p => {
         if (!liste_prof_current_tranche.includes(p.id_enseignants))
         profLibres.push(p)
     });
+
     liste_prof_current_tranche.forEach(p => {
        if(!profOccupes.includes(p))
             profOccupes.push(p)
     });
+
     profLibres = profsMatieres.filter(p=>!profOccupes.includes(p.id))
 
 
@@ -1218,8 +1339,8 @@ const acceptHandler=()=>{
                 message:""
             })             
             //currentUiContext.setIsParentMsgBox(true);
-            while(CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true)>=0)  {
-                matiereToDelete = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true);
+            while(CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId)>=0)  {
+                matiereToDelete = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId);
                 deleteEffectivelyMatiere(matiereToDelete);
             }   
             setSelectedPP({});
@@ -1490,19 +1611,22 @@ function deleteEffectivelyMatiere(toDeleIndex){
     while(index < AssociatedProfCount){
 
         var matiereToDeleteProf = {...CURRENT_DROPPED_MATIERE_LIST[toDeleIndex]};
+        console.log("MATIERE", matiereToDeleteProf)
         droppedProfId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID[index];                       
         profDropZone  =  document.getElementById(droppedProfId); 
         
         var idProf    = droppedProfId.split('_')[2];                                
         var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == droppedProfId);
         var droppedPP = CURRENT_DROPPED_PROFS_LIST.filter((elt)=>elt.idProf.split('_')[2] == idProf);
-        var droppedSelectedPP = getADroppedProfSelectionCount(CURRENT_DROPPED_MATIERE_LIST.filter((elt)=>elt.isSelected==true),droppedProfId);
+        var droppedSelectedPP = getADroppedProfSelectionCount(CURRENT_DROPPED_MATIERE_LIST.filter((elt)=>elt.isSelected==true && elt.idClasse==currentClasseId),droppedProfId);
        
-        var children = profDropZone.childNodes;   
-        for(var i = 0; i < children.length; i++){
-            children[i].remove();
-        } 
+        // var children = profDropZone.childNodes;   
+        // for(var i = 0; i < children.length; i++){
+        //     children[i].remove();
+        // } 
     
+        while(profDropZone.firstChild) profDropZone.removeChild(profDropZone.firstChild);
+
         profDropZone.remove();
 
         if (profDropZone.style.borderColor=='red'){
@@ -1525,12 +1649,13 @@ function deleteEffectivelyMatiere(toDeleIndex){
 
     CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
     document.getElementById(DropZoneId).remove(); 
+    clearProflist();
 
 
     // let emploiDeTemps = currentUiContext.emploiDeTemps;
-    let emp = CURRENT_EMPLOIS_DE_TEMPS.filter(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+    let emp = CURRENT_EMPLOIS_DE_TEMPS.filter(e=>e.id_classe == currentClasseId &&
         e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
-    let empIndex = CURRENT_EMPLOIS_DE_TEMPS.findIndex(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+    let empIndex = CURRENT_EMPLOIS_DE_TEMPS.findIndex(e=>e.id_classe == currentClasseId &&
         e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
         console.log("empIndex: ",empIndex);
 
@@ -1571,7 +1696,7 @@ function deleteEffectivelyProfs(){
 
         
         associatedMatiere = CURRENT_DROPPED_PROFS_LIST[profIndex].idMatiere;
-        matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere)
+        matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere && matiere.idClasse == currentClasseId)
         
         if (profIndex>=0 && matiereIndex>=0){
             indexProf = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.findIndex((prof)=> prof == DropProfId);
@@ -1581,7 +1706,7 @@ function deleteEffectivelyProfs(){
             var id_matiere = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].codeMatiere;
             var tab = DropProfId.split("_");
             //let emploiDeTemps = currentUiContext.emploiDeTemps;
-            let emp = CURRENT_EMPLOIS_DE_TEMPS.filter(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+            let emp = CURRENT_EMPLOIS_DE_TEMPS.filter(e=>e.id_classe == currentClasseId &&
                 e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
             console.log("emp: ",emp);
             let nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf[1];
@@ -1590,19 +1715,20 @@ function deleteEffectivelyProfs(){
             // 5:10h30_11h25*2*Mr.Enseigant1 Aminata%prof_5*Mr.Censeur Censeur%prof_14
             let listProfs = currentUiContext.listProfs.filter(item=>item.id==tab[2]);
             console.log(listProfs);
-            nomProf = listProfs[0].nom+" "+listProfs[0].prenom;
+            nomProf  = listProfs[0].nom+" "+listProfs[0].prenom;
+            var sexe = listProfs[0].sexe;
             if(emp.length>0){
                 for(let i=0;i<emp.length;i++){
                     let val =  emp[i].value;
                     console.log(val,"Mr."+nomProf+"%prof_"+tab[2]);
-                    val = val.replace("*Mr."+nomProf+"%prof_"+tab[2],"")
+                    val = (sexe=='M') ? val.replace("*Mr."+nomProf+"%prof_"+tab[2],"") : val.replace("*Mme."+nomProf+"%prof_"+tab[2],"");
                     emp[i].value = val;
                     console.log(emp);
                 }
                 
                 let empIndex =-1;
                 
-                empIndex=CURRENT_EMPLOIS_DE_TEMPS.findIndex(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
+                empIndex=CURRENT_EMPLOIS_DE_TEMPS.findIndex(e=>e.id_classe== currentClasseId &&
                     e.id_jour==tab[3]&&e.libelle==tab[4]+"_"+tab[5]&&e.id_matiere==id_matiere);
                     console.log("empIndex: ",empIndex);
                     if(empIndex>-1){
@@ -1758,7 +1884,7 @@ function Palette(props) {
         var deleteContinu = true;
         
         //Obtenir la liste des classe selectionnees
-        var selectedMatieres = CURRENT_DROPPED_MATIERE_LIST.filter((matiere)=>matiere.isSelected == true);
+        var selectedMatieres = CURRENT_DROPPED_MATIERE_LIST.filter((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId);
         
         //Obtenir la taille de cette liste
         var countMatiere = selectedMatieres.length;
@@ -1794,9 +1920,12 @@ function Palette(props) {
         }
 
         if(deleteContinu){
-            while(CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true)>=0)  {
-                toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true);
+            toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId);
+
+            while(toDeleIndex>=0)  {
                 deleteEffectivelyMatiere(toDeleIndex);
+                toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId);
+                
             }
 
         }
@@ -1812,7 +1941,7 @@ function Palette(props) {
         //     tabPos++;             
         // }
 
-        if(countMatiere>0) clearProflist();  
+        //if(countMatiere>0) clearProflist();  
     }
 
     
@@ -1862,27 +1991,43 @@ function Palette(props) {
         }
     }
     
-    function clearProflist(){
-        let listProfs = currentUiContext.listProfs;
-        var draggableSon, draggableSonText, draggableSonImg;
-        var PROFLIST_MAXSIZE =listProfs.length;
-        for (var i = 0; i < PROFLIST_MAXSIZE; i++) {
-            draggableSon =  document.getElementById('prof_' + listProfs[i].id);
-            draggableSonText = document.getElementById('prof_' + listProfs[i].id+'_sub');
+    // function clearProflist(){
+    //     let listProfs = currentUiContext.listProfs;
+    //     var draggableSon, draggableSonText, draggableSonImg;
+    //     var PROFLIST_MAXSIZE =listProfs.length;
+    //     for (var i = 0; i < PROFLIST_MAXSIZE; i++) {
+    //         draggableSon =  document.getElementById('prof_' + listProfs[i].id);
+    //         draggableSonText = document.getElementById('prof_' + listProfs[i].id+'_sub');
         
-            draggableSon.className = null;
-            draggableSon.title = '';
-            draggableSonText.textContent ='';
-            draggableSonText.className = null;
+    //         draggableSon.className = null;
+    //         draggableSon.title = '';
+    //         draggableSonText.textContent ='';
+    //         draggableSonText.className = null;
 
-            draggableSonImg =  document.getElementById('prof_' + listProfs[i].id + '_img');
-            draggableSonImg.className = null;
+    //         draggableSonImg =  document.getElementById('prof_' + listProfs[i].id + '_img');
+    //         draggableSonImg.className = null;
 
-            draggableSonImg = document.querySelector('#prof_' + listProfs[i].id + '_img > img');
-            draggableSonImg.style.display = 'none';
-        } 
+    //         draggableSonImg = document.querySelector('#prof_' + listProfs[i].id + '_img > img');
+    //         draggableSonImg.style.display = 'none';
+    //     } 
+    //     CURRENT_PROFS_LIST = [];
+    // }
+
+    function clearProflist(){
+        var draggableSon, draggableSonText, draggableSonImg;   
+        currentUiContext.listProfs.map((prof,index)=>{
+            draggableSon                  = document.getElementById('prof_' + prof.id);
+            draggableSonText              = document.getElementById('prof_' + prof.id+'_sub');
+            draggableSonImg               = document.getElementById('prof_' + prof.id + '_img');      
+            draggableSonImg               = document.querySelector('#prof_' + prof.id + '_img > img');
+    
+            draggableSon.style.display     = 'none';
+            draggableSonText.style.display = 'none';
+            draggableSonImg.style.display  = 'none';
+        }) 
         CURRENT_PROFS_LIST = [];
     }
+    
 
     function getCountSelectedDroppedProfs(){
         var count = 0;
@@ -2322,7 +2467,7 @@ function LigneProfPrincipal(props) {
                         buttonStyle={getButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
                         btnClickHandler={UpdateEmploiDeTemps}
-                        disable={(currentUiContext.ETDataChanged==true)}
+                        disable={(currentUiContext.ETDataChanged==false)}
                         // disable={(currentUiContext.CURRENT_DROPPED_MATIERE_LIST.length == 0)}
                     />
 
