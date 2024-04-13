@@ -419,7 +419,7 @@ export const initGrille=(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTem
                 while(j<countProf){
                     
                     // var droppedProfId = 'DP_'+ tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[1] + '_' + jour +'_' +  periode;
-                    var droppedProfId = 'DP_Prof_'+ emploiTemps[i].id_enseignants[j]+"_"+emploiTemps[i].id_jour+"_"+emploiTemps[i].libelle
+                    var droppedProfId = 'DP_prof_'+ emploiTemps[i].id_enseignants[j]+"_"+emploiTemps[i].id_jour+"_"+emploiTemps[i].libelle
                     
                     var droppedprofImgDiv = document.createElement('div');
                     droppedprofImgDiv.id = droppedProfId +'_img';

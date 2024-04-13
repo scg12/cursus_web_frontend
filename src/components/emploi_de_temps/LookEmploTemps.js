@@ -848,7 +848,7 @@ function matiereClickHandler(e){
                 periode = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].idMatiere;
                 tab_prof_id = CURRENT_DROPPED_MATIERE_LIST[indexMatiere].tabProfsID;
                 tab_prof_id.forEach(prof => {
-                    liste_prof.push(parseInt(prof.split("DP_Prof_")[1].split("_")[0]))
+                    liste_prof.push(parseInt(prof.split("DP_prof_")[1].split("_")[0]))
                 });
                 console.log("liste_prof: ",liste_prof)
                 // console.log("2indexMatiere: ",CURRENT_DROPPED_MATIERE_LIST[indexMatiere]);             

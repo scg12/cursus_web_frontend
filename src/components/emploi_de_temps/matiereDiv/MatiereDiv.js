@@ -107,7 +107,7 @@ function MatiereDiv(props){
                         tab_prof_id  = matiereWithLowestFreeProfs.tabProfsID;
 
                         tab_prof_id.forEach(prof => {
-                            liste_prof.push(parseInt(prof.split("DP_Prof_")[1].split("_")[0]))
+                            liste_prof.push(parseInt(prof.split("DP_prof_")[1].split("_")[0]))
                         });
                         console.log("liste_prof: ",liste_prof)
                         searchAndSetProfLibresInProfDiv(codeMatiere,periode,liste_prof);                    
