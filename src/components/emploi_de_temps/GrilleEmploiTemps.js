@@ -456,22 +456,20 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
     }
     else controleur = currentUiContext.nbRefreshEmpoiTemps;
 
-    if(controleur==0 ){
-        var tabMatiere = [];
+    if(controleur==0){
+        OLD_DROPPED_MATIERE = [];
         console.log("ET_data: ",ET_data," id_classe: ",id_classe);
+        
         i = 0;
         let emploiTemps = emploiDeTemps.filter(em=>!em.modify.includes("s")&&em.id_classe==id_classe)
-        console.log("emploiTemps: ",emploiTemps);
-        // console.log("initGrille :",matiereSousEtab);
         let cpte_emploiTemps = emploiTemps.length;
+       
         while(i < cpte_emploiTemps) {
             console.log("emploiTemps:[i] ",i,emploiTemps[i]);
-            // jour = tabMatiere[i].split(':')[0];
+            
             jour = emploiTemps[i].id_jour;
-            // periode = tabMatiere[i].split(':')[1].split('*')[0];
             periode = emploiTemps[i].libelle;
             id_tranche = emploiTemps[i].id_tranche;
-            // codeMatiere = tabMatiere[i].split(':')[1].split('*')[1];
             codeMatiere = emploiTemps[i].id_matiere;
             
             var idMatiereToDrop = 'DM_'+jour +'_' +  periode;
@@ -488,7 +486,7 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 droppedMatiere.heureDeb = periode.split('_')[0];
                 droppedMatiere.heureFin = periode.split('_')[1];
                 droppedMatiere.tabProfsID =[];
-                //droppedMatiere.tabProfsID.push(tabMatiere[i].split(':')[1].split('*')[2]);            
+                          
                 
                 //POSITIONNEMENT DE L'ELEMENT SUR LA GRILLE
                 var parentDiv = document.createElement('div');
@@ -503,23 +501,20 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 enfanDiv.textContent = droppedMatiere.libelleMatiere;
 
                 parentDiv.appendChild(enfanDiv);
-                // console.log("enfanDiv: ",enfanDiv);
-                // console.log("parentDiv: ",parentDiv);
-
+               
                 var idDropZone = jour +'_'+ periode;
-                console.log('zone de drop :', idDropZone)
                 var containerDiv = document.getElementById(idDropZone);
+               
                 containerDiv.appendChild(parentDiv);
                 parentDiv.addEventListener('click', (e) => {matiereClickHandler(e)})
                 
                 //S'IL YA UN OU DES PROFS, ON LES GERE
                 if(emploiTemps[i].value!="" && emploiTemps[i].value.split('*').length>2&& emploiTemps[i].value.split('*')[2].length>2) {
-                    // var countProf =  tabMatiere[i].split(':')[1].split('*').length-2;
+                   
                     var countProf =  emploiTemps[i].id_enseignants.length;
                     j = 0;
                     while(j<countProf){
                         console.log("emploiTemps[i].id_enseignants[j]: ",emploiTemps[i].id_enseignants[j])
-                        // var droppedProfId = 'DP_'+ tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[1] + '_' + jour +'_' +  periode;
                         var droppedProfId = 'DP_prof_'+ emploiTemps[i].id_enseignants[j]+"_"+emploiTemps[i].id_jour+"_"+emploiTemps[i].libelle
                         
                         var droppedprofImgDiv = document.createElement('div');
@@ -531,7 +526,6 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                         droppedprofImg.className = classes.imgStyle +' '+ classes.profImgStyle;
                         droppedprofImg.id = droppedProfId +'_img';
 
-                        // droppedprofImg.setAttribute('src', "images/maleTeacher.png");
                         var sexe = "M";
                         if(emploiTemps[i].value.split(':')[1].split('*')[j+2].split('%')[0].includes('Mr.'))
                             droppedprofImg.setAttribute('src', "images/maleTeacher.png");
@@ -539,48 +533,34 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                             sexe = "F";
                             droppedprofImg.setAttribute('src', "images/femaleTeacher.png");
                         }
-                            // droppedprofImg.setAttribute('src',(tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0].includes('Mme.'))? "images/femaleTeacher.png":"images/femaleTeacher.png");
+                
                         droppedprofImg.style.display = 'block';
-
                         droppedprofImg.addEventListener('click', (e) => {droppedProfClickHandler(e)})
 
                         
                         var droppedprofText = document.createElement('div');
                         droppedprofText.id = droppedProfId +'_sub';
                         droppedprofText.className = classes.profTextSyle;
-                        // droppedprofText.textContent = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
+                        
                         if(sexe=="M")
                             droppedprofText.textContent = emploiTemps[i].value.split("*")[2+j].split("%")[0].split("Mr.")[1];
                         else
                             droppedprofText.textContent = emploiTemps[i].value.split("*")[2+j].split("%")[0].split("Mme.")[1];
+                        
+                        
                         droppedprofText.addEventListener('click', (e) => {droppedProfClickHandler(e)})
-
-
-                    
                         droppedprofImgDiv.appendChild(droppedprofImg)
                         droppedprofImgDiv.appendChild(droppedprofText)
-                        //droppedprofImgDiv.addEventListener('click', (e) => {droppedProfClickHandler(e)})
-
-
+                        
                         var droppedprofDiv = document.createElement('div');
                         droppedprofDiv.id = droppedProfId;
                         droppedprofDiv.className = classes.profDivStyle;
                         droppedprofDiv.appendChild(droppedprofImgDiv);
-                        //droppedprofDiv.addEventListener('click', () => {droppedProfClickHandler(droppedProfId)})
                         
                         var container = document.getElementById('P_'+ jour + '_' +  periode);
                         container.appendChild(droppedprofDiv)
-                        //container.addEventListener('click', () => {droppedProfClickHandler(droppedProfId)})
                         droppedMatiere.tabProfsID.push(droppedProfId);
                         
-                        // let listProfs = currentUiContext.listProfs;
-                        // let nb = listProfs.length;
-                        // let nb_cours = 0;
-                        // for(let i=0;i<nb;i++){
-                        //     nb_cours = currentUiContext.emploiDeTemps.filter(item=>item.id_enseignants.includes(listProfs[i].id)).length;
-                        //     console.log("YOOOOOOO ",listProfs[i],nb_cours);
-                        // }
-
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
                         PROF_DATA.sexe       = sexe;
@@ -598,8 +578,6 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
                 }
                 
                 OLD_DROPPED_MATIERE.push(droppedMatiere);
-                //MISE A JOUR DES DONNEES GLOBALES
-                //AddValueToValueDroppedMatiereList(-1,droppedMatiere);          
             }  
             i++;         
         }
@@ -608,6 +586,8 @@ function initGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTemps,fu
  
     currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
     currentUiContext.setNbRefreshEmpoiTemps(0);
+
+    console.log("Old Matiere", OLD_DROPPED_MATIERE);
 }
 
 function matiereClickHandler(e){
