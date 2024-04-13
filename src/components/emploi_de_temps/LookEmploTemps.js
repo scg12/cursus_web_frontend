@@ -624,12 +624,12 @@ function initClassETGrille(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeT
                         //container.addEventListener('click', () => {droppedProfClickHandler(droppedProfId)})
 
                         droppedMatiere.tabProfsID.push(droppedProfId);
-                        
+
+                      
                     
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
-                        // PROF_DATA.NomProf    = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
-                        PROF_DATA.NomProf    = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1];
+                        PROF_DATA.NomProf    = (sexe=="M") ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1]:emploiTemps[i].value.split("*")[2].split("%")[0].split("Mme.")[1];
                         PROF_DATA.idJour     = jour;
                         PROF_DATA.idMatiere  = idMatiereToDrop;
                         PROF_DATA.heureDeb   = periode.split('_')[0];
@@ -744,10 +744,16 @@ function initTeachersETGrille(id_teacher,emploiDeTemps,functionAppellante) {
                         // var droppedProfId = 'DP_'+ tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[1] + '_' + jour +'_' +  periode;
                         var droppedProfId = 'DP_prof_'+ emploiTemps[i].id_enseignants[j]+"_"+emploiTemps[i].id_jour+"_"+emploiTemps[i].libelle
                         
+                        
+
                         var droppedprofDiv = document.createElement('div');
                         droppedprofDiv.id = droppedProfId;
                         droppedprofDiv.className = classes.profDivStyle;
                         droppedprofDiv.textContent = classeLabel;
+
+                       
+                        var sexe = "M";
+                        if(emploiTemps[i].value.split(':')[1].split('*')[j+2].split('%')[0].includes('Mme.'))  sexe = "F";
                         
                         var container = document.getElementById('P_'+ jour + '_' +  periode);
                         container.appendChild(droppedprofDiv)
@@ -758,7 +764,7 @@ function initTeachersETGrille(id_teacher,emploiDeTemps,functionAppellante) {
                     
                         PROF_DATA = {};
                         PROF_DATA.idProf     = droppedProfId;
-                        PROF_DATA.NomProf    = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1];
+                        PROF_DATA.NomProf    = (sexe == "M") ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr.")[1] : emploiTemps[i].value.split("*")[2].split("%")[0].split("Mme.")[1];
                         PROF_DATA.idJour     = jour;
                         PROF_DATA.idMatiere  = idMatiereToDrop;
                         PROF_DATA.heureDeb   = periode.split('_')[0];
@@ -1586,26 +1592,6 @@ const closePreview =()=>{
 
 
                 <div className={classes.buttonRow}>
-                    {/*(props.formMode!='consult')&&
-                        <CustomButton
-                            btnText={t('cancel')}  
-                            buttonStyle={getButtonStyle()}
-                            btnTextStyle = {classes.btnTextStyle}
-                            btnClickHandler={cancelHandler}
-                        />*/
-                    }
-                    
-                    {/*(props.formMode!='consult')&&
-                        <CustomButton
-                            btnText={t('save')} 
-                            buttonStyle={getButtonStyle()}
-                            btnTextStyle = {classes.btnTextStyle}
-                            btnClickHandler={UpdateEmploiDeTemps}
-                            //disable={(isValid==false)}
-                            // disable={(currentUiContext.CURRENT_DROPPED_MATIERE_LIST.length == 0)}
-                        />*/
-                    }
-
                     <CustomButton
                         btnText={t('imprimer')}
                         buttonStyle={getButtonStyle()}

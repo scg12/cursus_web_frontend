@@ -3,14 +3,19 @@ import { isMobile } from 'react-device-detect';
 import { useContext} from "react";
 import UiContext from '../../../store/UiContext';
 import DraggableDiv from '../../draggableDiv/DraggableDiv';
-
 import {profZoneClickedHandler} from '../ET_Module'
+
+let CURRENT_DROPPED_PROFS_LIST;
+
+
 
 function ProfDiv(props){ 
     const currentUiContext = useContext(UiContext);
+    CURRENT_DROPPED_PROFS_LIST=currentUiContext.CURRENT_DROPPED_PROFS_LIST;
+
     function ProfsClickHandler(){
         if(isMobile) currentUiContext.setSelectedProfId(props.id); //On est sur un prof            
-        profZoneClickedHandler(props.id);
+        profZoneClickedHandler(CURRENT_DROPPED_PROFS_LIST,props.id);
         /*SELECTED_PROF_ID = props.id;
         var idTab = SELECTED_PROF_ID.split('_');
         var ProfDroppableZone = 'P_'+idTab[3]+'_'+idTab[4]+'_'+idTab[5];

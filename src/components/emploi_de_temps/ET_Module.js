@@ -429,8 +429,16 @@ export const initGrille=(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTem
                     var droppedprofImg = document.createElement('img');
                     droppedprofImg.className = classes.imgStyle +' '+ classes.profImgStyle;
                     droppedprofImg.id = droppedProfId +'_img';
-                    // droppedprofImg.setAttribute('src',(tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0].includes('Mr.'))? "images/maleTeacher.png":"images/femaleTeacher.png");
-                    droppedprofImg.setAttribute('src', "images/maleTeacher.png");
+                    
+                    var sexe ='M';
+
+                    if(tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0].includes('Mr.')){
+                        droppedprofImg.setAttribute('src', "images/maleTeacher.png");
+                    }else{
+                        sexe ='F'
+                        droppedprofImg.setAttribute('src', "images/femaleTeacher.png");
+                    }
+                    
                     droppedprofImg.addEventListener('click', (e) => {droppedProfClickHandler(e)})
 
                     
@@ -438,7 +446,7 @@ export const initGrille=(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTem
                     droppedprofText.id = droppedProfId +'_sub';
                     droppedprofText.className = classes.profTextSyle;
                     // droppedprofText.textContent = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
-                    droppedprofText.textContent = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr."[1]);
+                    droppedprofText.textContent = (sexe=="M") ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr."[1]):emploiTemps[i].value.split("*")[2].split("%")[0].split("Mme."[1]);
                     droppedprofText.addEventListener('click', (e) => {droppedProfClickHandler(e)})
 
 
@@ -462,8 +470,7 @@ export const initGrille=(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTem
 
                     PROF_DATA = {};
                     PROF_DATA.idProf     = droppedProfId;
-                    // PROF_DATA.NomProf    = tabMatiere[i].split(':')[1].split('*')[j+2].split('%')[0];
-                    PROF_DATA.NomProf    = emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr."[1]);
+                    PROF_DATA.NomProf    = (sexe=='M') ? emploiTemps[i].value.split("*")[2].split("%")[0].split("Mr."[1]):emploiTemps[i].value.split("*")[2].split("%")[0].split("Mme."[1]);
                     PROF_DATA.idJour     = jour;
                     PROF_DATA.idMatiere  = idMatiereToDrop;
                     PROF_DATA.heureDeb   = periode.split('_')[0];
@@ -472,10 +479,8 @@ export const initGrille=(ET_data,matiereSousEtab,listProfs,id_classe,emploiDeTem
                     
                     CURRENT_DROPPED_PROFS_LIST.push(PROF_DATA);
                     j++;
-
                     console.log(PROF_DATA, CURRENT_DROPPED_PROFS_LIST)
-                }
-               
+                }               
             }
 
              //MISE A JOUR DES DONNEES GLOBALES
@@ -646,7 +651,7 @@ export const deleteProf =() => {
 }
 
 
-export const profZoneClickedHandler=(id)=>{
+export const profZoneClickedHandler=(CURRENT_DROPPED_PROFS_LIST,id)=>{
     SELECTED_PROF_ID = id;
     var idTab = SELECTED_PROF_ID.split('_');
     var ProfDroppableZone = 'P_'+idTab[3]+'_'+idTab[4]+'_'+idTab[5];
@@ -657,6 +662,7 @@ export const profZoneClickedHandler=(id)=>{
         index = CURRENT_DROPPED_PROFS_LIST.findIndex((prof)=>prof.idProf == id)
        
         if(index >=0) {
+            console.log("selected papah!")
             if(CURRENT_DROPPED_PROFS_LIST[index].isSelected == false){
                 CURRENT_DROPPED_PROFS_LIST[index].isSelected = true;
                 document.getElementById(SELECTED_PROF_ID).style.borderStyle ='solid';

@@ -308,13 +308,23 @@ function Palette(props) {
         currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
     }
 
+    // function getCountSelectedDroppedMatieres(){
+    //     var count = 0;
+    //     for(var i=0 ; i<CURRENT_DROPPED_MATIERE_LIST.length; i++){
+    //         if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true) count++;
+    //     }
+    //     return count;
+    // }
+
     function getCountSelectedDroppedMatieres(){
         var count = 0;
         for(var i=0 ; i<CURRENT_DROPPED_MATIERE_LIST.length; i++){
-            if(CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true) count++;
+            if(CURRENT_DROPPED_MATIERE_LIST[i].idClasse == currentUiContext.currentIdClasseEmploiTemps && CURRENT_DROPPED_MATIERE_LIST[i].isSelected==true) count++;
         }
+        console.log("count selected",count,currentUiContext.currentIdClasseEmploiTemps);
         return count;
     }
+
 
     function isProfPrincipal(idprof,classeId){
         var pp = currentUiContext.currentPPList.find((elt)=>(elt.PP_id == idprof && elt.id_classe == classeId))
@@ -335,7 +345,7 @@ function Palette(props) {
 
         while(tabPos<countMatiere){
             
-            var toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true)
+            var toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentUiContext.currentIdClasseEmploiTemps)
             
             DropZoneId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].idMatiere;
             idTab = DropZoneId.split('_');
@@ -353,11 +363,11 @@ function Palette(props) {
                     
                     while(AssociatedProfCount > 0 && deleteContinu){
                         
-                        droppedProfId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.shift();                        
-                        profDropZone =  document.getElementById(droppedProfId); 
+                        droppedProfId  = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.shift();                        
+                        profDropZone   =  document.getElementById(droppedProfId); 
                         
-                        var idProf   = droppedProfId.split('_')[2];
-                        var idClasse = document.getElementById("selectClasse").value;
+                        var idProf    = droppedProfId.split('_')[2];
+                        var idClasse  = document.getElementById("selectClasse").value;
                         var droppedPP = currentDroppedProfs.filter((elt)=>elt.idProf.split('_')[2] == idProf);
                         console.log('gggggdrop',droppedPP);
                         
@@ -489,12 +499,13 @@ function Palette(props) {
                     // 5:10h30_11h25*2*Mr.Enseigant1 Aminata%prof_5*Mr.Censeur Censeur%prof_14
                     let listProfs = currentUiContext.listProfs.filter(item=>item.id==tab[2]);
                     console.log(listProfs);
-                    nomProf = listProfs[0].nom+" "+listProfs[0].prenom;
+                    nomProf  = listProfs[0].nom+" "+listProfs[0].prenom;
+                    var sexe = listProfs[0].sexe;
                     if(emp.length>0){
                         for(let i=0;i<emp.length;i++){
                             let val =  emp[i].value;
                             console.log(val,"Mr."+nomProf+"%prof_"+tab[2]);
-                            val = val.replace("*Mr."+nomProf+"%prof_"+tab[2],"")
+                            val = (sexe=="M") ? val.replace("*Mr."+nomProf+"%prof_"+tab[2],""):val.replace("*Mme."+nomProf+"%prof_"+tab[2],"")
                             emp[i].value = val;
                             console.log(emp);
                         }
