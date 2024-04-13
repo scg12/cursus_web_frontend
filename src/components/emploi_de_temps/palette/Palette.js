@@ -480,7 +480,7 @@ function Palette(props) {
                 profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((prof)=>prof.isSelected == true)
                 DropProfId = CURRENT_DROPPED_PROFS_LIST[profIndex].idProf;
                 associatedMatiere = CURRENT_DROPPED_PROFS_LIST[profIndex].idMatiere;
-                matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere)
+                matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere && matiere.idClasse == currentUiContext.currentIdClasseEmploiTemps)
                 
                 if (profIndex>=0 && matiereIndex>=0){
                     indexProf = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.findIndex((prof)=> prof == DropProfId);

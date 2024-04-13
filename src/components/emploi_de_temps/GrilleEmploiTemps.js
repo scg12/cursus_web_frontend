@@ -1637,14 +1637,15 @@ function deleteEffectivelyMatiere(toDeleIndex){
         var idProf    = droppedProfId.split('_')[2];                                
         var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == droppedProfId);
         var droppedPP = CURRENT_DROPPED_PROFS_LIST.filter((elt)=>elt.idProf.split('_')[2] == idProf);
-        var droppedSelectedPP = getADroppedProfSelectionCount(CURRENT_DROPPED_MATIERE_LIST.filter((elt)=>elt.isSelected==true),droppedProfId);
+        var droppedSelectedPP = getADroppedProfSelectionCount(CURRENT_DROPPED_MATIERE_LIST.filter((elt)=>elt.isSelected==true && elt.idClasse==currentClasseId),droppedProfId);
        
-        var children = profDropZone.childNodes;   
-        for(var i = 0; i < children.length; i++){
-            children[i].remove();
-        } 
+        // var children = profDropZone.childNodes;   
+        // for(var i = 0; i < children.length; i++){
+        //     children[i].remove();
+        // } 
     
-        //while(profDropZone.firstChild) profDropZone.removeChild(profDropZone.firstChild);
+        while(profDropZone.firstChild) profDropZone.removeChild(profDropZone.firstChild);
+
         profDropZone.remove();
 
         if (profDropZone.style.borderColor=='red'){
@@ -1667,6 +1668,7 @@ function deleteEffectivelyMatiere(toDeleIndex){
 
     CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
     document.getElementById(DropZoneId).remove(); 
+    clearProflist();
 
 
     // let emploiDeTemps = currentUiContext.emploiDeTemps;
@@ -1713,7 +1715,7 @@ function deleteEffectivelyProfs(){
 
         
         associatedMatiere = CURRENT_DROPPED_PROFS_LIST[profIndex].idMatiere;
-        matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere)
+        matiereIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.idMatiere == associatedMatiere && matiere.idClasse == currentClasseId)
         
         if (profIndex>=0 && matiereIndex>=0){
             indexProf = CURRENT_DROPPED_MATIERE_LIST[matiereIndex].tabProfsID.findIndex((prof)=> prof == DropProfId);
@@ -1937,9 +1939,12 @@ function Palette(props) {
         }
 
         if(deleteContinu){
-            while(CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId)>=0)  {
-                toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId);
+            toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId);
+
+            while(toDeleIndex>=0)  {
                 deleteEffectivelyMatiere(toDeleIndex);
+                toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentClasseId);
+                
             }
 
         }
@@ -1955,7 +1960,7 @@ function Palette(props) {
         //     tabPos++;             
         // }
 
-        if(countMatiere>0) clearProflist();  
+        //if(countMatiere>0) clearProflist();  
     }
 
     
