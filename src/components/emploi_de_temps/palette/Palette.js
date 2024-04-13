@@ -38,8 +38,10 @@ TAB_COLORS["PinkDark"] ='rgb(95, 22, 65)';
 TAB_COLORS["Pink"] ='rgb(212, 16, 92)';
 TAB_COLORS["Grey"] ='grey';
 TAB_COLORS["Black"] ='rgb(26, 25, 25)';
+
 let CURRENT_DROPPED_MATIERE_LIST;
 let CURRENT_DROPPED_PROFS_LIST;
+let CURRENT_EMPLOIS_DE_TEMPS;
 
 var droppedPPid;
 var AssociatedProfCount;
@@ -298,14 +300,22 @@ function Palette(props) {
     
 
     function deleteElements(){
+       
         CURRENT_DROPPED_MATIERE_LIST = currentUiContext.CURRENT_DROPPED_MATIERE_LIST;
-        CURRENT_DROPPED_PROFS_LIST = currentUiContext.CURRENT_DROPPED_PROFS_LIST;
+        CURRENT_DROPPED_PROFS_LIST   = currentUiContext.CURRENT_DROPPED_PROFS_LIST;
+        CURRENT_EMPLOIS_DE_TEMPS     = currentUiContext.emploiDeTemps;
+        
+        currentUiContext.setETDataChanged(true);
+
         console.log("CURRENT_DROPPED_MATIERE_LIST: ",CURRENT_DROPPED_MATIERE_LIST);
         console.log("CURRENT_DROPPED_PROFS_LIST: ",CURRENT_DROPPED_PROFS_LIST);
+
         deleteMatiere();
         deleteProf();
+
         currentUiContext.addMatiereToDroppedMatiereList(CURRENT_DROPPED_MATIERE_LIST,-1);
         currentUiContext.addProfToDroppedProfList(CURRENT_DROPPED_PROFS_LIST,-1);
+        currentUiContext.setEmploiDeTemps(CURRENT_EMPLOIS_DE_TEMPS);
     }
 
     // function getCountSelectedDroppedMatieres(){
@@ -332,132 +342,176 @@ function Palette(props) {
         else return false;
     }
 
-    function deleteMatiere () {
 
-        var DropZoneId,toDeleIndex, droppedProfId, droppedProfZone,idTab;
-        var countMatiere, tabPos, profDropZone;
-        var currentDroppedProfs = [];
-        countMatiere = getCountSelectedDroppedMatieres();
-       
-       
-        tabPos = 0;
-        console.log('ggdgdgd',countMatiere, CURRENT_DROPPED_MATIERE_LIST);
-
-        while(tabPos<countMatiere){
-            
-            var toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentUiContext.currentIdClasseEmploiTemps)
-            
-            DropZoneId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].idMatiere;
-            idTab = DropZoneId.split('_');
-            droppedProfZone ='P_'+idTab[1]+'_'+idTab[2]+'_'+idTab[3];
-                        
-            if(toDeleIndex >= 0){
-                
-                var matiereToDeleteProf = {...CURRENT_DROPPED_MATIERE_LIST[toDeleIndex]};
-               
-                if (CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.length > 0) {
-
-                    currentDroppedProfs = [...currentUiContext.CURRENT_DROPPED_PROFS_LIST];
-
-                    AssociatedProfCount = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.length;
-                    
-                    while(AssociatedProfCount > 0 && deleteContinu){
-                        
-                        droppedProfId  = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.shift();                        
-                        profDropZone   =  document.getElementById(droppedProfId); 
-                        
-                        var idProf    = droppedProfId.split('_')[2];
-                        var idClasse  = document.getElementById("selectClasse").value;
-                        var droppedPP = currentDroppedProfs.filter((elt)=>elt.idProf.split('_')[2] == idProf);
-                        console.log('gggggdrop',droppedPP);
-                        
-                        if (isProfPrincipal(idProf,idClasse)) {
-                            droppedPPid  = droppedProfId;
-                            if(droppedPP.length == 1){
-                                chosenMsgBox = MSG_QUESTION_PAL1;
-                                currentUiContext.showMsgBox({
-                                    visible:true, 
-                                    msgType:"question", 
-                                    msgTitle:t("question_M"),
-                                    message:t("L'enseignant affecte a cette matiere est professeur principal. Voulez-vous vraiment supprimer cette matiere?")
-                                }) 
-                            }
-
-                        } else {
-                            var profIndex = currentDroppedProfs.findIndex((elt)=>elt.idProf == droppedProfId);
-                            if(profIndex>=0){
-                                currentDroppedProfs.splice(profIndex,1);
-                            
-                                if(droppedPP.length == 1){
-                                    var nomProf = currentDroppedProfs[profIndex].NomProf;
-                                    var idPP = "prof_" + nomProf;
-                                    document.getElementById(idPP).style.display="none";
-                                }
-                                
-                            }
-
-                            var children = profDropZone.childNodes;   
-                            for(var i = 0; i < children.length; i++){
-                                children[i].remove();
-                            } 
-                        
-                            profDropZone.remove();
-                    
-                            if (profDropZone.style.borderColor=='red'){
-                                profDropZone.style.borderStyle = null;
-                                profDropZone.style.borderWidth = null;
-                                profDropZone.style.borderColor = null;
-                            }                   
-                           
-                        }    
-
-                        AssociatedProfCount--;                   
-                    }
-                    
-                    if(deleteContinu){
-                        CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
-                        document.getElementById(DropZoneId).remove();                           
-                        currentUiContext.addProfToDroppedProfList(currentDroppedProfs,-1);
-                        console.log("prof associes", currentDroppedProfs, currentUiContext.CURRENT_DROPPED_PROFS_LIST,droppedProfId);
-                    }
-                        
-                   
-                } else {
-                    CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
-                    document.getElementById(DropZoneId).remove();                   
-                }               
-            }
-            tabPos++;
-
-            let emploiDeTemps = currentUiContext.emploiDeTemps;
-            let emp = emploiDeTemps.filter(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
-                e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
-            let empIndex = emploiDeTemps.findIndex(e=>e.id_classe==currentUiContext.currentIdClasseEmploiTemps&&
-                e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
-                console.log("empIndex: ",empIndex);
-
-            if (emp.length>0){
-                let empToUpdate = emp[0];
-                // C'est un cours qui a été créé pendant la session courante on peut simplement le supprimer
-                if(empToUpdate.modify.includes("c"))
-                      emploiDeTemps.splice(empIndex,1)
-                // Ca vient de la bd donc la suppression doit se faire en bd
-                else{
-                    empToUpdate.modify +="s";
-                    emploiDeTemps.splice(empIndex,1,empToUpdate)
-                    console.log("emploiDeTemps: ",emploiDeTemps);
-                }
-
-                    
-                    currentUiContext.setEmploiDeTemps(emploiDeTemps);
-                
-
+    function existProfPrincipal(listProfIDs, idClasse){
+        var existPP = -1;
+        if(listProfIDs.length > 0){
+            var countPP = listProfIDs.length;
+            var i = 0;
+            while(i < countPP && existPP==-1){
+                if (isProfPrincipal(listProfIDs[i].split('_')[2], idClasse)) existPP=i;
+                i++;
             }
         }
-        currentUiContext.addMatiereToDroppedMatiereList(CURRENT_DROPPED_MATIERE_LIST,-2);
-        clearProflist();
+        return existPP;
     }
 
+
+    function deleteMatiere () {
+
+        var toDeleIndex;
+        var tabPos;  
+        var idClasse  = document.getElementById("selectClasse").value;  
+
+        var deleteContinu = true;
+        
+        //Obtenir la liste des classe selectionnees
+        var selectedMatieres = CURRENT_DROPPED_MATIERE_LIST.filter((matiere)=>matiere.isSelected == true && matiere.idClasse == currentUiContext.currentIdClasseEmploiTemps);
+        
+        //Obtenir la taille de cette liste
+        var countMatiere = selectedMatieres.length;
+
+        //On n'a pas encore trouve
+        var PPExistIndex = -1;
+        
+        //parcourir cette liste et pour chaque matiere voir si les prof associe est pp
+        tabPos = 0; 
+        while(tabPos < countMatiere && PPExistIndex==-1){            
+            PPExistIndex = existProfPrincipal(selectedMatieres[tabPos].tabProfsID, idClasse);
+            tabPos++;
+        }
+
+        if(PPExistIndex >= 0){                        
+            var dProfId = selectedMatieres[tabPos-1].tabProfsID[PPExistIndex];
+            var idProf    = dProfId.split('_')[2];
+            var droppedPP = CURRENT_DROPPED_PROFS_LIST.filter((elt)=>elt.idProf.split('_')[2] == idProf);
+            var droppedSelectedPP = getADroppedProfSelectionCount(selectedMatieres,dProfId);
+            
+            if(droppedPP.length == droppedSelectedPP){
+                deleteContinu = false;
+                chosenMsgBox  = MSG_QUESTION_PAL1;
+                currentUiContext.showMsgBox({
+                    visible:true, 
+                    msgType:"question", 
+                    msgTitle:t("confirm_M"),
+                    message:t("delete_pp_question")
+                })   
+
+            }                            
+        
+        }
+
+        if(deleteContinu){
+            toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentUiContext.currentIdClasseEmploiTemps);
+
+            while(toDeleIndex>=0)  {
+                deleteEffectivelyMatiere(toDeleIndex);
+                toDeleIndex = CURRENT_DROPPED_MATIERE_LIST.findIndex((matiere)=>matiere.isSelected == true && matiere.idClasse == currentUiContext.currentIdClasseEmploiTemps);
+                
+            }
+
+        }
+    }
+
+
+    function getADroppedProfSelectionCount(selectedMatiere,profId){
+        var count = 0;
+        var listSize,i;
+        
+        console.log("Matiere",selectedMatiere);
+        if(selectedMatiere.length > 0){
+            console.log("ichdhhdhdhProf",profId)
+            listSize = selectedMatiere.length;
+            i = 0;
+            while(i<listSize){
+                console.log("gdgdgdgdgddgopd")
+                console.log("Matiere",selectedMatiere[i]);
+                if(selectedMatiere[i].tabProfsID.length > 0){                
+                    if(selectedMatiere[i].tabProfsID.find((elt)=>elt == profId) != undefined) count++;
+                }
+                i++;
+            }
+        }   
+        console.log("count",count);     
+        return count;
+    }
+        
+
+    function deleteEffectivelyMatiere(toDeleIndex){
+
+        var DropZoneId,toDeleIndex, droppedProfId, profDropZone,idTab;  
+
+        var matiereToDeleteProf = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex];
+        var AssociatedProfCount = matiereToDeleteProf.tabProfsID.length;
+        
+        DropZoneId =  matiereToDeleteProf.idMatiere;
+        var idTab  = DropZoneId.split('_');
+        var index  = 0;
+    
+        while(index < AssociatedProfCount){
+            
+            droppedProfId = matiereToDeleteProf.tabProfsID[index];                       
+            profDropZone  =  document.getElementById(droppedProfId); 
+            
+            var idProf    = droppedProfId.split('_')[2];                                
+            var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == droppedProfId);
+            var droppedPP = CURRENT_DROPPED_PROFS_LIST.filter((elt)=>elt.idProf.split('_')[2] == idProf);
+            var droppedSelectedPP = getADroppedProfSelectionCount(CURRENT_DROPPED_MATIERE_LIST.filter((elt)=>elt.isSelected==true && elt.idClasse==currentUiContext.currentIdClasseEmploiTemps),droppedProfId);
+            
+            
+            while(profDropZone.firstChild) profDropZone.removeChild(profDropZone.firstChild);
+    
+            profDropZone.remove();
+    
+            if (profDropZone.style.borderColor=='red'){
+                profDropZone.style.borderStyle = null;
+                profDropZone.style.borderWidth = null;
+                profDropZone.style.borderColor = null;
+            }       
+            
+            if(droppedPP.length == droppedSelectedPP){
+                var nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf;
+                var idPP = "prof_" + nomProf;
+                console.log("prof",idPP);
+                if(document.getElementById(idPP)!=null) document.getElementById(idPP).style.display="none";           
+            }
+    
+            CURRENT_DROPPED_PROFS_LIST.splice(profIndex,1);                         
+            
+            index++;         
+        }
+    
+    
+        // let emploiDeTemps = currentUiContext.emploiDeTemps;
+        let emp = CURRENT_EMPLOIS_DE_TEMPS.filter(e=>e.id_classe == currentUiContext.currentIdClasseEmploiTemps &&
+            e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
+        let empIndex = CURRENT_EMPLOIS_DE_TEMPS.findIndex(e=>e.id_classe == currentUiContext.currentIdClasseEmploiTemps &&
+            e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
+            console.log("empIndex: ",empIndex);
+    
+        if (emp.length>0){
+            console.log("gftrgrhr momomo: ");
+            let empToUpdate = emp[0];
+            // C'est un cours qui a été créé pendant la session courante on peut simplement le supprimer
+            if(empToUpdate.modify.includes("c"))
+            CURRENT_EMPLOIS_DE_TEMPS.splice(empIndex,1)                
+            // Ca vient de la bd donc la suppression doit se faire en bd
+            else{
+                empToUpdate.modify +="s";
+                CURRENT_EMPLOIS_DE_TEMPS.splice(empIndex,1,empToUpdate)
+                console.log("emploiDeTemps: ",CURRENT_EMPLOIS_DE_TEMPS);
+            }
+        }  
+        
+        CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
+        document.getElementById(DropZoneId).remove(); 
+        clearProflist();
+    
+    }
+        
+
+       
+    
     function clearPPList(){
         var parentDiv = document.getElementById("profsList2");
         var childDiv = undefined
