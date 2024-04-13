@@ -182,7 +182,7 @@ function GrilleEmploiTemps(props) {
             
             }  
 
-            currentUiContext.setETDataChanged(false);
+            //currentUiContext.setETDataChanged(false);
         }
  
     },[currentUiContext.TAB_CRENEAU_PAUSE]);
@@ -1232,7 +1232,7 @@ function cancelETData() {
         console.log("ANNULER: ",emploiTemps)
         currentUiContext.setEmploiDeTemps(emploiTemps);
         currentUiContext.addMatiereToDroppedMatiereList([],-1);
-        currentUiContext.setETDataChanged(false);        
+        //currentUiContext.setETDataChanged(false);        
     }
 
 }
@@ -1292,7 +1292,7 @@ const acceptHandler=()=>{
                 message:""
             }) 
             
-            currentUiContext.setETDataChanged(true);
+            //currentUiContext.setETDataChanged(true);
             return 1;
         }
 
@@ -1833,7 +1833,7 @@ function Palette(props) {
         CURRENT_DROPPED_PROFS_LIST   = currentUiContext.CURRENT_DROPPED_PROFS_LIST;
         CURRENT_EMPLOIS_DE_TEMPS     = currentUiContext.emploiDeTemps;
 
-        currentUiContext.setETDataChanged(true);
+        //currentUiContext.setETDataChanged(true);
         
         console.log("CURRENT_DROPPED_MATIERE_LIST: ",CURRENT_DROPPED_MATIERE_LIST);
         console.log("CURRENT_DROPPED_PROFS_LIST: ",CURRENT_DROPPED_PROFS_LIST);
@@ -2468,7 +2468,7 @@ function LigneProfPrincipal(props) {
                         buttonStyle={getButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
                         btnClickHandler={UpdateEmploiDeTemps}
-                        disable={(currentUiContext.ETDataChanged==false)}
+                        //disable={(currentUiContext.ETDataChanged==false)}
                         // disable={(currentUiContext.CURRENT_DROPPED_MATIERE_LIST.length == 0)}
                     />
 

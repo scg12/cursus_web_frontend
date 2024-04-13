@@ -305,7 +305,7 @@ function Palette(props) {
         CURRENT_DROPPED_PROFS_LIST   = currentUiContext.CURRENT_DROPPED_PROFS_LIST;
         CURRENT_EMPLOIS_DE_TEMPS     = currentUiContext.emploiDeTemps;
         
-        currentUiContext.setETDataChanged(true);
+        //currentUiContext.setETDataChanged(true);
 
         console.log("CURRENT_DROPPED_MATIERE_LIST: ",CURRENT_DROPPED_MATIERE_LIST);
         console.log("CURRENT_DROPPED_PROFS_LIST: ",CURRENT_DROPPED_PROFS_LIST);
