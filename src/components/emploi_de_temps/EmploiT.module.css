@@ -115,6 +115,14 @@
     align-items: center;
 }
 
+.profImgStyle:hover{
+    display: flex;
+    flex-direction: column;
+    justify-content:space-around;
+    align-items: center;
+    cursor: pointer;
+}
+
 .profDivStyle{
     width: 100%;
     border-radius: 7px;   
