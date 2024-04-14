@@ -182,7 +182,7 @@ function GrilleEmploiTemps(props) {
             
             }  
 
-            currentUiContext.setETDataChanged(false);
+            //currentUiContext.setETDataChanged(false);
         }
  
     },[currentUiContext.TAB_CRENEAU_PAUSE]);
@@ -1232,7 +1232,7 @@ function cancelETData() {
         console.log("ANNULER: ",emploiTemps)
         currentUiContext.setEmploiDeTemps(emploiTemps);
         currentUiContext.addMatiereToDroppedMatiereList([],-1);
-        currentUiContext.setETDataChanged(false);        
+        //currentUiContext.setETDataChanged(false);        
     }
 
 }
@@ -1292,7 +1292,7 @@ const acceptHandler=()=>{
                 message:""
             }) 
             
-            currentUiContext.setETDataChanged(true);
+            //currentUiContext.setETDataChanged(true);
             return 1;
         }
 
@@ -1600,31 +1600,27 @@ function getADroppedProfSelectionCount(selectedMatiere,profId){
 
 
 function deleteEffectivelyMatiere(toDeleIndex){
-    
-    var DropZoneId,toDeleIndex, droppedProfId, profDropZone,idTab;  
-    var AssociatedProfCount =  CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID.length;
 
-    DropZoneId =  CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].idMatiere;
-    var idTab = DropZoneId.split('_');
-    var index = 0;
+    var DropZoneId,toDeleIndex, droppedProfId, profDropZone,idTab;  
+
+    var matiereToDeleteProf = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex];
+    var AssociatedProfCount = matiereToDeleteProf.tabProfsID.length;
+    
+    DropZoneId =  matiereToDeleteProf.idMatiere;
+    var idTab  = DropZoneId.split('_');
+    var index  = 0;
 
     while(index < AssociatedProfCount){
-
-        var matiereToDeleteProf = {...CURRENT_DROPPED_MATIERE_LIST[toDeleIndex]};
-        console.log("MATIERE", matiereToDeleteProf)
-        droppedProfId = CURRENT_DROPPED_MATIERE_LIST[toDeleIndex].tabProfsID[index];                       
+        
+        droppedProfId = matiereToDeleteProf.tabProfsID[index];                       
         profDropZone  =  document.getElementById(droppedProfId); 
         
         var idProf    = droppedProfId.split('_')[2];                                
         var profIndex = CURRENT_DROPPED_PROFS_LIST.findIndex((elt)=>elt.idProf == droppedProfId);
         var droppedPP = CURRENT_DROPPED_PROFS_LIST.filter((elt)=>elt.idProf.split('_')[2] == idProf);
-        var droppedSelectedPP = getADroppedProfSelectionCount(CURRENT_DROPPED_MATIERE_LIST.filter((elt)=>elt.isSelected==true && elt.idClasse==currentClasseId),droppedProfId);
-       
-        // var children = profDropZone.childNodes;   
-        // for(var i = 0; i < children.length; i++){
-        //     children[i].remove();
-        // } 
-    
+        var droppedSelectedPP = getADroppedProfSelectionCount(CURRENT_DROPPED_MATIERE_LIST.filter((elt)=>elt.isSelected==true && elt.idClasse==currentUiContext.currentIdClasseEmploiTemps),droppedProfId);
+        
+        
         while(profDropZone.firstChild) profDropZone.removeChild(profDropZone.firstChild);
 
         profDropZone.remove();
@@ -1634,7 +1630,7 @@ function deleteEffectivelyMatiere(toDeleIndex){
             profDropZone.style.borderWidth = null;
             profDropZone.style.borderColor = null;
         }       
-      
+        
         if(droppedPP.length == droppedSelectedPP){
             var nomProf = CURRENT_DROPPED_PROFS_LIST[profIndex].NomProf;
             var idPP = "prof_" + nomProf;
@@ -1643,23 +1639,20 @@ function deleteEffectivelyMatiere(toDeleIndex){
         }
 
         CURRENT_DROPPED_PROFS_LIST.splice(profIndex,1);                         
-       
+        
         index++;         
     }
 
-    CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
-    document.getElementById(DropZoneId).remove(); 
-    clearProflist();
-
 
     // let emploiDeTemps = currentUiContext.emploiDeTemps;
-    let emp = CURRENT_EMPLOIS_DE_TEMPS.filter(e=>e.id_classe == currentClasseId &&
+    let emp = CURRENT_EMPLOIS_DE_TEMPS.filter(e=>e.id_classe == currentUiContext.currentIdClasseEmploiTemps &&
         e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
-    let empIndex = CURRENT_EMPLOIS_DE_TEMPS.findIndex(e=>e.id_classe == currentClasseId &&
+    let empIndex = CURRENT_EMPLOIS_DE_TEMPS.findIndex(e=>e.id_classe == currentUiContext.currentIdClasseEmploiTemps &&
         e.id_jour==idTab[1]&&e.libelle==idTab[2]+"_"+idTab[3]&&e.id_matiere==matiereToDeleteProf.codeMatiere);
         console.log("empIndex: ",empIndex);
 
     if (emp.length>0){
+        console.log("gftrgrhr momomo: ");
         let empToUpdate = emp[0];
         // C'est un cours qui a été créé pendant la session courante on peut simplement le supprimer
         if(empToUpdate.modify.includes("c"))
@@ -1670,9 +1663,14 @@ function deleteEffectivelyMatiere(toDeleIndex){
             CURRENT_EMPLOIS_DE_TEMPS.splice(empIndex,1,empToUpdate)
             console.log("emploiDeTemps: ",CURRENT_EMPLOIS_DE_TEMPS);
         }
-    }   
+    }  
+    
+    CURRENT_DROPPED_MATIERE_LIST.splice(toDeleIndex,1);
+    document.getElementById(DropZoneId).remove(); 
+    clearProflist();
 
 }
+
 
 function deleteEffectivelyProfs(){
     var DropProfId, children, profDropZone;
@@ -1834,6 +1832,8 @@ function Palette(props) {
         CURRENT_DROPPED_MATIERE_LIST = currentUiContext.CURRENT_DROPPED_MATIERE_LIST;
         CURRENT_DROPPED_PROFS_LIST   = currentUiContext.CURRENT_DROPPED_PROFS_LIST;
         CURRENT_EMPLOIS_DE_TEMPS     = currentUiContext.emploiDeTemps;
+
+        //currentUiContext.setETDataChanged(true);
         
         console.log("CURRENT_DROPPED_MATIERE_LIST: ",CURRENT_DROPPED_MATIERE_LIST);
         console.log("CURRENT_DROPPED_PROFS_LIST: ",CURRENT_DROPPED_PROFS_LIST);
@@ -1888,7 +1888,7 @@ function Palette(props) {
         
         //Obtenir la taille de cette liste
         var countMatiere = selectedMatieres.length;
-        
+
         //On n'a pas encore trouve
         var PPExistIndex = -1;
         
@@ -1965,6 +1965,7 @@ function Palette(props) {
         var idClasse  = document.getElementById("selectClasse").value;
        
         if (countProfs >0) {
+
             //verifier s'il y a un prof principal dedans qui est tel que en le supprimant, 
             //il ne restera plus de profs.
             var listProf = [];
@@ -2467,7 +2468,7 @@ function LigneProfPrincipal(props) {
                         buttonStyle={getButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
                         btnClickHandler={UpdateEmploiDeTemps}
-                        disable={(currentUiContext.ETDataChanged==false)}
+                        //disable={(currentUiContext.ETDataChanged==false)}
                         // disable={(currentUiContext.CURRENT_DROPPED_MATIERE_LIST.length == 0)}
                     />
 
