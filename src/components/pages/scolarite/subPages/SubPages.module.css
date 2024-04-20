@@ -133,19 +133,24 @@
 
 
 .clotureStyle{
-min-height: 5vh !important;
-max-height: 5vh !important;
-font-size: 0.9vw;
-font-weight: 600;
-color:red;
+    min-height  : 5vh !important;
+    max-height  : 5vh !important;
+    font-size   : 0.9vw;
+    font-weight : 600;
+    color       :red;
+    min-width   : 15px !important;
+    margin-left : -1vw;
+    margin-right : 3vw;
 }
 
 .enCoursStyle{
-min-height: 5vh !important;
-max-height: 5vh !important;
-font-size: 0.9vw;
-font-weight: 600;
-color:rgba(7, 167, 33, 0.836);
+    min-height  : 5vh !important;
+    max-height  : 5vh !important;
+    font-size   : 0.9vw;
+    font-weight : 600;    
+    color       :rgba(7, 167, 33, 0.836);
+    min-width   : 15px !important;
+    margin-left : -1vw;
 }
 
 
@@ -1191,6 +1196,10 @@ font-size: 0.9vw;
 }
 
 .GridColumnStyle{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center   ;
     background-color: rgb(6, 83, 134);
     /*background-color: rgb(3, 48, 78);---pour tester la CNI*/
     color:white;
@@ -1199,6 +1208,8 @@ font-size: 0.9vw;
 
     font-size: 0.80vw;
 }
+
+
 
 
 .GridColumnStyleNC{

@@ -1372,7 +1372,7 @@ function AddClassMeeting(props) {
                                     {t("classe_cible")}: 
                                 </div>                    
                                 <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
-                                    <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'3vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
+                                    <input id="classe" type="text" className={classes.inputRowControl }  defaultValue={props.currentClasseLabel} style={{width:'5vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
                                     <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                                 </div>
                             </div>
