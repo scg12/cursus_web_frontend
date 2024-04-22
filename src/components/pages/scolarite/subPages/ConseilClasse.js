@@ -112,7 +112,7 @@ function ConseilClasse(props) {
 
   
     function getClassMeetingData(classId){
-        var listConseils = [];
+        var listConseils = []; CCA_CREATED = false;
         setModalOpen(5);
         axiosInstance.post(`list-conseil-classes/`, {
             id_classe: classId,
@@ -248,7 +248,7 @@ function ConseilClasse(props) {
     }
 
     const getListConseilClasse =(classeId,sousEtabId)=>{
-        var listConseils = [];
+        var listConseils = []; CCA_CREATED = false;
         axiosInstance.post(`list-conseil-classes/`, {
             id_classe: classeId,
             id_sousetab: sousEtabId
@@ -320,7 +320,6 @@ function ConseilClasse(props) {
     }
 
 
-
     function createLabelValueTable(tab){
         var resultTab = [];
         if(tab.length>0){
@@ -331,7 +330,8 @@ function ConseilClasse(props) {
         return resultTab;
     }
 
-     function createLabelValueTableWithUserS(tab, present, etat){
+    
+    function createLabelValueTableWithUserS(tab, present, etat){
         var resultTab = [];
         if(tab.length>0){
             tab.map((elt)=>{
@@ -402,7 +402,7 @@ const columnsFr = [
     {
         field: 'id',
         headerName: 'ID',
-        width: 130,
+        width: 20,
         hide:true,
         editable: false,
         headerClassName:classes.GridColumnStyle
@@ -411,7 +411,7 @@ const columnsFr = [
     {
         field: 'rang',
         headerName: 'N°',
-        width: 70,
+        width: 50,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
@@ -426,7 +426,7 @@ const columnsFr = [
 
     {
         field: 'heure_prevue',
-        headerName: 'HEURE PREVUE',
+        headerName: 'HEURE',
         width: 100,
         editable: false,
         headerClassName:classes.GridColumnStyle
@@ -435,7 +435,7 @@ const columnsFr = [
     {
         field: 'type_conseil',
         headerName: 'TYPE DE CONSEIL',
-        width: 120,
+        width: 130,
         editable: false,
         headerClassName:classes.GridColumnStyle
     },
@@ -477,17 +477,18 @@ const columnsFr = [
     },
 
     {
-        field: 'resume_general_decisions',
-        headerName: 'DECISION',
-        width: 200,
-        editable: false,
+        field          : 'resume_general_decisions',
+        headerName     : 'DECISION',
+        width          : 50,
+        editable       : false,
+        hide           : true,
         headerClassName:classes.GridColumnStyle
     },
 
     {
         field: 'status',
         headerName: 'ETAT',
-        width: 70,
+        width: 50,
         editable: false,
         hide:true,
         headerClassName:classes.GridColumnStyle
@@ -509,17 +510,9 @@ const columnsFr = [
         headerClassName:classes.GridColumnStyle
     },
 
-    /*{
-        field: 'heure_effective',
-        headerName: 'DATE EFFECTIVE',
-        width: 100,
-        editable: false,
-        headerClassName:classes.GridColumnStyle
-    },*/
-
     {
         field: 'Action',
-        headerName: '',
+        headerName: 'ACTION',
         width: 80,
         editable: false,
         headerClassName:classes.GridColumnStyle,
@@ -556,96 +549,97 @@ const columnsFr = [
 
     const columnsEn = [
         {
-            field: 'id',
-            headerName: 'ID',
-            width: 130,
-            hide:true,
-            editable: false,
+            field          :'id',
+            headerName     :'ID',
+            width          :50,
+            hide           :true,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'rang',
-            headerName: 'N°',
-            width: 70,
-            editable: false,
+            field          :'rang',
+            headerName     :'N°',
+            width          :50,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
            
         {
-            field: 'date_prevue',
-            headerName: 'MEETING DATE',
-            width: 100,
-            editable: false,
+            field          :'date_prevue',
+            headerName     :'MEETING DATE',
+            width          :100,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'heure_prevue',
-            headerName: 'MEETING HOUR',
-            width: 100,
-            editable: false,
+            field          :'heure_prevue',
+            headerName     :'HOUR',
+            width          :100,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'type_conseil',
-            headerName: 'MEETING PURPOSE',
-            width: 120,
-            editable: false,
+            field          :'type_conseil',
+            headerName     :'MEETING PURPOSE',
+            width          :130,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
 
         {
-            field: 'id_type_conseil',
-            headerName: 'MEETING PURPOSE',
-            width: 50,
-            editable: false,
-            hide:true,
+            field          :'id_type_conseil',
+            headerName     :'MEETING PURPOSE',
+            width          :50,
+            editable       :false,
+            hide           :true,
             headerClassName:classes.GridColumnStyle
         },
         
         {
-            field: 'periode',
-            headerName: 'PERIODE',
-            width: 100,
-            editable: false,
+            field          :'periode',
+            headerName     :'PERIODE',
+            width          :100,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
     
        
     
         {
-            field: 'nom',
-            headerName: 'HEAD TEACHER',
-            width: 180,
-            editable: false,
+            field          :'nom',
+            headerName     :'HEAD TEACHER',
+            width          :180,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'user_id',
-            headerName: 'PROF PRINCIPAL',
-            width: 50,
-            editable: false,
-            hide:true,
+            field          :'user_id',
+            headerName     :'PROF PRINCIPAL',
+            width          :50,
+            editable       :false,
+            hide           :true,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'resume_general_decisions',
-            headerName: 'DECISION',
-            width: 200,
-            editable: false,
+            field          :'resume_general_decisions',
+            headerName     :'DECISION',
+            width          :170,
+            editable       :false,
+            hide           :true,
             headerClassName:classes.GridColumnStyle
         },
     
         {
-            field: 'status',
-            headerName: 'STATUS',
-            width: 70,
-            editable: false,
-            hide:true,
+            field          :'status',
+            headerName     :'STATUS',
+            width          :50,
+            editable       :false,
+            hide           :true,
             headerClassName:classes.GridColumnStyle
         },
     
@@ -658,24 +652,16 @@ const columnsFr = [
         },
     
         {
-            field: 'date_effective',
-            headerName: 'EFFECTIVE DATE',
-            width: 120,
-            editable: false,
+            field          :'date_effective',
+            headerName     :'EFFECTIVE DATE',
+            width          :120,
+            editable       :false,
             headerClassName:classes.GridColumnStyle
         },
     
-        /*{
-            field: 'heure_effective',
-            headerName: 'DATE EFFECTIVE',
-            width: 100,
-            editable: false,
-            headerClassName:classes.GridColumnStyle
-        },*/
-    
         {
             field: 'Action',
-            headerName: '',
+            headerName: 'ACTION',
             width: 80,
             editable: false,
             headerClassName:classes.GridColumnStyle,
@@ -1501,7 +1487,9 @@ const columnsFr = [
                                 : (params.field==='etatLabel' && params.row.status==0) ? 
                                 classes.enCoursStyle 
                                 : (params.field==='type_conseil'|| params.field==='date_effective') ? 
-                                classes.gridRowStyleBOLD :  classes.gridRowStyle                                
+                                classes.gridRowStyleBOLD 
+                                : (params.field==='nom') ?
+                                  classes.GridColumnStyleStart : classes.gridRowStyle                             
                             }
                             onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{

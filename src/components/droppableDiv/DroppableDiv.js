@@ -87,7 +87,7 @@ function DroppableDiv(props){
         if(props.acceptType == 'matiere') {
             
             //On reactive le button enregistrer
-            currentUiContext.setETDataChanged(true);
+            //currentUiContext.setETDataChanged(true);
             
             jour      = dropZone[0];
             PeriodDeb = dropZone[1];
@@ -147,7 +147,7 @@ function DroppableDiv(props){
                 let profId;
 
                 //On reactive le button enregistrer
-                currentUiContext.setETDataChanged(true); 
+                //currentUiContext.setETDataChanged(true); 
                 
                 jour      = dropZone[1];
                 PeriodDeb = dropZone[2];
