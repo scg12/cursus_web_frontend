@@ -449,11 +449,11 @@ function HeadAndNav(props) {
 
                 {(currentAppContext.infoUser.photo_url=="")?
                     <div className={classes.langButton}>
-                        < img src="images/profile.png" className={classes.widgetIcon} alt="my image"/>  
+                        < img id="image_profile" src="images/profile.png" className={classes.widgetIcon} alt="my image"/>  
                     </div>
                     :
                     <div className={classes.langButton}>
-                        < img src={currentAppContext.infoUser.photo_url}  className={classes.widgetIcon} alt="my image" />  
+                        < img id="image_profile" src={currentAppContext.infoUser.photo_url}  className={classes.widgetIcon} alt="my image" />  
                     </div>
                 }
                

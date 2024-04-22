@@ -320,7 +320,6 @@ function ConseilClasse(props) {
     }
 
 
-
     function createLabelValueTable(tab){
         var resultTab = [];
         if(tab.length>0){
@@ -331,7 +330,8 @@ function ConseilClasse(props) {
         return resultTab;
     }
 
-     function createLabelValueTableWithUserS(tab, present, etat){
+    
+    function createLabelValueTableWithUserS(tab, present, etat){
         var resultTab = [];
         if(tab.length>0){
             tab.map((elt)=>{

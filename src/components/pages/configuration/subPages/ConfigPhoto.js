@@ -102,8 +102,15 @@ function ConfigPhoto(props) {
                           
         }).then((res)=>{
             console.log(res.data);
+
+            var info_user       = {...currentAppContext.infoUser};
+            info_user.photo_url =  fileContent;
+
             currentUiContext.updatePhotoUrl(fileContent);
-            errorDiv.className = classes.formSuccessMsg;
+            document.getElementById("image_profile").src = fileContent;
+            //currentAppContext.setInfoUser(info_user);
+
+            errorDiv.className   = classes.formSuccessMsg;
             errorDiv.textContent = t("success_modif"); 
             
             //Retourner le statut de l'action            

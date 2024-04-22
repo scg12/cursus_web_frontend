@@ -1,5 +1,6 @@
                      
-{   "from_the"                        : "From the",
+{   "no_participant_name"             : "You must select a participant name to add and check it befor continue!",
+    "from_the"                        : "From the",
     "student_presence_for_the_course" : "Student's presence to the course",
     "note_recap"                  : "Student's notes summary for",
     "new_authorisation"           : "New Exit Permission",

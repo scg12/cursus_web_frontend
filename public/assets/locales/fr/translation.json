@@ -1,4 +1,5 @@
 {   
+    "no_participant_name"             : "Vous devez selectionner et valider un participant à ajouter avant de continuer!",
     "from_the"                        : "Du",
     "student_presence_for_the_course" : "presence des eleves pour le cours",
     "note_recap"                  : "Recapitulatif des note pour la",

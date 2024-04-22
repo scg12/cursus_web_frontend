@@ -676,10 +676,10 @@ function AddClassMeeting(props) {
             var result = tabProfsPresents.find((elt2)=>elt2.value == elt1.value);
             if(result!= undefined){
                 elt1.present = true;
-                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:result.present, etat:result.etat});
+                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:elt1.present, etat:(props.formMode == "consult") ? 1:0});
             } else {
                 elt1.present = false;
-                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:false, etat:0});
+                tempTab.push({value:elt1.value, label:elt1.label, role:elt1.role, present:false, etat:(props.formMode == "consult") ? 1:0});
             }
         })
 
@@ -757,6 +757,13 @@ function AddClassMeeting(props) {
 
         if(props.formMode == "creation" && MEETING.type_conseilId=="annuel" && props.cca_created){
             errorMsg = t("annual_meeting_already_created");
+            return errorMsg;
+        }
+
+        var index = optMembres.findIndex((elt)=>elt.value==0);
+        if (index >=0){
+            console.log("participant",participant_data);
+            errorMsg = t("no_participant_name");
             return errorMsg;
         }
 
@@ -933,7 +940,9 @@ function AddClassMeeting(props) {
         var indexParticipant = optAutresMembres.findIndex((participant)=>participant.value==SELECTED_PARTICIPANT)
         
         participant_data.push({value:SELECTED_PARTICIPANT, label:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
+
         setOptMembres(participant_data);
+        setTabProfsPresents(participant_data);
 
         participant_data = [...optAutresMembres];
         participant_data.splice(indexParticipant,1);
@@ -1276,10 +1285,9 @@ function AddClassMeeting(props) {
                 <div style={{width:'17vw'}}>               
                     {props.nom}                   
                 </div>
-               
                 <div style={{display:'flex',  flexDirection:'row', alignItems:'center'}}> 
                     <input type='checkbox' disabled={etats[props.rowIndex]==1} style={{width:'1vw', height:'2vh'}} checked={presents[props.rowIndex]==true}  id={props.rowIndex} name ={'Present'+props.rowIndex} onChange={managePresent}/>                    
-                </div>   
+                </div>
                            
             </div>
         );
@@ -1667,7 +1675,7 @@ function AddClassMeeting(props) {
 
                         <div className={classes.inputRowLeft}> 
 
-                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height:'20vh', marginLeft:'-2vw'}}>
+                            <div style={{display:'flex', flexDirection:'column', justifyContent:'flex-start', height: isBilan==true ? '20vh':'fit-content', marginLeft:'-2vw', }}>
                                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', fontSize:'1vw', fontWeight:'bold', marginBottom:'0vh', marginLeft:'0vw', width:'97%'}}>
                                     <FormPuce menuItemId ='1' 
                                         isSimple={true} 
@@ -1683,7 +1691,7 @@ function AddClassMeeting(props) {
                                                    
                                 </div>
 
-                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height:'20vh', minWidth:'40vw', overflowY:'scroll', justifyContent:'flex-start'}}>
+                                <div style={{display:'flex', flexDirection:'column', marginTop:'0.7vh', marginLeft:'2vw', height: isBilan==true ? '20vh':'fit-content', minWidth:'40vw', overflowY:'scroll', justifyContent:'flex-start'}}>
                                     <LignePresentsHeader/>
                                     {(tabProfsPresents||[]).map((participant, index)=>{
                                         return <LignePresent id={participant.value} rowIndex={index} nom={participant.label} />
