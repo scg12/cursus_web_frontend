@@ -306,6 +306,7 @@ function AddFicheProgess(props) {
     function downloadHandler(e){
         if(window.location.hostname==="localhost" || window.location.hostname==="127.0.0.1"){
             var downloadUrl = 'http://localhost:3000/fiches/FicheProgression.xlsx';
+            // var downloadUrl = 'http://localhost:3000/fiches/FicheProgression'+'___'+currentAppContext.idUser+'___'+cur_coursId;
         } else var downloadUrl = 'http://192.168.43.99:3000/fiches/FicheProgression.xlsx';
 
 
@@ -405,6 +406,8 @@ function AddFicheProgess(props) {
         form_data.append('file_type','fiche-progression' );
         form_data.append('timestamp','' );
         form_data.append('file',cur_fileToUpload);
+        form_data.append('id_cours',cur_coursId);
+        form_data.append('id_user',currentAppContext.idUser);
 
         axios.post(`http://127.0.0.1:8000/api/upload-fiche-progression/`,form_data, {
             header:{
