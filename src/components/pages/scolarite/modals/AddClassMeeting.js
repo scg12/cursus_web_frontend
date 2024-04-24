@@ -255,9 +255,10 @@ function AddClassMeeting(props) {
 
             
             MEETING.type_conseil    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
+            MEETING.type_conseilId  = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);  //Mettre le type de conseil
             MEETING.alerter_membres = true;
             
-            MEETING_OBJET_ID    = putToEmptyStringIfUndefined(currentUiContext.formInputs[4]);
+            MEETING_OBJET_ID    = putToEmptyStringIfUndefined(currentUiContext.formInputs[3]);
             MEETING_OBJET_LABEL =  MEETING.type_conseil;
             
             //----- 2ieme partie du formulaire1 ----- 
@@ -567,24 +568,24 @@ function AddClassMeeting(props) {
         if(props.formMode == "creation") MEETING.id_conseil_classe = -1;             
         else MEETING.id_conseil_classe = currentUiContext.formInputs[0]; 
             
-        MEETING.id_sousetab    =  currentAppContext.currentEtab;
+        MEETING.id_sousetab        =  currentAppContext.currentEtab;
 
-        MEETING.classeId       =  props.currentClasseId; 
-        MEETING.classeLabel    =  props.currentClasseLabel;
+        MEETING.classeId           =  props.currentClasseId; 
+        MEETING.classeLabel        =  props.currentClasseLabel;
 
         MEETING.currentPpUserId    = props.currentPpUserId;
         MEETING.profPrincipalId    = props.currentPpId; 
         MEETING.profPrincipalLabel = props.currentPpLabel;
             
             
-        MEETING.type_conseil    = MEETING_OBJET_LABEL;  //Mettre le type de conseil
-        MEETING.type_conseilId  = MEETING_OBJET_ID;     //Mettre l'ID type conseil
+        MEETING.type_conseil       = MEETING_OBJET_LABEL;  //Mettre le type de conseil
+        MEETING.type_conseilId     = MEETING_OBJET_ID;     //Mettre l'ID type conseil
             
-        MEETING.id_periode      = PERIODE_ID            //Mettre la periode   
-        MEETING.periode         = PERIODE_LABEL;  
-              
+        MEETING.id_periode         = PERIODE_ID            //Mettre la periode   
+        MEETING.periode            = PERIODE_LABEL;               
             
-        MEETING.alerter_membres = true;
+        MEETING.alerter_membres    = true;
+
         if (props.formMode != 'consult'){
             if(etape==1){
                 dateDeb  = document.getElementById('jour').value+'/'+ document.getElementById('mois').value + '/' + document.getElementById('anne').value;

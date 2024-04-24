@@ -803,7 +803,7 @@ function AddDisciplinMeeting(props) {
 
         //Test de posteriorite a la date d'aujourd'hui
         if(new Date(changeDateIntoMMJJAAAA(MEETING.date)+' 23:59:59') < new Date()) {
-            errorMsg = t("exitdate_lower_than_today_error");
+            errorMsg = t("meeting_date_lower_than_today_error");
             return errorMsg;
         }
 

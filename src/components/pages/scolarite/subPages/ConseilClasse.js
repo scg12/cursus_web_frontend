@@ -1215,7 +1215,8 @@ const columnsFr = [
        
 
         if(CURRENT_CLASSE_ID != undefined){
-            if(CURRENT_MEETING.type_conseil=='annuel'){
+            if(CURRENT_MEETING.type_conseilId=='annuel'){
+                console.log("ccAnnuel pododoo")
                 infosEleves      = [...CURRENT_MEETING.infoGeneralesEleves];
                 elevesDecisions  = [...CURRENT_MEETING.listDecisions];
                 elevesPromotions = [...CURRENT_MEETING.listPromotions];
@@ -1264,7 +1265,7 @@ const columnsFr = [
                 pageTitle           : "Proces verbal du conseil de classe de la classe de  " + CURRENT_CLASSE_LABEL,
                 tableHeaderModel    : [t('form_nom'), t('form_dateNaiss'), t("form_lieuNaiss"), t('moyenne'), t("redoublant"), t("decision_conseil"), t("promotion")],
                 
-                typeMeeting         : CURRENT_MEETING.type_conseil,
+                typeMeeting         : CURRENT_MEETING.type_conseilId,
                 compteRendu         : CURRENT_MEETING.resume_general_decisions,
                
                 eleveGeneralInfos   : [...CURRENT_MEETING.infoGeneralesEleves], 
