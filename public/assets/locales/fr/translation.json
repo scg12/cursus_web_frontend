@@ -1,7 +1,8 @@
-{   
+{   "no_participant_added"            : "Vous n'avez pas ajouté de participant pour ce conseil de discipline!",
+    "no_eleve_name"                   : "Vous devez selectionner et valider un élèves et sa sanction  avant de continuer!",
     "no_participant_name"             : "Vous devez selectionner et valider un participant à ajouter avant de continuer!",
     "from_the"                        : "Du",
-    "student_presence_for_the_course" : "presence des eleves pour le cours",
+    "student_presence_for_the_course" : "présence des élèves pour le cours",
     "note_recap"                  : "Recapitulatif des note pour la",
     "new_authorisation"           : "Nouvelle Autorisation",
     "debut"                       : "Début",

@@ -807,10 +807,33 @@ function AddDisciplinMeeting(props) {
             return errorMsg;
         }
 
-        if(MEETING.id_eleves == "0"){
+        if(tabElevesMotifs.length<=0){
             errorMsg= t("student_not_selected");
             return errorMsg;
         }
+
+        index = tabElevesMotifs.findIndex((elt)=>elt.id==0);
+        if (index >=0){
+            console.log("participant",tabElevesMotifs);
+            errorMsg = t("no_eleve_name");
+            return errorMsg;
+        }
+
+        if(optMembres.length<=0){
+            errorMsg = t("no_participant_added");
+            return errorMsg;
+        }
+
+        var index = optMembres.findIndex((elt)=>elt.value==0);
+        if (index >=0){
+            console.log("participant",participant_data);
+            errorMsg = t("no_participant_name");
+            return errorMsg;
+        }
+
+      
+
+        
     
         return errorMsg;  
     }
@@ -940,6 +963,8 @@ function AddDisciplinMeeting(props) {
         participant_data.push({value:SELECTED_PARTICIPANT, label:nomParticipant, role:SELECTED_ROLE, present:true, etat:0});
         console.log("participant",participant_data);
         setOptMembres(participant_data);
+        //----to loook
+        setTabProfsPresents(participant_data);
 
         participant_data = [...optAutresMembres];
         participant_data.splice(indexParticipant,1);
@@ -1521,7 +1546,7 @@ function AddDisciplinMeeting(props) {
                                     {t("classe_cible")}:
                                 </div>                    
                                 <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
-                                    <input id="classe" type="text"    defaultValue={props.currentClasseLabel} style={{width:'3vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
+                                    <input id="classe" type="text"    defaultValue={props.currentClasseLabel} style={{width:'5vw', textAlign:'center', height:'1.3vw', fontSize:'1.3vw', marginLeft:'0vw', color:'#898585'}} disabled={true}/>
                                     <input id="classe" type="hidden"  defaultValue={props.currentClasseId}/>
                                 </div>
                             </div>
@@ -1538,7 +1563,7 @@ function AddDisciplinMeeting(props) {
                                     </div>  
                                     :
                                     <div>                                     
-                                        <select id='convoquePar' defaultValue={MEETING.responsableId} onChange={convocateurChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw', fontSize:'1vw',width:'15vw'}}>
+                                        <select id='convoquePar' defaultValue={MEETING.responsableId} onChange={convocateurChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.97vw', fontSize:'1vw',width:'15vw'}}>
                                             {(optConvocateurs||[]).map((option)=> {
                                                 return(
                                                     <option  value={option.value}>{option.label}</option>

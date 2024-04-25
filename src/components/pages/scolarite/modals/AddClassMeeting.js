@@ -717,7 +717,7 @@ function AddClassMeeting(props) {
         var meeting_min = MEETING.heure.split(':')[1];
        
         if(meeting_hour[0]=='0') meeting_hour = meeting_hour[1];
-        if(meeting_min[0]=='0')  meeting_min  = meeting_min[1];
+        if(meeting_min[0] =='0')  meeting_min  = meeting_min[1];
        
         if(MEETING.date.length == 0) {
             errorMsg=t("enter_meeting_date");
@@ -758,6 +758,11 @@ function AddClassMeeting(props) {
 
         if(props.formMode == "creation" && MEETING.type_conseilId=="annuel" && props.cca_created){
             errorMsg = t("annual_meeting_already_created");
+            return errorMsg;
+        }
+
+        if(optMembres.length<=0){
+            errorMsg = t("no_participant_added");
             return errorMsg;
         }
 

@@ -1,5 +1,7 @@
                      
-{   "no_participant_name"             : "You must select a participant name to add and check it befor continue!",
+{   "no_participant_added"            : "No participant have been added to this meeting!",
+    "no_eleve_name"                   : "You must select and check student name and convocation reason before continue!",
+    "no_participant_name"             : "You must select a participant name to add and check it before continue!",
     "from_the"                        : "From the",
     "student_presence_for_the_course" : "Student's presence to the course",
     "note_recap"                  : "Student's notes summary for",
