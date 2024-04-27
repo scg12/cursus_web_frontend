@@ -1,4 +1,8 @@
-{   "no_participant_added"            : "Vous n'avez pas ajouté de participant pour ce conseil de discipline!",
+{   
+    "every_day_at"                    : "Tous les jours à",
+    "manual_synchro"                  : "Synchronisation Manuelle",
+    "automatic_synchro"               : "Synchronisation Automatique",
+    "no_participant_added"            : "Vous n'avez pas ajouté de participant pour ce conseil de discipline!",
     "no_eleve_name"                   : "Vous devez selectionner et valider un élèves et sa sanction  avant de continuer!",
     "no_participant_name"             : "Vous devez selectionner et valider un participant à ajouter avant de continuer!",
     "from_the"                        : "Du",
@@ -123,7 +127,7 @@
     "destinataire_M" : "DESTINATAIRE",
     "destinataire"   : "Destinataire",
     "data_synchronisation_M" : "Synchronisation des Données",
-    "connect_to_internet"    : "Tester Connexion  à Internet",
+    "connect_to_internet"    : "Test Internet",
     "start_msg_transfer"     : "Lancer l'envoi des Messages",
     "enter_exam_name":"Veuillez entrez le nom de l'Examen!",
     "no_classes_selected":"Aucune classe n'a été associée à cet Examen !",

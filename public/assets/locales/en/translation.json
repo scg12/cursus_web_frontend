@@ -1,5 +1,9 @@
                      
-{   "no_participant_added"            : "No participant have been added to this meeting!",
+{   
+    "every_day_at"                    : "Every Day At",
+    "manual_synchro"                  : "Synchronisation Manuelle",
+    "automatic_synchro"               : "Automatic Synchronisation",
+    "no_participant_added"            : "No participant have been added to this meeting!",
     "no_eleve_name"                   : "You must select and check student name and convocation reason before continue!",
     "no_participant_name"             : "You must select a participant name to add and check it before continue!",
     "from_the"                        : "From the",
@@ -123,7 +127,7 @@
     "destinataire_M" : "MESSAGE RECEIVER",
     "destinataire"   : "Destinataire",
     "data_synchronisation_M" : "Data Synchronisation",
-    "connect_to_internet"    : "Test Connection to Internet",
+    "connect_to_internet"    : "Internet Test",
     "start_msg_transfer"     : "Start Messages Transfer",
     "enter_exam_name":"Please enter Exam name!",
     "no_classes_selected":"No classes has been associated to that Exam!",

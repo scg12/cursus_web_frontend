@@ -31,13 +31,14 @@ function SynchroData(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
     const selectedTheme = currentUiContext.theme;
-    const [fileSelected, setFileSelected] = useState(false)
-    const [sequenceActivated, setSequenceActivated] = useState(false);
-    const [checkDisabled, setCheckDisabled] = useState(true);
+    const [fileSelected, setFileSelected]               = useState(false)
+    const [sequenceActivated, setSequenceActivated]     = useState(false);
+    const [checkDisabled, setCheckDisabled]             = useState(true);
     const [isInternetAvailable, setIsInternetAvailable] = useState(false);
-    const [percent, setPercent] = useState(0);
-    const [currentAction, setCurrentAction] = useState("");
-    const [pgBarVisible, setPgBarVisible]   = useState(false)
+    const [percent, setPercent]                         = useState(0);
+    const [currentAction, setCurrentAction]             = useState("");
+    const [pgBarVisible, setPgBarVisible]               = useState(false);
+    const [isManualSychro, setIsManualSynchro]          = useState(false)
     
     
    
@@ -349,6 +350,22 @@ function SynchroData(props) {
         setIsValid(true);
     }
 
+    function moveOnMax(e,currentField, nextField){
+        if(nextField!=null){
+            e = e || window.event;
+            if(e.keyCode != 9){
+                if(currentField.value.length >= currentField.maxLength){
+                    nextField.focus();
+                }
+            }
+        }
+     
+    }
+
+    function updateHeureSynchro(){
+
+    }
+
     
     /************************************ JSX Code ************************************/
 
@@ -381,35 +398,54 @@ function SynchroData(props) {
                 />                 
             }
             
-            <div className={classes.etape} style={{marginTop:"-1vh"}}>                   
-    
-                <div  style={{ display:"flex", flexDirection: "row", justifyContent:"space-around", alignItems:"center", width:"100%", height:"80%"}}> 
-                    <CustomButton
-                        btnText={t('connect_to_internet')}
-                        buttonStyle={getGridButtonStyle()}
-                        btnTextStyle = {classes.btnTextStyleP}
-                        style={{width:"15.7vw", height:"3vw", borderRadius:"0.7vw"}}
-                        hasIconImg= {true}
-                        imgSrc='images/connecttoWeb.png'
-                        imgStyle = {classes.grdBtnImgStylePrim}
-                        btnClickHandler={testInternetConnection}
-                        // disable={(isValid) ? !isValid :!fileSelected}
-                    />
+            <div className={classes.etape} style={{marginTop:"-8vh"}}>                 
+               
+                <div  style={{ display:"flex", flexDirection: "row", justifyContent:"flex-start", alignItems:"center", width:"100%", height:"80%", marginLeft:"1vw"}}> 
+                    <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={isManualSychro==false}  value={'presents'} name='ficheProg' onClick={()=>{isManualSychro? setIsManualSynchro(false):setIsManualSynchro(true)}}/>
+                    <label style={{color:'black',  fontWeight:"bold", fontSize:"1vw", marginRight:"0.3vw", marginLeft:"0.3vw", marginTop:"0vw"}}>{t('automatic_synchro')} </label>
 
-                    <CustomButton
-                        btnText={t('start_msg_transfer')}
-                        buttonStyle={getGridButtonStyle()}
-                        btnTextStyle = {classes.btnTextStyleP}
-                        style={{width:"15.7vw", height:"3vw", borderRadius:"0.7vw", /*paddingLeft:"1vw"*/}}
-                        hasIconImg= {true}
-                        imgSrc='images/SmsP.png'
-                        imgStyle = {classes.grdBtnImgStylePrim}
-                        //btnClickHandler={props.cancelHandler}
-                        btnClickHandler={envoyerMessages}
-                        disable={(isInternetAvailable==false) ? true:false}
-                    />
-                    
-                </div>    
+                    <input type='radio' style={{width:'1.7vw', height:'2.3vh', marginLeft:"3.7vw"}} checked={isManualSychro==true}  value={'presents'} name='ficheProg' onClick={()=>{isManualSychro? setIsManualSynchro(false):setIsManualSynchro(true);}}/>
+                    <label style={{color:'black', fontWeight:"bold", fontSize:"1vw", marginLeft:'0.13vw', marginRight:"1vw",marginTop:"0vw" }}>{t('manual_synchro')}</label>
+                </div>
+                {/* <div style={{flexDirection: "row", justifyContent:"center", alignItems:"center",marginTop:"-8vh", marginBottom:"2vh", width:"90%", height:"0%", borderBottomStyle:"solid", borderBottomWidth:"2px", borderBottomColor:"black"}}></div> */}
+                {isManualSychro ?
+                    <div  style={{ display:"flex", flexDirection: "row", justifyContent:"flex-start", alignItems:"center", width:"100%", marginLeft:"2vw", marginTop:"-5vh"}}> 
+                        <CustomButton
+                            btnText={t('start_msg_transfer')}
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.btnTextStyleP}
+                            style={{width:"15.7vw", height:"3vw", borderRadius:"0.7vw", /*paddingLeft:"1vw"*/}}
+                            hasIconImg= {true}
+                            imgSrc='images/SmsP.png'
+                            imgStyle = {classes.grdBtnImgStylePrim}
+                            //btnClickHandler={props.cancelHandler}
+                            btnClickHandler={envoyerMessages}
+                            disable={(isInternetAvailable==false) ? true:false}
+                        />
+                    </div>
+                    :
+                    <div  style={{ display:"flex", flexDirection: "row", justifyContent:"flex-start", alignItems:"center", width:"100%", marginLeft:"2vw",marginTop:"-5vh"}}> 
+                        <div className={classes.inputRowLabelP} style={{fontWeight:570, marginRight:'2vw'}}>
+                            {t("every_day_at")} :  
+                        </div>
+
+                        <div style ={{display:'flex', flexDirection:'row'}}> 
+                            <input id="heure"  type="text"  Placeholder='17'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("heure"), document.getElementById("min"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.3vw', height:'1.3vw', fontSize:'1vw', marginLeft:'-7vw'}} /><b>h</b>
+                            <input id="min"  type="text"    Placeholder='00'   onKeyUp={(e)=>{moveOnMax(e,document.getElementById("min"), document.getElementById("objet"))}}     maxLength={2}   className={classes.inputRowControl }  style={{width:'1.7vw', height:'1.3vw', fontSize:'1vw', marginLeft:'0vw'}}  /><b>min</b>
+                        </div>
+
+                        <CustomButton
+                            btnText={t('valider')}
+                            buttonStyle={getGridButtonStyle()}
+                            style={{marginLeft:"1vw", width:"4.7vw", height:"1.7vw", borderRadius:"0.7vw", /*paddingLeft:"1vw"*/}}
+                            btnTextStyle = {classes.btnTextStyleP}
+                            btnClickHandler={updateHeureSynchro}
+                        /> 
+                    </div>
+
+                }
+
+
 
                 {pgBarVisible &&                
                     <ProgressBar 
@@ -449,11 +485,24 @@ function SynchroData(props) {
                     disable={(isValid) ? !isValid :!fileSelected}
                 /> */}
 
+                    <CustomButton
+                        btnText={t('connect_to_internet')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyleP}
+                        style={{width:"7.7vw", height:"2vw", borderRadius:"0.3vw"}}
+                        hasIconImg= {true}
+                        imgSrc='images/connecttoWeb.png'
+                        imgStyle = {classes.grdBtnImgStylePrim}
+                        btnClickHandler={testInternetConnection}
+                        // disable={(isValid) ? !isValid :!fileSelected}
+                    />
+
                 <CustomButton
                     btnText={t('cancel')}
                     buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
+                    btnTextStyle = {classes.btnTextStyleP}
                     btnClickHandler={props.cancelHandler}
+                    style={{width:"7.7vw", height:"2vw", borderRadius:"0.3vw"}}
                 />
                 
             </div>
