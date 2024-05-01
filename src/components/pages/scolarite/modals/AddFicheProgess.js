@@ -497,7 +497,7 @@ function AddFicheProgess(props) {
                                             
                                         <div style={{marginBottom:'1.3vh', marginLeft:'-5.7vw'}}> 
                                             
-                                            <select id='optClasse' defaultValue={1} onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'1.73rem',width:'12vw'}}>
+                                            <select id='optClasse' defaultValue={1} onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', /*height:'1.73rem',*/width:'12vw'}}>
                                                 {(optClasse||[]).map((option)=> {
                                                     return(
                                                         <option  value={option.value}>{option.label}</option>
@@ -512,7 +512,7 @@ function AddFicheProgess(props) {
                                         
                                         <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
                                             
-                                            <select id='optCours' defaultValue={1} onChange={coursChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-5.7vw', height:'1.73rem',width:'15vw'}}>
+                                            <select id='optCours' defaultValue={1} onChange={coursChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-5.7vw', /*height:'1.73rem',*/ width:'15vw'}}>
                                                 {(optCours||[]).map((option)=> {
                                                     return(
                                                         <option  value={option.value}>{option.label}</option>

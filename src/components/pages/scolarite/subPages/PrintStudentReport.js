@@ -285,7 +285,7 @@ function PrintStudentReport(props) {
 
                 ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs, true);
                
-                console.log("eleves_data",ELEVES_C_TO_PRINT);                
+                console.log("eleves_data",ELEVES_C_TO_PRINT,ELEVES_DATA);                
                 ELEVES_CL   = formatSeqList(ELEVES_C_TO_PRINT, studentList);
                 setGridRowsCL(ELEVES_CL);
 
@@ -322,7 +322,7 @@ function PrintStudentReport(props) {
 
                 ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs, true);
                
-                console.log("eleves_data",ELEVES_C_TO_PRINT);                
+                console.log("eleves_data",ELEVES_C_TO_PRINT,ELEVES_DATA);                
                 ELEVES_CL   = formatTrimList(ELEVES_C_TO_PRINT, studentList);
                 setGridRowsCL(ELEVES_CL);
 
@@ -359,7 +359,7 @@ function PrintStudentReport(props) {
 
                 ELEVES_C_TO_PRINT = createBulletinToPrintData(typeBulletin, ELEVES_DATA, listMatiereEtProfs, true);
                
-                console.log("eleves_data",ELEVES_C_TO_PRINT);                
+                console.log("eleves_data",ELEVES_C_TO_PRINT,ELEVES_DATA);                
                 ELEVES_CL   = formatAnnualList(ELEVES_C_TO_PRINT, studentList);
                 setGridRowsCL(ELEVES_CL);
 

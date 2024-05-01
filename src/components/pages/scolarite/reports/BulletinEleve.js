@@ -86,9 +86,10 @@ function BulletinEleve(props) {
     const EleveGenInfo = (props) =>{
         return(
             <View style={styles.header3}>
-                <View style={styles.header3_3}>
+                <Image style={styles.header3_3} src={props.eleveEntete.photo_url.length>0? props.eleveEntete.photo_url :'images/photo4Fois4P.png'}/> 
+                {/* <View style={styles.header3_3}>
                     <Text>Photo</Text>
-                </View>
+                </View> */}
             
                 <View style={styles.header3_1}>                   
                     <View style={{textAlign:"left",marginLeft:"5px"}}>

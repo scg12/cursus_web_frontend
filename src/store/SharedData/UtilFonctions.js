@@ -167,6 +167,11 @@ export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elev
                 elvDataSize   = resultatElev.length;
                 resultatElev  = resultatElev.splice(1,elvDataSize-1);
                 resultatElev.push(elv.absences+"&"+elv.sanctions);
+                
+                if(elv.photo_url!=undefined)
+                    resultatElev.push(elv.photo_url);
+                else resultatElev.push("");
+                
                 ElevesInfo.push(resultatElev)
             });
         } else {
@@ -175,6 +180,11 @@ export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elev
                 elvDataSize   = resultatElev.length;
                 resultatElev  = resultatElev.splice(1,elvDataSize-1);
                 resultatElev.push(elv.absences+"&"+elv.sanctions);
+                
+                if(elv.photo_url!=undefined)
+                    resultatElev.push(elv.photo_url);
+                else resultatElev.push("");
+                
                 ElevesInfo.push(resultatElev)
             });
         } 
@@ -202,9 +212,10 @@ export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elev
                     var ligne=0;
                     
                     eleve_data={};
-                    console.log("ligne courante", currentElvData[ligne]);
+                    console.log("ligne courante", currentElvData);
                     //construction de l'entete de l'eleve
                     eleve_data.entete = {};
+                    
                     eleve_data.entete.nom       = currentElvData[ligne].split("²²")[0];
                     eleve_data.entete.prenom    = currentElvData[ligne].split("²²")[1];
                     eleve_data.entete.matricule = currentElvData[ligne].split("²²")[2];
@@ -212,6 +223,11 @@ export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elev
                     eleve_data.entete.redouble  = currentElvData[ligne].split("²²")[4];
                     eleve_data.entete.dateNaiss = currentElvData[ligne].split("²²")[5];
                     eleve_data.entete.lieuNaiss = currentElvData[ligne].split("²²")[6];
+
+                    //Photo de l'eleve 01/05/2024
+                    eleve_data.entete.photo_url = currentElvData[ligne].split("²²")[7]==undefined ?"" : currentElvData[ligne].split("²²")[7];
+
+                   
 
                     //construction des notes de l'eleve par groupes
                     eleve_data.groupesInfos = []; 
@@ -311,6 +327,9 @@ export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elev
                     eleve_data.entete.redouble  = currentElvData[ligne].split("²²")[4];
                     eleve_data.entete.dateNaiss = currentElvData[ligne].split("²²")[5];
                     eleve_data.entete.lieuNaiss = currentElvData[ligne].split("²²")[6];
+
+                    //Photo de l'eleve 01/05/2024
+                    eleve_data.entete.photo_url = currentElvData[ligne].split("²²")[7]==undefined ?"" : currentElvData[ligne].split("²²")[7];
 
                     //construction des notes de l'eleve par groupes
                     eleve_data.groupesInfos = []; 
@@ -416,6 +435,9 @@ export function createBulletinToPrintData(typeBulletin, eleveToPrintData, /*elev
                     eleve_data.entete.redouble  = currentElvData[ligne].split("²²")[4];
                     eleve_data.entete.dateNaiss = currentElvData[ligne].split("²²")[5];
                     eleve_data.entete.lieuNaiss = currentElvData[ligne].split("²²")[6];
+
+                    //Photo de l'eleve 01/05/2024
+                    eleve_data.entete.photo_url = currentElvData[ligne].split("²²")[7]==undefined ?"" : currentElvData[ligne].split("²²")[7];
 
                     //construction des notes de l'eleve par groupes
                     eleve_data.groupesInfos = []; 

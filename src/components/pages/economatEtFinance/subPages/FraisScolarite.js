@@ -453,22 +453,51 @@ const columnsFr = [
     }
 
     function consultRowData(row){
-        var inputs=[];
-       
-        inputs[0]= row.nom;
-        inputs[1]= row.prenom;
-        inputs[3]= row.matricule;
-        inputs[4]= row.montant;
-        inputs[2]= row.id;
-        inputs[5]= CURRENT_CLASSE_ID;
-        inputs[6]= type_payements;
-        inputs[7]= montant_total_a_payer;
-        inputs[8]= row.dates_payements;
-        inputs[9]= row.montants;
-        inputs[10]= CURRENT_CLASSE_LABEL;
+        console.log(type_payements)
+        var inputs   = [];
+        var tranches = [];
+        var tranche  = {};
+        var recap    = {};
 
-     
-        currentUiContext.setFormInputs(inputs)
+        var totalVerse   = 0;
+        var totalAttendu = 0;
+
+        type_payements.map((elt, index)=>{
+            tranche  = {};
+            tranche.id             =  elt.id;
+            tranche.libelle        =  elt.libelle;
+            tranche.date_deb       =  elt.date_deb;
+            tranche.date_fin       =  elt.date_fin;
+            tranche.montantVerse   =  row.montant_par_types.split('_')[index];
+            tranche.montantAttendu =  elt.montant;
+            tranches.push(tranche); 
+            totalVerse   += parseInt(tranche.montantVerse);
+            totalAttendu +=  parseInt(tranche.montantAttendu); 
+        });
+
+        recap.montantVerse   = totalVerse;
+        recap.montantAttendu = totalAttendu;
+        recap.montantRestant = totalAttendu-totalVerse;
+
+        inputs[0] = row.nom;
+        inputs[1] = row.prenom;
+        inputs[3] = row.matricule;
+        inputs[4] = row.montant;
+        inputs[2] = row.id;
+        inputs[5] = CURRENT_CLASSE_ID;
+        inputs[6] = type_payements;
+        inputs[7] = montant_total_a_payer;
+        inputs[8] = row.dates_payements;
+        inputs[9] = row.montants;
+        inputs[10]= CURRENT_CLASSE_LABEL;
+        inputs[11]= row.photoUrl;
+        inputs[12]= row.redouble;
+        inputs[13]= [...tranches];
+        inputs[14]= {...recap};
+        inputs[15]= row.age;
+        
+        currentUiContext.setFormInputs(inputs);
+        console.log(row);
         setModalOpen(3);
 
     }

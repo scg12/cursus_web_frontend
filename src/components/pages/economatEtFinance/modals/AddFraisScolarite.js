@@ -402,7 +402,7 @@ function AddFraisScolarite(props) {
                 :null  
             }           
             
-            <div className={classes.buttonRow} style={{alignSelf:'center', width:'27vw'}}>
+            <div className={classes.buttonRow} style={{alignSelf:'center', justifyContent: (props.formMode =='consult' && listing_dates_payements.length > 0 && listing_dates_payements[0]=="") ? "center":"space-between", width:'27vw'}}>
                 <CustomButton
                     btnText={t('cancel')} 
                     buttonStyle={getButtonStyle()}
@@ -410,22 +410,25 @@ function AddFraisScolarite(props) {
                     btnClickHandler={props.cancelHandler}
                 />
                 
-              
-                <CustomButton
-                    btnText={(props.formMode=='creation') ? t('apply'):t('save')} 
-                    buttonStyle={getButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={(isValid) ? actionHandler : null}
-                    disable={!isValid}
-                />
+                { (props.formMode !='consult') &&
+                    <CustomButton
+                        btnText={(props.formMode=='creation') ? t('apply'):t('save')} 
+                        buttonStyle={getButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={(isValid) ? actionHandler : null}
+                        disable={!isValid}
+                    />
+                }
 
-                <CustomButton
-                    btnText={t('imprimer')} 
-                    buttonStyle={getButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={(isValid) ? actionHandler : null}
-                   
-                />  
+                { (props.formMode =='consult' && listing_dates_payements.length > 0 && listing_dates_payements[0]!="") &&
+                    <CustomButton
+                        btnText={t('imprimer')} 
+                        buttonStyle={getButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={(isValid) ? actionHandler : null}
+                    
+                    />
+                }  
                 
             </div>
 

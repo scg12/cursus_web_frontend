@@ -300,17 +300,18 @@ function Sheet(props){
                 <div className={classes.inputRowLeft+' '+classes.textStyleP}>
                     {(devoirOpen==2) ? t("summary_list") : (devoirOpen==1) ? t("homework_list"):null}
                 </div>
-
-                <div className={classes.inputRowRight}>
-                    <CustomButton
-                        btnText= {t("add")}  
-                        buttonStyle={classes.btnAdd}
-                        btnTextStyle = {classes.btnTextStyle}
-                        hasIconImg= {false}
-                        btnClickHandler={()=>{initDialogBox(); currentUiContext.setBookInActivity(true); setModalOpen(true); console.log('activite',currentUiContext.bookInActivity)}}
-                        disable={(etatLesson==CLOTURE)}
-                    /> 
-                </div>           
+                { displayModif &&
+                    <div className={classes.inputRowRight}>
+                        <CustomButton
+                            btnText= {t("add")}  
+                            buttonStyle={classes.btnAdd}
+                            btnTextStyle = {classes.btnTextStyle}
+                            hasIconImg= {false}
+                            btnClickHandler={()=>{initDialogBox(); currentUiContext.setBookInActivity(true); setModalOpen(true); console.log('activite',currentUiContext.bookInActivity)}}
+                            disable={(etatLesson==CLOTURE)}
+                        /> 
+                    </div> 
+                }          
             </div>
             
             <div style={{width:'93%', height:'45vh', borderStyle:'solid', borderWidth:"2px", borderColor:'gray', borderRadius:'7px', alignSelf:'center', padding:7, marginBottom:'-2vh'}}>

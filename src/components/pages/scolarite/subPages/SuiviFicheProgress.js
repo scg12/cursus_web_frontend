@@ -226,7 +226,7 @@ const columnsFr = [
     {
         field: '',
         headerName: 'ACTION',
-        width: 100,
+        width: 150,
         editable: false,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
@@ -286,7 +286,7 @@ const columnsEn = [
     {
         field: '',
         headerName: 'ACTION',
-        width: 100,
+        width: 150,
         editable: false,
         headerClassName:classes.GridColumnStyle,
         renderCell: (params)=>{
