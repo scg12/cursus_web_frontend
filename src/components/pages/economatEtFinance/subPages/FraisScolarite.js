@@ -862,8 +862,8 @@ const columnsFr = [
                     customStyle={true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {t("ok")}
-                    buttonRejectText = {t("non")}  
+                    buttonAcceptText = {t("yes")}
+                    buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
                 />                    
