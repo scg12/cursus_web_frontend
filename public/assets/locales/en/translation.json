@@ -1,5 +1,6 @@
                      
-{   
+{   "student_marks_for_course"        : "Student's marks for the course",
+    "note"                            : "Mark",
     "every_day_at"                    : "Every Day At",
     "manual_synchro"                  : "Synchronisation Manuelle",
     "automatic_synchro"               : "Automatic Synchronisation",

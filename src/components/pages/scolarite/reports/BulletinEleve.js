@@ -370,7 +370,7 @@ function BulletinEleve(props) {
 
     const EleveGroupe = (props) =>{
         return(
-            <View style={{...props.style, display:"flex",flexDirection:"column",justifyContent:"flex-start", alignItems:"center", height:"50vh", width:"100%", /*marginBottom:"-10vh"*/}}>
+            <View style={{...props.style, display:"flex",flexDirection:"column",justifyContent:"flex-start", opacity:0.3, alignItems:"center", height:"50vh", width:"100%", /*marginBottom:"-10vh"*/}}>
                 {  props.eleveInfos.map((elv)=>{
                    return( 
                         <EleveNoteRow typeBulletin ={props.typeBulletin} eleve={elv}/>
@@ -943,8 +943,10 @@ const styles = StyleSheet.create({
       flexDirection:"row",
       justifyContent:"center",
       alignItems:"center",
-      backgroundColor:"gray"
+      backgroundColor:"gray",
+      opacity:0.3
     },
+
     ligne_note:{
       boxSizing:"border-box",
       width: "100%",

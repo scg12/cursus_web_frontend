@@ -2,6 +2,7 @@ import React from "react";
 import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/renderer";
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
+import Filigrane from "../../../filigrane/Filigrane";
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n';
 
@@ -98,6 +99,26 @@ function ListNotesEleves(props){
 
     }
 
+    
+    function getMainTitle(title){
+        var pos   = title.search(/\:/); 
+        return title.substr(0,pos+1)
+    }
+
+    function getSuffixe(title){
+        var pos   = title.search(/\(/); 
+        if (pos != -1)  return title.substr(pos);
+        else return "";     
+        
+    }
+
+    function getClassabel(title){
+        var pos1   = title.search(/\:/); 
+        var pos2   = title.search(/\(/);  
+        if(pos2!=-1)  return title.substr(pos1+1,pos2-pos1-1);
+        else  return title.substr(pos1+1); 
+    }
+
    
 
     return (
@@ -105,9 +126,17 @@ function ListNotesEleves(props){
          { Array.from(props.pageSet,
           (el, index) => (
             <Page size="A4"  style={styles.page} key={index}>
+                <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:9999}}/>
+                {/* <View style={styles.header}>
+                    <PageHeadLeft  style={styles.headerLeft}   page={el}   />
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
+                    <PageHeadRight style={styles.headerRight}  page={el}  />                                     
+                </View> */}
+
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
+                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyleDefault} imageSrc={el.pageImagesDefault[0]}/>
                     <PageHeadRight style={styles.headerRight}  page={el}  />                                     
                 </View>
                 
@@ -116,8 +145,14 @@ function ListNotesEleves(props){
                     <Text style={styles.dateStyle}>{el.dateText}</Text>
                 </View>
                 
-                <View style={styles.pageTitleContainer}>
+                {/* <View style={styles.pageTitleContainer}>
                     <Text style={styles.titleStyle}>{el.pageTitle}</Text>
+                </View> */}
+
+                <View style={styles.pageTitleContainer}>
+                    <Text style={styles.titleStyle}>{getMainTitle(el.pageTitle)} </Text>
+                    <Text style={{fontSize:13, fontFamily:"Times-Roman", fontFamily:"MyBold",marginLeft:"0.1vw"}}>{getClassabel(el.pageTitle)}</Text>
+                    <Text style={{fontSize:10,marginLeft:"-0.5vw", fontFamily:"Times-Roman", fontFamily:"MyItalic"}}>{getSuffixe(el.pageTitle)}</Text>
                 </View>
 
                 <TableHeader style={styles.headerColumnStyle} page={el}/>
@@ -197,11 +232,27 @@ const styles = StyleSheet.create({
         width: "14%",
     },
 
+    imagestyleDefault:{
+        position:"absolute",
+        top:"-8vh",
+        left:0,
+        zIndex:2,       
+        width :'12vw',
+        height:'11vw',
+        borderRadius:3,
+        marginLeft:"-7vw"
+    },
+
     imagestyle:{
-        width:'12vw',
+        position:"absolute",
+        top:"-8vh",
+        left:30,
+        zIndex:3,       
+        width :'12vw',
         height:'11vw',
         borderRadius:3
     },
+
 
     headerCenter:{
         display: "flex",
@@ -230,7 +281,7 @@ const styles = StyleSheet.create({
    
     pageTitleContainer:{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row",
         justifyContent:'center',
         alignItems:'center',
         width:'auto',
@@ -297,7 +348,7 @@ const styles = StyleSheet.create({
 
     main: {
         textAlign: "center",
-        backgroundColor: "white",
+        /*backgroundColor: "white",*/
         height: "70%",
         width: "97%",
         color:'black',

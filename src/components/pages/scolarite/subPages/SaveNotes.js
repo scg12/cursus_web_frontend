@@ -16,7 +16,7 @@ import LoadingView from '../../../loadingView/LoadingView';
 import {isMobile} from 'react-device-detect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, ajouteZeroAuCasOu, getTodayDate,darkGrey} from '../../../../store/SharedData/UtilFonctions';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
 
@@ -78,6 +78,7 @@ function SaveNotes(props) {
     const [optClasse, setOpClasse] = useState([]);
     const [optCours, setOpCours] = useState([]);
     const [optPeriode, setOptPeriode] = useState([]);
+    const[imageUrl, setImageUrl] = useState('');
     
 
     useEffect(()=> {   
@@ -87,6 +88,13 @@ function SaveNotes(props) {
         if(gridRows.length ==0){
             CURRENT_CLASSE_ID = undefined;
         }    
+        
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
         getEtabListClasses();    
         getCoursClasse(currentAppContext.currentEtab, 0);
         getActivatedEvalPeriods(0);
@@ -94,6 +102,9 @@ function SaveNotes(props) {
         // setSuperieurA10(nbreSup10);
         // setInferieureA10(nbreInf10)
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
 
     const getEtabListClasses=()=>{
         var tempTable=[{value: '0',      label:'Choisir une classe'    }];
@@ -560,21 +571,31 @@ function SaveNotes(props) {
     const printStudentNotesList=()=>{
         if(CURRENT_CLASSE_ID != undefined){
             var PRINTING_DATA ={
-                dateText:'Yaounde, le 14/03/2023',
-                leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
-                centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
-                rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
-                pageImages:["images/collegeVogt.png"],
-                pageTitle: "Notes du cours " + CURRENT_COURS_LABEL,
-                tableHeaderModel:["N°","Matricule", "Nom et prenom(s)", "Note"],
-                tableData :[...gridRows],
-                numberEltPerPage:ROWS_PER_PAGE  
+                // dateText:'Yaounde, ' + t('le')+' '+ getTodayDate(),
+                // leftHeaders:["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                // centerHeaders:["College francois xavier vogt", "Ora et Labora","BP 125 Yaounde, Telephone:222 25 26 53"],
+                // rightHeaders:["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", "Annee scolaire 2022-2023"],
+                // pageImages:["images/collegeVogt.png"],
+                // pageTitle: "Notes du cours " + CURRENT_COURS_LABEL,
+                // tableHeaderModel:["N°","Matricule", "Nom et prenom(s)", "Note"],
+                // tableData :[...gridRows],
+                // numberEltPerPage:ROWS_PER_PAGE  
+
+                leftHeaders      : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+                centerHeaders    : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+                rightHeaders     : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+                pageImages       : [imgUrl], 
+                pageImagesDefault: [imgUrlDefault],
+                pageTitle        : t("student_marks_for_course") + ' ' + CURRENT_COURS_LABEL + ', ' + t('class') + ' : ' + CURRENT_CLASSE_LABEL,
+                tableHeaderModel : ["N°",t("matricule_short"), t("displayedName_M"), t("note")],
+                tableData        : [...gridRows],
+                numberEltPerPage : ROWS_PER_PAGE
             };
             printedETFileName = 'Notes_' + CURRENT_COURS_LABEL +'('+ CURRENT_CLASSE_LABEL+').pdf';
             setModalOpen(5);
             ElevePageSet=[];
             //ElevePageSet = [...splitArray([...gridRows], "Liste des eleves de la classe de " + CURRENT_CLASSE_LABEL, ROWS_PER_PAGE)];          
-            ElevePageSet = createPrintingPages(PRINTING_DATA);
+            ElevePageSet = createPrintingPages(PRINTING_DATA,i18n.language);
             console.log("ici la",ElevePageSet,gridRows);                    
         } else{
             chosenMsgBox = MSG_WARNING_NOTES;

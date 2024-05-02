@@ -1,4 +1,5 @@
-{   
+{   "student_marks_for_course"        : "Notes des élèves pour le cours",
+    "note"                            : "Note",
     "every_day_at"                    : "Tous les jours à",
     "manual_synchro"                  : "Synchronisation Manuelle",
     "automatic_synchro"               : "Synchronisation Automatique",
@@ -20,7 +21,7 @@
     "justify_exit_permission"     : "Justificatif de la sortie allant du",
     "to_a"                        : "A",
     "enrole_en"                   : "Enrole en",
-    "studentList_of"              : "Liste des éleves de la classe de",
+    "studentList_of"              : "Liste des élèves de la classe de",
     "le"                          : "le",
     "depot_fiches"                : "Dépôt de Fiche de Progression",
     "fiches_progression_attendues": "Certaines de vos fiches de progressions sont encore attendue !!",
