@@ -769,6 +769,7 @@ const styles = StyleSheet.create({
       alignItems:"center",
       alignSelf:"flex-start",
       border: "1px 1px solid black",
+      borderRadius:3
     },
 
     main: {
