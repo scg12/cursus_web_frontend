@@ -1,5 +1,8 @@
                      
-{   "student_marks_for_course"        : "Student's marks for the course",
+{   "listing_versements_frais"        : "Listing of School fees payements",
+    "date_versemnt"                   : "Payement date",
+    "montant_verse"                   : "Amount Paid",
+    "student_marks_for_course"        : "Student's marks for the course",
     "note"                            : "Mark",
     "every_day_at"                    : "Every Day At",
     "manual_synchro"                  : "Synchronisation Manuelle",

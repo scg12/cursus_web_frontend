@@ -370,7 +370,7 @@ function BulletinEleve(props) {
 
     const EleveGroupe = (props) =>{
         return(
-            <View style={{...props.style, display:"flex",flexDirection:"column",justifyContent:"flex-start", opacity:0.3, alignItems:"center", height:"50vh", width:"100%", /*marginBottom:"-10vh"*/}}>
+            <View style={{...props.style, display:"flex",flexDirection:"column",justifyContent:"flex-start", alignItems:"center", height:"50vh", width:"100%", /*marginBottom:"-10vh"*/}}>
                 {  props.eleveInfos.map((elv)=>{
                    return( 
                         <EleveNoteRow typeBulletin ={props.typeBulletin} eleve={elv}/>
@@ -593,7 +593,7 @@ function BulletinEleve(props) {
             {Array.from(ELEVES_DATA,
                 (eleve, index) => (
                     <Page size="A4"  style={styles.page} key={index}> 
-                        <Filigrane photoStyle ={{width:"73vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
+                        <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
                         <View style={styles.header}>
                             <PageHeader titreBulletin={props.data.titreBulletin.titre} 
                                 entete_fr = {props.data.entete_fr} 
@@ -944,7 +944,7 @@ const styles = StyleSheet.create({
       justifyContent:"center",
       alignItems:"center",
       backgroundColor:"gray",
-      opacity:0.3
+     
     },
 
     ligne_note:{
@@ -1038,6 +1038,7 @@ const styles = StyleSheet.create({
       border: "1px 1px solid black",
       justifyContent:"center",
       alignItems:"center",
+     /* opacity:0.7*/
     },
     box_header:{
       width:"100%",
@@ -1047,6 +1048,7 @@ const styles = StyleSheet.create({
       justifyContent:"center",
       alignItems:"center",
       fontFamily:"MyBold",
+      opacity:0.73
     },
     box_corps:{
       width:"100%",
@@ -1056,6 +1058,7 @@ const styles = StyleSheet.create({
       flexDirection:"column",
       justifyContent:"flex-start",
       alignItems:"center",
+      /*opacity:0.3*/
     },
     box_corps_ligne:{
       width:"100%",

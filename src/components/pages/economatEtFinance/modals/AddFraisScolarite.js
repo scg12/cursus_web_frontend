@@ -1,14 +1,19 @@
 import React from 'react';
 import { useFilePicker } from 'use-file-picker';
+import { isMobile } from 'react-device-detect';
 import classes from "../subPages/SubPages.module.css";
 import CustomButton from "../../../customButton/CustomButton";
+import ListingPaiements from '../reports/ListingPaiements';
 import { useContext, useState, useEffect } from "react";
 import axiosInstance from '../../../../axios';
 import AppContext from '../../../../store/AppContext';
 import UiContext from "../../../../store/UiContext";
-import {convertDateToUsualDate, formatCurrency,formatCurrencyInverse, getTodayDate} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, formatCurrency,formatCurrencyInverse, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 import { fontSize } from '@mui/system';
 import { useTranslation } from "react-i18next";
+import PDFTemplate from '../../scolarite/reports/PDFTemplate';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import BackDrop from '../../../backDrop/BackDrop';
 import LoadingView from '../../../loadingView/LoadingView';
 
@@ -19,6 +24,7 @@ var CURRENT_PAIEMENT = {};
 var BASE_MONTANT_VERSE;
 var BASE_MONTANT_RESTANT;
 var CURRENT_TRANCHE_TO_PAY = {};
+var paiementDataSet ={};
 
 var chosenMsgBox;
 const MSG_SUCCESS =1;
@@ -26,10 +32,16 @@ const MSG_WARNING =2;
 const OP_SUCCESS  =3;
 const MSG_CONFIRM =4;
 
+var printedETFileName ='';
+
+var paiementData = {};
+
 
 function AddFraisScolarite(props) {
     const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
+    const currentUiContext  = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
+
     const [isValid, setIsValid] = useState(false);
     const [montantRestant, setMontantRestant] = useState(Number(0? formatCurrencyInverse(currentUiContext.formInputs[4])>= formatCurrencyInverse(currentUiContext.formInputs[7]) : formatCurrencyInverse(currentUiContext.formInputs[7])-formatCurrencyInverse(currentUiContext.formInputs[4])));
     const [montantVerse, setMontantVerse]     = useState(Number(formatCurrencyInverse(currentUiContext.formInputs[4])));
@@ -39,10 +51,20 @@ function AddFraisScolarite(props) {
     const [listing_dates_payements, setListing_dates_payements] = useState(currentUiContext.formInputs[8].split(','));
     const [listing_montants, setListing_montants]               = useState(currentUiContext.formInputs[9].split(';'));
     const selectedTheme = currentUiContext.theme;
+    const [imageUrl, setImageUrl] = useState('');
+    const [modalOpen, setModalOpen] = useState(0);
     
     useEffect(()=> {
         BASE_MONTANT_VERSE   = montantVerse;
         BASE_MONTANT_RESTANT = montantRestant;
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
+
+        
 
        currentUiContext.setIsParentMsgBox(false);
 
@@ -50,7 +72,35 @@ function AddFraisScolarite(props) {
 
     },[])
 
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
     
+
+    function initPaiementData(){
+        var eleveInfo      = {};
+        var listePaiements = [];
+
+        eleveInfo.nom                = currentUiContext.formInputs[0]+' '+currentUiContext.formInputs[1];
+        eleveInfo.matricule          = currentUiContext.formInputs[3];
+        eleveInfo.photo_url          = currentUiContext.formInputs[11];
+        eleveInfo.age                = currentUiContext.formInputs[15];
+        eleveInfo.classeLabel        = props.currentClasseLabel;
+        eleveInfo.redouble           = currentUiContext.formInputs[12];
+
+        paiementData.eleveInfo       = eleveInfo;
+
+        listing_dates_payements.map((datePaie,index)=>{
+            var paiement     = {};
+            paiement.date    = datePaie;
+            paiement.montant = listing_montants[index];
+            listePaiements.push(paiement);
+        })
+        
+        paiementData.listePaiements  = listePaiements;
+    }
+
+
     function getButtonStyle()
     { // Choix du theme courant
         switch(selectedTheme){
@@ -193,6 +243,35 @@ function AddFraisScolarite(props) {
         CURRENT_PAIEMENT.type_paiement_Id = trancheToPay.id;
     }
 
+
+    function printListPaiements(){
+
+        initPaiementData();
+
+        var PRINTING_DATA ={
+            dateText          : 'Yaounde, ' + t('le')+' '+ getTodayDate(),
+            leftHeaders       : ["Republique Du Cameroun", "Paix-Travail-Patrie","Ministere des enseignement secondaire"],
+            centerHeaders     : [currentAppContext.currentEtabInfos.libelle, currentAppContext.currentEtabInfos.devise, currentAppContext.currentEtabInfos.bp+'  Telephone:'+ currentAppContext.currentEtabInfos.tel],
+            rightHeaders      : ["Delegation Regionale du centre", "Delegation Departementale du Mfoundi", t("annee_scolaire")+' '+ currentAppContext.activatedYear.libelle],
+            pageImages        : [imgUrl],
+            pageImagesDefault : [imgUrlDefault],
+            classeLabel       : props.currentClasseLabel,
+            pageTitle         : t("listing_versements_frais") +' '+ paiementData.eleveInfo.nom,
+            paiementData      : paiementData
+        };
+        printedETFileName     = 'listing_paiements('+ paiementData.eleveInfo.nom +').pdf';
+        paiementDataSet       = PRINTING_DATA
+        console.log("ici la",PRINTING_DATA);
+        setModalOpen(1);
+    }
+
+
+    const closePreview =()=>{
+        setModalOpen(0);
+    }
+    
+
+
     /************************************ JSX Code ************************************/
 
     const LigneHeader=(props)=>{
@@ -262,6 +341,21 @@ function AddFraisScolarite(props) {
                 }                
             </div>
 
+            
+            {(modalOpen==1) &&              
+                <PDFTemplate previewCloseHandler={closePreview}>
+                    {isMobile?
+                        <PDFDownloadLink  document ={<ListingPaiements pageSet={paiementDataSet}/>} fileName={printedETFileName}>
+                            {({blob, url, loading, error})=> loading ? "": <DownloadTemplate fileBlobString={url} fileName={printedETFileName}/>}
+                        </PDFDownloadLink>
+                        :
+                        <PDFViewer style={{height:"85.3vh", width: "70vw" , marginTop:"8vh", marginLeft:"-10vw", display:'flex', flexDirection:'column', justifyContent:'center',}}>
+                            <ListingPaiements pageSet={paiementDataSet}/>
+                        </PDFViewer>
+                    }
+                </PDFTemplate>
+            } 
+
             <div id='errMsgPlaceHolder'/>
             {currentUiContext.isParentMsgBox && 
                 <BackDrop id="backDrop" style={{height:"100%"}}/>
@@ -274,33 +368,7 @@ function AddFraisScolarite(props) {
                 />                    
             }  
             
-            {/* {currentUiContext.isParentMsgBox && 
-                <div id="loadingText" style={{alignSelf: 'center',position:'absolute', top:'49.3%', fontWeight:'bolder', color:'#fffbfb', zIndex:'1207',marginTop:'-2.7vh', fontSise:'0.9vw'}}> 
-                    {t('traitement')}...
-                </div> 
-            }                 
-            
-            {currentUiContext.isParentMsgBox && 
-                <div id="loadingBar" style={{  
-                    display:"none", 
-                    alignSelf: 'center',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '13vw',
-                    height: '3.13vh',
-                    position: 'absolute',
-                    top:'50%',
-                    zIndex: '1200',
-                    overflow: 'hidden'
-                }}
-                >
-                    <img id="imgloading" src='images/Loading2.gif' alt="loading..." style={{width:'24.1vw'}} />
-                </div> 
-            }       */}
-
+           
             
             <div style={{display:"flex", flexDirection:"row", marginRight:'-3.7vw', marginLeft:'0.7vw', marginTop:'7.7vh', marginBottom:"3vh",  width:'97%', height:'13.3vh', justifyContent:"flex-start", backgroundColor:'rgb(23 116 227)', color:'white',  borderRadius:7}}>
                 <div style={{marginLeft:'2vw', marginRight:"1vw", paddingTop:"0.7vh"}}>
@@ -425,7 +493,8 @@ function AddFraisScolarite(props) {
                         btnText={t('imprimer')} 
                         buttonStyle={getButtonStyle()}
                         btnTextStyle = {classes.btnTextStyle}
-                        btnClickHandler={(isValid) ? actionHandler : null}
+                        btnClickHandler={ printListPaiements }
+                      
                     
                     />
                 }  
