@@ -1,5 +1,6 @@
                      
-{   "listing_versements_frais"        : "Listing of School fees payements",
+{   "tranche"                         : "Fee part",
+    "listing_versements_frais"        : "Listing of School fees payements",
     "date_versemnt"                   : "Payement date",
     "montant_verse"                   : "Amount Paid",
     "student_marks_for_course"        : "Student's marks for the course",

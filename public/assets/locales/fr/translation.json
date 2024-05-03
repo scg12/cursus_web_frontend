@@ -1,4 +1,5 @@
-{   "listing_versements_frais"        : "Listing Des versement des Frais de scolarité ",
+{   "tranche"                         : "Tranche",
+    "listing_versements_frais"        : "Listing Des versement des Frais de scolarité ",
     "date_versemnt"                   : "Date Versement",
     "montant_verse"                   : "Montant versé",
     "student_marks_for_course"        : "Notes des élèves pour le cours",

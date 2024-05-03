@@ -3,6 +3,7 @@ import { Page, Text, View, Image, Document, StyleSheet, Font} from "@react-pdf/r
 import fontBold from "../../../../fonts/timesBold.ttf";
 import fontItalic from "../../../../fonts/timesItalic.ttf";
 import Filigrane from "../../../filigrane/Filigrane";
+import { formatCurrency } from "../../../../store/SharedData/UtilFonctions";
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n';
 
@@ -91,40 +92,34 @@ function ListingPaiements(props){
             <View style={{display:"flex", flexDirection:"row", justifyContent:"flex-start",marginBottom:"3vh", width:'100%'}}>
                 <Photo photoStyle ={{...styles.photoStyle,alignSelf:"center", borderStyle:"solid", borderWidth:"1px", marginRight:"2vw", borderRadius:3}} imageSrc={props.eleve.photo_url.length>0? props.eleve.photo_url : 'images/photo4Fois4P.png'}/>
                 
-                <View style={{display:"flex", flexDirection:"row", backgroundColor:"lightgray", padding:7, borderRadius:3, width:"100%", marginRight:"3vw", paddingBottom:"3vh"}}> 
+                <View style={{display:"flex", flexDirection:"row", backgroundColor:"lightgray", opacity:0.73, padding:7, borderRadius:3, width:"100%", marginRight:"3vw", paddingBottom:"3vh"}}> 
                     <View style={{display:"flex", flexDirection:"column", height:"5vh"}}>
                         <View style={{display:"flex",flexDirection:"row"}}>
-                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>{t('nom_M')} :</Text>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold", textTransform:"uppercase"}}>{t('nom_M')} :</Text>
                             <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.nom}  </Text>
                         </View>
                     
                         <View style={{display:"flex",flexDirection:"row", marginTop:"2vh"}}>
-                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>{t('class_M')} :</Text>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold", textTransform:"uppercase"}}>{t('class_M')} :</Text>
                             <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.classeLabel}  </Text>
                         </View>
                         <View style={{display:"flex",flexDirection:"row", marginTop:"2vh"}}>
-                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>{t("entree_M")}  :</Text>
-                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.date_entree}  </Text>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold", textTransform:"uppercase"}}>{t("age_M")} : </Text>
+                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.age}  </Text>
                         </View>                   
                     </View>
                 
                     <View style={{display:"flex", flexDirection:"column", height:"2vh", marginLeft:"2vw", paddingBottom:"2.7vh", alignSelf:"flex-end"}}>
                         <View style={{display:"flex",flexDirection:"row"}}>
-                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>{t('matricule_M')} :</Text>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold", textTransform:"uppercase"}}>{t('matricule_M')} :</Text>
                             <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.matricule}</Text>
                         </View>
                         <View style={{display:"flex",flexDirection:"row", marginTop:"2vh"}}>
-                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy' , fontFamily:"MyBold"}}>{t('sortie_M')}  :</Text>
-                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{/*(props.eleve.redouble)?"Oui":"Non"*/}</Text>
+                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy' , fontFamily:"MyBold", textTransform:"uppercase"}}>{t('redouble')}  :</Text>
+                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{(props.eleve.redouble)? t("yes"):t("no")}</Text>
                         </View>                    
                     </View>
-
-                    <View style={{display:"flex", flexDirection:"column", height:"2vh", marginLeft:"2vw", paddingBottom:"2.7vh", alignSelf:"flex-end"}}>
-                        <View style={{display:"flex",flexDirection:"row"}}>
-                            <Text style={{fontSize:"1.3vh", fontWeight:'heavy', fontFamily:"MyBold"}}>AGE :</Text>
-                            <Text style={{fontSize:"1.3vh", marginLeft:"0.3vw"}}>{props.eleve.age}</Text>
-                        </View>
-                    </View>
+                  
                 </View>
                 
             </View>
@@ -137,7 +132,8 @@ function ListingPaiements(props){
         return(
             <View style={props.style}>
                 <View style={{width:'12vw',  justifyContent:'flex-start',...styles.cell}}><Text>{t("date_versement")}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{t("montant_verse")}   </Text></View>
+                <View style={{width:'14vw', justifyContent:'flex-start',...styles.cell}}><Text>{t("montant_verse")}   </Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{t("tranche")}   </Text></View>
             </View>             
         );
     }
@@ -147,12 +143,29 @@ function ListingPaiements(props){
         return(
             <View style={props.style}>
                 <View style={{width:'12vw',  justifyContent:'flex-start',...styles.cell}}><Text>{props.paiement.date}</Text></View>
-                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.paiement.montant}   </Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{formatCurrency(parseInt(props.paiement.montant))} FCFA   </Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{props.paiement.libelle}        </Text></View>
             </View>             
         );
     }
 
+    const PaiementRowFooter = (props) =>{
+        return(
+            <View style={props.style}>
+                <View style={{width:'12vw',  justifyContent:'flex-start',...styles.cell, textTransform:"uppercase"}}><Text>{t("total_paye_M")}</Text></View>
+                <View style={{width:'12vw',  justifyContent:'flex-start',...styles.cell, textTransform:"uppercase"}}><Text>{""}</Text></View>
+                <View style={{width:'12vw', justifyContent:'flex-start',...styles.cell}}><Text>{formatCurrency(props.totalVerse)} FCFA  </Text></View>
+            </View>             
+        );
+    }
 
+    function calculSommeTotale(listPaiements){
+        var somme = 0;
+        listPaiements.map((paiement)=>{
+            somme += parseInt(paiement.montant);
+        })
+        return somme;
+    }
 
    
 
@@ -188,6 +201,8 @@ function ListingPaiements(props){
                             <PaiementRow style={styles.row} paiement={paie}/>                            
                         ))
                     } 
+                    <PaiementRowFooter style={styles.footerColumnStyle} totalVerse={calculSommeTotale(props.pageSet.paiementData.listePaiements)} />
+                    
                    
                 </View>
               
@@ -342,6 +357,20 @@ const styles = StyleSheet.create({
         width:'97%',
         height:'2.3vh',
         backgroundColor:'rgb(6, 83, 134)',
+        textTransform:'uppercase',
+        fontSize:8,
+        fontWeight:'heavy',
+        color:'white'
+    },
+
+    footerColumnStyle:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'space-evenly',
+        alignItems:'center',
+        width:'97%',
+        height:'2.3vh',
+        backgroundColor:'black',
         textTransform:'uppercase',
         fontSize:8,
         fontWeight:'heavy',

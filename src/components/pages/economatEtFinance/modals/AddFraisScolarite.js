@@ -34,7 +34,10 @@ const MSG_CONFIRM =4;
 
 var printedETFileName ='';
 
+var listingTranche;
+
 var paiementData = {};
+var typePaiement;
 
 
 function AddFraisScolarite(props) {
@@ -50,6 +53,7 @@ function AddFraisScolarite(props) {
     const [trancheToPay, setTrancheToPay]     = useState(currentUiContext.formInputs[13].find((elt)=>elt.montantVerse < elt.montantAttendu));
     const [listing_dates_payements, setListing_dates_payements] = useState(currentUiContext.formInputs[8].split(','));
     const [listing_montants, setListing_montants]               = useState(currentUiContext.formInputs[9].split(';'));
+    const [tranchesInfos, setTranchesInfos]                     = useState(getTrancheInfos(listing_dates_payements, listing_montants, currentUiContext.formInputs[6]));
     const selectedTheme = currentUiContext.theme;
     const [imageUrl, setImageUrl] = useState('');
     const [modalOpen, setModalOpen] = useState(0);
@@ -64,9 +68,9 @@ function AddFraisScolarite(props) {
         var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
         setImageUrl(url);
 
-        
+        //listingTranche = getTrancheInfo(listing_dates_payements, listing_montants, currentUiContext.formInputs[6]);
 
-       currentUiContext.setIsParentMsgBox(false);
+        currentUiContext.setIsParentMsgBox(false);
 
        console.log("Tranche a payer",trancheToPay)
 
@@ -89,15 +93,8 @@ function AddFraisScolarite(props) {
         eleveInfo.redouble           = currentUiContext.formInputs[12];
 
         paiementData.eleveInfo       = eleveInfo;
-
-        listing_dates_payements.map((datePaie,index)=>{
-            var paiement     = {};
-            paiement.date    = datePaie;
-            paiement.montant = listing_montants[index];
-            listePaiements.push(paiement);
-        })
         
-        paiementData.listePaiements  = listePaiements;
+        paiementData.listePaiements  = [...tranchesInfos];
     }
 
 
@@ -269,6 +266,30 @@ function AddFraisScolarite(props) {
     const closePreview =()=>{
         setModalOpen(0);
     }
+
+    function getTrancheInfos(listing_date, listing_montant, typePaiement){
+        var i=0; var somme = 0; var j=0;
+        var tabTranche = [];
+        var curTranche = {};
+
+
+        console.log("pppppp",typePaiement);
+
+        listing_date.map((elt, index)=>{
+            curTranche          = {};
+            curTranche.date     = elt;
+            curTranche.montant  = listing_montant[index];
+            somme               = somme + parseInt(curTranche.montant);
+            if(somme <= typePaiement[j].montant) curTranche.libelle  = typePaiement[j].libelle;
+            else  { j=j+1; curTranche.libelle  = typePaiement[j].libelle; somme = 0;}           
+            console.log("dffdfdfll", tabTranche, typePaiement);
+            tabTranche.push(curTranche);
+        })
+
+        console.log("dffdfdfll", tabTranche, typePaiement);
+       
+        return tabTranche;       
+    }
     
 
 
@@ -316,8 +337,9 @@ function AddFraisScolarite(props) {
     const LigneListing =(props)=>{
         return(
             <div key="listing" style={{width:'93%', display:'flex',flexDirection:'row', marginLeft:"2vw", backgroundColor:'#dcecf5', borderBottomStyle:'solid', borderBottomWidth:'1px', borderTopStyle:'solid', borderTopWidth:'1px'}}>
-                <div style={{width:'33vw'}}><i>{formatCurrency(props.montants)}</i></div>
-                <div style={{width:'33vw',marginLeft:'1.7vw'}}><i>{props.dates_payements}</i></div>
+                <div style={{width:'12vw'}}><i>{formatCurrency(props.montants)}</i></div>
+                <div style={{width:'10vw',marginLeft:'1.7vw'}}><i>{props.dates_payements}</i></div>
+                <div style={{width:'20vw',marginLeft:'1.7vw'}}><i>{props.trancheAssociee}</i></div>
             </div>
         );
     }
@@ -439,15 +461,16 @@ function AddFraisScolarite(props) {
 
             {(currentUiContext.formInputs[8]!=="")&&
                 <div key="recap" style={{display:'flex',flexDirection:'row', marginLeft:"2vw"}}>
-                    <div style={{width:'33vw'}}><b>{t("paid_amount")}</b></div>
-                    <div style={{width:'33vw'}}><b>{t("payment_date")} </b></div>
+                    <div style={{width:'13vw'}}><b>{t("paid_amount")}</b></div>
+                    <div style={{width:'12vw'}}><b>{t("payment_date")} </b></div>
+                    <div style={{width:'12vw'}}><b>{t("tranche")} </b></div>
                 </div>
             }
 
-             {(currentUiContext.formInputs[8]!=="")&&
-                <div style={{display:"flex", flexDirection:"column", paddingTop:"1vh", paddingBottom:"1vh", width:"97%",justifyContent:"center", height:"20vh", overflowY:"scroll"}}>
-                    {listing_dates_payements.map((elt, index)=>{
-                        return <LigneListing montants={listing_montants[index]} dates_payements={listing_dates_payements[index]} />
+            {(currentUiContext.formInputs[8]!=="")&&
+                <div style={{display:"flex", flexDirection:"column", paddingTop:"1vh", paddingBottom:"1vh", width:"97%",justifyContent:"flex-start", height:"20vh", overflowY:"scroll"}}>
+                    {tranchesInfos.map((elt, index)=>{
+                        return <LigneListing montants={elt.montant} dates_payements={elt.date}  trancheAssociee={elt.libelle} />
                     })}
                 </div>
             } 

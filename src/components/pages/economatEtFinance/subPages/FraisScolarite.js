@@ -50,6 +50,7 @@ var ElevePageSet=[];
 
 var type_payements = [],eleves = [];
 let montant_total_a_payer=0;
+var mntPayesParTypes ;
 
 
 
@@ -283,6 +284,7 @@ function FraisScolarite(props) {
             listElt.redouble              = elt.redouble;
             listElt.montant_par_types     = elt.montant_par_types;
             listElt.dates_payements       = convertDateToUsualDate(elt.dates_payements);
+            mntPayesParTypes              = elt.montant_par_types.split("_");
 
             typesPaiements.map((el, index)=>{
                 listElt[el.libelle]   =  formatCurrency(Math.abs(listElt.montant_par_types.split('_')[index]))
@@ -293,6 +295,8 @@ function FraisScolarite(props) {
         })
         return formattedList;
     }
+
+    
     
 /*************************** DataGrid Declaration ***************************/    
 const columnsFr = [
@@ -445,6 +449,8 @@ const columnsFr = [
         inputs[13]= [...tranches];
         inputs[14]= {...recap};
         inputs[15]= row.age;
+       
+        
         
         currentUiContext.setFormInputs(inputs);
         console.log(row);
@@ -495,6 +501,8 @@ const columnsFr = [
         inputs[13]= [...tranches];
         inputs[14]= {...recap};
         inputs[15]= row.age;
+        
+        
         
         currentUiContext.setFormInputs(inputs);
         console.log(row);
