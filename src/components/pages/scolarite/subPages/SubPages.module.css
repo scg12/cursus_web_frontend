@@ -153,6 +153,30 @@
     margin-left : -1vw;
 }
 
+.clotureStyleP{
+    min-height  : 5vh !important;
+    max-height  : 5vh !important;
+    font-size   : 0.9vw;
+    font-weight : 600;
+    color       :red;
+    min-width   : 15px !important;
+    margin-left : -1vw;
+    /*margin-right : 3vw;*/
+    width:100px;
+}
+
+.enCoursStyleP{
+    min-height  : 5vh !important;
+    max-height  : 5vh !important;
+    font-size   : 0.9vw;
+    font-weight : 600;    
+    color       :rgba(7, 167, 33, 0.836);
+    min-width   : 15px !important;
+    /*margin-left : -1vw;*/
+    width:100px;
+}
+
+
 
 .notifBtnTextStyle{
 display: flex;

@@ -415,7 +415,7 @@ const columnsFr = [
                         width={17} 
                         height={17} 
                         className={classes.cellPointer} 
-                        style={{marginLeft:'0.5vw', marginRight:'0.5vw', cursor:"pointer"}}
+                        style={{marginLeft:'0.7vw', marginRight:'0.7vw', cursor:"pointer"}}
                         onClick={(event)=> {
                             //event.ignore = true;
                             CURRENT_AUTORISATION_ID = params.row.id_billet;
@@ -438,7 +438,7 @@ const columnsFr = [
                         width={23} 
                         height={23} 
                         className={classes.cellPointer} 
-                        style={{marginLeft:'0.5vw', cursor:"pointer"}}
+                        style={{marginLeft:'0.7vw', cursor:"pointer"}}
                         onClick={(event)=> {
                             event.ignore = false;
                             printBillet(params.row)
@@ -448,12 +448,34 @@ const columnsFr = [
                 </div>
             :
 
-                <div className={classes.inputRow}>               
-                    <img src="images/print.png"  
+                <div className={classes.inputRow}>  
+                    <img src="images/blank.png"  
                         width={23} 
                         height={23} 
                         className={classes.cellPointer} 
-                        style={{marginRight:'0.5vw', cursor:"pointer"}}
+                        style={{marginRight:'0.3vw', cursor:"pointer"}}
+                        onClick={(event)=> {
+                            event.ignore = true;
+                        }}
+                        alt=''
+                    />  
+
+                    <img src="images/blank.png"  
+                        width     = {17} 
+                        height    = {17} 
+                        className = {classes.cellPointer} 
+                        style={{marginLeft:'0.5vw', marginRight:'0.5vw', cursor:"pointer"}}
+                        onClick={(event)=> {
+                            event.ignore = true;
+                        }}
+                        alt=''
+                    />    
+
+                    <img src="images/print.png"  
+                        width     = {23} 
+                        height    = {23} 
+                        className = {classes.cellPointer} 
+                        style={{marginRight:'0.4vw', cursor:"pointer"}}
                         onClick={(event)=> {
                             event.ignore = false;
                             printBillet(params.row)
@@ -541,6 +563,7 @@ const columnsFr = [
             editable: false,
             hide:true,
             headerClassName:classes.GridColumnStyle,
+        
                 
         },
     
@@ -591,8 +614,8 @@ const columnsFr = [
                     (params.row.status == false) ?
                     <div className={classes.inputRow}>
                         <img src="icons/baseline_edit.png"  
-                            width={23} 
-                            height={23} 
+                            width={20} 
+                            height={20} 
                             className={classes.cellPointer} 
                             style={{marginRight:'0.5vw', cursor:"pointer"}}
                             onClick={(event)=> {
@@ -607,7 +630,7 @@ const columnsFr = [
                             width={17} 
                             height={17} 
                             className={classes.cellPointer} 
-                            style={{marginLeft:'0.5vw', marginRight:'0.5vw', cursor:"pointer"}}
+                            style={{marginLeft:'0.7vw', marginRight:'0.7vw', cursor:"pointer"}}
                             onClick={(event)=> {
                                 event.ignore = false;
                                 CURRENT_AUTORISATION_ID = params.row.id_billet;
@@ -630,7 +653,7 @@ const columnsFr = [
                             width={23} 
                             height={23} 
                             className={classes.cellPointer} 
-                            style={{marginLeft:'0.5vw', cursor:"pointer"}}
+                            style={{marginLeft:'0.7vw', cursor:"pointer"}}
                             onClick={(event)=> {
                                 event.ignore = false;
                                 printBillet(params.row)
@@ -640,12 +663,31 @@ const columnsFr = [
                     </div>
                 :
 
-                    <div className={classes.inputRow}>               
-                        <img src="images/print.png"  
+
+
+                    <div className={classes.inputRow}>
+                        <img src="images/blank.png"  
                             width={23} 
                             height={23} 
                             className={classes.cellPointer} 
-                            style={{marginRight:'0.5vw', cursor:"pointer"}}
+                            style={{marginRight:'0.5vw', cursor:"pointer"}}                          
+                            alt=''
+                        />   
+
+                        <img src="images/blank.png"  
+                            width={17} 
+                            height={17} 
+                            className={classes.cellPointer} 
+                            style={{marginLeft:'0.4vw', marginRight:'0.3vw', cursor:"pointer"}}                       
+                            alt=''
+                        />
+
+
+                        <img src="images/print.png"  
+                            width={23} 
+                            height={22} 
+                            className={classes.cellPointer} 
+                            style={{marginLeft:'0.4vw', cursor:"pointer"}}
                             onClick={(event)=> {
                                 event.ignore = false;
                                 printBillet(params.row)
@@ -1191,7 +1233,7 @@ const columnsFr = [
                     <StripedDataGrid
                         rows={gridRows}
                         columns={(i18n.language =='fr') ? columnsFr : columnsEn}
-                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : (params.field==='statusLabel' && params.row.status==true)?  classes.enCoursStyle: (params.field==='statusLabel' && params.row.status==false) ? classes.clotureStyle : classes.gridRowStyle }
+                        getCellClassName={(params) => (params.field==='nom')? classes.gridMainRowStyle : (params.field==='statusLabel' && params.row.status==true)?  classes.enCoursStyleP: (params.field==='statusLabel' && params.row.status==false) ? classes.clotureStyleP : classes.gridRowStyle }
                        
                         
                         onCellClick={(params,event)=>{

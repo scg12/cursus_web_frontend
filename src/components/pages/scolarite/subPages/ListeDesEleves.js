@@ -375,15 +375,20 @@ const columnsFr = [
                         }}
                         alt=''
                     />
-                    {(params.row.email_mere=='' && params.row.email_pere=='')&&
+                    {(params.row.email_mere=='' && params.row.email_pere=='') ?
                         <img src="images/defautEmail.png"  
                             width     = {20} 
                             height    = {20} 
                             style     = {{marginLeft:'1vw', borderRadius:10}}
                             className = {classes.cellPointer} 
-                            // onClick={(event)=> {
-                            //     event.ignore = true;
-                            // }}
+                            alt=''
+                        />
+                        :
+                        <img src="images/blank.png"  
+                            width     = {20} 
+                            height    = {20} 
+                            style     = {{marginLeft:'1vw', borderRadius:10}}
+                            className = {classes.cellPointer} 
                             alt=''
                         />
                     }
@@ -580,15 +585,20 @@ const columnsFr = [
                             alt=''
                         />
 
-                        {(params.row.email_mere=='' && params.row.email_pere=='')&&
+                        {(params.row.email_mere=='' && params.row.email_pere=='')?
                             <img src="images/defautEmail.png"  
                                 width     = {20} 
                                 height    = {20} 
                                 style     = {{marginLeft:'1vw', borderRadius:10}}
                                 className = {classes.cellPointer} 
-                                // onClick={(event)=> {
-                                //     event.ignore = true;
-                                // }}
+                                alt=''
+                            />
+                            :
+                            <img src="images/blank.png"  
+                                width     = {20} 
+                                height    = {20} 
+                                style     = {{marginLeft:'1vw', borderRadius:10}}
+                                className = {classes.cellPointer} 
                                 alt=''
                             />
                         }
