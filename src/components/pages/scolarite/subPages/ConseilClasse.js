@@ -52,6 +52,7 @@ var LIST_ELEVES            =[];
 var CURRENT_ANNEE_SCOLAIRE ='';
 
 var CCA_CREATED = false;
+var ROW_TO_DELETE_ID;
 
 
 
@@ -68,11 +69,13 @@ var page = {
 }
 
 var chosenMsgBox;
+const MSG_SUCCESS_DELETE       = 0;
 const MSG_SUCCESS_CREATE       = 1;
 const MSG_SUCCESS_UPDATE       = 2;
 const MSG_SUCCESS_UPDATE_PRINT = 3;
 const MSG_WARNING              = 4;
 const MSG_CONFIRM              = 5;
+const MSG_CONFIRM_DELETE       = 6;
 
 const ROWS_PER_PAGE            = 40;
 const FIRST_PAGE_ROWS_COUNT    = 20;
@@ -520,7 +523,7 @@ const columnsFr = [
             
             return(
                 (params.row.status==0)?
-                <div className={classes.inputRow}>
+                <div className={classes.inputRow}  >
                     <img src="icons/baseline_edit.png"  
                         width={17} 
                         height={17} 
@@ -532,10 +535,12 @@ const columnsFr = [
                     />
                     <img src="icons/baseline_delete.png"  
                         width={17} 
-                        height={17} 
+                        height={17}
+                        style={{marginLeft:"1vw"}} 
                         className={classes.cellPointer} 
                         onClick={(event)=> {
-                            event.ignore = true;
+                            // event.ignore = true;
+                            deleteRowConfirm(params.row.id)
                         }}
                         alt=''
                     />
@@ -662,7 +667,7 @@ const columnsFr = [
         {
             field: 'Action',
             headerName: 'ACTION',
-            width: 80,
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
@@ -672,19 +677,22 @@ const columnsFr = [
                     <div className={classes.inputRow}>
                         <img src="icons/baseline_edit.png"  
                             width={17} 
-                            height={17} 
+                            height={17}                             
                             className={classes.cellPointer} 
                             onClick={(event)=> {
                                 event.ignore = true;
                             }}
                             alt=''
                         />
+
                         <img src="icons/baseline_delete.png"  
                             width={17} 
                             height={17} 
+                            style={{marginLeft:"1vw"}}
                             className={classes.cellPointer} 
                             onClick={(event)=> {
-                                event.ignore = true;
+                                // event.ignore = true;
+                                deleteRowConfirm(params.row.id)
                             }}
                             alt=''
                         />
@@ -733,12 +741,65 @@ const columnsFr = [
 
     }
 
-    function handleDeleteRow(params){
-        if(params.field=='id'){
-            //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
-        }
+    
+
+    function deleteRowConfirm(rowId) {
+        ROW_TO_DELETE_ID = rowId;
+
+        chosenMsgBox = MSG_CONFIRM_DELETE;
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType  : "question", 
+            msgTitle : t("confirm_M"), 
+            message  : t("confirm_delete")
+        })
+    } 
+
+   
+
+    function deleteCS(){
+       
+        setIsloading(true);
+        return new Promise(function(resolve, reject){
+            axiosInstance
+            .post(`delete-conseil-classe/`, {
+                id          : ROW_TO_DELETE_ID,
+                id_sousetab : currentAppContext.currentEtab,
+                id_user     : currentAppContext.idUser
+            }).then((res)=>{
+                console.log(res.data.status)
+                listConseilClasseThen().then(()=>{
+                    setIsloading(false);
+                    chosenMsgBox = MSG_SUCCESS_DELETE;
+                    currentUiContext.showMsgBox({
+                        visible:true, 
+                        msgType:"info", 
+                        msgTitle:t("success_modif_M"), 
+                        message:t("success_modif")
+                    })
+                })
+               
+                resolve(1);
+            },(res)=>{
+                console.log(res.data.status)
+                reject(0);
+            })     
+
+        })       
     }
+
+    function listConseilClasseThen(){
+        return new Promise(function(resolve, reject){
+            var grdData = [...gridMeeting]
+            var index_to_delete = grdData.findIndex((cs)=>cs.id==ROW_TO_DELETE_ID);
+            grdData.splice(index_to_delete,1);
+            setGridMeeting(grdData);
+            //getListConseilClasse(CURRENT_CLASSE_ID, currentAppContext.currentEtab);
+            resolve(1);
+        })
+    }
+
+
 
     function initFormInputs(){
         var inputs=[];
@@ -1044,7 +1105,17 @@ const columnsFr = [
 
     const acceptHandler=()=>{
         
-        switch(chosenMsgBox){
+        switch(chosenMsgBox){           
+
+            case MSG_SUCCESS_DELETE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }); 
+                return 1;
+            }
 
             case MSG_SUCCESS_CREATE: {
                 currentUiContext.showMsgBox({
@@ -1105,6 +1176,17 @@ const columnsFr = [
                 return 1;
             }
 
+            case MSG_CONFIRM_DELETE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                deleteCS();
+                return 1;
+            }
+
             default: {
                 currentUiContext.showMsgBox({
                     visible:false, 
@@ -1118,6 +1200,17 @@ const columnsFr = [
 
     const rejectHandler=()=>{
         switch(chosenMsgBox){
+
+            case MSG_SUCCESS_DELETE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                }); 
+                return 1;
+            }
+
 
             case MSG_SUCCESS_CREATE: {
                 currentUiContext.showMsgBox({
@@ -1173,7 +1266,18 @@ const columnsFr = [
                 // modifyClassMeeting(CURRENT_MEETING);
                 return 1;
             }
-            
+
+            case MSG_CONFIRM_DELETE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+
+                return 1;
+            }
+
            
             default: {
                 currentUiContext.showMsgBox({
@@ -1492,7 +1596,7 @@ const columnsFr = [
                                 : (params.field==='nom') ?
                                   classes.GridColumnStyleStart : classes.gridRowStyle                             
                             }
-                            onCellClick={handleDeleteRow}
+                            //onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {
                                     //console.log(params.row);

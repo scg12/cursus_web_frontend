@@ -51,6 +51,7 @@ var LIST_MOTIFS      = [];
 var LIST_SANCTIONS   = [];
 var LIST_ELEVES      = [];
 var CURRENT_POS      = [];
+var ROW_TO_DELETE_ID;
 
 
 var LIST_CONSEILS_INFOS = [];
@@ -69,11 +70,13 @@ var page = {
 }
 
 var chosenMsgBox;
+const MSG_SUCCESS_DELETE       = 0;
 const MSG_SUCCESS_CREATE       = 1;
 const MSG_SUCCESS_UPDATE       = 2;
 const MSG_SUCCESS_UPDATE_PRINT = 3;
 const MSG_WARNING              = 4; 
 const MSG_CONFIRM              = 5;
+const MSG_CONFIRM_DELETE       = 6;
 
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
@@ -544,11 +547,12 @@ const columnsFr = [
                         alt=''
                     />
                     <img src="icons/baseline_delete.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
+                        width     = {17} 
+                        height    = {17} 
+                        style     = {{marginLeft:"1vw"}}
+                        className = {classes.cellPointer} 
                         onClick={(event)=> {
-                            event.ignore = true;
+                            deleteRowConfirm(params.row.id);
                         }}
                         alt=''
                     />
@@ -677,7 +681,7 @@ const columnsFr = [
         {
             field: 'Action',
             headerName: '',
-            width: 80,
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle,
             renderCell: (params)=>{
@@ -695,11 +699,12 @@ const columnsFr = [
                             alt=''
                         />
                         <img src="icons/baseline_delete.png"  
-                            width={17} 
-                            height={17} 
-                            className={classes.cellPointer} 
+                            width     = {17} 
+                            height    = {17} 
+                            style     = {{marginLeft:"1vw"}}
+                            className = {classes.cellPointer} 
                             onClick={(event)=> {
-                                event.ignore = true;
+                                deleteRowConfirm(params.row.id);
                             }}
                             alt=''
                         />
@@ -751,12 +756,12 @@ function setEditMeetingGlobalData(meeting){
 
 }
 
-    function handleDeleteRow(params){
-        if(params.field=='id'){
-            //console.log(params.row.matricule);
-            deleteRow(params.row.matricule);            
-        }
-    }
+    // function handleDeleteRow(params){
+    //     if(params.field=='id'){
+    //         //console.log(params.row.matricule);
+    //         deleteRow(params.row.matricule);            
+    //     }
+    // }
 
     function initFormInputs(){
         var inputs=[];
@@ -1045,22 +1050,63 @@ function setEditMeetingGlobalData(meeting){
         }
     }
 
+    function deleteRowConfirm(rowId) {
+        ROW_TO_DELETE_ID = rowId;
 
-    function deleteRow(rowId) {
-       // alert(rowId);
-        //Message de confirmation
-        /*if(window.confirm('Voulez-vous vraiment supprimer la section selectionnée?')){
-            //requete  axios de suppression de l'eatab qui a cet id
+        chosenMsgBox = MSG_CONFIRM_DELETE;
+        currentUiContext.showMsgBox({
+            visible:true, 
+            msgType  : "question", 
+            msgTitle : t("confirm_M"), 
+            message  : t("confirm_delete")
+        })
+    } 
+
+   
+
+    function deleteCD(){
+       
+        setIsloading(true);
+        return new Promise(function(resolve, reject){
             axiosInstance
-            .post(`delete-etab/`, {
-                id:rowId,
+            .post(`delete-conseil-discipline/`, {
+                id          : ROW_TO_DELETE_ID,
+                id_sousetab : currentAppContext.currentEtab,
+                id_user     : currentAppContext.idUser
             }).then((res)=>{
                 console.log(res.data.status)
-                 //Mise a jour du tableau
-                //setDataState(result)
-            })              
-        }*/
-    } 
+                listConseilDisciplineThen().then(()=>{
+                    setIsloading(false);
+                    chosenMsgBox = MSG_SUCCESS_DELETE;
+                    currentUiContext.showMsgBox({
+                        visible:true, 
+                        msgType:"info", 
+                        msgTitle:t("success_modif_M"), 
+                        message:t("success_modif")
+                    })
+                })
+               
+                resolve(1);
+            },(res)=>{
+                console.log(res.data.status)
+                reject(0);
+            })     
+
+        })       
+    }
+
+    function listConseilDisciplineThen(){
+        return new Promise(function(resolve, reject){
+            var grdData = [...gridMeeting]
+            var index_to_delete = grdData.findIndex((cd)=>cd.id==ROW_TO_DELETE_ID);
+            grdData.splice(index_to_delete,1);
+            setGridMeeting(grdData);
+            //getListConseilDiscipline(CURRENT_CLASSE_ID, currentAppContext.currentEtab);  
+            resolve(1);
+        })
+    }
+
+
 
     function quitForm() {
         //ClearForm();
@@ -1165,6 +1211,18 @@ function setEditMeetingGlobalData(meeting){
                 modifyMeeting(CURRENT_MEETING);
                 return 1;
             }
+
+            case MSG_CONFIRM_DELETE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                deleteCD();
+                return 1;
+            }
+
             
            
             default: {
@@ -1224,6 +1282,18 @@ function setEditMeetingGlobalData(meeting){
                 })  
                 return 1;
             }
+
+            case MSG_CONFIRM_DELETE: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+               // deleteCD();
+                return 1;
+            }
+
 
             
            
@@ -1481,7 +1551,7 @@ function setEditMeetingGlobalData(meeting){
                                 classes.gridRowStyleBOLD :
                                 classes.gridRowStyle 
                             }
-                            onCellClick={handleDeleteRow}
+                            //onCellClick={handleDeleteRow}
                             onRowClick={(params,event)=>{
                                 if(event.ignore) {
                                     //console.log(params.row);

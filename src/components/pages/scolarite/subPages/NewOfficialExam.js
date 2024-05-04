@@ -176,6 +176,7 @@ const columnsFr = [
                     <img src="icons/baseline_delete.png"  
                         width={17} 
                         height={17} 
+                        style={{marginLeft:"1vw"}}
                         className={classes.cellPointer} 
                         onClick={(event)=> {
                             deleteRowConfirm(params.row.id);
@@ -272,6 +273,7 @@ const columnsFr = [
                         <img src="icons/baseline_delete.png"  
                             width={17} 
                             height={17} 
+                            style={{marginLeft:"1vw"}}
                             className={classes.cellPointer} 
                             onClick={(event)=> {
                                deleteRowConfirm(params.row.id);
@@ -656,8 +658,8 @@ const columnsFr = [
                     customStyle={true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {t("ok")}
-                    buttonRejectText = {t("non")}  
+                    buttonAcceptText = {(currentUiContext.msgBox.msgType == "question")? t("yes") : t("ok") }
+                    buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
                 />                 

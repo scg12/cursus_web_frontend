@@ -870,7 +870,7 @@ const columnsFr = [
                     customStyle={true}
                     contentStyle={classes.msgContent}
                     imgStyle={classes.msgBoxImgStyleP}
-                    buttonAcceptText = {t("yes")}
+                    buttonAcceptText = {(currentUiContext.msgBox.msgType=="question")? t("yes"):t("ok")}
                     buttonRejectText = {t("no")}  
                     buttonAcceptHandler = {acceptHandler}  
                     buttonRejectHandler = {rejectHandler}            
