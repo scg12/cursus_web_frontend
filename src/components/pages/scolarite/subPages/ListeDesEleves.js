@@ -367,14 +367,26 @@ const columnsFr = [
             return(
                 <div className={classes.inputRow}>
                     <img src="icons/baseline_edit.png"  
-                        width={17} 
-                        height={17} 
-                        className={classes.cellPointer} 
+                        width     = {17} 
+                        height    = {17} 
+                        className = {classes.cellPointer} 
                         onClick={(event)=> {
                             event.ignore = true;
                         }}
                         alt=''
                     />
+                    {(params.row.email_mere=='' && params.row.email_pere=='')&&
+                        <img src="images/defautEmail.png"  
+                            width     = {20} 
+                            height    = {20} 
+                            style     = {{marginLeft:'1vw', borderRadius:10}}
+                            className = {classes.cellPointer} 
+                            // onClick={(event)=> {
+                            //     event.ignore = true;
+                            // }}
+                            alt=''
+                        />
+                    }
                 </div>
             )}           
             
@@ -567,6 +579,19 @@ const columnsFr = [
                             }}
                             alt=''
                         />
+
+                        {(params.row.email_mere=='' && params.row.email_pere=='')&&
+                            <img src="images/defautEmail.png"  
+                                width     = {20} 
+                                height    = {20} 
+                                style     = {{marginLeft:'1vw', borderRadius:10}}
+                                className = {classes.cellPointer} 
+                                // onClick={(event)=> {
+                                //     event.ignore = true;
+                                // }}
+                                alt=''
+                            />
+                        }
                     </div>
                 )}           
                 
@@ -706,6 +731,7 @@ const columnsFr = [
             id_user         : currentAppContext.idUser           
         }).then((res)=>{
             console.log(res.data);
+            var status = res.data.status;
 
             setModalOpen(0);
             chosenMsgBox = MSG_SUCCESS;

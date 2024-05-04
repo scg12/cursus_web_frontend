@@ -492,13 +492,19 @@ function AddStudent(props) {
 
     function formDataCheck3(eleve){       
         var errorMsg='';
+        
         if(eleve.nom_pere.length == 0 && eleve.nom_mere.length == 0){
             errorMsg= t('enter_parent_name_atLeast'); 
             return errorMsg;
         }
-        if( eleve.email_pere.length == 0 &&  eleve.email_mere.length == 0){
-            errorMsg= t('enter_parent_email_atLeast'); 
-            return errorMsg;
+        
+        if(props.formMode != 'creation'){
+
+            if( eleve.email_pere.length == 0 &&  eleve.email_mere.length == 0){
+                errorMsg= t('enter_parent_email_atLeast'); 
+                return errorMsg;
+            }
+
         }
 
         if(eleve.email_pere.length != 0 && !eleve.email_pere.includes('@')){
@@ -510,6 +516,7 @@ function AddStudent(props) {
             errorMsg= t('enter_mother_correct_email'); 
             return errorMsg;
         } 
+            
         
         if((eleve.tel_mere.length==0 && eleve.tel_pere.length==0)||(eleve.tel_mere.length >0 && isNaN(eleve.tel_mere.replace(/\s/g,'')))||(eleve.tel_pere.length >0 && isNaN(eleve.tel_pere.replace(/\s/g,''))) ){
             errorMsg= t('enter_correct_phone_number'); 
