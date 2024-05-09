@@ -94,7 +94,11 @@ function CardListTemplate(props){
                 <CardHeadCenter style={styles.headerCenter} page={props.page}/>
                 
                 <View style={{backgroundImage:"images/collegeVogt.png" ,...styles.main}}>
-                    <CardPHOTO photoStyle={styles.photoStyle} imageSrc={'images/profile.png'}/>
+                    <View style={{display:"flex", flexDirection:"column",justifyContent:"center", alignItems:"center"}}>
+                        <CardPHOTO photoStyle={styles.photoStyle} imageSrc={'images/profile.png'}/>
+                        <Image style={styles.QRCodeStyle} src={'images/QRCode.png'}/>  
+                    </View>
+                    
 
                     <View style={styles.cardInfo}>
                         <View style={styles.fieldZone}>
@@ -376,6 +380,12 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize:4,
         fontWeight:'extrabold'
+    },
+
+    QRCodeStyle:{
+        marginTop:"1vh",
+        width:20,
+        height:20
     }
 
   });

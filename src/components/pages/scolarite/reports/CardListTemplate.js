@@ -93,7 +93,11 @@ function CardListTemplate(props){
                 <CardHeadCenter style={styles.headerCenter} page={props.page}/>
                 
                 <View style={styles.main}>
-                    <CardPHOTO photoStyle={styles.photoStyle} imageSrc={props.eleve.photo_url.length>0? props.eleve.photo_url :'images/photo4Fois4P.png'}/>
+                    <View style={{display:"flex", flexDirection:"column",justifyContent:"center", alignItems:"center"}}>
+                        <CardPHOTO photoStyle={styles.photoStyle} imageSrc={props.eleve.photo_url.length>0? props.eleve.photo_url :'images/photo4Fois4P.png'}/>
+                        <Image style={styles.QRCodeStyle} src={'images/QRCode.png'}/>  
+                    </View>
+                    
 
                     <View style={styles.cardInfo}>
                         <View style={styles.fieldZone}>
@@ -202,7 +206,7 @@ const styles = StyleSheet.create({
         width: "40vw",
         height: "17.7vh",
         border: "1.5px solid black",
-        borderRadius:7,
+        borderRadius:5,
         marginLeft:'1.3vw',
         marginBottom:'2vh'
 
@@ -274,9 +278,9 @@ const styles = StyleSheet.create({
     },
 
     photoStyle:{
-        width:'8.7vw',
-        height:'8.7vw',
-        borderRadius:"1.7vw",
+        width:50,
+        height:50,
+        borderRadius:3,
         marginRight:"1vw"
     },
 
@@ -432,6 +436,13 @@ const styles = StyleSheet.create({
     etoile:{
         width:'1.5vw',
         height:'1.5vw'
+    },
+
+    QRCodeStyle:{
+        marginTop:"1vh",
+        marginLeft:"-1vh",
+        width:20,
+        height:20,
     }
 
 });

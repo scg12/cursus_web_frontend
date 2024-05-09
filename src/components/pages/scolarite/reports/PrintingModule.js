@@ -58,6 +58,7 @@ export const createPrintingPages=(printingData,lng)=>{
         page.tableHeaderModel   = [...printingData.tableHeaderModel];
         page.pageTitle          = printingData.pageTitle + getTitleSuffix(index, eltsPerPage, tabSize,lng);
         page.currentClasse      = printingData.currentClasse;
+        page.anneeScolaire      = printingData.anneeScolaire;
         
         var subTable = printingData.tableData.splice(i,i+eltsPerPage);
         page.pageRows = [...subTable];
