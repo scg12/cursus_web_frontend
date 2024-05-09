@@ -161,9 +161,11 @@ function ListingNotesTemplate(props){
                     <Text style={{fontSize:10,marginLeft:"-0.5vw", fontFamily:"Times-Roman", fontFamily:"MyItalic"}}>{getSuffixe(el.pageTitle)}</Text>
                 </View>
 
-               <TableHeader style={styles.headerColumnStyle} listCours={el.tableHeaderModel}/>
+               
               
                 <View style={styles.main}>
+                    <TableHeader style={styles.headerColumnStyle} listCours={el.tableHeaderModel}/>
+
                    { Array.from(el.pageRows,
                         (row, index) => (
                             <TableRow style={styles.row} eleve={row} listCours={el.tableHeaderModel}/>
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-evenly',
         alignItems:'center',
-        width:'97%',
+        width:'93%',
         height:'2.7vh',
         backgroundColor:'rgb(6, 83, 134)',
         textTransform:'uppercase',
@@ -363,15 +365,26 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         fontSize:9,
         color:'black',
+        width:'93%',
         justifyContent:'space-evenly',
-        alignItems:"center"
+        alignItems:"center",
+        borderLeftStyle :"solid",
+        borderRightStyle:"solid",
+        borderBottomStyle:"solid",
+        borderTopStyle:"none",
+        borderLeftWidth:1,
+        borderRightWidth:1,
+        borderBottomWidth:1,
     }, 
 
     main: {
+        display:"flex",
+        justifyContent:"flex-start",
+        alignItems:"center",
         textAlign: "center",
-        // backgroundColor: "white",
+        /*backgroundColor: "white",*/
         height: "70%",
-        width: "97%",
+        width: "100%",
         color:'black',
     },
     
