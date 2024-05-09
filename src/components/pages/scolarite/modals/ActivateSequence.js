@@ -324,7 +324,7 @@ function ActivateSequence(props) {
                             
                         <div style={{marginBottom:'0vh', marginLeft:'-5.7vw'}}> 
                             
-                            <select id='optSequence' defaultValue={1} onChange={sequenceChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', height:'1.73rem',width:'12vw'}}>
+                            <select id='optSequence' defaultValue={1} onChange={sequenceChangeHandler} className={classes.comboBoxStyleP} style={{marginLeft:'-8.7vw', height:'2vw',width:'12vw'}}>
                                 {(optPeriode||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>

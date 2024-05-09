@@ -337,6 +337,18 @@ margin-right: 5px;
     padding-bottom: 0.7vh !important;  
 }
 
+.comboBoxStyleP{
+    font-weight: 600;
+    font-size: 0.97vw;
+    height:4.3vh;
+    border-radius:1vh;
+    border-style:solid;
+    border-color: rgb(128, 180, 248);
+    border-width: 0.47vh;
+    padding-left: 0.7vh !important;
+    padding-bottom: 0.5vh !important;  
+}
+
 .infoPresence{
 width: 33vw;
 display:flex;

@@ -1563,7 +1563,7 @@ function AddDisciplinMeeting(props) {
                                     </div>  
                                     :
                                     <div>                                     
-                                        <select id='convoquePar' defaultValue={MEETING.responsableId} onChange={convocateurChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.97vw', fontSize:'1vw',width:'15vw'}}>
+                                        <select id='convoquePar' defaultValue={MEETING.responsableId} onChange={convocateurChangeHandler} className={classes.comboBoxStyleP} style={{marginLeft:'-2vw', height:'1.97vw', fontSize:'1vw',width:'15vw'}}>
                                             {(optConvocateurs||[]).map((option)=> {
                                                 return(
                                                     <option  value={option.value}>{option.label}</option>
@@ -1632,7 +1632,7 @@ function AddDisciplinMeeting(props) {
                                     </div>  
                                     :
 
-                                    <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                    <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.97vw',width:'15vw'}}>
                                         {(optObjet||[]).map((option)=> {
                                             return(
                                                 <option  value={option.value}>{option.label}</option>
@@ -1656,7 +1656,7 @@ function AddDisciplinMeeting(props) {
                                     </div>  
                                     :
                                     <div>                                     
-                                        <select id='periode' defaultValue={MEETING.responsableId} onChange={periodeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                        <select id='periode' defaultValue={MEETING.responsableId} onChange={periodeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.97vw',width:'15vw'}}>
                                             {(optPeriode||[]).map((option)=> {
                                                 return(
                                                     <option  value={option.value}>{option.label}</option>

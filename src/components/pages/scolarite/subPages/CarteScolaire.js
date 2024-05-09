@@ -945,10 +945,10 @@ const columnsFr = [
                                 }
                             }}  
                             
-                            onRowDoubleClick ={(params, event) => {
-                                event.defaultMuiPrevented = true;
-                                consultRowData(params.row)
-                            }}
+                            // onRowDoubleClick ={(params, event) => {
+                            //     event.defaultMuiPrevented = true;
+                            //     consultRowData(params.row)
+                            // }}
                             
                             //loading={loading}
                             //{...data}

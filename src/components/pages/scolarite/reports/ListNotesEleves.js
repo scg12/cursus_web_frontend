@@ -127,12 +127,7 @@ function ListNotesEleves(props){
           (el, index) => (
             <Page size="A4"  style={styles.page} key={index}>
                 <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:9999}}/>
-                {/* <View style={styles.header}>
-                    <PageHeadLeft  style={styles.headerLeft}   page={el}   />
-                    <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
-                    <PageHeadRight style={styles.headerRight}  page={el}  />                                     
-                </View> */}
-
+               
                 <View style={styles.header}>
                     <PageHeadLeft  style={styles.headerLeft}   page={el}   />
                     <PageLOGO      style={styles.pageLogoContainer} imagestyle={styles.imagestyle} imageSrc={el.pageImages[0]}/>
@@ -144,10 +139,7 @@ function ListNotesEleves(props){
                 <View style={styles.dateContainer}>
                     <Text style={styles.dateStyle}>{el.dateText}</Text>
                 </View>
-                
-                {/* <View style={styles.pageTitleContainer}>
-                    <Text style={styles.titleStyle}>{el.pageTitle}</Text>
-                </View> */}
+               
 
                 <View style={styles.pageTitleContainer}>
                     <Text style={styles.titleStyle}>{getMainTitle(el.pageTitle)} </Text>
@@ -155,9 +147,9 @@ function ListNotesEleves(props){
                     <Text style={{fontSize:10,marginLeft:"-0.5vw", fontFamily:"Times-Roman", fontFamily:"MyItalic"}}>{getSuffixe(el.pageTitle)}</Text>
                 </View>
 
-                <TableHeader style={styles.headerColumnStyle} page={el}/>
-               
                 <View style={styles.main}>
+                    <TableHeader style={styles.headerColumnStyle} page={el}/>
+
                    { Array.from(el.pageRows,
                         (row, index) => (
                             <TableRow style={styles.row} eleve={row}/>
@@ -342,15 +334,26 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         fontSize:9,
         color:'black',
+        width:'87%',
         justifyContent:'space-evenly',
-        alignItems:"center"
+        alignItems:"center",
+        borderLeftStyle :"solid",
+        borderRightStyle:"solid",
+        borderBottomStyle:"solid",
+        borderTopStyle:"none",
+        borderLeftWidth:1,
+        borderRightWidth:1,
+        borderBottomWidth:1,
     }, 
 
     main: {
+        display:"flex",
+        justifyContent:"flex-start",
+        alignItems:"center",
         textAlign: "center",
         /*backgroundColor: "white",*/
         height: "70%",
-        width: "97%",
+        width: "100%",
         color:'black',
     },
     

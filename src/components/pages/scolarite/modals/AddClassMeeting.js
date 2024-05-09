@@ -1460,7 +1460,7 @@ function AddClassMeeting(props) {
                                     </div>  
                                     :
 
-                                    <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                    <select id='objet' defaultValue={MEETING.objetId} onChange={objetChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.97vw',width:'15vw'}}>
                                         {(optObjet||[]).map((option)=> {
                                             return(
                                                 <option  value={option.value}>{option.label}</option>
@@ -1485,7 +1485,7 @@ function AddClassMeeting(props) {
                                     </div>  
                                     :
                                     <div>                                     
-                                        <select id='periode' defaultValue={MEETING.responsableId} onChange={periodeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.87vw',width:'15vw'}}>
+                                        <select id='periode' defaultValue={MEETING.responsableId} onChange={periodeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-2vw', height:'1.97vw',width:'15vw'}}>
                                             {(optPeriode||[]).map((option)=> {
                                                 return(
                                                     <option  value={option.value}>{option.label}</option>

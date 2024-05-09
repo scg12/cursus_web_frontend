@@ -834,6 +834,14 @@ function AddStudent(props) {
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={backToStep1Handler}
                             />
+
+                            <CustomButton
+                                btnText= {t("cancel")}
+                                buttonStyle={getGridButtonStyle()}
+                                btnTextStyle = {classes.btnTextStyle}
+                                btnClickHandler={props.cancelHandler}
+                            />
+
                             <CustomButton
                                 btnText= {t("etape") + ' 3 >'}
                                 buttonStyle={getGridButtonStyle()}
@@ -934,6 +942,14 @@ function AddStudent(props) {
                                 btnTextStyle = {classes.btnTextStyle}
                                 btnClickHandler={backToStep2Handler}
                             />
+
+                            <CustomButton
+                                btnText= {t("cancel")}
+                                buttonStyle={getGridButtonStyle()}
+                                btnTextStyle = {classes.btnTextStyle}
+                                btnClickHandler={props.cancelHandler}
+                            />
+
                             <CustomButton
                                 btnText={t("terminer")}
                                 buttonStyle={getGridButtonStyle()}
