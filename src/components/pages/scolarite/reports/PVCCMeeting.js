@@ -96,15 +96,16 @@ function PVCCMeeting(props){
                     color           :'white',
                     alignItems      :'center',  
                     height          :"2.3vh",
+                    textTransform   :"uppercase",
                     ...props.style}}
             >
-                <Text style={{fontSize:8, width:"20vw",textAlign:'left' }}>{props.header.tableHeaderModel[0]}</Text>
-                <Text style={{fontSize:8, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[1]}</Text>
-                <Text style={{fontSize:8, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[2]}</Text>
-                <Text style={{fontSize:8, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[3]}</Text>
-                <Text style={{fontSize:8, width:"8vw", textAlign:'left' }}>{props.header.tableHeaderModel[4]}</Text>
-                <Text style={{fontSize:8, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[5]}</Text> 
-                <Text style={{fontSize:8, width:"7vw", textAlign:'left' }}>{props.header.tableHeaderModel[6]}</Text>
+                <Text style={{fontSize:7, width:"20vw",textAlign:'left' }}>{props.header.tableHeaderModel[0]}</Text>
+                <Text style={{fontSize:7, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[1]}</Text>
+                <Text style={{fontSize:7, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[2]}</Text>
+                <Text style={{fontSize:7, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[3]}</Text>
+                <Text style={{fontSize:7, width:"8vw", textAlign:'left' }}>{props.header.tableHeaderModel[4]}</Text>
+                <Text style={{fontSize:7, width:"13vw", textAlign:'left' }}>{props.header.tableHeaderModel[5]}</Text> 
+                <Text style={{fontSize:7, width:"7vw", textAlign:'left' }}>{props.header.tableHeaderModel[6]}</Text>
             </View>
         );
     }
@@ -159,7 +160,7 @@ function PVCCMeeting(props){
 
     const PVText = (props)=>{
        return(
-            <View style={{display:"flex", flexDirection:"column", justifyContent:"flex-start"}}>
+            <View style={{display:"flex", flexDirection:"column", justifyContent:"flex-start",}}>
                 <View style={{display:"flex", flexDirection:"row"}}>
                     <Text style={{fontSize:12, textAlign:'justify'}}>En la date du {props.date}, s'est tenue a {props.time}, dans les locaux du {props.schoolName}, sis au quartier {props.quartier}({props.ville}),un conseil de classe {props.typeMeeting}.</Text>
                 </View>
@@ -173,7 +174,7 @@ function PVCCMeeting(props){
                 </View>
                
                 {(props.typeMeeting =='annuel')&&
-                    <View style={{display:"flex", flexDirection:"row",marginTop:"0.7vh"}}>
+                    <View style={{display:"flex", flexDirection:"row",marginTop:"0.7vh",  marginBottom:"0.8vh"}}>
                         <Text style={{fontSize:12,textAlign:'justify'}}>Les decisions prises specifiquement pour chacun des de cette classe eleves sont les suivantes :</Text>
                     </View> 
                 }
@@ -215,13 +216,14 @@ function PVCCMeeting(props){
                         participants     = {props.pageSet.participants}
                     />
                    
-                    {(props.pageSet.typeMeeting=="annuel") && 
-                       <TableHeader style={{marginTop :"1vh",marginBottom :"0.3vh"}}  header={props.pageSet}/>
-                    }
+                    {/* {(props.pageSet.typeMeeting=="annuel") && 
+                       <TableHeader style={{marginTop :"1vh",marginBottom :"0.3vh", width:"93%"}}  header={props.pageSet}/>
+                    } */}
   
                        
                     {(props.pageSet.typeMeeting=="annuel")&& 
                         <View style={{width:"100%"}}>
+                            <TableHeader   header={props.pageSet}/>
                             { Array.from(props.pageSet.firstPageElt,
                                (elt, index) => (
                                     <TableRow eleve={elt} eleveDecision={props.pageSet.firstPageDecisions} elevePromotions={props.pageSet.firstPagePromotions} index={index} />
@@ -450,14 +452,21 @@ const styles = StyleSheet.create({
         flexDirection:"row",                 
     },
 
-    row:{
+    row:{      
         display: "flex",
         flexDirection: "row",
         fontSize:9,
         color:'black',
+        // width:'97%',
         justifyContent:'space-evenly',
         alignItems:"center",
-        width:"100%",
+        borderLeftStyle :"solid",
+        borderRightStyle:"solid",
+        borderBottomStyle:"solid",
+        borderTopStyle:"none",
+        borderLeftWidth:1,
+        borderRightWidth:1,
+        borderBottomWidth:1,
         /*height:"1.7vh"*/
     }, 
 
@@ -465,7 +474,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         // backgroundColor: "white",
         height: "70%",
-        width: "97%",
+        width: "93vw",
         color:'black',
         paddingLeft:'2vw'
     },

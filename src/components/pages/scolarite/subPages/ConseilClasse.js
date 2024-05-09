@@ -1326,7 +1326,7 @@ const columnsFr = [
                 elevesPromotions = [...CURRENT_MEETING.listPromotions];
         
         
-                countOtherPage   =  (infosEleves.length-FIRST_PAGE_ROWS_COUNT)/ROWS_PER_PAGE;
+                countOtherPage   =  Math.ceil((infosEleves.length-FIRST_PAGE_ROWS_COUNT)/ROWS_PER_PAGE);
                 firstElts        =  infosEleves.splice(0,FIRST_PAGE_ROWS_COUNT);
                 firstDecisions   =  elevesDecisions.splice(0,FIRST_PAGE_ROWS_COUNT);
                 firstPromotions  =  elevesPromotions.splice(0,FIRST_PAGE_ROWS_COUNT);

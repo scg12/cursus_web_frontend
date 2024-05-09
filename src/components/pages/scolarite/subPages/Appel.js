@@ -740,7 +740,7 @@ function Appel(props) {
                             null
                         }
 
-                        <CustomButton
+                        {/* <CustomButton
                             btnText={t('imprimer')}
                             hasIconImg= {true}
                             imgSrc='images/printing1.png'
@@ -749,7 +749,7 @@ function Appel(props) {
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
                             disable={(modalOpen==1||modalOpen==2)}   
-                        />
+                        /> */}
 
                     </div>
                         
