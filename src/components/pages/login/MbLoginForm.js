@@ -491,7 +491,7 @@ function initUserNotifs(foundedNotifs){
                     
 
                     <div class="input-field center" style={{paddingBottom:'3vh'}}>
-                            <button class="btn-small button" onClick={connectHandler}>Connexion</button>
+                            <button class="btn-small button"  style={{borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button>
                     </div>
                     {isLoading &&
                         <div className={classes.loading}>

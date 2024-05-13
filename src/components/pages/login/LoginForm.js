@@ -653,7 +653,7 @@ function LoginForm(props){
                         </form>
 
                         <div class="input-field center" style={{marginTop:passWordError ? "2vh": isLoading ? "-0.8vh": null}}>
-                            <button class="btn-small button" style={{fontSize:'1vw', fontWeight:555, width:'10vw', height:'5.3vh', borderRadius:3}} onClick={connectHandler}>{t("Connexion")}</button>
+                            <button class="btn-small button" style={{fontSize:'1vw', fontWeight:555, width:'10vw', height:'5.3vh', borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button>
                         </div>
 
                         {isLoading && 
