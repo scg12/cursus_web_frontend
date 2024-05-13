@@ -213,7 +213,6 @@ export const createModule=()=>{
         TAB_LESSON[CHAPITRE.chapitreId] = [];
 
         lessonTab = modulesTab[j+1].split('*');
-        
         for(var k = 0; k <lessonTab.length; k++){
           lesson = lessonTab[k].split('_');
           LESSON={};
