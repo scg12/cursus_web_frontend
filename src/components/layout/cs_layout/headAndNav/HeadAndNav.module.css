@@ -78,8 +78,8 @@
  
  .logoStyle {
   align-self: center;
-  max-height: 13vh;
-  max-width: 9.3vw;
+  max-height: 19vh;
+  max-width: 15.3vw;
   margin-left: 7px;
   border-radius: 5px;
   position: relative;
@@ -286,6 +286,7 @@ div .Theme1_widget_content  :hover {
   display: flex;
   flex-direction: column;
   margin-top: -2vh;
+  position: relative;
 }
 
 .Theme2_widget {
@@ -335,6 +336,7 @@ div .Theme2_widget_content :hover {
   display: flex;
   flex-direction: column;
   margin-top: -2vh;
+  position: relative;
 }
 
 .Theme3_widget {
