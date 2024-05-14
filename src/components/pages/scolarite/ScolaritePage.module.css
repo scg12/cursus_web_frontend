@@ -70,7 +70,7 @@
 
 .pageTitle {
     position: absolute;
-    top: 14.3vh;
+    top: 16.3vh;
     font-size: 1.3vw;
     font-weight: 770;
     background-color: rgba(241, 246, 248, 0.918);
@@ -124,7 +124,7 @@
 /*--------------------- Theme1 ----------------------- */
 .Theme1_mainContentPosition {
     position: absolute;
-    top: 21vh;
+    top: 23vh;
     z-index: 1;
     display : flex;
     flex-direction: column;
@@ -146,7 +146,7 @@
 
 .Theme2_mainContentPosition {
     position: absolute;
-    top: 21vh;
+    top: 23vh;
     z-index: 1;
     display : flex;
     flex-direction: column;
@@ -170,7 +170,7 @@
 
 .Theme3_mainContentPosition {
     position: absolute;
-    top: 21vh;
+    top: 23vh;
     z-index: 1;
     display : flex;
     flex-direction: column;

@@ -489,8 +489,10 @@ function ConfigGen(props) {
     }
 
     function MajEtabDisplayedInfos(infosEtab){
-        document.getElementById("etab_name").textContent  = infosEtab.libelle;
-        document.getElementById("etab_motto").textContent = infosEtab.devise;
+        document.getElementById("etab_name").textContent      = infosEtab.libelle;
+        document.getElementById("etab_motto").textContent     = infosEtab.devise;
+        document.getElementById("etab_motto").style.fontStyle = 'italic';
+
         if(infosEtab.logo_url!=undefined && infosEtab.logo_url!= null && infosEtab.logo_url!="")
         document.getElementById("etab_logo").setAttribute('src', infosEtab.logo_url);
 

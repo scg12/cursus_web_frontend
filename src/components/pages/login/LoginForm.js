@@ -3,7 +3,8 @@ import classes from './LoginForm.module.css';
 import {Link} from 'react-router-dom';
 
 import { useTranslation } from "react-i18next";
-import '../../../translation/i18n'
+import '../../../translation/i18n';
+import CustomButton from '../../customButton/CustomButton';
 
 import axiosInstance from "../../../axios"
 import { useState,useContext} from "react";
@@ -652,8 +653,20 @@ function LoginForm(props){
                             }
                         </form>
 
-                        <div class="input-field center" style={{marginTop:passWordError ? "2vh": isLoading ? "-0.8vh": null}}>
-                            <button class="btn-small button" style={{fontSize:'1vw', fontWeight:555, width:'10vw', height:'5.3vh', borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button>
+                        <div class="input-field center" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", marginTop:passWordError ? "2vh": isLoading ? "-0.8vh": null}}>
+                            
+                            {/* <button  class="btn-small button" style={{fontSize:'1vw', fontWeight:555, width:'10vw', height:'5.3vh', borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button> */}
+
+                            <CustomButton
+                                btnText={t("Connexion")}
+                                hasIconImg= {true}
+                                imgSrc='icons/login1.png'
+                                imgStyle = {classes.grdBtnImgStyle}  
+                                buttonStyle={classes.loginButton}
+                                btnTextStyle = {classes.loginButtonText}
+                                btnClickHandler={connectHandler}
+                                
+                            />
                         </div>
 
                         {isLoading && 

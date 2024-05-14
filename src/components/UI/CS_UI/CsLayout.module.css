@@ -22,7 +22,7 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  height: 10vh;
+  height: 15vh;
   position:relative;
   z-index: 11;
 }
@@ -115,7 +115,7 @@
   
   .Theme2_sideContentStyle{
     background-color:rgb(77, 75, 75);
-    height:100%;
+    /*height:100%;*/
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -145,7 +145,7 @@
   
 .Theme3_sideContentStyle{
   background-color:rgb(77, 75, 75);
-  height:100%;
+ /* height:100%;*/
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

@@ -67,7 +67,7 @@ function ConfigEnseignantSpecialites(props) {
         {
             field: 'nom',
             headerName: 'Nom',
-            width: 180,
+            width: 120,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
@@ -82,10 +82,20 @@ function ConfigEnseignantSpecialites(props) {
         {
             field: 'prenom',
             headerName: 'Prénom',
-            width: 180,
+            width: 100,
             editable: false,
             headerClassName:classes.GridColumnStyle
         },
+
+        {
+            field: 'code_ens',
+            headerName: 'Code Ens.',
+            width: 120,
+            editable: false,
+            headerClassName:classes.GridColumnStyle
+        },
+
+
         {
             field: 'liste_matieres_enseignees',
             headerName: 'Matiere(s) enseignée(s)',
