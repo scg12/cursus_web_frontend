@@ -125,6 +125,21 @@ export function getTodayDate(){
    return jour+'/'+ mois +'/'+ annee;
 }
 
+export function getYestedayDate(){
+    var date = new Date();
+    date.setDate(date.getDate()-1);
+    
+    var jour  = date.getDate();
+    var mois  = date.getMonth()+1;
+    var annee = date.getFullYear();
+
+    if(jour <= 9) jour = '0'+jour;
+    if(mois <= 9) mois = '0'+mois;
+
+    return jour+'/'+ mois +'/'+ annee;
+
+}
+
 export function ajouteZeroAuCasOu(nombre){
     if(parseInt(nombre).toString().trim().length==1) return '0'+nombre.toString().trim();
     else return nombre.toString().trim();    

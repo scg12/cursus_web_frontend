@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import '../../../translation/i18n'
 import axiosInstance from '../../../axios';
+import CustomButton from '../../customButton/CustomButton';
 
 import { useState,useContext } from "react";
 import UiContext from '../../../store/UiContext';
@@ -488,10 +489,23 @@ function initUserNotifs(foundedNotifs){
                             : null
                         }
                     </form>
+
+
+                 
                     
 
-                    <div class="input-field center" style={{paddingBottom:'3vh'}}>
-                            <button class="btn-small button"  style={{borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button>
+                    <div class="input-field center" style={{display:"flex", flexDirection:"column", justifyContent:"center",paddingBottom:'3vh'}}>
+                        <button class="btn-small button"  style={{borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button>
+                        <CustomButton
+                            btnText={t("Connexion")}
+                            hasIconImg= {true}
+                            imgSrc='icons/login1.png'
+                            imgStyle = {classes.grdBtnImgStyle}  
+                            buttonStyle={classes.loginButton}
+                            btnTextStyle = {classes.loginButtonText}
+                            btnClickHandler={connectHandler}
+                                
+                        />
                     </div>
                     {isLoading &&
                         <div className={classes.loading}>
