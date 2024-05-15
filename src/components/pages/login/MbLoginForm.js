@@ -494,8 +494,8 @@ function initUserNotifs(foundedNotifs){
                  
                     
 
-                    <div class="input-field center" style={{display:"flex", flexDirection:"column", justifyContent:"center",paddingBottom:'3vh'}}>
-                        <button class="btn-small button"  style={{borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button>
+                    <div class="input-field center" style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:'center', paddingBottom:'3vh'}}>
+                        {/* <button class="btn-small button"  style={{borderRadius:7}} onClick={connectHandler}>{t("Connexion")}</button> */}
                         <CustomButton
                             btnText={t("Connexion")}
                             hasIconImg= {true}
@@ -503,8 +503,7 @@ function initUserNotifs(foundedNotifs){
                             imgStyle = {classes.grdBtnImgStyle}  
                             buttonStyle={classes.loginButton}
                             btnTextStyle = {classes.loginButtonText}
-                            btnClickHandler={connectHandler}
-                                
+                            btnClickHandler={connectHandler}                            
                         />
                     </div>
                     {isLoading &&
