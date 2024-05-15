@@ -94,7 +94,7 @@
 
 .pageTitle {
     position: absolute;
-    top: 15.3vh;
+    top: 15.7vh;
     font-size: 1.3vw; /*2vw;*/
     font-weight:770;/*700;*/
     background-color:#f1f6f8ea; 
@@ -151,7 +151,7 @@
 /*--------------------- Theme1 ----------------------- */
 .Theme1_mainContentPosition {
     position:absolute;
-    top:23vh;
+    top:23.3vh;
     z-index: 1;
     display : flex;
     flex-direction: column;
@@ -309,7 +309,7 @@
 
 .Theme2_mainContentPosition {
     position:absolute;
-    top:23vh;
+    top:23.3vh;
     z-index: 1;
     display : flex;
     flex-direction: column;
@@ -468,7 +468,7 @@
 
 .Theme3_mainContentPosition {
     position:absolute;
-    top:23vh;
+    top:23.3vh;
     z-index: 1;
     display : flex;
     flex-direction: column;
