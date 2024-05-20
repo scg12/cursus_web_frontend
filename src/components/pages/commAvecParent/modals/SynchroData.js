@@ -458,7 +458,7 @@ function SynchroData(props) {
                         ratePosition  = {"top"}
 
                         barContainerStyle={{
-                            marginTop:"-5.3vh"
+                            marginTop:"3.3vh"
                         }}
 
                         barStyle={{
