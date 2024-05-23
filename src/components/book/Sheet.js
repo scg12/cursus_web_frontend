@@ -101,8 +101,8 @@ function Sheet(props){
     function createString(tab){
         var chaine = ''
         tab.map((elt, index)=>{
-            if(index==0) chaine = elt.date+"&&"+elt.libelle;
-            else chaine = chaine + "²²" + elt.date+"&&"+elt.libelle;
+            if(index==0) chaine = elt.date+"||"+elt.libelle;
+            else chaine = chaine + "²²" + elt.date+"||"+elt.libelle;
         })
         return chaine;
     }
@@ -112,8 +112,8 @@ function Sheet(props){
         var ctDataTab = [];
         if (tab.length>0) {
             tab.map((elt)=>{ 
-                if(elt.split("&&")[0].length>0){
-                    ctDataTab.push({date:elt.split("&&")[0], libelle:elt.split("&&")[1]});
+                if(elt.split("||")[0].length>0){
+                    ctDataTab.push({date:elt.split("||")[0], libelle:elt.split("||")[1]});
                 }                
             })
         }      
