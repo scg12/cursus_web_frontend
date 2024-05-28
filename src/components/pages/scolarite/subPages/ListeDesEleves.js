@@ -741,6 +741,7 @@ const columnsFr = [
         inputs[13]= (row.redouble=='Redoublant')? 'O': 'N';
 
         inputs[14]= row.date_entree;
+        inputs[15]= row.photo_url;
 
      
         currentUiContext.setFormInputs(inputs)
