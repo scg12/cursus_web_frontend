@@ -1,4 +1,6 @@
-{   "sent_Msg_by_class_M"             : "MESSAGES ENVOYES PAR CLASSES",
+{   "connected"                       : "Connecté",
+    "not_connected"                   : "Non connecté",
+    "sent_Msg_by_class_M"             : "MESSAGES ENVOYES PAR CLASSES",
     "name_to_seach"                   : "Nom Recherché",
     "tranche"                         : "Tranche",
     "listing_versements_frais"        : "Listing Des versement des Frais de scolarité ",

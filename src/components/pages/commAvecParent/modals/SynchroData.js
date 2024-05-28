@@ -34,7 +34,7 @@ function SynchroData(props) {
     const [fileSelected, setFileSelected]               = useState(false)
     const [sequenceActivated, setSequenceActivated]     = useState(false);
     const [checkDisabled, setCheckDisabled]             = useState(true);
-    const [isInternetAvailable, setIsInternetAvailable] = useState(false);
+    const [isInternetAvailable, setIsInternetAvailable] = useState("");
     const [percent, setPercent]                         = useState(0);
     const [currentAction, setCurrentAction]             = useState("");
     const [pgBarVisible, setPgBarVisible]               = useState(false);
@@ -253,9 +253,11 @@ function SynchroData(props) {
     function testInternetConnection(){
         axiosInstance.post(`test-internet-connection/`, {            
         }).then((res)=>{   
-            console.log("resultat",res.data);
-            //setIsInternetAvailable(res.data.status)
-            setIsInternetAvailable(true);
+            console.log("resultat",res.data, res.data.status);
+            setIsInternetAvailable(res.data.status.toString())
+            //setIsInternetAvailable(true);
+        },(res)=>{
+            setIsInternetAvailable(false);
         })
     } 
 
@@ -420,7 +422,7 @@ function SynchroData(props) {
                             imgStyle = {classes.grdBtnImgStylePrim}
                             //btnClickHandler={props.cancelHandler}
                             btnClickHandler={envoyerMessages}
-                            disable={(isInternetAvailable==false) ? true:false}
+                            disable={(isInternetAvailable==false||isInternetAvailable=="") ? true:false}
                         />
                     </div>
                     :
@@ -458,7 +460,7 @@ function SynchroData(props) {
                         ratePosition  = {"top"}
 
                         barContainerStyle={{
-                            marginTop:"3.3vh"
+                            marginTop:"2.3vh"
                         }}
 
                         barStyle={{
@@ -484,6 +486,20 @@ function SynchroData(props) {
                     btnClickHandler={activateOrDesactivateEvalPeriod}
                     disable={(isValid) ? !isValid :!fileSelected}
                 /> */}
+                    {(isInternetAvailable=="")?                          
+                        null
+                        :
+                        (isInternetAvailable=='false') ?
+                            <div style={{position:"absolute", left:2, display:"flex", flexDirection:"row"}}>
+                                <img src= "images/synchroOFF.png" style={{width:"1rem",height:"1rem"}}/>
+                                <label style={{marginLeft:"0.17vw", color:"black", sontStyle:"0.87vw", fontWeight:"600"}}> {t("not_connected")}</label>
+                            </div>                        
+                            :
+                            <div style={{position:"absolute", left:2, display:"flex", flexDirection:"row"}}>
+                                <img src= "images/synchroOK.png" style={{width:"1rem",height:"1rem"}}/>
+                                <label style={{marginLeft:"0.17vw", color:"black", sontStyle:"0.87vw", fontWeight:"600"}}> {t("connected")}</label>
+                            </div>
+                    }
 
                     <CustomButton
                         btnText={t('connect_to_internet')}
