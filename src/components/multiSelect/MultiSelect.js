@@ -33,7 +33,7 @@ function DataListRow(props){
         (props.selectionMode == "single")?
             <div className={getSingleSelectionStyle()} style={{display:"flex", flexDirection:"row", justifyContent:"flex-start", width:"100%", paddingLeft:"1vw"}} onClick={props.selectionHandler}>
                 <input id={props.rowId} type="hidden" value={props.rowId}/>
-                <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-start", width:"100%"}} >
+                <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-start", width:"100%"}} onClick={props.selectionHandler}>
                     <div style={{fontSize:"1.7vw", marginTop:"-2.3vh", width:"10%"}}>.</div>           
                     <div style={{width:"100%", textOverflow:"ellipsis"}} id={props.rowId}> {props.rowText} </div>
                 </div>
@@ -170,7 +170,7 @@ function MultiSelect(props) {
                 
             <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}> 
                 <div style={{display:"flex",height:"3vh", flexDirection:"row", justifyContent:"center", alignItems:"center",border:"solid 1px gray", borderRadius:"2.3vh", marginBottom:"0.3vh", paddingLeft:"1vh", ...props.searchInputStyleP}}>
-                    <input id={"searchText"} type="text"   style={{height:"3vh", marginTop:"1vh", border:"none", ...props.searchInputStyle}} onChange={props.searchTextChangeHandler}></input>
+                    <input id={"searchText"} type="text"  placeholder={props.placeholder} title={props.title} style={{height:"3vh", marginTop:"1vh", border:"none", ...props.searchInputStyle}} onChange={props.searchTextChangeHandler}></input>
                     <img src={"images/loupe_trans.png"} className={classes.searchImgStyle}/>
                 </div>
 

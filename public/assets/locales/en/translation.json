@@ -1,5 +1,7 @@
                      
-{   "tranche"                         : "Fee part",
+{   "sent_Msg_by_class_M"             : "SENT MESSAGES ORDERED BY CLASSES",
+    "name_to_seach"                   : "Searched Name",
+    "tranche"                         : "Fee part",
     "listing_versements_frais"        : "Listing of School fees payements",
     "date_versemnt"                   : "Payement date",
     "montant_verse"                   : "Amount Paid",

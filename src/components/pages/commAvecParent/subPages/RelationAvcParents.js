@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
-var LIST_GENERALE_ELEVES;
+var LIST_GENERALE_ELEVES = [];
 
 var listElt = {}
 var tempTable;
@@ -105,6 +105,7 @@ function RelationAvcParents(props) {
     function classChangeHandler(e){
         if(e.target.value > 0){
             getClassStudentList(e.target.value);
+            document.getElementById("searchText").value ="";
         }else{
             setListEleves([]);
             setGridRows([]);
@@ -169,20 +170,26 @@ function RelationAvcParents(props) {
     function searchTextChangeHandler(e){
         var name = e.target.value;
         console.log("fffff",name,LIST_GENERALE_ELEVES)
-        //var tabEleves     = [...listEleves];
-        setListEleves(LIST_GENERALE_ELEVES);
+        //var tabEleves     = [...listEleves];        
         var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
         setGridRows(matchedEleves);
+        setListEleves(matchedEleves);
     }
 
 
     function validateSelectionHandler(e){
         list_destinataire      = document.getElementById("hidden2_"+MultiSelectId).value;
         list_destinataires_ids = document.getElementById("hidden1_"+MultiSelectId).value;
-        
+
+        var searchedName       =  document.getElementById("searchText").value;
+        var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(searchedName.toLowerCase()));
         setListEleves([]);
-        setOptClasses(tempTable);
+        setGridRows(matchedEleves);
         setMultiSelectVisible(false);
+        
+        // setListEleves([]);
+        // setOptClasses(tempTable);
+        // setMultiSelectVisible(false);
     }
 
     /*************************** DataGrid Declaration ***************************/    
@@ -491,18 +498,19 @@ function RelationAvcParents(props) {
             <div className={classes.formGridContent}>
               
                 <div className={classes.gridTitleRow}> 
-                    <div className={classes.gridTitle}>                  
+                    <div className={classes.gridTitle} style={{width:"47vw"}}>                  
                         <div className={classes.gridTitleText}>
-                            {t('destinataire_M')}  :
+                            {t('sent_Msg_by_class_M')}  :
                         </div>
                       
                         <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
-                        <MultiSelect
+                            <MultiSelect
                                 id                  = {MultiSelectId}
                                 //-----Fields-----
                                 optData             = {optClasses}
                                 fetchedData         = {listEleves}
                                 selectionMode       = {"single"}
+                                placeholder         = {"--- "+t("name_to_seach")+" ---"}
                             
                                 //-----Handler-----
                                 optionChangeHandler     = {classChangeHandler      }
@@ -514,7 +522,7 @@ function RelationAvcParents(props) {
                             
                                 //-----Styles-----
                                 searchInputStyle    = {{fontSize:"0.87vw", height:"4.7vh"}}
-                                searchInputStyleP   = {{height:"4vh"}}
+                                searchInputStyleP   = {{height:"4vh",backgroundColor:"ghostwhite"}}
                                 comboBoxStyle       = {{width:"13vw", height:"4vh", border:"solid 2px #8eb1ec", fontSize:"1vw", borderRadius:"3px"}}
                                 dataFieldStyle      = {{minHeight:"5vh", borderRadius:"1vh", height:"fit-content", maxHeight:"53vw", overflowY:"scroll", border:"solid 1px gray", fontSize:"0.8vw", fontWeight:100, backgroundColor:"whitesmoke", position:"absolute", top:"22.3vh", width:"13vw"}}
                                 MSContainerStyle    = {{/*border:"solid 1px grey",*/ padding:"1vh", marginRight:"1vh", marginBottom:"-1vh"}}

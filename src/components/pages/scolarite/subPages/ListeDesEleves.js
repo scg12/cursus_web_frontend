@@ -9,6 +9,7 @@ import axiosInstance from '../../../../axios';
 import AddStudent from "../modals/AddStudent";
 import MsgBox from '../../../msgBox/MsgBox';
 import BackDrop from "../../../backDrop/BackDrop";
+import MultiSelect from '../../../multiSelect/MultiSelect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 import {convertDateToUsualDate, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
@@ -25,6 +26,8 @@ import { useTranslation } from "react-i18next";
 
 let CURRENT_CLASSE_ID;
 let CURRENT_CLASSE_LABEL;
+
+var MOUSE_INSIDE_DROPDOWN = false;
 
 var listElt ={}
 
@@ -44,6 +47,12 @@ const MSG_WARNING =2;
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 var printedETFileName ='';
+var tempTable;
+var MultiSelectId = "searchStudent";
+
+var LIST_GENERALE_ELEVES = [];
+var list_destinataire    = "";
+var list_destinataires_ids = "";
 
 
 function ListeDesEleves(props) {
@@ -55,7 +64,9 @@ function ListeDesEleves(props) {
     const [gridRows, setGridRows] = useState([]);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
     const [optClasse, setOpClasse] = useState([]);
+    const [listEleves, setListEleves] = useState([]);
     const [imageUrl, setImageUrl] = useState('');
+    const [multiSelectVisible, setMultiSelectVisible] = useState(false);
     const selectedTheme = currentUiContext.theme;
 
     useEffect(()=> {
@@ -124,7 +135,9 @@ function ListeDesEleves(props) {
             id_classe: classId,
         }).then((res)=>{
             console.log(res.data);
-            listEleves = [...formatList(res.data)]
+            listEleves           = [...formatList(res.data)]
+            LIST_GENERALE_ELEVES = [...formatList(res.data)];
+
             console.log(listEleves);
             setGridRows(listEleves);
             console.log(gridRows);
@@ -138,6 +151,7 @@ function ListeDesEleves(props) {
         list.map((elt)=>{
             listElt={};
             listElt.id              = elt.id;
+            listElt.label           = elt.nom +' '+elt.prenom;
             listElt.displayedName   = elt.nom +' '+elt.prenom;
             listElt.nom             = elt.nom;
             listElt.age             = elt.age;
@@ -179,14 +193,37 @@ function ListeDesEleves(props) {
             CURRENT_CLASSE_ID = e.target.value; 
             CURRENT_CLASSE_LABEL = optClasse[optClasse.findIndex((classe)=>(classe.value == CURRENT_CLASSE_ID))].label;
             getClassStudentList(CURRENT_CLASSE_ID);   
-            console.log(CURRENT_CLASSE_LABEL)          
+            console.log(CURRENT_CLASSE_LABEL);   
+            document.getElementById("searchText").value = "";       
         }else{
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL='';
             setGridRows([]);
             setIsValid(false);
+            document.getElementById("searchText").value ="";
         }
     }
+
+    function searchTextChangeHandler(e){
+        var name = e.target.value;
+        console.log("fffff",name,LIST_GENERALE_ELEVES)
+        //var tabEleves     = [...listEleves];        
+        var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(name.toLowerCase()));
+        setGridRows(matchedEleves);
+        setListEleves(matchedEleves);
+    }
+
+
+    function validateSelectionHandler(e){
+        list_destinataire      = document.getElementById("hidden2_"+MultiSelectId).value;
+        list_destinataires_ids = document.getElementById("hidden1_"+MultiSelectId).value;
+        var searchedName       =  document.getElementById("searchText").value;
+        var matchedEleves =  LIST_GENERALE_ELEVES.filter((elt)=>elt.displayedName.toLowerCase().includes(searchedName.toLowerCase()));
+        setListEleves([]);
+        setGridRows(matchedEleves);
+        setMultiSelectVisible(false);
+    }
+
  
 /*************************** DataGrid Declaration ***************************/    
 const columnsFr = [
@@ -949,16 +986,16 @@ const columnsFr = [
     }));
   
     return (
-        <div className={classes.formStyleP}>
+        <div className={classes.formStyleP} onClick={()=>{if(!MOUSE_INSIDE_DROPDOWN && listEleves.length>0) {document.getElementById("hidden1_"+MultiSelectId).value = ""; setListEleves([]);}}}>
             
             {(modalOpen!=0) && <BackDrop/>}
             {(modalOpen >0 && modalOpen<4) && 
                 <AddStudent 
-                    currentClasseLabel={optClasse[optClasse.findIndex((classe)=> classe.value == CURRENT_CLASSE_ID)].label} 
-                    currentClasseId={CURRENT_CLASSE_ID} 
-                    formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
-                    actionHandler={(modalOpen==1) ? addNewStudent : modifyStudent} 
-                    cancelHandler={quitForm}
+                    currentClasseLabel = {CURRENT_CLASSE_LABEL} 
+                    currentClasseId    = {CURRENT_CLASSE_ID} 
+                    formMode           = {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  
+                    actionHandler      = {(modalOpen==1) ? addNewStudent : modifyStudent} 
+                    cancelHandler      = {quitForm}
                 />
             }
 
@@ -1008,24 +1045,53 @@ const columnsFr = [
             <div className={classes.formGridContent}>
               
                 <div className={classes.gridTitleRow}> 
-                    <div className={classes.gridTitle}>                  
+                    <div className={classes.gridTitle} style={{width:"47vw"}}>                  
                         <div className={classes.gridTitleText}>
                             {t('student_list_M')}  :
                         </div>
                       
-                        <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
+                        {/* <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
                             <select id='selectClass1' onChange={dropDownHandler} className={classes.comboBoxStyle} style={{width:'11.3vw', marginBottom:1}}>
                                 {(optClasse||[]).map((option)=> {
                                     return(
                                         <option  value={option.value}>{option.label}</option>
                                     );
                                 })}
-                            </select>                          
-                        </div>
+                            </select>  
+                        </div> */}
+
+                        <div className={classes.selectZone} style={{marginLeft:"1vw"}}>
+                            <MultiSelect
+                                id                  = {MultiSelectId}
+                                //-----Fields-----
+                                optData             = {optClasse}
+                                fetchedData         = {listEleves}
+                                selectionMode       = {"single"}
+                                placeholder         = {"--- "+t("name_to_seach")+" ---"}
+                                title               ={""}
+                            
+                                //-----Handler-----
+                                optionChangeHandler     = {dropDownHandler         }
+                                searchTextChangeHandler = {searchTextChangeHandler }
+                                selectValidatedHandler  = {validateSelectionHandler}
+                                mouseLeave              = {()=>{MOUSE_INSIDE_DROPDOWN = false}}
+                                mouseEnter              = {()=>{MOUSE_INSIDE_DROPDOWN = true }}
+
+                            
+                                //-----Styles-----
+                                searchInputStyle    = {{fontSize:"0.87vw", height:"4.7vh"}}
+                                searchInputStyleP   = {{height:"4vh", backgroundColor:"ghostwhite"}}
+                                comboBoxStyle       = {{width:"10.3vw", height:"4vh", border:"solid 2px #8eb1ec", fontSize:"1vw", borderRadius:"1vh"}}
+                                dataFieldStyle      = {{minHeight:"5vh", borderRadius:"1vh", height:"fit-content", maxHeight:"53vw", overflowY:"scroll", border:"solid 1px gray", fontSize:"0.8vw", fontWeight:100, backgroundColor:"white", position:"absolute", top:"22.3vh", width:"13vw"}}
+                                MSContainerStyle    = {{/*border:"solid 1px grey",*/ padding:"1vh", marginRight:"1vh", marginBottom:"-1vh"}}
+                            />
+                           
+                        </div>                        
+                        
                     </div>
                     
                                 
-                    <div className={classes.gridAction}> 
+                    <div className={classes.gridAction} style={{paddingTop:"0.57vh"}}> 
                         {(props.formMode=='ajout')?
                             <CustomButton
                                 btnText={t('New_student')}
@@ -1052,7 +1118,7 @@ const columnsFr = [
                             btnClickHandler={printStudentList}
                             disable={(isValid==false)}   
                         />
-
+                      {/* 
                         <CustomButton
                             btnText={t('importer')}
                             hasIconImg= {true}
@@ -1062,7 +1128,7 @@ const columnsFr = [
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
                             disable={(isValid==false)}    
-                        />
+                        /> */}
                     </div>
                         
                 </div>
