@@ -10,13 +10,17 @@ import UiContext from "../../../../store/UiContext";
 import { useTranslation } from "react-i18next";
 import BackDrop from '../../../backDrop/BackDrop';
 import MsgBox from '../../../msgBox/MsgBox';
+import * as FileSaver from 'file-saver';
+import XLSX from 'sheetjs-style';
+import * as XLSX_IMPORT from 'xlsx';
 
-var cur_fileToUpload = undefined;
-var cur_classeId     = undefined;
-var cur_coursId      = undefined;
-var cur_coursLabel   = undefined
-var selected_file_name='';
-var filename = '';
+var cur_fileToUpload   = undefined;
+var cur_fileToDownLoad = undefined
+var cur_classeId       = undefined;
+var cur_coursId        = undefined;
+var cur_coursLabel     = undefined
+var selected_file_name ='';
+var filename           = '';
 
 
 var chosenMsgBox;
@@ -26,7 +30,7 @@ const MSG_ERROR_FP   =13;
 
 const SERVER_ADDRESS = 'http://192.168.43.99';
 
-function AddFicheProgess(props) {
+function ImportExportData(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext)
@@ -45,11 +49,10 @@ function AddFicheProgess(props) {
     const [inputDataCorrect, setInputDataCorrect] = useState(false);
 
     useEffect(()=> {
-        selected_file_name='';
+        cur_fileToDownLoad = "export_eleves_"+props.classeLabel;
+        selected_file_name = '';
         getEtabListClasses();
-        getCoursClasse(currentAppContext.currentEtab, 0);
-        currentUiContext.setIsParentMsgBox(false);
-        //console.log("msgParents:", currentUiContext.isParentMsgBox)
+        currentUiContext.setIsParentMsgBox(false);        
     },[]);
 
 
@@ -309,7 +312,7 @@ function AddFicheProgess(props) {
         if(window.location.hostname==="localhost" || window.location.hostname==="127.0.0.1"){
             var downloadUrl = 'http://localhost:3000/fiches/FicheProgression.xlsx';
             // var downloadUrl = 'http://localhost:3000/fiches/FicheProgression'+'___'+currentAppContext.idUser+'___'+cur_coursId;
-        } else var downloadUrl = SERVER_ADDRESS +':3000/fiches/FicheProgression.xlsx';
+        } else var downloadUrl = SERVER_ADDRESS + ':3000/fiches/FicheProgression.xlsx';
 
 
         fetch(downloadUrl,{
@@ -345,6 +348,7 @@ function AddFicheProgess(props) {
 
     }
 
+
     function fileChangeHandler(e){
         cur_fileToUpload = e.target.files[0];
         if(cur_fileToUpload!=undefined){
@@ -357,7 +361,7 @@ function AddFicheProgess(props) {
         console.log('file data',cur_fileToUpload);
         console.log("msgParents:", currentUiContext.isParentMsgBox);
         
-    }
+    }   
 
 
     function storeFicheProgress(coursId){
@@ -426,23 +430,63 @@ function AddFicheProgess(props) {
     }
 
 
-    function saveOrUploadFP(e){       
-        if(isDownload) props.cancelHandler();
-        else  uploadFile(cur_fileToUpload);
+    function exportOrImport(e){   
+        if(props.isImport) importData(cur_fileToUpload);
+        else {
+            exportData(props.dataToExport,cur_fileToDownLoad);
+        }
+    }
+
+    function exportTemplate(e){
+        exportData(props.importTemplate,cur_fileToDownLoad);
+    }
+
+    function importData(file){
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const workbook   = XLSX_IMPORT.read(event.target.result,{type:'binary'});
+            const sheetName  = workbook.SheetNames[0];
+            const sheet      = workbook.Sheets[sheetName];
+            const sheetData  = XLSX_IMPORT.utils.sheet_to_json(sheet);
+
+            props.actionHandler(sheetData)
+        }
+        reader.readAsBinaryString(file);
+    }
+
+
+
+    const  exportData = async(dataToExport, fileName) =>{
+        const filetype      = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const fileExtension = '.xlsx';
+
+        const ws            = XLSX.utils.json_to_sheet(dataToExport);
+        const wb            = {Sheets:{'data':ws}, SheetNames:['data']};
+        const excelBuffer   = XLSX.write(wb,{bookType:'xlsx', type:'array'});
+        const data          = new Blob([excelBuffer],{type:filetype});
+        FileSaver.saveAs(data, fileName + fileExtension);
     }
 
     /************************************ JSX Code ************************************/
 
     return (
-        <div className={'card '+ classes.formContainerPPP}>
+        <div className={'card '+ classes.formImpExp}>
             <div className={getCurrentHeaderTheme()}>
-                <div className={classes.formImageContainer}>
-                    <img alt='add student' className={classes.formHeaderImg} src='images/FicheProgession.png'/>
-                </div>
-                           
-                <div className={classes.formMainTitle} >
-                    {t("get_or_put_FP")}
-                </div>                
+                {props.isImport ?
+                    <div className={classes.formImageContainer}>
+                        <img alt='add student' className={classes.formHeaderImg1}  src='images/import.png'/>
+                    </div>
+                    :
+                    <div className={classes.formImageContainer}>
+                        <img alt='add student' className={classes.formHeaderImg1}  src='images/export.png'/>
+                    </div>
+                }
+
+               
+                <div className={classes.formMainTitleP} >
+                    {props.titleText}
+                </div>  
+
             </div>
 
             {(currentUiContext.msgBox.visible == true) && !currentUiContext.isParentMsgBox && <BackDrop style={{height:'47vh'}}/>}
@@ -464,109 +508,87 @@ function AddFicheProgess(props) {
             
                 <div className={classes.etape}>                   
 
-                    <div className={classes.inputRow}>
-                        <div className={classes.groupInfo} >
-                            <div className={classes.inputRowLeft}> 
-                                <div style={{display:'flex', flexDirection:'row',  marginLeft:"-2.3vw", marginTop:"2vh"}}>
-                                    <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={isDownload==false}  value={'presents'} name='ficheProg' onClick={()=>{isDownload? setIsDownload(false):setIsDownload(true)}}/>
-                                    <label style={{color:'black',  fontWeight:"bold", fontSize:"1vw", marginRight:"0.3vw", marginLeft:"0.3vw", marginTop:"0vw"}}>{t('upload_FP')} </label>
+                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center", paddingLeft:"3vw"}}>
+                                               
+                        <div style={{ marginLeft:"-2.3vw"}}>
+                            <label style={{fontSize:"2.07vh", fontStyle:"italic", color:"#065386", fontWeight:"bold"}}>{props.isImport ? t("do_you_have_import_template")+" ?":t("the_excel_file")+" '"+cur_fileToDownLoad+"' "+t("has_been_created")} </label>
+                        </div>
 
-                                    <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={isDownload==true}  value={'presents'} name='ficheProg' onClick={()=>{isDownload? setIsDownload(false):setIsDownload(true);}}/>
-                                    <label style={{color:'black', fontWeight:"bold", fontSize:"1vw", marginLeft:'0.13vw', marginRight:"1vw",marginTop:"0vw" }}>{t('get_model_FP')}</label>
-                                </div>                     
+                        {!props.isImport &&
+                            <div className={classes.inputRowLeft} style={{marginTop:"1.7vh"}}>
+                            <label onClick={exportOrImport} style={{height:'4.3vh', border:"1px solid none", borderRadius:'5px',  backgroundColor:'rgb(85 118 194)', color:'white', paddingRight:"1vw", cursor:"pointer" }}><img alt='img' src="images/selectFile.png" style={{width:"1.93vw",height:"1.93vw", marginBottom:"-1.47vh"}}/>{t('download_export')}</label>
+                            
+                        
+
+                            <div style={{minWidth:'11vw'}}> 
+                                <label id="fileName" style={{fontSize:"2.3vh"}}>{selected_file_name}</label>
                             </div>
-                            {isDownload ?
-                                <div className={classes.inputRowLeft} style={{marginTop:'7vh'}}> 
-                                    <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[11]}/>
-                                   
-                                    <CustomButton
-                                        btnText={t('download_FPModel_here')}
-                                        hasIconImg= {true}
-                                        imgSrc='images/saveToDisk_trans.png'
-                                        imgStyle = {classes.grdBtnImgStyle}  
-                                        buttonStyle={getNotifButtonStyle()}
-                                        btnTextStyle = {classes.notifBtnTextStyle}
-                                        btnClickHandler={downloadHandler}
-                                        //disable={(isValid==false)}   
-                                    />
-                                </div>
-                                :
-                                <div className={classes.groupInfo} style={{marginBottom:'3.7vh', marginTop:'2.7vh'}}>
-                                    <div className={classes.inputRowLeft} style={{marginBottom:'3vw'}}> 
-                                        <div style={{width:'19vw', fontWeight:570}}>
-                                           {t('class')}:  
-                                        </div>
-                                            
-                                        <div style={{marginBottom:'1.3vh', marginLeft:'-5.7vw'}}> 
-                                            
-                                            <select id='optClasse' defaultValue={1} onChange={classeChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-8.7vw', /*height:'1.73rem',*/width:'12vw'}}>
-                                                {(optClasse||[]).map((option)=> {
-                                                    return(
-                                                        <option  value={option.value}>{option.label}</option>
-                                                    );
-                                                })}
-                                            </select>
-                                        </div>
-                                         
-                                        <div className={classes.inputRowLabel} style={{fontWeight:570, marginLeft:'2.3vw'}}>
-                                            {t('course')}:   
-                                        </div>
-                                        
-                                        <div style={{marginBottom:'1.3vh', marginLeft:'-2vw'}}>  
-                                            
-                                            <select id='optCours' defaultValue={1} onChange={coursChangeHandler} className={classes.comboBoxStyle} style={{marginLeft:'-5.7vw', /*height:'1.73rem',*/ width:'15vw'}}>
-                                                {(optCours||[]).map((option)=> {
-                                                    return(
-                                                        <option  value={option.value}>{option.label}</option>
-                                                    );
-                                                })}
-                                            </select>
-                                        </div>
-                                        
-                                    </div>
+                        </div> 
 
-                                    <div className={classes.inputRowLeft}> 
-                                        {/*<div className={classes.inputRowLabel} style={{fontWeight:570}}>
-                                            Fichier: 
-                                            </div> */}                   
-                                        <div style={{alignSelf:"center"}}> 
-                                            <label for="xlsFile"  style={{height:'4.3vh', border:"1px solid none", borderRadius:'5px', paddingLeft:'0.3vw', paddingRight:'0.3vw', paddingTop:"1vh", paddingBottom:"1vh", backgroundColor:  inputDataCorrect ? 'rgb(85 118 194)':'gray', color:'white' }}><img alt='img' src="images/selectFile.png" style={{width:"1.93vw",height:"1.93vw", marginBottom:"-1.47vh"}}/>{t('select_file')}</label>
-                                            <input id="xlsFile"  /*disabled={true}*/ type="file"  accept=".xls, .xlsx" onChange={fileChangeHandler} style={{display:"none"}}/>
-                                        </div>
+                        }
+                           
 
-                                        <div style={{minWidth:'11vw', marginLeft:'0.7vw',alignSelf:"center",}}> 
+                        {props.isImport &&
+
+                            <div className={classes.inputRowLeft} style={{ marginLeft:"-2.3vw", marginTop:"1vh"}}> 
+                              
+                                <input type='radio' style={{width:'1.7vw', height:'2.3vh'}} checked={isDownload==false}  value={'presents'} name='ficheProg' onClick={()=>{isDownload? setIsDownload(false):setIsDownload(true)}}/>
+                                <label style={{color:'black',  fontWeight:"bold", fontSize:"1vw", marginRight:"0.3vw", marginLeft:"0.3vw", marginTop:"0vw"}}>{t('no')} </label>
+
+                                <input type='radio' style={{width:'1.7vw', height:'2.3vh', marginLeft:"7vw",}} checked={isDownload==true}  value={'presents'} name='ficheProg' onClick={()=>{isDownload? setIsDownload(false):setIsDownload(true);}}/>
+                                <label style={{color:'black',  fontWeight:"bold", fontSize:"1vw", marginRight:"0.3vw", marginLeft:"0.3vw", marginTop:"0vw"}}>{t('yes')}</label>
+                                                  
+                            </div>
+                        }
+
+                        {props.isImport &&
+                          
+                            <div style={{display:'flex', flexDirection:"column", marginTop:'3vh', paddingLeft:"0vw"}}> 
+                                {isDownload ? 
+                                    <div className={classes.inputRowLeft}>
+                                        <label for="xlsFile"  style={{height:'4.3vh', border:"1px solid none", borderRadius:'5px',  backgroundColor:'rgb(85 118 194)', color:'white', paddingRight:"1vw" }}><img alt='img' src="images/selectFile.png" style={{width:"1.93vw",height:"1.93vw", marginBottom:"-1.47vh",}}/>{t('select_file_to_import')}</label>
+                                        <input id="xlsFile"  /*disabled={true}*/ type="file"  accept=".xls, .xlsx" onChange={fileChangeHandler} style={{display:"none"}}/>
+                                    
+
+                                        <div style={{minWidth:'11vw'}}> 
                                             <label id="fileName" style={{fontSize:"2.3vh"}}>{selected_file_name}</label>
                                         </div>
-   
-                                        {/*(fileSelected)&&
-                                            <CustomButton
-                                                btnText= {t('depose_fichier')} 
-                                                buttonStyle={getNotifButtonStyle()}
-                                                btnTextStyle = {classes.gridBtnTextStyleP}
-                                                style={{marginLeft:"2.67vw"}}
-                                                btnClickHandler={saveFicheProgressChanges}
-                                                //disable={(!fileSelected)}
-                                            />
-                                        */}
-                                    </div>
-                                                          
-                                </div>
-                            }
-
-                        </div>
+                                    </div> 
+                                :      
+                                    <div className={classes.inputRowLeft}>
+                                                                           
+                                        <input id="id" type="hidden"  defaultValue={currentUiContext.formInputs[11]}/>
+                                
+                                        <CustomButton
+                                            btnText={t('download_template')}
+                                            hasIconImg= {true}
+                                            imgSrc='images/saveToDisk_trans.png'
+                                            imgStyle = {classes.grdBtnImgStyle}  
+                                            buttonStyle={getNotifButtonStyle()}
+                                            btnTextStyle = {classes.notifBtnTextStyle}
+                                            btnClickHandler={exportTemplate}
+                                        />
+                                    </div>    
+                                }
+                            </div>    
+                        }                                
+                             
+                        
                        
                     </div>
 
                 </div>
             
             <div className={classes.formButtonRowP}>
-                <CustomButton
-                    btnText={t('ok')}
-                    buttonStyle={getGridButtonStyle()}
-                    btnTextStyle = {classes.btnTextStyle}
-                    btnClickHandler={saveOrUploadFP}
-                    disable={(isDownload) ? !isDownload :!fileSelected}
-                />
+                {props.isImport &&
+                    <CustomButton
+                        btnText={t('import')}
+                        buttonStyle={getGridButtonStyle()}
+                        btnTextStyle = {classes.btnTextStyle}
+                        btnClickHandler={exportOrImport}
+                        disable={!fileSelected}
+                    />
+                }
 
                 <CustomButton
                     btnText={t('cancel')}
@@ -581,5 +603,5 @@ function AddFicheProgess(props) {
        
     );
  }
- export default AddFicheProgess;
+ export default ImportExportData;
  

@@ -422,7 +422,7 @@ function SynchroData(props) {
                             imgStyle = {classes.grdBtnImgStylePrim}
                             //btnClickHandler={props.cancelHandler}
                             btnClickHandler={envoyerMessages}
-                            disable={(isInternetAvailable==false||isInternetAvailable=="") ? true:false}
+                            disable={(isInternetAvailable=="false"||isInternetAvailable=="") ? true:false}
                         />
                     </div>
                     :

@@ -1239,7 +1239,7 @@ function PrintStudentReport(props) {
                 ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
                 ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
                 ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
-                ElevePageSet.etabLogo       = "images/collegeVogt.png";
+                ElevePageSet.etabLogo       = imgUrl;
                 ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
                 ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
                 printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';
@@ -1290,7 +1290,7 @@ function PrintStudentReport(props) {
                 ElevePageSet.entete_fr      = {... ELEVES_DATA.entete_fr};
                 ElevePageSet.entete_en      = {... ELEVES_DATA.entete_en};
                 ElevePageSet.titreBulletin  = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
-                ElevePageSet.etabLogo       = "images/collegeVogt.png";
+                ElevePageSet.etabLogo       = imgUrl;
                 ElevePageSet.profPrincipal  = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
                 ElevePageSet.classeLabel    = CURRENT_CLASSE_LABEL; 
                 printedETFileName = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';

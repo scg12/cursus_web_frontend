@@ -70,7 +70,7 @@ function BulletinEleve(props) {
                     <View style={[styles.header1_ligne,{fontSize:"8px"}]}><Text>BP:{props.entete_fr.bp} Tel:{props.entete_fr.tel}</Text></View> 
                 </View>
                     
-                <View style={styles.header1_2}><Image src={props.etabLogo} style={{width:"16.3vw", height:"38.3vw"}}/></View>
+                <View style={styles.header1_2}><Image src={props.etabLogo} style={{width:"11.7vw", height:"40.3vw"}}/></View>
                     
                 <View style={styles.header1_3}>
                     <View style={[styles.header1_ligne,{}]}><Text style={{fontSize:"10px"}}>{props.entete_en.pays}</Text></View>
@@ -593,7 +593,7 @@ function BulletinEleve(props) {
             {Array.from(ELEVES_DATA,
                 (eleve, index) => (
                     <Page size="A4"  style={styles.page} key={index}> 
-                        <Filigrane photoStyle ={{width:"76vw", height:"70vw"}} style={{zIndex:0}} imageSrc="images/collegeVogt_fil.png"/>                    
+                        <Filigrane photoStyle ={{width:"57vw", height:"48vw"}} style={{zIndex:0, marginBottom:"-13vh"}} />
                         <View style={styles.header}>
                             <PageHeader titreBulletin={props.data.titreBulletin.titre} 
                                 entete_fr = {props.data.entete_fr} 

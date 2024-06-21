@@ -10,6 +10,7 @@ import PDFTemplate from '../reports/PDFTemplate';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
 import MsgBox from '../../../msgBox/MsgBox';
 import AddStudent from "../modals/AddStudent";
+import ImportExportData from '../modals/ImportExportData';
 import ListNotesEleves from "../reports/ListNotesEleves";
 import BackDrop from "../../../backDrop/BackDrop";
 import LoadingView from '../../../loadingView/LoadingView';
@@ -53,9 +54,11 @@ var infA10 = 0;
 var nonSaisi =0;
 
 var chosenMsgBox;
-const MSG_SUCCESS_NOTES =11;
-const MSG_WARNING_NOTES =12;
-const MSG_ERROR_NOTES   =13;
+const MSG_SUCCESS_NOTES        =11;
+const MSG_WARNING_NOTES        =12;
+const MSG_ERROR_NOTES          =13;
+const MSG_WARNING_NOTES_IMPORT =14;
+const MSG_WARNING_NOTES_EXPORT =15;
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
 
@@ -74,6 +77,7 @@ function SaveNotes(props) {
     const [superieurA10, setSuperieurA10]= useState(0);
     const [inferieureA10, setInferieureA10]= useState(0);
     const [notesNonSaisie, setNotesNonSaisie]= useState(0);
+    const [isDataImport, setIsDataImport] = useState(true);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const [optClasse, setOpClasse] = useState([]);
     const [optCours, setOpCours] = useState([]);
@@ -282,14 +286,19 @@ function SaveNotes(props) {
             
             getClassStudentList(CURRENT_CLASSE_ID)
             getCoursClasse(currentAppContext.currentEtab, CURRENT_CLASSE_ID);
-            getActivatedEvalPeriods(-1);
+            getActivatedEvalPeriods(-1);           
         }else{
             CURRENT_CLASSE_ID = undefined;
             CURRENT_CLASSE_LABEL =undefined;
             setGridRows([]);
             getCoursClasse(currentAppContext.currentEtab, 0);
             getActivatedEvalPeriods(0);
+            setIsValid(false);
+            setSuperieurA10(0);
+            setInferieureA10(0);
+            setNotesNonSaisie(0);
         }
+       
     }
 
    
@@ -322,12 +331,14 @@ function SaveNotes(props) {
         if(e.target.value != optPeriode[0].value){
             CURRENT_SEQUENCE_ID = e.target.value;
             getClassStudentListWithNotes(CURRENT_COURS_ID,CURRENT_SEQUENCE_ID);   
+            setIsValid(true);
             //On pourra mettre les >10 et <10
             /*setSuperieurA10(presents);
             setInferieureA10(absents); */ 
         } else {
             CURRENT_SEQUENCE_ID = undefined;
             updateStudentsNote([]); 
+            setIsValid(false);
           
         }
     }
@@ -378,6 +389,37 @@ function SaveNotes(props) {
                 // setInferieureA10(0);
                 return 1;
             }
+
+            case MSG_WARNING_NOTES_IMPORT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                //setModalOpen(0); 
+                setModalOpen(2); 
+                setIsDataImport(true); 
+                currentUiContext.setFormInputs([]);
+                return 1;
+            }
+
+
+            case MSG_WARNING_NOTES_EXPORT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+               // setModalOpen(0); 
+                setModalOpen(2); 
+                setIsDataImport(false); 
+                currentUiContext.setFormInputs([]);
+                return 1;
+            }
+
+            
             
            
             default: {
@@ -417,7 +459,41 @@ function SaveNotes(props) {
                // currentUiContext.setIsParentMsgBox(true);
                 return 1;
             }
-            
+
+
+            case MSG_WARNING_NOTES: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })  
+                //currentUiContext.setIsParentMsgBox(true);
+                setGridRows([]);
+                // setSuperieurA10(0);
+                // setInferieureA10(0);
+                return 1;
+            }
+
+            case MSG_WARNING_NOTES_IMPORT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })
+                return 1;
+            }
+
+            case MSG_WARNING_NOTES_EXPORT: {
+                currentUiContext.showMsgBox({
+                    visible:false, 
+                    msgType:"", 
+                    msgTitle:"", 
+                    message:""
+                })
+                return 1;
+            }            
            
             default: {
                 currentUiContext.showMsgBox({
@@ -607,6 +683,39 @@ function SaveNotes(props) {
             })            
         }      
     }
+
+    function importHandler(){
+        if(notesNonSaisie!=0){
+            chosenMsgBox = MSG_WARNING_NOTES_IMPORT;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("warning_M"), 
+                message:t("already_some_marks")
+            });
+        } else {
+            setModalOpen(2); 
+            setIsDataImport(true); 
+            currentUiContext.setFormInputs([]);
+        }        
+    }
+
+
+    function exportHandler(){
+        if(notesNonSaisie!=gridRows.length){
+            chosenMsgBox = MSG_WARNING_NOTES_EXPORT;
+            currentUiContext.showMsgBox({
+                visible:true, 
+                msgType:"question", 
+                msgTitle:t("warning_M"), 
+                message:t("not_all_mark_have_been_typed")
+            });
+        } else {
+            setModalOpen(2); 
+            setIsDataImport(false); 
+            currentUiContext.setFormInputs([]);
+        }
+    }
   
 
     /********************************** JSX Code **********************************/   
@@ -760,7 +869,7 @@ function SaveNotes(props) {
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={saveNotesHandler}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            disable={(isValid==false)}   
                         />
                     }
                          
@@ -773,7 +882,7 @@ function SaveNotes(props) {
                             buttonStyle={getGridButtonStyle()}
                             btnTextStyle = {classes.gridBtnTextStyle}
                             btnClickHandler={printStudentNotesList}
-                            disable={(modalOpen==1||modalOpen==2)}   
+                            disable={(isValid==false)}   
                         />
 
                     </div>
@@ -821,6 +930,15 @@ function SaveNotes(props) {
                         }
                     />
                 </div>
+
+                {(modalOpen == 2) &&    
+                    <ImportExportData       
+                        isImport      = {isDataImport}  
+                        titleText     = {isDataImport? t('data_import'):t('data_export')}
+                       // actionHandler = {(modalOpen==1) ? addNewStudent : modifyStudent} 
+                        cancelHandler = {quitForm} 
+                    />
+                }
                   
             </div>
 
@@ -840,6 +958,36 @@ function SaveNotes(props) {
                         <div> ({t('non_saisi')}) : </div>
                         <div> {notesNonSaisie} </div>
                     </div>
+
+                    <div style={{marginLeft:"2vw", display:"flex", flexDirection:"row"}}>
+                        <CustomButton
+                            btnText={t('import_notes')}
+                            hasIconImg= {true}
+                            imgSrc='images/import.png'
+                            imgStyle = {classes.grdBtnImgStyle} 
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.gridBtnTextStyle}
+                            style={{width:"10vw"}}
+                            btnClickHandler={importHandler}
+                            disable={(isValid==false)}    
+                        />
+
+                        <CustomButton
+                            btnText={t('export_notes')}
+                            hasIconImg= {true}
+                            imgSrc='images/export.png'
+                            imgStyle = {classes.grdBtnImgStyleP3} 
+                            buttonStyle={getGridButtonStyle()}
+                            btnTextStyle = {classes.gridBtnTextStyle}
+                            style={{width:"10vw"}}
+                            btnClickHandler={exportHandler}
+                            disable={(isValid==false)||(notesNonSaisie==gridRows.length)}    
+                        />
+
+                    </div>
+
+
+
                 </div>
             }
           
