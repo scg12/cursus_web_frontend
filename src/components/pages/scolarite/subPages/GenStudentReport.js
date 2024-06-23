@@ -10,7 +10,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import LoadingView from '../../../loadingView/LoadingView';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames,ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, createBulletinToPrintData, getMatieresWithTeachersNames,ajouteZeroAuCasOu, darkGrey} from '../../../../store/SharedData/UtilFonctions';
 
 import {isMobile} from 'react-device-detect';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
@@ -87,6 +87,7 @@ function GenStudentReport(props) {
     const [elevesCL, setEleveCL] = useState([]);
     const [elevesNCL,setEleveNCL] = useState([]);
     const [bullTypeLabel, setBullTypeLabel] = useState();
+    const[imageUrl, setImageUrl] = useState('');
     const selectedTheme = currentUiContext.theme;
 
     var firstItem = {
@@ -114,8 +115,19 @@ function GenStudentReport(props) {
             CURRENT_PERIOD_ID = undefined;
         }
         getEtabListClasses();
+
+        var cnv = document.getElementById('output');
+        while(cnv.firstChild) cnv.removeChild(cnv.firstChild);
+        var cnx = cnv.getContext('2d');
+        var url = darkGrey(document.getElementById("logo_url").value,cnv,cnx);
+        setImageUrl(url);
         
     },[]);
+
+    const imgUrl = document.getElementById("etab_logo").src;
+    const imgUrlDefault = imageUrl;
+
+
 
 
     const getEtabListClasses=()=>{
@@ -957,7 +969,7 @@ const columnsSeq = [
             ElevePageSet.entete_fr       = {... ELEVES_DATA.entete_fr};
             ElevePageSet.entete_en       = {... ELEVES_DATA.entete_en};
             ElevePageSet.titreBulletin   = getBulletinTypeLabel(typeBulletin)+'-'+CURRENT_PERIOD_LABEL;
-            ElevePageSet.etabLogo        = "images/collegeVogt.png";
+            ElevePageSet.etabLogo        = imgUrl;
             ElevePageSet.profPrincipal   = (PROF_PRINCIPAL!=undefined)? getTitre(PROF_PRINCIPAL.sexe)+' '+PROF_PRINCIPAL.PP_nom :t("not_defined");  
             ElevePageSet.classeLabel     = CURRENT_CLASSE_LABEL; 
             printedETFileName            = getBulletinTypeLabel(typeBulletin)+'_'+CURRENT_PERIOD_LABEL+'('+CURRENT_CLASSE_LABEL+').pdf';

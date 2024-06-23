@@ -6,13 +6,13 @@ import {Buffer} from 'buffer';
 //const baseURL = 'http://192.168.61.235:8000/api/';
 
 //LOCAL
-//const baseURL = 'http://localhost:8000/api/';
+const baseURL = 'http://localhost:8000/api/';
 
 ///IP DE MA MACHINE DE GE DONNEE PAR POINT D'ACCES
 // const baseURL = 'http://192.168.1.100:8000/api/';
 
 ///IP DE MA MACHINE
-const baseURL = 'http://192.168.43.99:8000/api/';
+//const baseURL = 'http://192.168.43.99:8000/api/';
 
 
 ///IP SERVER DONNE PAR POINT D'ACCES

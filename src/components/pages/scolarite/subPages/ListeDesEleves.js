@@ -12,7 +12,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import MultiSelect from '../../../multiSelect/MultiSelect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, getTodayDate, darkGrey} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, darkGrey, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -22,6 +22,8 @@ import StudentList from '../reports/StudentList';
 import StudentListTemplate from '../reports/StudentListTemplate';
 import {createPrintingPages} from '../reports/PrintingModule';
 import { useTranslation } from "react-i18next";
+import ImportExportData from '../modals/ImportExportData';
+import ImportWizard from '../modals/ImportWizard';
 
 
 let CURRENT_CLASSE_ID;
@@ -60,14 +62,40 @@ function ListeDesEleves(props) {
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
 
-    const [isValid, setIsValid] = useState(false);
-    const [gridRows, setGridRows] = useState([]);
-    const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
-    const [optClasse, setOpClasse] = useState([]);
-    const [listEleves, setListEleves] = useState([]);
-    const [imageUrl, setImageUrl] = useState('');
+    const [isValid, setIsValid]                       = useState(false);
+    const [gridRows, setGridRows]                     = useState([]);
+    const [exportData, setExportData]                 = useState([]);
+    const [modalOpen, setModalOpen]                   = useState(0); //0 = close, 1=creation, 2=modif, 3=consult, 4=impression 
+    const [optClasse, setOpClasse]                    = useState([]);
+    const [listEleves, setListEleves]                 = useState([]);
+    const [isDataImport, setIsDataImport]             = useState(true);
+    const [imageUrl, setImageUrl]                     = useState('');
     const [multiSelectVisible, setMultiSelectVisible] = useState(false);
+    const [importedData, setImportedData]             = useState([]);
     const selectedTheme = currentUiContext.theme;
+
+    const EXPORT_TEMPLATE = [
+        {   
+            rang               : "",
+            nom                : "",
+            prenom             : "",
+            age                : "",
+            sexe               : "",
+            date_naissance     : "",
+            lieu_naissance     : "",
+            date_entree        : "",
+            nom_pere           : "",
+            prenom_pere        : "",
+            tel_pere           : "",
+            email_pere         : "",
+            nom_mere           : "",
+            prenom_mere        : "",
+            tel_mere           : "",
+            email_mere         : "",
+            etab_provenance    : "",
+            redouble           : "",          
+        }
+    ]
 
     useEffect(()=> {
         
@@ -130,17 +158,21 @@ function ListeDesEleves(props) {
     }
 
     const  getClassStudentList=(classId)=>{
-        var listEleves = []
+        var listEleves       = [];
+        var listElevesExport = [];
         axiosInstance.post(`list-eleves/`, {
             id_classe: classId,
         }).then((res)=>{
             console.log(res.data);
-            listEleves           = [...formatList(res.data)]
+            listEleves           = [...formatList(res.data)];
             LIST_GENERALE_ELEVES = [...formatList(res.data)];
+            listElevesExport     = [...createExportList(res.data)];
+            
 
             console.log(listEleves);
             setGridRows(listEleves);
-            console.log(gridRows);
+            setExportData(listElevesExport);
+            console.log("donnees",exportData,listElevesExport);
         })  
         return listEleves;     
     }
@@ -183,6 +215,36 @@ function ListeDesEleves(props) {
         })
         return formattedList;
     }
+
+    const createExportList=(list) =>{
+        var rang = 1;
+        var formattedList =[]
+        list.map((elt)=>{
+            listElt={};
+            listElt.rang            = ajouteZeroAuCasOu(rang) ; 
+            listElt.matricule       = elt.matricule;           
+            listElt.nom             = elt.nom;
+            listElt.prenom          = elt.prenom;
+            listElt.age             = elt.age;      
+            listElt.sexe            = elt.sexe;  
+            listElt.date_naissance  = convertDateToUsualDate(elt.date_naissance);
+            listElt.lieu_naissance  = elt.lieu_naissance;
+            listElt.date_entree     = elt.date_entree;
+            listElt.nom_pere        = elt.nom_pere;
+            listElt.tel_pere        = elt.tel_pere;    
+            listElt.email_pere      = elt.email_pere;
+            listElt.nom_mere        = elt.nom_mere;
+            listElt.tel_mere        = elt.tel_mere;   
+            listElt.email_mere      = elt.email_mere;
+            listElt.etab_provenance = elt.etab_provenance;           
+            listElt.redouble        = (elt.redouble == false) ? (i18n.language=='fr') ? "Nouveau" : "Non repeating" : (i18n.language=='fr') ? "Redoublant" :"Repeating";
+
+            formattedList.push(listElt);
+            rang ++;
+        })
+        return formattedList;
+    }
+    
 
 
     function dropDownHandler(e){
@@ -944,6 +1006,109 @@ const columnsFr = [
         }      
     }
 
+    function handleImport(importedData){
+        console.log("donnees importees", importedData);
+        setImportedData(importedData);
+        setModalOpen(6)
+    }
+
+
+    function checkImportedData(eleve,row){         
+        var errorMsg='';
+
+        console.log("eleve+row",eleve)
+
+        if(eleve.nom == undefined || eleve.nom.length == 0){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_student_name'); 
+            return errorMsg;
+        }
+
+        if (eleve.prenom == undefined || eleve.prenom.length == 0 ) {
+            errorMsg=  t('row')+ ' '+ row +': '+ t('enter_student_surname'); 
+            return errorMsg;
+        }
+
+        if(eleve.date_naissance == undefined || eleve.date_naissance.length==0) {
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_correct_bithDate'); 
+            return errorMsg;
+        } 
+
+        if(!((isNaN(eleve.date_naissance) && (!isNaN(Date.parse(eleve.date_naissance)))))){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_correct_bithDate'); 
+            return errorMsg;
+        }
+
+        if(eleve.lieu_naissance.length == 0 ){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_student_bithPlace');  
+            return errorMsg;
+        }   
+        
+        if(eleve.nom_pere == undefined && eleve.nom_mere == undefined){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_parent_name_atLeast'); 
+            return errorMsg;
+        }
+        
+
+        if( eleve.email_pere == undefined &&  eleve.email_mere == undefined){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_parent_email_atLeast'); 
+            return errorMsg;
+        }
+    
+
+        if(eleve.email_pere != undefined && !eleve.email_pere.includes('@')){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_father_correct_email'); 
+            return errorMsg ;
+        }  
+
+        if(eleve.email_mere != undefined && !eleve.email_mere.includes('@')){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_mother_correct_email'); 
+            return errorMsg;
+        } 
+            
+        
+        if((eleve.tel_mere==undefined && eleve.tel_pere==undefined)||(eleve.tel_mere!= undefined && eleve.tel_mere.length >0 && isNaN(eleve.tel_mere.replace(/\s/g,'')))||(eleve.tel_mere!= undefined && eleve.tel_pere.length >0 && isNaN(eleve.tel_pere.replace(/\s/g,''))) ){
+            errorMsg= t('row')+ ' '+ row +': '+ t('enter_correct_phone_number'); 
+            console.log(eleve.tel_pere.replace(/\s/g,''))
+            return errorMsg;
+        }
+
+        return errorMsg;    
+    }
+
+
+    function insertImportedDataInBD(eleve){
+
+        axiosInstance.post(`create-eleve/`, {
+            id_classe       : CURRENT_CLASSE_ID,
+            id_sousetab     : currentAppContext.currentEtab,
+            nom             : eleve.nom,
+            adresse         : "",
+            prenom          : eleve.prenom, 
+            sexe            : eleve.sexe,
+            date_naissance  : eleve.date_naissance,
+            lieu_naissance  : eleve.lieu_naissance,
+            date_entree     : eleve.date_entree,
+            nom_pere        : eleve.nom_pere==undefined?    "" : eleve.nom_pere,
+            prenom_pere     : eleve.prenom_pere==undefined? "" : eleve.prenom_pere,
+            nom_mere        : eleve.nom_mere==undefined?    "" : eleve.nom_mere,
+            prenom_mere     : eleve.prenom_mere==undefined? "" : eleve.prenom_mere,
+            tel_pere        : eleve.tel_pere==undefined?    "" : eleve.tel_pere,    
+            tel_mere        : eleve.tel_mere==undefined?    "" : eleve.tel_mere,
+            email_pere      : eleve.email_pere==undefined?  "" : eleve.email_pere,
+            email_mere      : eleve.email_mere==undefined?  "" : eleve.email_mere,
+            photo_url       : "", 
+            redouble        : (eleve.redouble == "O") ? true : false,
+            age             : eleve.age,
+            est_en_regle    : false,
+            etab_provenance : eleve.etab_provenance, 
+            id_user         : currentAppContext.idUser           
+        }).then((res)=>{
+            console.log(res.data);
+            var status = res.data.status;
+            setGridRows((gridRows)=>[...gridRows, eleve]);          
+        })      
+    }
+
     
     const closePreview =()=>{
         setModalOpen(0);
@@ -1092,44 +1257,64 @@ const columnsFr = [
                     </div>
                     
                                 
-                    <div className={classes.gridAction} style={{paddingTop:"0.57vh"}}> 
+                    <div className={classes.gridAction} style={{paddingTop:"0.57vh", width:"33vw"}}> 
                         {(props.formMode=='ajout')?
                             <CustomButton
-                                btnText={t('New_student')}
-                                hasIconImg= {true}
-                                imgSrc='images/addNewSchoolStud.png'
+                                btnText         = {t('New_student')}
+                                hasIconImg      = {true}
+                                imgSrc          = 'images/addNewSchoolStud.png'
                                 //imgSrc='images/addNewUserOrg.png'
-                                imgStyle = {classes.grdBtnImgStyleP}  
-                                buttonStyle={getGridButtonStyle()}
-                                btnTextStyle = {classes.gridBtnTextStyle}
-                                btnClickHandler={AddNewStudentHandler}
-                                disable={(isValid==false)}   
+                                imgStyle        = {classes.grdBtnImgStyleP}  
+                                buttonStyle     = {getGridButtonStyle()}
+                                btnTextStyle    = {classes.gridBtnTextStyle}
+                                btnClickHandler = {AddNewStudentHandler}
+                                disable         = {(isValid==false)}   
                             />
                             :
                             null
                         }
 
                         <CustomButton
-                            btnText={t('imprimer')}
-                            hasIconImg= {true}
-                            imgSrc='images/printing1.png'
-                            imgStyle = {classes.grdBtnImgStyle}  
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={printStudentList}
-                            disable={(isValid==false)}   
+                            btnText         = {t('imprimer')}
+                            hasIconImg      = {true}
+                            imgSrc          = 'images/printing1.png'
+                            imgStyle        = {classes.grdBtnImgStyle}  
+                            buttonStyle     = {getGridButtonStyle()}
+                            btnTextStyle    = {classes.gridBtnTextStyle}
+                            btnClickHandler = {printStudentList}
+                            disable         = {(isValid==false)}   
                         />
-                      {/* 
-                        <CustomButton
-                            btnText={t('importer')}
-                            hasIconImg= {true}
-                            imgSrc='images/import.png'
-                            imgStyle = {classes.grdBtnImgStyle} 
-                            buttonStyle={getGridButtonStyle()}
-                            btnTextStyle = {classes.gridBtnTextStyle}
-                            btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
-                            disable={(isValid==false)}    
-                        /> */}
+                     
+                       {(props.formMode=='ajout')?
+                            <CustomButton
+                                btnText         = {t('importer')}
+                                hasIconImg      = {true}
+                                imgSrc          = 'images/import.png'
+                                imgStyle        = {classes.grdBtnImgStyle} 
+                                buttonStyle     = {getGridButtonStyle()}
+                                btnTextStyle    = {classes.gridBtnTextStyle}
+                                btnClickHandler = {()=>{setModalOpen(5); setIsDataImport(true); currentUiContext.setFormInputs([])}}
+                                disable         = {(isValid==false)}    
+                            />
+                            :
+                            null
+                        }
+
+                        {(props.formMode=='ajout')?
+                            <CustomButton
+                                btnText         = {t('exporter')}
+                                hasIconImg      = {true}
+                                imgSrc          = 'images/export.png'
+                                imgStyle        = {classes.grdBtnImgStyleP3} 
+                                buttonStyle     = {getGridButtonStyle()}
+                                btnTextStyle    = {classes.gridBtnTextStyle}
+                                btnClickHandler = {()=>{setModalOpen(5); setIsDataImport(false); currentUiContext.setFormInputs([])}}
+                                disable         = {(isValid==false)}    
+                            />
+                            :
+                            null
+                        }
+
                     </div>
                         
                 </div>
@@ -1138,6 +1323,31 @@ const columnsFr = [
 
              
                 <div className={classes.gridDisplay} >
+
+                    {(modalOpen == 5) &&    
+                        <ImportExportData       
+                            isImport       = {isDataImport}  
+                            titleText      = {isDataImport? t('student_import'):t('student_export')}
+                            exportFileName = {"export_eleves_"+CURRENT_CLASSE_LABEL}
+                            tempFileName   = {"eleves_template_"+CURRENT_CLASSE_LABEL}
+                            classeLabel    = {CURRENT_CLASSE_LABEL}
+                            actionHandler  = {(isDataImport)  ? handleImport    : null} 
+                            dataToExport   = {(!isDataImport) ? exportData      : null}
+                            importTemplate = {(isDataImport)  ? EXPORT_TEMPLATE : null}
+                            cancelHandler  = {quitForm} 
+                        />
+                    }
+
+                    {(modalOpen == 6) &&    
+                        <ImportWizard       
+                            ImportedData      = {importedData}  
+                            dataCheckFunction = {checkImportedData} 
+                            insertFunction    = {insertImportedDataInBD}
+                            cancelHandler     = {quitForm} 
+                        />
+                    }
+
+
                     <StripedDataGrid
                         
                         rows={gridRows}

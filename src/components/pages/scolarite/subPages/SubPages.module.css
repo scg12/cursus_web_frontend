@@ -350,7 +350,7 @@ margin-right: 5px;
 }
 
 .infoPresence{
-width: 33vw;
+width: 50vw;
 display:flex;
 flex-direction: row;
 justify-content: space-around;
@@ -477,6 +477,16 @@ width: 100%;
     border-radius: 7px;
     background-color: white;
 }
+
+
+.formHeaderImg1{
+    border-style: none;
+    width:3.9vw;
+    height: 3.7vw;
+    /* border-radius: 7px;
+    background-color: white; */
+}
+
 
 
 .formHeaderImg2{
@@ -746,13 +756,20 @@ justify-content: flex-end;
 }
 
 .formMainTitle {
-font-size: 1.27vw;
-font-weight: 657;
-align-self: center;
-margin-left: 2vw;
-/*font-family: "Cambria, Cochin, Georgia, Times, 'Times New Roman', serif";*/
+    font-size: 1.27vw;
+    font-weight: 657;
+    align-self: center;
+    margin-left: 2vw;
+    /*font-family: "Cambria, Cochin, Georgia, Times, 'Times New Roman', serif";*/
 
-/*color:rgb(8, 167, 101); */
+    /*color:rgb(8, 167, 101); */
+    }
+
+.formMainTitleP {
+    font-size: 1.27vw;
+    font-weight: 657;
+    align-self: center; 
+    margin-left: 0.37vw; 
 }
 
 .formContainer {
@@ -867,6 +884,8 @@ font-size: 1.07vw;
 font-weight: 474;
 }
 
+
+
 .formContainerPPPP {
 z-index: 1200;
 align-self: center;
@@ -930,6 +949,27 @@ font-weight: 474;
     font-size: 1.07vw;
     font-weight: 474;
 }
+
+.formImpExp {
+    z-index: 1200;
+    align-self: center;
+    padding-top: 3vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 33vw;
+    height: 37vh;
+    background-color: rgb(255, 255, 255);
+    position: fixed;
+    top: 23vh;
+    left: 30vw;
+    border-radius: 7px;
+    border-color: rgb(218, 214, 214);
+    border-width: 0.5px;
+    border-style: solid;
+    font-size: 1.07vw;
+    font-weight: 474;
+    }
 
 
 
@@ -1068,6 +1108,15 @@ height: 1.5vw;
 margin-right: 1px;
 margin-left: 0.3vw;
 }
+
+.grdBtnImgStyleP3{
+    position: relative;
+    z-index: 100;
+    width: 2.3vw;
+    height: 2.17vw;
+    margin-right: 1px;
+}
+
 
 
 

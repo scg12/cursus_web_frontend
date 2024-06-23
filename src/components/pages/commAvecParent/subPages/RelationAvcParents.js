@@ -498,7 +498,7 @@ function RelationAvcParents(props) {
             <div className={classes.formGridContent}>
               
                 <div className={classes.gridTitleRow}> 
-                    <div className={classes.gridTitle} style={{width:"47vw"}}>                  
+                    <div className={classes.gridTitle} style={{width:"50vw"}}>                  
                         <div className={classes.gridTitleText}>
                             {t('sent_Msg_by_class_M')}  :
                         </div>
