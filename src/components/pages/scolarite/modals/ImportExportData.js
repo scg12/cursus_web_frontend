@@ -523,7 +523,7 @@ function ImportExportData(props) {
                         
 
                             <div style={{minWidth:'11vw'}}> 
-                                <label id="fileName" style={{fontSize:"2.3vh"}}>{selected_file_name}</label>
+                                <label id="fileName" style={{fontSize:"1vw",marginLeft:"0.3vw"}}>{selected_file_name}</label>
                             </div>
                         </div> 
 
