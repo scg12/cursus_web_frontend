@@ -754,7 +754,7 @@ function SaveNotes(props) {
 
 
     function exportHandler(){
-        if(notesNonSaisie!=gridRows.length){
+        if(notesNonSaisie >0 && gridRows.length>0){
             chosenMsgBox = MSG_WARNING_NOTES_EXPORT;
             currentUiContext.showMsgBox({
                 visible:true, 
