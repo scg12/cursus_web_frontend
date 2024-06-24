@@ -271,7 +271,7 @@ function SynchroData(props) {
             id_sousetab:currentAppContext.currentEtab,         
         
         }).then((res)=>{  
-            pourcentage = pourcentage +25 
+            pourcentage = pourcentage +20
             setPercent(pourcentage);
             setCurrentAction(t('Mise à jour des informations de payement des élèves')+'.......');
             console.log("resultat",res.data);
@@ -280,7 +280,7 @@ function SynchroData(props) {
             id_sousetab:currentAppContext.currentEtab
             
             }).then((res)=>{   
-                pourcentage = pourcentage +25
+                pourcentage = pourcentage +20
                 setPercent(pourcentage);
                 setCurrentAction(t("Modification eventuelles des info des eleves dans l'annuaire en ligne")+'.......');
                 console.log("resultat",res.data);
@@ -290,7 +290,7 @@ function SynchroData(props) {
                 id_sousetab:currentAppContext.currentEtab
                 
                 }).then((res)=>{  
-                    pourcentage = pourcentage +25
+                    pourcentage = pourcentage +20
                     setPercent(pourcentage);
                     setCurrentAction(t("Envoie des messages aux parents")+'..........'); 
                     console.log("resultat",res.data);
@@ -300,12 +300,24 @@ function SynchroData(props) {
                     id_sousetab:currentAppContext.currentEtab
                    
                     }).then((res)=>{   
-                        pourcentage = pourcentage +25
+                        pourcentage = pourcentage +20
                         setPercent(pourcentage);
                         setCurrentAction(t("")+"");
-                        setPgBarVisible(false);
                         console.log("resultat",res.data);
                         console.log("Envoie des messages aux parents..............");
+
+                        axiosInstance.post(`send-password-to-parents-by-email/`, { 
+                        // id_sousetab:currentAppContext.currentEtab
+                    
+                        }).then((res)=>{   
+                            pourcentage = pourcentage +20
+                            setPercent(pourcentage);
+                            setCurrentAction(t("")+"");
+                            setPgBarVisible(false);
+                            console.log("resultat",res.data);
+                            console.log("Envoie des code aux parents par email..............");
+
+                        })
 
                     })
                 })
