@@ -12,7 +12,7 @@ import BackDrop from "../../../backDrop/BackDrop";
 import MultiSelect from '../../../multiSelect/MultiSelect';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
-import {convertDateToUsualDate, getTodayDate, darkGrey, ajouteZeroAuCasOu} from '../../../../store/SharedData/UtilFonctions';
+import {convertDateToUsualDate, getTodayDate, darkGrey, ajouteZeroAuCasOu, convertDateToAAAAMMjj} from '../../../../store/SharedData/UtilFonctions';
 
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import DownloadTemplate from '../../../downloadTemplate/DownloadTemplate';
@@ -52,9 +52,10 @@ var printedETFileName ='';
 var tempTable;
 var MultiSelectId = "searchStudent";
 
-var LIST_GENERALE_ELEVES = [];
-var list_destinataire    = "";
+var LIST_GENERALE_ELEVES   = [];
+var list_destinataire      = "";
 var list_destinataires_ids = "";
+var DATA_IMPORTED          = undefined
 
 
 function ListeDesEleves(props) {
@@ -1008,6 +1009,7 @@ const columnsFr = [
 
     function handleImport(importedData){
         console.log("donnees importees", importedData);
+        DATA_IMPORTED = [...importedData];
         setImportedData(importedData);
         setModalOpen(6)
     }
@@ -1077,6 +1079,7 @@ const columnsFr = [
 
 
     function insertImportedDataInBD(eleve){
+        console.log("date convertie", convertDateToAAAAMMjj(eleve.date_naissance));
 
         axiosInstance.post(`create-eleve/`, {
             id_classe       : CURRENT_CLASSE_ID,
@@ -1085,7 +1088,7 @@ const columnsFr = [
             adresse         : "",
             prenom          : eleve.prenom, 
             sexe            : eleve.sexe,
-            date_naissance  : eleve.date_naissance,
+            date_naissance  : convertDateToAAAAMMjj(eleve.date_naissance),
             lieu_naissance  : eleve.lieu_naissance,
             date_entree     : eleve.date_entree,
             nom_pere        : eleve.nom_pere==undefined?    "" : eleve.nom_pere,
@@ -1108,6 +1111,12 @@ const columnsFr = [
             setGridRows((gridRows)=>[...gridRows, eleve]);          
         })      
     }
+
+    // function refreshGrid(){
+    //     var gridData  = [...gridRows];
+    //     var  allData = gridData.concat(DATA_IMPORTED);
+    //     setGridRows(allData);
+    // }
 
     
     const closePreview =()=>{
@@ -1343,6 +1352,7 @@ const columnsFr = [
                             ImportedData      = {importedData}  
                             dataCheckFunction = {checkImportedData} 
                             insertFunction    = {insertImportedDataInBD}
+                            // updateGridFct     = {refreshGrid}
                             cancelHandler     = {quitForm} 
                         />
                     }

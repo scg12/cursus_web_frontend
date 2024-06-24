@@ -15,6 +15,7 @@ import * as FileSaver from 'file-saver';
 import XLSX from 'sheetjs-style';
 import * as XLSX_IMPORT from 'xlsx';
 
+
 var cur_fileToUpload   = undefined;
 var cur_fileToDownLoad = undefined
 var cur_classeId       = undefined;
@@ -80,9 +81,11 @@ function ImportWizard(props) {
                 setCountImported(countImported);     
             },80*index);
 
-        })
+        });
+
+       // props.updateGridFct();
            
-        setFeedback(import_feedBack); setCountImported(countImported)
+        setFeedback(import_feedBack); setCountImported(countImported);
     }
     
 

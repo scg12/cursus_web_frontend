@@ -34,6 +34,7 @@ var CURRENT_COURS_LABEL;
 var NOTES_CHANGED_IDS =[];
 var NOTES_CHANGES;
 var printedETFileName='';
+var TAILLE_GRILLE = 0;
 
 var listElt ={
     rang:1, 
@@ -62,6 +63,7 @@ const MSG_WARNING_NOTES_IMPORT =14;
 const MSG_WARNING_NOTES_EXPORT =15;
 const ROWS_PER_PAGE= 40;
 var ElevePageSet=[];
+var gridData;
 
 
 
@@ -162,6 +164,8 @@ function SaveNotes(props) {
             EXPORT_TEMPLATE   = [...createExportTemplate(res.data)];  
             setExportTemplate(EXPORT_TEMPLATE);
 
+            TAILLE_GRILLE = listEleves.length;
+
             console.log("template",EXPORT_TEMPLATE);
             setGridRows(listEleves);            
             calculTendance();  
@@ -245,10 +249,11 @@ function SaveNotes(props) {
 
         if(notes.length>0){
             notes.map((ntElv)=>{
-               var currentElev = listEleves.find((elev)=>elev.id == ntElv.eleves[0]);
-               currentElev.note = ntElv.score;
-            //    currentElev.deja_saisi = 1;
-               currentElev.deja_saisi = 1?ntElv.deja_saisi:-1;
+                var currentElev = listEleves.find((elev)=>elev.id == ntElv.eleves[0]);
+                currentElev.note = ntElv.score;
+                //   currentElev.deja_saisi = 1;
+                ntElv.deja_saisi == 1 ?  currentElev.deja_saisi = 1 : currentElev.deja_saisi = -1;
+               //currentElev.deja_saisi == 1? ntElv.deja_saisi:-1;
             })        
         } 
         calculTendance();  
@@ -794,7 +799,7 @@ function SaveNotes(props) {
             return errorMsg;
         }
 
-        if (eleve.note == undefined || eleve.note.length == 0 || (eleve.note != undefined && eleve.note < 0) || (eleve.note != undefined && eleve.note > 0)) {
+        if (eleve.note == undefined || eleve.note.length == 0 || (eleve.note != undefined && eleve.note < 0) || (eleve.note != undefined && eleve.note >= 20)) {
             errorMsg=  t('row')+ ' '+ row +': '+ t('enter_correct_note'); 
             return errorMsg;
         }
@@ -806,11 +811,21 @@ function SaveNotes(props) {
 
 
     function insertImportedData(eleve){
-        var gridData = [...gridRows];
-        var index    = gridData.findIndex((elv)=>elv.matricule==eleve.matricule);
-        gridData[index].note = eleve.note;
+        //gridData  = [...gridRows];
+        var index = listEleves.findIndex((elv)=>elv.matricule==eleve.matricule);
+        listEleves[index].note        = eleve.note;
+        listEleves[index].deja_saisi  = 0;
+        // gridData[index].note          = eleve.note;
+        // gridData[index].deja_saisi    = 0;
+        NOTES_CHANGED_IDS.push(listEleves[index].id)
+        setGridRows(listEleves);
+      
+    }
+
+    function refreshGrid(){
         setGridRows(gridData);
     }
+
 
   
 
@@ -1047,6 +1062,7 @@ function SaveNotes(props) {
                         ImportedData      = {importedData}  
                         dataCheckFunction = {checkImportedData} 
                         insertFunction    = {insertImportedData}
+                        // updateGridFct     = {refreshGrid}
                         cancelHandler     = {quitForm} 
                     />
                 }
@@ -1092,7 +1108,7 @@ function SaveNotes(props) {
                             btnTextStyle = {classes.gridBtnTextStyle}
                             style={{width:"10vw"}}
                             btnClickHandler={exportHandler}
-                            disable={(isValid==false)||(notesNonSaisie==gridRows.length)}    
+                            disable={(isValid==false)||(notesNonSaisie==TAILLE_GRILLE)}    
                         />
 
                     </div>

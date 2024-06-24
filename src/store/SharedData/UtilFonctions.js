@@ -86,6 +86,19 @@ export function formatCurrencyInverse(number){
     return formattedValue;
 }
 
+export const convertDateToAAAAMMjj=(date)=>{
+    var newDate = date.split("/");
+    if (newDate.length ==3){
+        return "20"+newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);     
+    } else{
+        newDate = date.split("-");
+        if (newDate.length ==3){
+            return "20"+ newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);
+        }      
+    }
+    return date;
+}
+
 
 
 export const convertDateToUsualDate=(date)=>{

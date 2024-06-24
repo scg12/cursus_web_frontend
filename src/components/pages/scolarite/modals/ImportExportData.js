@@ -449,7 +449,7 @@ function ImportExportData(props) {
             const workbook   = XLSX_IMPORT.read(event.target.result,{type:'binary'});
             const sheetName  = workbook.SheetNames[0];
             const sheet      = workbook.Sheets[sheetName];
-            const sheetData  = XLSX_IMPORT.utils.sheet_to_json(sheet);
+            const sheetData  = XLSX_IMPORT.utils.sheet_to_json(sheet, {raw:false});
 
             props.actionHandler(sheetData)
         }
