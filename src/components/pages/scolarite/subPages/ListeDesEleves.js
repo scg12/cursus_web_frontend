@@ -1035,7 +1035,7 @@ const columnsFr = [
             return errorMsg;
         } 
 
-        if(!((isNaN(eleve.date_naissance) && (!isNaN(Date.parse(eleve.date_naissance)))))){
+        if(!((isNaN(convertDateToAAAAMMjj(eleve.date_naissance)) && (!isNaN(Date.parse(convertDateToAAAAMMjj(eleve.date_naissance))))))){
             errorMsg= t('row')+ ' '+ row +': '+ t('enter_correct_bithDate'); 
             return errorMsg;
         }

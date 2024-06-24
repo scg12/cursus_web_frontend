@@ -14,6 +14,7 @@ import MsgBox from '../../../msgBox/MsgBox';
 import * as FileSaver from 'file-saver';
 import XLSX from 'sheetjs-style';
 import * as XLSX_IMPORT from 'xlsx';
+import {convertDateToUsualDate, getTodayDate, darkGrey, ajouteZeroAuCasOu, convertDateToAAAAMMjj} from '../../../../store/SharedData/UtilFonctions';
 
 
 var cur_fileToUpload   = undefined;
@@ -65,6 +66,7 @@ function ImportWizard(props) {
             setTimeout(function() {
                 // pourcentage = pourcentage + 1;
                 // setPercent(pourcentage);
+             
                 importError = props.dataCheckFunction(data,index+1);
                 if(importError.length == 0){  
                     console.log("pas d'erreur")             
@@ -233,7 +235,7 @@ function ImportWizard(props) {
     /************************************ JSX Code ************************************/
 
     return (
-        <div className={'card '+ classes.formImpExp} style={{height:(feedback.length==0|| !showFeedBack)? "37vh":(feedback.length <2 && showFeedBack)? "37vh" : (feedback.length >=2 && feedback.length <10 && showFeedBack)? 44+feedback.length*3+"vh":44+feedback.length*7+"vh"}}>
+        <div className={'card '+ classes.formImpExp} style={{height:(feedback.length==0|| !showFeedBack)? "37vh":(feedback.length <2 && showFeedBack)? "37vh" : (feedback.length >=2 && feedback.length <10 && showFeedBack)? 44+feedback.length*1+"vh":44+feedback.length*2+"vh"}}>
             <div className={getCurrentHeaderTheme()}>
                 {props.isImport ?
                     <div className={classes.formImageContainer}>

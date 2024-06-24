@@ -89,11 +89,16 @@ export function formatCurrencyInverse(number){
 export const convertDateToAAAAMMjj=(date)=>{
     var newDate = date.split("/");
     if (newDate.length ==3){
-        return "20"+newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);     
+        if (newDate[2].length == 2) 
+            return "20"+newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);
+        else return newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]); 
+          
     } else{
         newDate = date.split("-");
         if (newDate.length ==3){
-            return "20"+ newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);
+            if (newDate[2].length == 2)
+                return "20"+ newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);
+            else return newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);
         }      
     }
     return date;
