@@ -1043,7 +1043,8 @@ const columnsFr = [
         if(eleve.lieu_naissance.length == 0 ){
             errorMsg= t('row')+ ' '+ row +': '+ t('enter_student_bithPlace');  
             return errorMsg;
-        }   
+        } 
+
         
         if(eleve.nom_pere == undefined && eleve.nom_mere == undefined){
             errorMsg= t('row')+ ' '+ row +': '+ t('enter_parent_name_atLeast'); 
@@ -1051,10 +1052,11 @@ const columnsFr = [
         }
         
 
-        if( eleve.email_pere == undefined &&  eleve.email_mere == undefined){
-            errorMsg= t('row')+ ' '+ row +': '+ t('enter_parent_email_atLeast'); 
-            return errorMsg;
-        }
+        //------------------ Permettre aussi a l'import de ne mettre aucun email. Cette donnee pourra etre mise a jour apres ----------- 
+        // if( eleve.email_pere == undefined &&  eleve.email_mere == undefined){
+        //     errorMsg= t('row')+ ' '+ row +': '+ t('enter_parent_email_atLeast'); 
+        //     return errorMsg;
+        // }
     
 
         if(eleve.email_pere != undefined && !eleve.email_pere.includes('@')){
