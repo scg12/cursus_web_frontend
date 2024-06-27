@@ -1108,9 +1108,16 @@ const columnsFr = [
             etab_provenance : eleve.etab_provenance, 
             id_user         : currentAppContext.idUser           
         }).then((res)=>{
-            console.log(res.data);
-            var status = res.data.status;
-            setGridRows((gridRows)=>[...gridRows, eleve]);          
+            console.log("resultat ajout",res.data);
+            //----- On met la donnee ds un tableau pour faire le formatList ------
+            var tabEleve = [];
+            tabEleve.push(res.data.eleve);
+            var elevResult = formatList(tabEleve); 
+
+            //----- On met la donnee ds la grille ------            
+            LIST_GENERALE_ELEVES.push(elevResult[0]);    
+            console.log("liste totale",LIST_GENERALE_ELEVES)       
+            setGridRows((gridRows)=>[...gridRows, elevResult[0]]);          
         })      
     }
 
