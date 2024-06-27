@@ -302,9 +302,9 @@ function SynchroData(props) {
                     }).then((res)=>{   
                         pourcentage = pourcentage +20
                         setPercent(pourcentage);
-                        setCurrentAction(t("")+"");
+                        setCurrentAction(t("Envoie des codes aux parents par email..............")+"");
                         console.log("resultat",res.data);
-                        console.log("Envoie des messages aux parents..............");
+                        console.log("Envoie des codes aux parents par email..............");
 
                         axiosInstance.post(`send-password-to-parents-by-email/`, { 
                         // id_sousetab:currentAppContext.currentEtab
@@ -315,7 +315,7 @@ function SynchroData(props) {
                             setCurrentAction(t("")+"");
                             setPgBarVisible(false);
                             console.log("resultat",res.data);
-                            console.log("Envoie des code aux parents par email..............");
+                            console.log("FIN..............");
 
                         })
 
