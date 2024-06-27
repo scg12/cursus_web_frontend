@@ -92,7 +92,7 @@ export const convertDateToAAAAMMjj=(date)=>{
         if (newDate[2].length == 2) 
             return "20"+newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);
         else return newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]); 
-          
+
     } else{
         newDate = date.split("-");
         if (newDate.length ==3){
@@ -101,6 +101,7 @@ export const convertDateToAAAAMMjj=(date)=>{
             else return newDate[2]+'-'+ajouteZeroAuCasOu(newDate[1])+'-'+ajouteZeroAuCasOu(newDate[0]);
         }      
     }
+    
     return date;
 }
 
