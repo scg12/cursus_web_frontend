@@ -315,11 +315,12 @@ function ImportWizard(props) {
                 {(showFeedBack)&& 
                     <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start", marginTop:"0vh", width:"100%", height:"auto", fontSize:"0.77vw"}}> 
                     
-                        {feedback.map((fdBck)=>{
+                        {feedback.map((fdBck,index)=>{
                            return(                           
                                 <div style={{display:"flex",flexDirection:"row", height:"3vh"}}>
                                     <img src="images/cancel_trans.png" style={{width:"1vw",height:"1.3vw"}}/>
-                                    <label style={{color:"black"}}>{fdBck}</label>                         
+                                    <label style={{color:"black", fontWeight:800}}>{fdBck.substring(0,fdBck.indexOf(':')+1)}</label>
+                                    <label style={{color:"black", marginLeft:"0.3vw"}}>{fdBck.substring(fdBck.indexOf(':')+1,fdBck.length)}</label>                         
                                 </div>                       
                             )  
                         })}                      
