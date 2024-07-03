@@ -1070,7 +1070,7 @@ const columnsFr = [
         } 
             
         
-        if((eleve.tel_mere==undefined && eleve.tel_pere==undefined)||(eleve.tel_mere!= undefined && eleve.tel_mere.length >0 && isNaN(eleve.tel_mere.replace(/\s/g,'')))||(eleve.tel_mere!= undefined && eleve.tel_pere.length >0 && isNaN(eleve.tel_pere.replace(/\s/g,''))) ){
+        if((eleve.tel_mere==undefined && eleve.tel_pere==undefined)||(eleve.tel_mere!= undefined && eleve.tel_mere.length >0 && isNaN(eleve.tel_mere.replace(/\s/g,'')))||(eleve.tel_pere!= undefined && eleve.tel_pere.length >0 && isNaN(eleve.tel_pere.replace(/\s/g,''))) ){
             errorMsg= t('row')+ ' '+ row +': '+ t('enter_correct_phone_number'); 
             console.log(eleve.tel_pere.replace(/\s/g,''))
             return errorMsg;
