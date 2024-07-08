@@ -1,7 +1,10 @@
-{    
+{   
+    "import_failed"                   : "échecs", 
+    "import_failed_sing"              : "échec",
     "enter_correct_note"              : "note incorrecte!",
     "row"                             : "ligne",
     "data_imported"                   : "Données importées",
+    "data_imported_sing"              : "Donnée importée",    
     "no_data_imported"                : "Aucune donnée importée, voir le rapport pour plus de détail.",
     "import_succes"                   : "Tous les elements importés avec succès !",
     "show_imoprt_report"              : "Afficher le Rapport d'importation",
@@ -662,7 +665,7 @@
     "enter_parent_email_atLeast":  "Veuillez saisir au moins l'adresse mail d'un parent ou tuteur !",
     "enter_father_correct_email":  "Veuillez entrer une adresse mail valide pour le pere !",
     "enter_mother_correct_email":  "Veuillez entrer une adresse mail valide pour la mere !",
-    "enter_correct_phone_number":  "Le numero de telephone d'un des parents n'est pas correct !",
+    "enter_correct_phone_number":  "Le numéro de téléphone d'un des parents n'est pas correct !",
    
     "recale" : "Recale",
     "admis"  : "Admis",

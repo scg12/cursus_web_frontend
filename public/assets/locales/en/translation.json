@@ -1,8 +1,11 @@
                      
 {   
+    "import_failed"                   : "failed",
+    "import_failed_sing"              : "échecs",
     "enter_correct_note"              : "Incorrect note!",
     "row"                             : "Row",
     "data_imported"                   : "Data imported",
+    "data_imported_sing"              : "Data imported",
     "no_data_imported"                : "No data imported look import feedback for more information",
     "import_succes"                   : "All items were successfully imported !", 
     "show_imoprt_report"              : "Show import report",

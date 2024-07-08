@@ -314,6 +314,7 @@ function SynchroData(props) {
                             setPercent(pourcentage);
                             setCurrentAction(t("")+"");
                             setPgBarVisible(false);
+                            setIsInternetAvailable("done");
                             console.log("resultat",res.data);
                             console.log("FIN..............");
 
@@ -434,7 +435,7 @@ function SynchroData(props) {
                             imgStyle = {classes.grdBtnImgStylePrim}
                             //btnClickHandler={props.cancelHandler}
                             btnClickHandler={envoyerMessages}
-                            disable={(isInternetAvailable=="false"||isInternetAvailable=="") ? true:false}
+                            disable={(isInternetAvailable=="false"||isInternetAvailable==""||isInternetAvailable=="done") ? true:false}
                         />
                     </div>
                     :

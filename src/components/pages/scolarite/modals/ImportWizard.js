@@ -39,13 +39,16 @@ const SERVER_ADDRESS = 'http://192.168.43.99';
 
 function ImportWizard(props) {
     const { t, i18n } = useTranslation();
-    const currentUiContext                      = useContext(UiContext);
-    const currentAppContext                     = useContext(AppContext)
-    const selectedTheme                         = currentUiContext.theme;
-    const [feedback, setFeedback]               = useState([]);     
-    const [percent, setPercent]                 = useState(0);
-    const [showFeedBack, setShowFeedBack]       = useState(false);
-    const [countImported, setCountImported]     = useState(0);
+    const currentUiContext                         = useContext(UiContext);
+    const currentAppContext                        = useContext(AppContext)
+    const selectedTheme                            = currentUiContext.theme;
+
+    const [feedback, setFeedback]                  = useState([]);     
+    const [percent, setPercent]                    = useState(0);
+    const [showFeedBack, setShowFeedBack]          = useState(false);
+    const [countImported, setCountImported]        = useState(0);
+    const [countNotImported, setCountNotImported]  = useState(0);
+    
    
     useEffect(()=> {
         DATA_SIZE =  props.ImportedData.length;
@@ -80,7 +83,8 @@ function ImportWizard(props) {
 
                 pourcentage = pourcentage + 1;
                 setPercent(pourcentage);   
-                setCountImported(countImported);     
+                setCountImported(countImported);    
+                setCountNotImported(DATA_SIZE-countImported); 
             },80*index);
 
         });
@@ -300,8 +304,10 @@ function ImportWizard(props) {
 
                 />
                 {(showFeedBack)&& 
-                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start", marginTop:"2vh", width:"100%", height:"auto", fontSize:"0.77vw"}}> 
-                        <label style={{color:"green", fontWeight:"bold"}}>{feedback.length==0 ? t("import_succes") : countImported==0? t('no_data_imported') : countImported + " " +t("data_imported")}</label>            
+                    <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-start", alignItems:"flex-start", marginTop:"2vh", width:"100%", height:"auto", fontSize:"0.77vw"}}> 
+                        <label style={{color:"green", fontWeight:"bold"}}>{feedback.length==0 ? t("import_succes") : countImported > 0 ? countImported==1?  countImported + " " +t("data_imported_sing"):countImported + " " +t("data_imported"):null}</label>            
+                        <label style={{color:"red", fontWeight:"bold"}}>{(feedback.length!=0 && countImported==0) ? t('no_data_imported') :null}</label>            
+                        <label style={{color:"red", fontWeight:"bold", marginLeft:"1vw"}}>{(feedback.length!=0 && countNotImported>0 && countNotImported<DATA_SIZE) ? countNotImported ==1 ? countNotImported + " " +t("import_failed_sing") : countNotImported + " " +t("import_failed"):null}</label>            
                     </div>
                 } 
 
@@ -309,11 +315,12 @@ function ImportWizard(props) {
                 {(showFeedBack)&& 
                     <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start", marginTop:"0vh", width:"100%", height:"auto", fontSize:"0.77vw"}}> 
                     
-                        {feedback.map((fdBck)=>{
+                        {feedback.map((fdBck,index)=>{
                            return(                           
                                 <div style={{display:"flex",flexDirection:"row", height:"3vh"}}>
                                     <img src="images/cancel_trans.png" style={{width:"1vw",height:"1.3vw"}}/>
-                                    <label style={{color:"black"}}>{fdBck}</label>                         
+                                    <label style={{color:"black", fontWeight:800}}>{fdBck.substring(0,fdBck.indexOf(':')+1)}</label>
+                                    <label style={{color:"black", marginLeft:"0.3vw"}}>{fdBck.substring(fdBck.indexOf(':')+1,fdBck.length)}</label>                         
                                 </div>                       
                             )  
                         })}                      
