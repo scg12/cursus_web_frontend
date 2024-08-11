@@ -1,0 +1,102 @@
+.logoStyle{
+    width:47vw;
+    height: 30vh;
+}
+
+.pageContainer{
+    display        : flex;
+    flex-direction : column;
+    justify-content: center;
+    align-items    : center;
+    height         : 100vh;
+    width          : 100%
+}
+
+/*--------------------- Theme1 ----------------------- */
+
+.Theme1_pageContainer {
+    background-color:rgb(60, 160, 21);  
+    color:white;
+
+    -moz-box-shadow: 8px 8px 12px #aaa; 
+    -webkit-box-shadow: 8px 8px 12px  #aaa; 
+    box-shadow: 8px 8px 12px #555;
+}
+
+.Theme1_progressBarBgClr {
+    background-color: rgb(7, 75, 153);
+    border          :  solid 1px  #074b99; 
+}
+
+/*--------------------- Theme2 ----------------------- */
+
+.Theme2_pageContainer {
+    background-color:rgb(35, 88, 187);  
+    color:white;
+
+    -moz-box-shadow: 8px 8px 12px #aaa; 
+    -webkit-box-shadow: 8px 8px 12px  #aaa; 
+    box-shadow: 8px 8px 12px #555; 
+}
+
+.Theme2_progressBarBgClr{
+    background-color:  rgb(60, 160, 21);  
+    border          :  solid 1px #3ca015; 
+}
+
+
+/*--------------------- Theme3 ----------------------- */
+
+.Theme3_pageContainer {
+    background-color: rgb(209, 30, 90);  
+    color:white;
+
+    -moz-box-shadow: 8px 8px 12px #aaa; 
+    -webkit-box-shadow: 8px 8px 12px  #aaa; 
+    box-shadow: 8px 8px 12px #555; 
+}
+
+.Theme3_progressBarBgClr{
+    background-color:  rgb(64, 49, 165);
+    border          :  solid 1px #4031a5;
+}
+
+
+/*-------------------- ecrans au dessus de 1300px -----------------------------*/
+    @media screen 
+    and (min-device-width: 1400px) {
+        
+        .mainContentPosition {
+            width: 30vw;
+            height: 50vh;  
+            margin-top: 2vh;
+            font-size: 0.9rem;
+            border-radius: 10px;
+        
+            border-color: rgb(218, 214, 214);
+            border-width: 0.5px;
+            border-style: solid;
+        }
+
+        .loginMainContent{
+            height: fit-content;
+            /*padding-bottom: 2vh;*/
+           padding-top: 3.3vh;
+            height: 70vh;
+            display:flex;
+            flex-direction: column;
+            /*justify-content: flex-end;*/
+            align-items: center;
+            background-color:'white';
+        }
+
+    }
+
+
+
+
+
+
+ 
+ 
+  

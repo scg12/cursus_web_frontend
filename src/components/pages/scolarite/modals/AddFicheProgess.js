@@ -29,9 +29,9 @@ const SERVER_ADDRESS = 'http://192.168.43.99';
 function AddFicheProgess(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
-    const currentAppContext = useContext(AppContext)
+    const currentAppContext = useContext(AppContext);
     const selectedTheme = currentUiContext.theme;
-    const [fileSelected, setFileSelected] = useState(false)
+    const [fileSelected, setFileSelected] = useState(false);
     const [fileUploaded, setFileUploaded] = useState(false);
     
    

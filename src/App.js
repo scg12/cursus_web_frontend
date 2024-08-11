@@ -12,6 +12,7 @@ import ExtrasPages from './components/pages/extras/ExtrasPages';
 import DashBoardPage from './components/pages/dashBoard/DashBoardPage';
 import ScolaritePage from './components/pages/scolarite/ScolaritePage';
 import StatsEtMonitoringPage from './components/pages/statEtMonitoring/StatsEtMonitoringPage';
+import SplashScreen from './components/pages/splashScreen/SplashScreen'
 
 import { useState,useContext } from "react";
 import { useHistory } from 'react-router-dom';
@@ -129,9 +130,14 @@ function App()
         }
         else 
         {  history.replace('/login');
-            return (
-                <LoginForm/>
-            );
+            if(currentAppContext.isUserLogging)
+                return (
+                    <SplashScreen/>
+                );
+            else 
+                return (
+                    <LoginForm/>
+                );
         }
             
     }

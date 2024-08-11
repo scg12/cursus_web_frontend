@@ -138,7 +138,7 @@
     white-space: nowrap;
     border-style: solid;  
     border-radius: 7px 7px 7px 7px;
-    border-color: rgb(60, 160, 21);
+    border-color: #3ca015;
     
 }
 
@@ -159,7 +159,7 @@
     border-style: solid;  
     border-radius: 7px 7px 7px 7px;
 
-    border-color: rgb(35, 88, 187); ;
+    border-color: #2358bb; ;
     border-radius: 7px 7px 7px 7px;
     /*background-color: rgba(212, 234, 245,0.5);*/
 }
