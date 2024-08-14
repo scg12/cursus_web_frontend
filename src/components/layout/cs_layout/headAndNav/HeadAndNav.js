@@ -243,6 +243,9 @@ function HeadAndNav(props) {
                         localStorage.removeItem('access');
                         localStorage.removeItem('refresh');
                         console.log(res.data);
+                        // currentAppContext.setIsUserLogging(false);
+                        console.log("isLogging",currentAppContext.isUserLogging);
+                     
                     },(res)=>{                    
                         console.log('Erreur: ',res);                       
                     });                    

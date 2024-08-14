@@ -238,7 +238,7 @@
 /*--------------------- Theme1 ----------------------- */
 
 .Theme1_border {
-  border-bottom: solid 7px rgb(14, 94, 199);
+  border-bottom: solid 7px #0e5ec7;
 }
 
 .Theme1_header {
@@ -293,7 +293,7 @@ div .Theme1_widget_content  :hover {
 }
 
 .Theme2_header {
-  background-color:rgb(35, 88, 187);  
+  background-color:#2358bb;  
   line-height: 40px;
   height: 38px;
   display: flex;
@@ -343,7 +343,7 @@ div .Theme2_widget_content :hover {
 }
 
 .Theme3_header {
-  background-color: rgb(209, 30, 90);  
+  background-color: #d11e5a;  
   line-height: 40px;
   height: 38px;
   display: flex;

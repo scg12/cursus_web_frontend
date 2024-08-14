@@ -27,7 +27,7 @@ function ProgressBar(props) {
             }
 
             <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"flex-start", width:props.pgBarWidth,...props.barStyle}} >
-                <div  style={{height:"100%", display:"flex", flexDirection:"column", justifyContent:"flex-start", ...props.rateStyle}}>
+                <div  style={{height:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", ...props.rateStyle}}>
                     {(props.showRate==true && props.ratePosition=="inside") &&
                         <label style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center",...props.rateTextStyle}}>{props.rate}</label>
                     }

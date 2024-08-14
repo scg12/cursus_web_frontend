@@ -332,7 +332,7 @@ function ConfigTrimestre(props) {
                                 
                     <div className={classes.gridAction}> 
                         <CustomButton
-                            btnText='+' 
+                            btnText='Ajouter' 
                             buttonStyle={getButtonStyle()}
                             btnTextStyle = {classes.btnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}

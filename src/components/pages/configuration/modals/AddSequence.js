@@ -144,6 +144,7 @@ function AddSequence(props) {
                     <input id="date_deb" type="text" className={classes.inputRowControl + ' formInput'} onChange={handleChange} defaultValue={currentUiContext.formInputs[4]}/>
                 </div>
             </div>
+
             <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel}>
                     Date Fin :  
@@ -151,6 +152,16 @@ function AddSequence(props) {
                     
                 <div> 
                     <input id="date_fin" type="text" className={classes.inputRowControl + ' formInput'} onChange={handleChange} defaultValue={currentUiContext.formInputs[5]}/>
+                </div>
+            </div>
+
+            <div className={classes.inputRowLeft}> 
+                <div className={classes.inputRowLabel}>
+                    Pourcentage :  
+                </div>
+                    
+                <div> 
+                    <input id="pourcentage" type="number" className={classes.inputRowControl} style={{width:'3.3vw', height:'1.5rem'}} onChange={handleChange} defaultValue={currentUiContext.formInputs[5]}/> %
                 </div>
             </div>
 

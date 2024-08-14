@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import '../../../translation/i18n';
 import CustomButton from '../../customButton/CustomButton';
 
-import axiosInstance from "../../../axios"
+import {createAxiosInstance} from "../../../axios";
+// import axiosInstance from "../../../axios"; 
 import { useState,useContext} from "react";
 import UiContext from '../../../store/UiContext';
 import AppContext from '../../../store/AppContext';
@@ -26,120 +27,6 @@ var ERROR_CODE;
 
 var listNotifs=[];
 
-
-// let FeaturesCode = {
-//     "SCOLARITE": "1",
-//     "SCOLARITE_A": "1",
-//     "SCOLARITE_A1": "1",
-//     "SCOLARITE_A2": "1",
-//     "SCOLARITE_A3": "1",
-//     "SCOLARITE_A4": "1",
-//     "SCOLARITE_A5": "1",
-//     "SCOLARITE_A6": "1",
-//     "SCOLARITE_B": "1",
-//     "SCOLARITE_B1": "1",
-//     "SCOLARITE_B2": "1",
-//     "SCOLARITE_B3": "1",
-//     "SCOLARITE_B4": "1",
-//     "SCOLARITE_B5": "1",
-//     "SCOLARITE_B6": "1",
-//     "SCOLARITE_C": "1",
-//     "SCOLARITE_C1": "1",
-//     "SCOLARITE_C2": "1",
-//     "SCOLARITE_C3": "1",
-//     "SCOLARITE_C4": "1",
-//     "SCOLARITE_C5": "1",
-//     "SCOLARITE_D": "1",
-//     "SCOLARITE_D1": "1",
-//     "SCOLARITE_D2": "1",
-//     "SCOLARITE_D3": "1",
-//     "SCOLARITE_D4": "1",
-//     "SCOLARITE_D5": "1",
-//     "SCOLARITE_D6": "1",
-//     "SCOLARITE_E": "1",
-//     "SCOLARITE_E1": "1",
-//     "SCOLARITE_E2": "1",
-//     "SCOLARITE_E3": "1",
-//     "FINANCE": "1",
-//     "FINANCE_A": "1",
-//     "FINANCE_A1": "1",
-//     "FINANCE_A2": "1",
-//     "FINANCE_B": "1",
-//     "FINANCE_B1": "1",
-//     "FINANCE_B2": "1",
-//     "FINANCE_B3": "1",
-//     "FINANCE_B4": "1",
-//     "FINANCE_C": "1",
-//     "FINANCE_C1": "1",
-//     "FINANCE_C2": "1",
-//     "STATS": "1",
-//     "STATS_A": "1",
-//     "STATS_A1": "1",
-//     "STATS_A2": "1",
-//     "STATS_A3": "1",
-//     "STATS_A4": "1",
-//     "STATS_B": "1",
-//     "STATS_B1": "1",
-//     "STATS_B2": "1",
-//     "STATS_B3": "1",
-//     "COMM_PARENT": "1",
-//     "COMM_PARENT_A": "1",
-//     "COMM_PARENT_A1": "1",
-//     "COMM_PARENT_A2": "1",
-//     "COMM_PARENT_B": "1",
-//     "COMM_PARENT_B1": "1",
-//     "COMM_PARENT_B2": "1",
-//     "COMM_PARENT_B3": "1",
-//     "CONFIG": "1",
-//     "CONFIG_A": "1",
-//     "CONFIG_A1": "1",
-//     "CONFIG_A2": "1",
-//     "CONFIG_A3": "1",
-//     "CONFIG_A4": "1",
-//     "CONFIG_A5": "1",
-//     "CONFIG_A6": "1",
-//     "CONFIG_B": "1",
-//     "CONFIG_B1": "1",
-//     "CONFIG_B2": "1",
-//     "CONFIG_B3": "1",
-//     "CONFIG_B4": "1",
-//     "CONFIG_B5": "1",
-//     "CONFIG_B6": "1",
-//     "CONFIG_B7": "1",
-//     "CONFIG_B8": "1",
-//     "CONFIG_B9": "1",
-//     "CONFIG_B10": "1",
-//     "CONFIG_B11": "1",
-//     "CONFIG_B12": "1",
-//     "CONFIG_B13": "1",
-//     "CONFIG_B14": "1",
-//     "CONFIG_B15": "1",
-//     "CONFIG_B16": "1",
-//     "CONFIG_B17": "1",
-//     "CONFIG_B18": "1",
-//     "CONFIG_B19": "1",
-//     "CONFIG_B20": "1",
-//     "CONFIG_B21": "1",
-//     "CONFIG_B22": "1",
-//     "CONFIG_B23": "1",
-//     "CONFIG_B24": "1",
-//     "CONFIG_B25": "1",
-//     "CONFIG_B26": "1",
-//     "CONFIG_C": "1",
-//     "CONFIG_C1": "1",
-//     "CONFIG_C2": "1",
-//     "CONFIG_C3": "1",
-//     "CONFIG_D": "1",
-//     "CONFIG_D1": "1",
-//     "CONFIG_D2": "1",
-//     "CONFIG_D3": "1",
-//     "CONFIG_D4": "1",
-//     "CONFIG_E": "1",
-//     "CONFIG_E1": "1",
-//     "CONFIG_E2": "1",
-//     "EXTRAS": "1"
-// }
-
 let FeaturesCode = {}
 function LoginForm(props){
 
@@ -148,6 +35,7 @@ function LoginForm(props){
     const history = useHistory();
     const [passWordError, setPassWordError]=useState(false);
     const [isLoading, setIsLoading]=useState(false);
+    
     //const [selectedValue, setSelectedValue] =useState();
     
     //Cette constante sera lu lors de la configuration de l'utilisateur.
@@ -160,6 +48,8 @@ function LoginForm(props){
     const changeLanguage = (event) => {
         i18n.changeLanguage(event.target.id);
     };
+
+    const axiosInstance = createAxiosInstance(currentAppContext.serverAdress);
 
 
     //Necessaire pour l'emploi de temps
@@ -534,7 +424,13 @@ function LoginForm(props){
         setIsLoading(true);
         const loginText = document.getElementById('login').value;
         const passwordText = document.getElementById('password').value;
-        
+
+       
+
+
+        // axiosInstance.baseURL = 'http://'+currentAppContext.serverAdress+':8000/api/';
+        // console.log("adresse server",currentAppContext.serverAdress,axiosInstance)
+
         axiosInstance
         .post(`token-get/`, {
             username: loginText,
@@ -613,7 +509,7 @@ function LoginForm(props){
     return ( 
         <div className= {classes.loginContainer}>
             <div className= {getCurrentHeaderTheme()}>
-                <img src='images/cursusLogo.png'  alt='AppLogo' className= {classes.logoStyle}></img>
+                <img src={i18n.language=='fr' ? 'images/logoAdminFr.png':'images/logoAdminEn.png'}  alt='AppLogo' className= {classes.logoStyle}></img>
             </div>
 
             <div className= {getCurrentWidgetTemplateStyle()+ ' '+ getWidgetContentStyle() }>

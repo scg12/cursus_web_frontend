@@ -32,7 +32,17 @@ const AppContext = createContext({
 
     /*---------- Infos Etablissement en cours -----------*/
     currentEtabInfos : {},
+
+    /*--------- Detecter si c'est le login ou le logout -------*/
+    isUserLogging   : true,
     
+    /*--------------- Adresse du serveur ----------------*/
+    serverAdress   : "",
+
+
+    /*--------------- Objet axios instance ----------------*/
+    axiosInstance  : {},
+
 
 
 
@@ -66,6 +76,17 @@ const AppContext = createContext({
 
     /*---------- Infos Etablissement en cours -----------*/
     setCurrentEtabInfos:(etabInfos) => {},
+
+    /*--------- Detecter si c'est le login ou le logout -------*/
+    setIsUserLogging   :(boolValue) => {},
+
+    /*--------------- Adresse du serveur ----------------*/
+    setServerAdress    :(adress)=>{},
+
+    /*--------------- Objet axios instance ----------------*/
+    setAxiosInstance   :(axiosIstance)=>{},
+
+
     
 });
 
@@ -102,7 +123,16 @@ export function AppContextProvider(props)
     /*---------- Infos Etablissement en cours -----------*/
     const [currentEtabInfos, setCurrentEtabInfos] = useState({});
    
-    
+    /*--------- Detecter si c'est le login ou le logout -------*/
+    const [isUserLogging, setIsUserLogging]       = useState(true);
+
+    /*--------------- Adresse du serveur ----------------*/
+    const [serverAdress, setServerAdress]         = useState("");
+
+    /*--------------- Objet axios instance ----------------*/
+    const [axiosInstance, setAxiosInstance]       = useState({});
+      
+   
   
     
     function connectHandler(givenLogin, givenProfile){
@@ -197,8 +227,21 @@ export function AppContextProvider(props)
     }
     
 
-   
+    /*--------- Detecter si c'est le login ou le logout -------*/
+    function setIsUserLoggingHandler(boolValue){
+        setIsUserLogging(boolValue);
+    }
 
+    /*--------------- Adresse du serveur ----------------*/
+    function setServerAdressHandler(adress){
+        setServerAdress(adress);
+    }
+
+    /*--------------- Objet axios instance ----------------*/
+    function setAxiosInstanceHandler(axiosInstance){
+        setAxiosInstance(axiosInstance);
+    }
+    
     
     const APP_Ctx = {
         usrLogin            : usrLogin,
@@ -229,7 +272,16 @@ export function AppContextProvider(props)
 
         /*---------- Infos Etablissement en cours -----------*/
         currentEtabInfos    : currentEtabInfos,
-       
+
+        /*--------- Detecter si c'est le login ou le logout -------*/
+        isUserLogging       : isUserLogging,
+
+        /*--------------- Adresse du serveur ----------------*/
+        serverAdress        : serverAdress,
+
+        /*--------------- Objet axios instance ----------------*/
+        axiosInstance       : axiosInstance,
+
         setUsrConnected     : connectHandler,
         setUsrLogin         : connectedUserHandler,
         logOut              : logOutHandler,
@@ -260,6 +312,15 @@ export function AppContextProvider(props)
         
         /*---------- Infos Etablissement en cours -----------*/
         setCurrentEtabInfos : setCurrentEtabInfosHandler, 
+
+        /*--------- Detecter si c'est le login ou le logout -------*/
+        setIsUserLogging    : setIsUserLoggingHandler,
+
+        /*--------------- Adresse du serveur ----------------*/
+        setServerAdress     : setServerAdressHandler,
+
+        /*--------------- Objet axios instance ----------------*/
+        setAxiosInstance    : setAxiosInstanceHandler
     };
 
 
