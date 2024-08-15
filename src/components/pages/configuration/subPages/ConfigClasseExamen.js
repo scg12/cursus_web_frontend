@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddClasseExamen from "../modals/AddClasseExamen";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from "react-i18next";
 
 
 var classses = [], chaine = "_", nb_click=0;  
 
 function ConfigClasseExamen(props) {
+    const { t, i18n }       = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -288,6 +290,10 @@ function ConfigClasseExamen(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("conseil_class_prepa")}
+            </div> 
+
             {(modalOpen!=0) && <AddClasseExamen formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewCycle : modifyClasseExamen} cancelHandler={quitForm} />}
 
             {(modalOpen==0) ?
@@ -304,6 +310,7 @@ function ConfigClasseExamen(props) {
                             // btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
                             btnClickHandler={modifyClasseExamen}
                             disable={(modalOpen==1||modalOpen==2)}
+                            style={{paddingLeft:"0.3vw", paddingRight:"0.7vw"}}
                         />
                     </div>
                     

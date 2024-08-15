@@ -103,8 +103,12 @@ function ConfigLogin(props) {
     return (
         <div className={classes.formStyle}>
             <div id='errMsgPlaceHolder'></div>
+            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("conseil_class_prepa")}
+            </div> 
 
-            <div className={classes.inputRow}> 
+            <div className={classes.inputRow}>
+                
                 <div className={classes.inputRowLabel}>
                     Nouveau Login :
                 </div>                    
