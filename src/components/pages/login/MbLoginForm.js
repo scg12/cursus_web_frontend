@@ -448,12 +448,28 @@ function initUserNotifs(foundedNotifs){
         });
      
     }
+
+    function getImageFromAppVersion(version,langue){
+        if(version == "starter"){
+            if(langue=='fr'){
+                return 'images/cursusStarterTr.png';
+            } else {
+                return 'images/cursusStarterEnTr.png';
+            }  
+        } else {
+            if(langue=='fr'){
+                return 'images/logoAdminFr.png';
+            } else {
+                return 'images/logoAdminEn.png';
+            }  
+        }
+    }
     
 
     return(
         <div className= {classes.loginContainer}>
             <div className= {getCurrentHeaderTheme()}>
-                <img src='images/cursusLogo.png'  alt='AppLogo' className= {classes.logoStyle}></img>
+                <img src={getImageFromAppVersion(currentAppContext.appVersion,i18n.language)} alt='AppLogo' className= {classes.logoStyle}></img>
             </div>
 
             <div className= {getCurrentWidgetTemplateStyle()+ ' '+ getWidgetContentStyle() }>

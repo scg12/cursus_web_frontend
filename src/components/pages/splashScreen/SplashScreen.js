@@ -25,6 +25,7 @@ function SplashScreen(props){
     const currentAppContext                 = useContext(AppContext);
     const [isLoginView, setIsLoginView]     = useState(false);
     const [percent, setPercent]             = useState(0);
+    const [appVersion, setAppVersion]       = useState("starter");
     
 
     const { t, i18n } = useTranslation();
@@ -72,9 +73,11 @@ function SplashScreen(props){
             return response.json();
         })
         .then(function(myJson){
-            objConf = {...myJson};
-           
+            objConf = {...myJson};           
+
+            setAppVersion(objConf.version);
             currentAppContext.setServerAdress(objConf.adress);
+            currentAppContext.setAppVersion(objConf.version);
             //const axiosInstance = createAxiosInstance(objConf.adress);
             //currentAppContext.setAxiosInstance(axiosInstance);
             console.log("perepepepe",myJson)
@@ -103,6 +106,24 @@ function SplashScreen(props){
             default: return "#074b99";
         }
     }
+
+
+
+    function getImageFromAppVersion(version,langue){
+        if(version == "starter"){
+            if(langue=='fr'){
+                return 'images/cursusStarterTr.png';
+            } else {
+                return 'images/cursusStarterEnTr.png';
+            }  
+        } else {
+            if(langue=='fr'){
+                return 'images/logoAdminFr.png';
+            } else {
+                return 'images/logoAdminEn.png';
+            }  
+        }
+    }
     
     if(isLoginView) return (<LoginForm/>)
     else
@@ -110,7 +131,7 @@ function SplashScreen(props){
         return ( 
             <div className= {classes.pageContainer}>
                 <div className= {getCurrentContentTheme()}>
-                    <img src={i18n.language=='fr' ? 'images/logoAdminFr.png':'images/logoAdminEn.png'}  alt='AppLogo' className= {classes.logoStyle}></img> 
+                    <img src={getImageFromAppVersion(appVersion,i18n.language)}  alt='AppLogo' className= {classes.logoStyle}></img> 
                    
 
                     <ProgressBar 
