@@ -294,7 +294,7 @@ function ConfigCycle(props) {
     return (
         <div className={classes.formStyle}>
             <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
-                {t("conseil_class_prepa")}
+                {t("gest_cycle")}
             </div> 
             {(modalOpen!=0) && <AddCycle formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewCycle : modifyCycle} cancelHandler={quitForm} />}
 

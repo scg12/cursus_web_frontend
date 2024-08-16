@@ -915,7 +915,7 @@ function ConfigAssocEvalPeriod(props) {
           
             <div id='etape1' className={classes.etapeP} onLoad={()=>{moveToLeft()}}>
                 <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
-                    {t("conseil_class_prepa")}
+                    {t("affect_seq_trim")}
                 </div>
 
                 <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}> 

@@ -126,7 +126,7 @@ function ConfigPhoto(props) {
         <div className={classes.formStyle}>  
             <div id='MsgPlaceHolder'></div>
             <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
-                {t("conseil_class_prepa")}
+                {t("modif_photo")}
             </div> 
             {(errors.length>0)&&<div className={classes.errorMsg}> {getUploadError()}</div>}
            

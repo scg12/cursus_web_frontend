@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddMatiere from "../modals/AddMatiere";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from "react-i18next";
 
 
 var matieres = [];  
 
 function ConfigMatieres(props) {
+    const { t, i18n }       = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -291,17 +293,20 @@ function ConfigMatieres(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("matieres_clases_config")}
+            </div> 
             {(modalOpen!=0) && <AddMatiere formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewMatiere : modifyMatiere} cancelHandler={quitForm} />}
 
             {(modalOpen==0) ?
                 <div className={classes.gridTitleRow}> 
                     <div className={classes.gridTitle}>
-                        LISTE DES MATIERES
+                        LISTE DES MATIERES 
                     </div>
                                 
                     <div className={classes.gridAction}> 
                         <CustomButton
-                            btnText='+' 
+                            btnText='Ajouter' 
                             buttonStyle={getButtonStyle()}
                             btnTextStyle = {classes.btnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
