@@ -112,15 +112,15 @@ function SplashScreen(props){
     function getImageFromAppVersion(version,langue){
         if(version == "starter"){
             if(langue=='fr'){
-                return 'images/cursusStarterTr.png';
+                return 'images/logoStarterFrTr.png';
             } else {
-                return 'images/cursusStarterEnTr.png';
+                return 'images/logoStarterEnTr.png';
             }  
         } else {
             if(langue=='fr'){
-                return 'images/logoAdminFr.png';
+                return 'images/logoAdminFrTr.png';
             } else {
-                return 'images/logoAdminEn.png';
+                return 'images/logoAdminEnTr.png';
             }  
         }
     }
