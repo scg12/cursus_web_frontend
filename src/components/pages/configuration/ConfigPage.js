@@ -158,11 +158,11 @@ function ConfigPage(props) {
             setCurrentActiveMenuID(NewActiveMenuId);
         }  
 
-        if(parseInt(NewActiveMenuId)>=1 && parseInt(NewActiveMenuId)<=4) {
-            document.getElementById("link_head_conf_1").click(); 
-        }
+        // if(parseInt(NewActiveMenuId)>=1 && parseInt(NewActiveMenuId)<=4) {
+        //     document.getElementById("link_head_conf_1").click(); 
+        // }
         
-        if(parseInt(NewActiveMenuId)>=5 && parseInt(NewActiveMenuId)<=31) {
+        if(parseInt(NewActiveMenuId)>=17 && parseInt(NewActiveMenuId)<=31) {
             document.getElementById("link_head_conf_2").click(); 
         }
 
