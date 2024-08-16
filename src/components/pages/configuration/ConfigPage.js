@@ -328,26 +328,26 @@ function ConfigPage(props) {
                             }
                             {(sectionSelectedItem==10) ?
                                 <div className={getDetailSectionTheme()}>
-                                    <ConfigCours/>
+                                   <ConfigMatieres/>                                   
                                 </div>                                    
                                 : null
                             }
                             {(sectionSelectedItem==11) ?
                                 <div className={getDetailSectionTheme()}>
-                                    <ConfigMatieres/>
+                                    <ConfigCours/>
                                 </div>                                    
                                 : null
                             }
                             {(sectionSelectedItem==12) ?
                                 <div className={getDetailSectionTheme()}>
-                                    <ConfigGroupe/>
+                                    <ConfigMatieresClasse/>                                    
                                 </div>                                   
                                 : null
                             }
 
                             {(sectionSelectedItem==13) ?
                                 <div className={getDetailSectionTheme()}>
-                                     <ConfigMatieresClasse/>
+                                    <ConfigGroupe/>
                                 </div>                                    
                                 : null
                             }

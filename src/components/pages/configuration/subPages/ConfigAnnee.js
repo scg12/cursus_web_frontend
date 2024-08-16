@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddAnnee from "../modals/AddAnnee";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from "react-i18next";
 
 
 var configs = [];  
 
 function ConfigAnnee(props) {
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -497,6 +499,10 @@ function ConfigAnnee(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("modif_etab_conf")}
+            </div>
+            
             {(modalOpen!=0) && <AddAnnee formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewCycle : modifyConfigAnnee} cancelHandler={quitForm} />}
 
             {(modalOpen==0) ?
