@@ -19,7 +19,9 @@ import { useTranslation } from "react-i18next";
 
 var LIST_ELEVES = undefined;
 var SELECTED_ROLE = undefined;
-var SELECTED_PARTICIPANT = undefined;
+var typedEvalName = undefined;
+var typedEvalID   = undefined;
+var typedEvalPourcent = undefined;
 var SELECTED_DECISION = 0 //0-> Recale, 1-> Admis, 2-> Traduit, 3->Blame, 4->Autre
 var SELECTED_ELEVE = undefined;
 var MEETING_OBJET_ID = undefined;
@@ -33,7 +35,8 @@ var MEETING_GEN_DECISION = undefined
 var LIST_NEXT_CLASSES ='';
 
 
-var participant_data = [];
+var eval_data = [];
+
 
 var eleves_data=[];
 var MEETING = {};
@@ -86,38 +89,17 @@ function ConfigAssocEvalPeriod(props) {
     const [formMode, setFormMode] = useState(props.formMode);
     const [LargeViewOpen, setLargeViewOpen] = useState(false);
 
-    const[listDecisions, setListDecisions]   = useState([]);
-    const[listPromotions, setListPromotions] = useState([]);
-    const [optTirmestres, setOptTirmestres]  = useState([]);
+    const [listDecisions, setListDecisions]   = useState([]);
+    const [listPromotions, setListPromotions] = useState([]);
+    const [optTirmestres, setOptTirmestres]   = useState([]);
+    const [listEvals,     setListEvals]       = useState([]);
+    const [optEvals,        setOptEvals]      = useState([]);
 
 
 
-    var firstSelectItem1 = {
-        value: 0,   
-        label:'-----'+ t('choisir') +'-----'
-    }
-
-    var firstSelectItem2 = {
-        value: undefined,   
-        label:'-----'+ t('choisir') +'-----'
-    }
-
-    var NDEF = {
-        value: -1,
-        label: t("not_defined")
-    }
-
-    var firstSelectItem3 = {
-        value: undefined,   
-        label:'--'+ t('choisir') +'--'
-    }
-
+  
     const nonDefini=[        
         {value: -1,   label:'-----'+ t('not_defined') +'-----' },
-    ];
-
-    const choisir = [        
-        {value: undefined,   label:'-----'+ t('choisir') +'-----' },
     ];
 
     
@@ -145,36 +127,28 @@ function ConfigAssocEvalPeriod(props) {
         {value:5,     label:t("Trimestre5")},
         {value:6,     label:t("Trimestre6")},
     ];
-    
+
+    const evaluations = [
+        {id:1,    nomEval:"evaluation1",    PourcentEval:0 },
+        {id:2,    nomEval:"evaluation2",    PourcentEval:0 },
+        {id:3,    nomEval:"evaluation3",    PourcentEval:0 },
+
+    ];
+
+   
     
     
     
     useEffect(()=> {
         console.log("valeure", props.defaultMembres);
-        //getClassStudentList(props.currentClasseId);
-
-        setOptTirmestres(tabTrimestres)
-       
-        setOptPeriode(nonDefini);
-
-        LIST_ELEVES = props.eleves;
-
-        var tempTab = [...tabTypeConseil];
-        tempTab.unshift(firstSelectItem2);
-        setOptObjet(tempTab);
-
-        tempTab = [...tabTypeConseil];
-        //tempTab.unshift(firstSelectItem);
-        setOptMembres(tempTab);
-
-        tempTab = [...tabTypeConseil];
-        tempTab.unshift(firstSelectItem1);
-        setOptAutresMembres(tempTab);
-
-        console.log("les tableaux", optMembres,optAutresMembres);
-
-        console.log("hhgtuiop",currentUiContext.formInputs);
-            
+     
+        setOptTirmestres(tabTrimestres);       
+      
+        setOptEvals(evaluations);    
+        
+        typedEvalName = evaluations[0].nomEval;
+        typedEvalID   = evaluations[0].id;
+        
 
     },[]);
 
@@ -285,37 +259,7 @@ function ConfigAssocEvalPeriod(props) {
     }
    
     /************************************ Handlers ************************************/  
-    function getDecisionGeneraleHandler(e){
-        //console.log("dfdffd",e);
-        MEETING_GEN_DECISION = e.target.value;
-    }
-
-
-    function periodeChangeHandler(e){
-        console.log("hdhhdh",e.target.value)
-        if(e.target.value > 0){
-            PERIODE_ID    = e.target.value;
-            PERIODE_LABEL = e.target.label;
-        } else {
-            PERIODE_ID = undefined;
-            PERIODE_LABEL = "";
-        }
-    }
-
-
-    function getNonSelectedMembers(){
-        var tabOthers = [...props.otherMembers];
-        var members = [... props.defaultMembrers];
-        var tabNonSelectedElt =[]
-        
-        tabOthers.map((elt)=>{
-            if(!members.includes(elt)){
-                tabNonSelectedElt.push(elt);
-            }
-        })
-
-        return tabNonSelectedElt;
-    }
+    
   
     function saveMeetingHandler(){
         var errorDiv = document.getElementById('errMsgPlaceHolder');
@@ -629,7 +573,7 @@ function ConfigAssocEvalPeriod(props) {
 
         var index = optMembres.findIndex((elt)=>elt.value==0);
         if (index >=0){
-            console.log("participant",participant_data);
+            console.log("participant",eval_data);
             errorMsg = t("no_participant_name");
             return errorMsg;
         }
@@ -758,92 +702,9 @@ function ConfigAssocEvalPeriod(props) {
 
     /************************************ JSX Code ************************************/
 
-    //----------------- PARTICIPANT-----------------
-   
-    function participantChangeHandler(e){
-        console.log(e, e.target.value);
-        if(e.target.value != optAutresMembres[0].value){
+    //----------------- EVALUATION -----------------
 
-           var selected_memmbre = optAutresMembres.find((elt)=>(elt.value == e.target.value));
-
-            document.getElementById('participantId').style.borderRadius = '1vh';
-            document.getElementById('participantId').style.border = '0.47vh solid rgb(128, 180, 248)';
-            SELECTED_PARTICIPANT = e.target.value;
-            SELECTED_ROLE = selected_memmbre.role;
-
-        }else{
-            document.getElementById('participantId').style.borderRadius = '1vh';
-            document.getElementById('participantId').style.border = '0.47vh solid red';
-            SELECTED_PARTICIPANT = undefined;
-            SELECTED_ROLE = undefined;
-        }
-
-    }
-
-
-    function addParticipantRow(){       
-        participant_data = [...optMembres];
-        var index = participant_data.findIndex((elt)=>elt.value==0);
-        if (index <0){            
-            participant_data.push({value:0, label:'', role:'', present:true, etat:-1});
-            setOptMembres(participant_data);
-            console.log(participant_data);
-        } 
-    }
-
-    function addParticipant(){
-        participant_data =[...optMembres];
-
-        if(SELECTED_PARTICIPANT==undefined){
-            document.getElementById('participantId').style.borderRadius = '1vh';
-            document.getElementById('participantId').style.border = '0.47vh solid red';
-            return -1;
-        }
-
-        var index = participant_data.findIndex((elt)=>elt.value==0);
-        if (index >=0) participant_data.splice(index,1);
-      
-        var nomParticipant   = optAutresMembres.find((participant)=>participant.value==SELECTED_PARTICIPANT).label;
-        var indexParticipant = optAutresMembres.findIndex((participant)=>participant.value==SELECTED_PARTICIPANT)
-        
-        participant_data.push({value:SELECTED_PARTICIPANT, label:nomParticipant, /*roleId:SELECTED_ROLE,*/ role:SELECTED_ROLE, present:true, etat:0});
-
-        setOptMembres(participant_data);
-        setTabProfsPresents(participant_data);
-
-        participant_data = [...optAutresMembres];
-        participant_data.splice(indexParticipant,1);
-        setOptAutresMembres(participant_data);
-        
-        SELECTED_PARTICIPANT=undefined;
-        SELECTED_ROLE = undefined;        
-    }
-
-    function deleteParticipant(e){
-        console.log(e);
-        console.log("participants",optMembres);
-        participant_data =[...optMembres];
-        var idParticipant = e.target.id;
-
-        var index = participant_data.findIndex((elt)=>elt.value==idParticipant);
-        var participantToDelete = participant_data.find((elt)=>elt.value==idParticipant);
-
-        if (index >=0){
-            participant_data.splice(index,1);
-            setOptMembres(participant_data);
-
-            if(participantToDelete.value > 0){
-                participant_data = [...optAutresMembres];
-                participant_data.push(participantToDelete);
-                setOptAutresMembres(participant_data);
-            }
-        }
-        SELECTED_PARTICIPANT=undefined;
-        SELECTED_ROLE = undefined
-
-    }
-
-    const LigneProfParticipantHeader=(props)=>{
+    const LigneEvaluationHeader=(props)=>{
         return(
             <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
                 <div style={{width:'17vw'}}>{t("eval_name")}</div>
@@ -853,136 +714,161 @@ function ConfigAssocEvalPeriod(props) {
         );
     }
 
-    const LigneProfParticipant=(props)=>{
+    const LigneEvaluation=(props)=>{
         return(
-            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+            <div style={{display:'flex', paddingTop:props.isHeader? "0vh":"1.3vh", color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'4.3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black', }}>
                 <div style={{width:'17vw'}}>
                     {(props.etat >= 0) ? 
-                        props.nom
+                        props.nomEval
                      :
-                        <select id='participantId' style={{height:'3.5vh', fontSize:'0.87vw', paddingTop:'1.3vh', width:'11.3vw', borderRadius:'1vh', borderColor:'#80b4f8', borderWidth:'0.47vh'}} onChange={participantChangeHandler} >
-                            {(optAutresMembres||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
+                     <select id='evalNameId' style={{height:'3.5vh', marginBottom:"1vh", fontSize:'0.87vw', width:'11.3vw', borderRadius:'1vh', borderColor:'grey', borderWidth:'1px'}} onChange={evaluationChangeHandler} >
+                        {(optEvals||[]).map((option)=> {
+                            return(
+                                <option  value={option.id}>{option.nomEval}</option>
+                            );
+                        })}
+                    </select> 
+                    //    <input id="evalNameId" type="text" style={{width:"13vw", height:"3vh", borderBottom:"none", borderStyle:"solid", borderWidth:1, borderColor:"grey", borderRadius:"1vh"}} onChange={evalNameChangeHandler}/> 
                     }
                 </div>
                 
                 <div style={{width:'11.3vw'}}>
-                    { props.role}
+                    {(props.etat >= 0) ? 
+                        props.PourcentEval
+                     :
+                       <input id="evalPourcentId" type="number" style={{width:"3vw", height:"3vh", borderBottom:"none", borderStyle:"solid", borderWidth:1, borderColor:"grey",borderRadius:"1vh"}} onChange={evalPourcentChangeHandler}/> 
+                    }
+                   %
                 </div>
               
-                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row'}}> 
-                    {(props.etat<=0)&&
-                        <img src="images/cancel_trans.png"  
-                            id={props.participantId}
-                            width={25} 
-                            height={33} 
-                            className={classes.cellPointer} 
-                            onClick={deleteParticipant}                         
-                            alt=''
-                        />
-                    }
+                <div style={{width:'7vw', marginLeft:'1.7vw', display:'flex', flexDirection:'row', paddingBottom:"1vh", marginLeft:"0.7vw"}}> 
+                    
+                    <img src="images/cancel_trans.png"  
+                        id={props.evaluationId}
+                        width={25} 
+                        height={33} 
+                        className={classes.cellPointer} 
+                        onClick={deleteEvaluation}                         
+                        alt=''
+                    />
+                    
 
-                    {(props.etat<0)&&
+                   { props.etat==-1 &&
                         <img src="images/checkp_trans.png"  
                             width={19} 
                             height={19} 
                             className={classes.cellPointer} 
-                            onClick={addParticipant}                         
+                            onClick={addEvaluation}                         
                             alt=''
-                            style={{marginLeft:'1vw', marginTop:'1.2vh'}}
+                            style={{marginLeft:'0.7vw', marginTop:'1.2vh'}}
                         />
-                    }
+                   }
+                    
                 </div>
 
             </div>
         );
     }
 
-    //----------------- ELEVE (cas par cas)------------
+    function evaluationChangeHandler(e){
+        console.log(e, e.target.value);
+        typedEvalID = e.target.value;
 
-    function decisionChangeHandler(e,rowIndex){
-        var selectedDecision = e.target.value;  //initialiser les selects avec undefined
-        list_decisions_conseil_eleves = [...listDecisions];
-        if(selectedDecision != undefined){
-            list_decisions_conseil_eleves[rowIndex] = selectedDecision;
-        } else {
-            list_decisions_conseil_eleves[rowIndex] = undefined;
-        }        
-        console.log("class decision",list_decisions_conseil_eleves);
-        setListDecisions(list_decisions_conseil_eleves);
+        document.getElementById('evalNameId').style.borderRadius = '1vh';
+        document.getElementById('evalNameId').style.border = '1px solid grey';
+        typedEvalName = optEvals.find((ev)=>ev.id == typedEvalID).nomEval;
     }
 
 
-    function promotionChangeHandler(e,rowIndex){
-        var selectedclassePromotion = e.target.value;  //initialiser les selects avec undefined
-        list_classes_promotions_eleves = [...listPromotions];
-        if(selectedclassePromotion != undefined){
-            list_classes_promotions_eleves[rowIndex] = selectedclassePromotion;
-        } else {
-            list_classes_promotions_eleves[rowIndex] = undefined;
-        }
-        console.log("class prom",list_classes_promotions_eleves);
-        setListPromotions(list_classes_promotions_eleves);
+    function evalPourcentChangeHandler(e){
+        document.getElementById('evalPourcentId').style.borderRadius = '1vh';
+        document.getElementById('evalPourcentId').style.border = '1px solid grey';
+        console.log(e, e.target.value);
+        typedEvalPourcent = e.target.value;        
     }
 
 
-    function eleveChangeHandler(e){
-        if(e.target.value != LIST_ELEVES[0].value){
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid rgb(128, 180, 248)';
+    function addEvalRow(e){       
+        eval_data = [...listEvals];
+
+        var tabEvals = [];
+        evaluations.map((ev1)=>{
+            if(eval_data.find((ev2)=>ev2.id==ev1.id) == undefined){
+                tabEvals.push(ev1)
+            }
+        });
+        setOptEvals(tabEvals);
+
+        typedEvalID   = tabEvals[0].id;
+        typedEvalName = tabEvals[0].nomEval;
         
-            SELECTED_ELEVE = e.target.value;
-        
-        }else{
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid red';
-            SELECTED_ELEVE=undefined
-        }
+        var index = eval_data.findIndex((elt)=>elt.etat==-1);
+        if (index <0){            
+            eval_data.push({id:0, nomEval:'', PourcentEval:0,  etat:-1});
+            setListEvals(eval_data);
+            console.log(eval_data);
+        } 
     }
 
-    function addEleveRow(){
-        eleves_data = [...tabEleves];
-        var index = eleves_data.findIndex((elt)=>elt.id==0);
-        if (index <0){
-            eleves_data.push({id:0, nom:'', decisions:[0,1,2,3,4], decisionsId:0, decisionsLabel:'', etat:0});
-            setTabEleves(eleves_data);
-        } else {alert("ici")}
+    function addEvaluation(e){
+        eval_data =[...listEvals];
 
-    }
-
-    function addEleve(){
-        eleves_data = [...tabEleves];
-        if(SELECTED_ELEVE==undefined){
-            document.getElementById('eleveId').style.borderRadius = '1vh';
-            document.getElementById('eleveId').style.border = '0.47vh solid red';
+        if(typedEvalName==undefined || typedEvalName==""){
+            document.getElementById('evalNameId').style.borderRadius = '1vh';
+            document.getElementById('evalNameId').style.border = '2px solid red';
             return -1;
         }
-        
-        var index = eleves_data.findIndex((eleve)=>eleve.id==0);
-        if (index >= 0)  eleves_data.splice(index,1);
-        
-        var eleveNom = LIST_ELEVES.find((eleve)=>eleve.value==SELECTED_ELEVE).label;
-        eleves_data.push({id:SELECTED_ELEVE, nom:eleveNom, decisionsId:currentDecision, decisionLabel:getDecision(currentDecision), decisions:[0,0,0,0,0], etat:1})
-        setTabEleves(eleves_data);
-        
-        SELECTED_ELEVE=undefined;
-    }
 
-    function getDecision(decisionId){
-        switch(decisionId){
-            case 0:  return t('recale');
-            case 1:  return t('admis');
-            case 2:  return t('traduit');
-            case 3:  return t('blame')
-            default: return t("autre");
+        if(typedEvalPourcent==undefined || isNaN(typedEvalPourcent)){
+            document.getElementById('evalPourcentId').style.borderRadius = '1vh';
+            document.getElementById('evalPourcentId').style.border = '2px solid red';
+            return -1;
         }
-   
+
+        var index = eval_data.findIndex((elt)=>elt.etat==-1);
+        if (index >=0) eval_data.splice(index,1);
+    
+        eval_data.push({id:typedEvalID, nomEval:typedEvalName, PourcentEval:typedEvalPourcent, etat:0});
+
+        setListEvals(eval_data);
+
+       
+
+        //setOptEvals(tabEval);
+        
+        typedEvalName     = undefined;
+        typedEvalID       = undefined;
+        typedEvalPourcent = undefined;        
     }
 
+
+    function deleteEvaluation(e){
+        console.log(e);
+        eval_data = [...listEvals];
+        var evaluationId = e.target.id;
+
+        var index = eval_data.findIndex((elt)=>elt.id==evaluationId);
+       // var evalToDelete = eval_data.find((elt)=>elt.id==idParticipant);
+
+        if (index >=0){
+            eval_data.splice(index,1);
+            setListEvals(eval_data);
+
+            // if(participantToDelete.value > 0){
+            //     eval_data = [...optAutresMembres];
+            //     eval_data.push(participantToDelete);
+            //     setOptAutresMembres(eval_data);
+            // }
+        }
+
+        typedEvalName=undefined;
+        typedEvalPourcent = undefined;
+    }
+
+    
+    
+
+    
 
     function getSelectDropDownTextColr() {
         switch(selectedTheme){
@@ -1017,183 +903,9 @@ function ConfigAssocEvalPeriod(props) {
     }
     
 
-    function deleteEleve(e){
-        var eleveId = e.target.id;
-        eleves_data = [...tabEleves];
-        var index = eleves_data.findIndex((eleve)=>eleve.id==eleveId);
-        if (index >= 0) {
-            eleves_data.splice(index,1);
-            setTabEleves(eleves_data);
-        }
-        SELECTED_ELEVE=undefined;
-    }
+   
 
-    const LigneEleveHeader=(props)=>{
-        return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'50vw', fontSize:'0.77vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}> {t("nom")}               </div> 
-                <div style={{width:'3vw'}}>  {t("age")}               </div>   
-                <div style={{width:'7vw'}}>  {t("redouble")}?         </div>
-                <div style={{width:'5.3vw'}}>{t("Abs. NJ")}           </div> 
-                <div style={{width:'5.3vw'}}>{t("Abs. J")}            </div>
-                <div style={{width:'17vw', textAlign:"center"}}> {t("Convocation CD.")}   </div>
-                <div style={{width:'7vw'}}>  {t("Moyenne")}          </div>
-                <div style={{width:'13vw'}}> {t("decision")}          </div>
-                <div style={{width:'13vw'}}> {t("Promu en")}          </div>
-            </div>
-        );
-    }
-
-    const LigneEleve=(props)=>{
-        var taille;
-        useEffect(()=> {
-            if(formMode!="consult"){            
-           
-                (listDecisions.length>0) ? taille = listDecisions.length : (listPromotions.length>0) ? taille = listPromotions.length : taille=0
-                if(taille > 0 ){
-                    if(props.rowIndex < taille){
-                        console.log("infos",props.rowIndex)
-                        var selectedIndex = optVerdict.findIndex((elt)=>elt.value == listDecisions[props.rowIndex]);
-                        if(selectedIndex >=0){
-                            document.getElementById('decision'+ props.eleveId).options[selectedIndex].selected = true;
-                        }
-
-                        var selectedIndex = optPromuEn.findIndex((elt)=>elt.value == listPromotions[props.rowIndex]);
-                        if(selectedIndex >=0){
-                            document.getElementById('promuEn'+ props.eleveId).options[selectedIndex].selected  = true;
-                        }
-                        
-                    }
-                }
-            }
-        },[]);
-
-
-        return(
-            <div style={{display:'flex', color:'black', backgroundColor: (props.rowIndex % 2==0) ? 'white':'#e2e8f0cf', flexDirection:'row', height: 'fit-content',width:'50vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw', fontSize:"0.77vw", fontWeight:'bold'}}>         
-                    {props.nom}                     
-                </div>
-
-                <div style={{width:'3vw', textAlign:'center'}}>                             
-                    {props.age}                     
-                </div>
-                
-                <div style={{width:'7vw',   fontSize:"0.77vw",  textAlign:"center"}}>                                         
-                    {props.redouble}                
-                </div>
-                
-                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"red"}}>       
-                    {props.absences_nj}             
-                </div>
-                
-                <div style={{width:'5.3vw', textAlign:"center", fontSize:"0.77vw", fontWeight:"bold", color:"green"}}>     
-                    {props.absences_j}             
-                </div>
-                
-                <div style={{width:'17vw', fontSize:'0.67vw', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', paddingTop:"0.7vh"}}>                            
-                    {(props.convocations.split('_')||[]).map((elt)=>{                        
-                        return (
-                            <div style ={{width:'100%', display:'flex', flexDirection:'row', justifyContent:"flex-start"}}> 
-                                <div style={{fontWeight:'bold', paddingLeft:"2vw", marginRight:"0.3vw", justifyContent:"center"}}>  
-                                    {elt.split(' ')[0]} 
-                                </div>
-                                <div>  {elt.split(' ')[1]} </div>                              
-                            </div>
-                        );                        
-                    })}
-                </div>
-                
-                <div style={{width:"7vw"}} > 
-                    {props.moyenne}                 
-                </div>
- 
-                {(formMode=="consult")?
-                    <div style={{width:'13vw', fontSize:"0.77vw",  textAlign:"center"}}>{ (MEETING.status == 1) ? props.decision_finale : t("not_set")}</div>
-                    :
-                    <div style={{width:'13vw'}}>
-                        <select id={'decision'+ props.eleveId} style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.77vw', width:'7.7vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>decisionChangeHandler(e,props.rowIndex)}>
-                            {(optVerdict||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    </div>
-                
-                }
-           
-
-                {(formMode=="consult")?
-                    <div style={{width:'13vw', fontSize:"0.77vw",  textAlign:"center"}}>{(MEETING.status == 1) ? props.promuEn : t("not_set")}</div>
-
-                    :
-
-                    <div style={{width:'13vw'}}>
-                        <select id={'promuEn'+ props.eleveId} style={{height:'3.3vh', borderRadius:"1vh", fontSize:'0.77vw', width:'7.7vw', borderStyle:'solid', borderColor:'rgb(128, 180, 248)', borderWidth:'0.47vh', fontWeight:'solid'}} onChange={(e)=>promotionChangeHandler(e,props.rowIndex)}>
-                            {(optPromuEn||[]).map((option)=> {
-                                return(
-                                    <option  value={option.value}>{option.label}</option>
-                                );
-                            })}
-                        </select> 
-                    </div>
-                }
-               
-              
-            </div>
-        );
-    }
-
-    //----------------- ENSEIGNANTS PRESENTS ------------
-
-    function managePresent(e){
-        e.preventDefault();
-        //var participants = [...optMembres];
-        var profPresents = [...tabProfsPresents];
-        var tabPresent = [...presents];
-        var row = e.target.id;
-
-        if(e.target.checked){
-            tabPresent[row] = true;
-            profPresents[row].present = true;
-            //e.target.checked = true;
-            //setOptMembres(participants);
-            setPresents(tabPresent);
-            setTabProfsPresents(profPresents);
-        } else {
-            tabPresent[row] = false;
-            profPresents[row].present = false;
-            //e.target.checked = false;
-            setPresents(tabPresent);
-            setTabProfsPresents(profPresents);
-        }
-        console.log("profs presents",profPresents);
-    }
-
-    const LignePresentsHeader=(props)=>{
-        return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>{t("nom")}</div>
-                <div style={{width:'10vw'}}>{t("present")}</div>
-            </div>
-        );
-    }
-
-    const LignePresent=(props)=>{
-        return(
-            <div style={{display:'flex', color: props.isHeader ?'white':'black', backgroundColor: props.isHeader ?'rgb(6, 83, 134)':'white', flexDirection:'row', height: props.isHeader ?'3vh':'3.7vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
-                <div style={{width:'17vw'}}>               
-                    {props.nom}                   
-                </div>
-                <div style={{display:'flex',  flexDirection:'row', alignItems:'center'}}> 
-                    <input type='checkbox' disabled={etats[props.rowIndex]==1} style={{width:'1vw', height:'2vh'}} checked={presents[props.rowIndex]==true}  id={props.rowIndex} name ={'Present'+props.rowIndex} onChange={managePresent}/>                    
-                </div>
-                           
-            </div>
-        );
-    }
-
+    
 
 
     return (
@@ -1223,16 +935,16 @@ function ConfigAssocEvalPeriod(props) {
                         btnText         ={t('add_eval')} 
                         buttonStyle     = {getButtonStyle()}
                         btnTextStyle    = {classes.btnTextStyle}
-                        btnClickHandler = {props.cancelHandler}
+                        btnClickHandler = {addEvalRow}
                         style           = {{marginLeft:"2vw", height:"4.3vh"}}
                     />
                 </div>
                 
                 <div className={classes.inputRowLeft}>
                     <div style={{display:'flex', justifyContent:"center", flexDirection:'column', marginTop:'0.7vh', marginLeft:'0vw', paddingLeft:"1vw", width:"99%",paddingRight:"1vw", height:'30vh',overflowY:'scroll', justifyContent:'flex-start'}}>
-                        <LigneProfParticipantHeader date={'Date'} nbreJours={'Nbre Jours'} etat={'Etat'}/>
-                        {(optMembres||[]).map((prof)=>{
-                            return <LigneProfParticipant  participantId={prof.value} nom={prof.label} role={prof.role} etat={prof.etat}/>
+                        <LigneEvaluationHeader date={'Date'} nbreJours={'Nbre Jours'} etat={'Etat'}/>
+                        {(listEvals||[]).map((ev,index)=>{
+                            return <LigneEvaluation evaluationId={ev.id}  nomEval={ev.nomEval} PourcentEval={ev.PourcentEval} etat={ev.etat}/>
                             })
                         }
 
