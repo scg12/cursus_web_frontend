@@ -1,4 +1,7 @@
 {   
+    "pourcent"                        : "% de la note finale",
+    "eval_name"                       : "Nom évaluation",
+    "add_eval"                        : "Ajouter évaluation",
     "affect_seq_trim"                 : "Association d'évaluations aux périodes d'évaluation",
     "import_failed"                   : "échecs", 
     "import_failed_sing"              : "échec",

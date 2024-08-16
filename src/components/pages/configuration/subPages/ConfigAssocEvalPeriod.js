@@ -92,7 +92,7 @@ function ConfigAssocEvalPeriod(props) {
     const [listDecisions, setListDecisions]   = useState([]);
     const [listPromotions, setListPromotions] = useState([]);
     const [optTirmestres, setOptTirmestres]   = useState([]);
-    const [listEvals,     setListEvals]       = useState([]);
+    const [listEvals,     setListEvals]       = useState([{id:0, nomEval:'', PourcentEval:0,  etat:-1}]);
     const [optEvals,        setOptEvals]      = useState([]);
 
 
@@ -706,7 +706,7 @@ function ConfigAssocEvalPeriod(props) {
 
     const LigneEvaluationHeader=(props)=>{
         return(
-            <div style={{display:'flex', color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
+            <div style={{display:'flex', paddingLeft:"0.3vw", color:'white', backgroundColor:'rgb(6, 83, 134)', flexDirection:'row', height:'3vh', width:'40vw', fontSize:'0.87vw', alignItems:'center', borderBottomStyle:'solid', borderBottomWidth:'1px', borderBottomColor:'black', borderTopStyle:'solid', borderTopWidth:'1px', borderTopColor:'black'}}>
                 <div style={{width:'17vw'}}>{t("eval_name")}</div>
                 <div style={{width:'11.3vw'}}>{t("pourcent")}</div>
                 <div style={{width:'7vw', marginLeft:'1.7vw'}}>{t("action")}</div>
@@ -934,9 +934,9 @@ function ConfigAssocEvalPeriod(props) {
                     <CustomButton
                         btnText         ={t('add_eval')} 
                         buttonStyle     = {getButtonStyle()}
-                        btnTextStyle    = {classes.btnTextStyle}
+                        btnTextStyle    = {classes.btnTextStyleP}
                         btnClickHandler = {addEvalRow}
-                        style           = {{marginLeft:"2vw", height:"4.3vh"}}
+                        style           = {{marginLeft:"2vw", height:"4.3vh", width:"fit-content",paddingLeft:"0.3vw", paddingRight:"0.3vw"}}
                     />
                 </div>
                 
