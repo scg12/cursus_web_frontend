@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddActiverUser from "../modals/AddActiverUser";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from 'react-i18next';
 
 
 var users = [] ,chaine = ",", nb_click=0; 
 
 function ConfigActiverUser(props) {
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -294,6 +296,9 @@ function ConfigActiverUser(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("activate_users")}
+            </div>  
             {(modalOpen!=0) && <AddActiverUser formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewUser : modifyUser} cancelHandler={quitForm} />}
 
             {(modalOpen==0) ?

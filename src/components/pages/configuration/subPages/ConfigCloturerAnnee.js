@@ -7,7 +7,8 @@ import MsgBox from '../../../msgBox/MsgBox';
 import UiContext from "../../../../store/UiContext";
 import AppContext from "../../../../store/AppContext";
 import { useContext, useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
+
 
 var login;
 var CURRENT_ANNEE_SCOLAIRE;
@@ -87,7 +88,10 @@ function ConfigCloturerAnnee(props) {
 /************************************ JSX CODE ************************************/
 
     return (
-        <div className={classes.formStyle}>          
+        <div className={classes.formStyle}>    
+            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("conf_close_year")}
+            </div>      
             <div id='errMsgPlaceHolder'></div>
             <div className={classes.inputRow}> 
                 <div className={classes.inputRowLabel} style={{width:"auto",justifyContent:"center", fontWeight:"bold"}}>

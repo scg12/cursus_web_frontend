@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddTypeEnseignant from "../modals/AddTypeEnseignant";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from 'react-i18next';
 
 
 var ens = [];  
 
 function ConfigTypeEnseignant(props) {
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -311,6 +313,10 @@ function ConfigTypeEnseignant(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("conf_type_prof")}
+            </div>
+            
             {(modalOpen!=0) && <AddTypeEnseignant formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewType : modifyType} cancelHandler={quitForm} />}
 
             {(modalOpen==0) ?
@@ -321,7 +327,7 @@ function ConfigTypeEnseignant(props) {
                                 
                     <div className={classes.gridAction}> 
                         <CustomButton
-                            btnText='+' 
+                            btnText={t('add')} 
                             buttonStyle={getButtonStyle()}
                             btnTextStyle = {classes.btnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
