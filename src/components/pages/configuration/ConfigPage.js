@@ -347,14 +347,14 @@ function ConfigPage(props) {
 
                             {(sectionSelectedItem==13) ?
                                 <div className={getDetailSectionTheme()}>
-                                    <ConfigMatricule/>
+                                     <ConfigMatieresClasse/>
                                 </div>                                    
                                 : null
                             }
 
                             {(sectionSelectedItem==14) ?
                                 <div className={getDetailSectionTheme()}>
-                                    <ConfigMatieresClasse/>
+                                    <ConfigMatricule/>
                                 </div>                                    
                                 : null
                             }
