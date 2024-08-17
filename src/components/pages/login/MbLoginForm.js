@@ -448,12 +448,30 @@ function initUserNotifs(foundedNotifs){
         });
      
     }
+
+    function getImageFromAppVersion(version,langue){
+        if(langue=='fr'){
+            switch(version){
+                case 'starter': return 'images/logoStarterFrTr.png';
+                case 'admin'  : return 'images/logoAdminFrTr.png';
+                case 'online' : return "images/logoOnlineFrTr.png" ;
+                default: return "images/logoStarterFrTr.png" ;
+            }
+        } else {
+            switch(version){
+                case 'starter': return 'images/logoStarterEnTr.png';
+                case 'admin'  : return 'images/logoAdminEnTr.png';
+                case 'online' : return "images/logoOnlineEnTr.png" ;
+                default: return "images/logoStarterEnTr.png" ;
+            }
+        }       
+    }
     
 
     return(
         <div className= {classes.loginContainer}>
             <div className= {getCurrentHeaderTheme()}>
-                <img src='images/cursusLogo.png'  alt='AppLogo' className= {classes.logoStyle}></img>
+                <img src={getImageFromAppVersion(currentAppContext.appVersion,i18n.language)} alt='AppLogo' className= {classes.logoStyle}></img>
             </div>
 
             <div className= {getCurrentWidgetTemplateStyle()+ ' '+ getWidgetContentStyle() }>

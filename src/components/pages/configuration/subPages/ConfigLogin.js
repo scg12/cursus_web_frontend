@@ -97,14 +97,27 @@ function ConfigLogin(props) {
         document.getElementById('login').value='';
         setIsValid(false);
     }
+
+    function getConfigTitleColor(){
+        switch(selectedTheme){
+            case 'Theme1': return "#3ca015" ;
+            case 'Theme2': return "#2358bb" ;
+            case 'Theme3': return "#d11e5a" ;
+            default: return "#3ca015" ;
+        }
+    }
     
 /************************************ JSX CODE ************************************/
 
     return (
         <div className={classes.formStyle}>
             <div id='errMsgPlaceHolder'></div>
+            <div className={classes.inputRowLeft} style={{color:getConfigTitleColor(), fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:getConfigTitleColor(), borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("modif_login")}
+            </div> 
 
-            <div className={classes.inputRow}> 
+            <div className={classes.inputRow}>
+                
                 <div className={classes.inputRowLabel}>
                     Nouveau Login :
                 </div>                    

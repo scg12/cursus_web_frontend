@@ -43,6 +43,10 @@ const AppContext = createContext({
     /*--------------- Objet axios instance ----------------*/
     axiosInstance  : {},
 
+    /*--------------- Version de cursus ----------------*/
+    appVersion     : "starter",
+
+
 
 
 
@@ -86,6 +90,8 @@ const AppContext = createContext({
     /*--------------- Objet axios instance ----------------*/
     setAxiosInstance   :(axiosIstance)=>{},
 
+    /*--------------- Version de cursus ----------------*/
+    setAppVersion      :(version)=>{}
 
     
 });
@@ -131,7 +137,9 @@ export function AppContextProvider(props)
 
     /*--------------- Objet axios instance ----------------*/
     const [axiosInstance, setAxiosInstance]       = useState({});
-      
+
+    /*--------------- Version de cursus ----------------*/
+    const [appVersion, setAppVersion]             = useState("starter");
    
   
     
@@ -241,6 +249,12 @@ export function AppContextProvider(props)
     function setAxiosInstanceHandler(axiosInstance){
         setAxiosInstance(axiosInstance);
     }
+
+    /*--------------- Version de cursus ----------------*/
+    function setAppVersionHandler(version){
+        setAppVersion(version);
+    }
+    
     
     
     const APP_Ctx = {
@@ -282,6 +296,10 @@ export function AppContextProvider(props)
         /*--------------- Objet axios instance ----------------*/
         axiosInstance       : axiosInstance,
 
+       /*--------------- Version de cursus ----------------*/
+        appVersion          : appVersion,
+        
+        
         setUsrConnected     : connectHandler,
         setUsrLogin         : connectedUserHandler,
         logOut              : logOutHandler,
@@ -320,7 +338,10 @@ export function AppContextProvider(props)
         setServerAdress     : setServerAdressHandler,
 
         /*--------------- Objet axios instance ----------------*/
-        setAxiosInstance    : setAxiosInstanceHandler
+        setAxiosInstance    : setAxiosInstanceHandler,
+
+        /*--------------- Version de cursus ----------------*/
+        setAppVersion       :  setAppVersionHandler
     };
 
 

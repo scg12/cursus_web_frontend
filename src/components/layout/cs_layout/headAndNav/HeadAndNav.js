@@ -333,13 +333,9 @@ function HeadAndNav(props) {
     return (
       
         <header className={getCurrentTheme()} > 
-            { (currentUiContext.msgBox.visible == true) ?
-                <BackDrop/>
-                :
-                null
-            }
-            { (currentUiContext.msgBox.visible == true)&&currentUiContext.isParentMsgBox ?
-                 <MsgBox 
+            {(currentUiContext.msgBox.visible == true) &&   <BackDrop style={{top:"-4vh"}}/>}            
+            {(currentUiContext.msgBox.visible == true)&&currentUiContext.isParentMsgBox ?
+                <MsgBox 
                     msgTitle            = {currentUiContext.msgBox.msgTitle} 
                     msgType             = {currentUiContext.msgBox.msgType} 
                     message             = {currentUiContext.msgBox.message} 

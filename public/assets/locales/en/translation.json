@@ -1,5 +1,8 @@
                      
-{   
+{   "pourcent"                        : "% final mark",
+    "eval_name"                       : "Evaluation name",
+    "add_eval"                        : "Add evaluation",
+    "affect_seq_trim"                 : "Evaluation to evaluation period association",
     "import_failed"                   : "failed",
     "import_failed_sing"              : "échecs",
     "enter_correct_note"              : "Incorrect note!",

@@ -51,7 +51,7 @@ function FooterContent(props) {
                 </div>
                 
                 <div className={classes.LogoStyle}> 
-                    <img src= 'images/cursusLogo_Mob.png'  alt='AppLogo' className= {classes.logoStyle}></img>
+                    <img src= 'images/bottomLogo.png'  alt='AppLogo' className= {classes.logoStyle}></img>
                 </div>
         </div>
     );

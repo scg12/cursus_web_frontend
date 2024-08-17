@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddClasse from "../modals/AddClasse";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from "react-i18next";
 
 
 var clases = [];  
 
 function ConfigClasse(props) {
+    const { t, i18n }       = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -173,6 +175,16 @@ function ConfigClasse(props) {
         default: return classes.Theme1_BtnstyleSmall ;
       }
     }
+
+    function getConfigTitleColor(){
+        switch(selectedTheme){
+            case 'Theme1': return "#3ca015" ;
+            case 'Theme2': return "#2358bb" ;
+            case 'Theme3': return "#d11e5a" ;
+            default: return "#3ca015" ;
+        }
+    }
+   
     
 /*************************** Handler functions ***************************/
     function ClearForm(){        
@@ -333,6 +345,9 @@ function ConfigClasse(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:getConfigTitleColor(), fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:getConfigTitleColor(), borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("gest_classes")}
+            </div>
             {(modalOpen!=0) && <AddClasse formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewClasse : modifyClasse} cancelHandler={quitForm} />}
 
             {(modalOpen==0) ?
@@ -343,7 +358,7 @@ function ConfigClasse(props) {
                                 
                     <div className={classes.gridAction}> 
                         <CustomButton
-                            btnText='+' 
+                            btnText='Ajouter' 
                             buttonStyle={getButtonStyle()}
                             btnTextStyle = {classes.btnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}

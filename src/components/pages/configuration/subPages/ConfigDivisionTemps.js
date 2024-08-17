@@ -8,11 +8,12 @@ import Select from 'react-select';
 import {Grid, GridColumn} from "@progress/kendo-react-grid";
 import {process} from "@progress/kendo-data-query";
 import AddDivisionTemps from "../modals/AddDivisionTemps";
+import { useTranslation } from 'react-i18next';
 
 
 var cycleLib, cycleDesc;
 function ConfigDivisionTemps(props) {
-    
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const [modalOpen, setModalOpen] = useState(false);
     const selectedTheme = currentUiContext.theme;
@@ -53,6 +54,16 @@ function ConfigDivisionTemps(props) {
             case 'Theme2': return classes.Theme2_Btnstyle ;
             case 'Theme3': return classes.Theme3_Btnstyle ;
             default: return classes.Theme1_Btnstyle ;
+        }
+    }
+
+    
+    function getConfigTitleColor(){
+        switch(selectedTheme){
+            case 'Theme1': return "#3ca015" ;
+            case 'Theme2': return "#2358bb" ;
+            case 'Theme3': return "#d11e5a" ;
+            default: return "#3ca015" ;
         }
     }
    
@@ -180,6 +191,9 @@ function ConfigDivisionTemps(props) {
     return (
 
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:getConfigTitleColor(), fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:getConfigTitleColor(), borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("conf_division_temps")}
+            </div>
             {/*<AddCycle addCycleHandler={addNewCycle} cancelHandler={quitForm}/>*/}
             {modalOpen && <AddDivisionTemps addCycleHandler={addNewCycle} cancelHandler={quitForm}/>}
             

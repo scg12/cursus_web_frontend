@@ -194,6 +194,7 @@
     margin-bottom: 7px;
 }
 
+
 .btnTextStyle {
     display:flex;
     flex-direction: row;
@@ -201,8 +202,17 @@
     color: rgb(236, 238, 234);
     font-size: 1vw;
     font-weight: 555;
-    margin-left: 0.7vh;
-    
+    margin-left: 0.7vh;    
+}
+
+.btnTextStyleP {
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    color: rgb(236, 238, 234);
+    font-size: 0.9vw;
+    font-weight: 555;
+    margin-left: 0.7vh;    
 }
 
 .widgetIcon{

@@ -1,5 +1,6 @@
 {
-    "adress" :  "127.0.0.1",
-    "lng"    :  "fr",
-    "theme"  :  "green"
+    "adress"  :  "127.0.0.1",
+    "version" :  "starter",
+    "lng"     :  "fr",
+    "theme"   :  "green"
 }

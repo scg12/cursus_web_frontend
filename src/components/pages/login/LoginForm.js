@@ -505,11 +505,41 @@ function LoginForm(props){
             //console.log('erreur',res.response.status);
         });     
     }
+
+
+    function getImageFromAppVersion(version,langue){
+        if(langue=='fr'){
+            switch(version){
+                case 'starter': return 'images/logoStarterFrTr.png';
+                case 'admin'  : return 'images/logoAdminFrTr.png';
+                case 'online' : return "images/logoOnlineFrTr.png" ;
+                default: return "images/logoStarterFrTr.png" ;
+            }
+        } else {
+            switch(version){
+                case 'starter': return 'images/logoStarterEnTr.png';
+                case 'admin'  : return 'images/logoAdminEnTr.png';
+                case 'online' : return "images/logoOnlineEnTr.png" ;
+                default: return "images/logoStarterEnTr.png" ;
+            }
+        }       
+    }
+
+    function getAppName(version){
+        switch(version){
+            case 'starter': return "Cursus Starter" ;
+            case 'admin'  : return "Cursus Administration" ;
+            case 'online' : return "Cursus Online" ;
+            default: return "Cursus Starter" ;
+        }
+    }
+
+
     
     return ( 
         <div className= {classes.loginContainer}>
             <div className= {getCurrentHeaderTheme()}>
-                <img src={i18n.language=='fr' ? 'images/logoAdminFr.png':'images/logoAdminEn.png'}  alt='AppLogo' className= {classes.logoStyle}></img>
+                <img src= {getImageFromAppVersion(currentAppContext.appVersion,i18n.language)}   alt='AppLogo' className= {classes.logoStyle}></img>
             </div>
 
             <div className= {getCurrentWidgetTemplateStyle()+ ' '+ getWidgetContentStyle() }>
@@ -585,17 +615,17 @@ function LoginForm(props){
 
             </div>
                             
-            <div className= {getCurrentFooterTheme()}>
+            <div className= {getCurrentFooterTheme()} style={{paddingRight:"1.77vw"}}>
                 <div className={classes.copyRight}>
                     <h7> © Copyright 2022 </h7>
                 </div>
                 
 
-                <div className={classes.aboutApp} style={{width:"29vw"}}> 
+                <div className={classes.aboutApp} style={{width:"29vw",paddingBottom:"1vh"}}> 
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center", marginLeft:(i18n.language=='fr') ? "-1vw":"0vw"}}>
                         {/* <img src="images/cursusLogo_Mob1.png" style={{position:"absolute",marginTop:"0.3vh", marginRight:"18.7vw", width:"7vw", height:"5vh"}}/> */}
                         <div className={classes.aboutAppTextStyle} style={{width:"29vw", color:"whitesmoke" /*"#bobob5"*/ /*"#2a2a32"*/ /*"#20202d"*/}}>
-                           <b style={{fontSize:"1.3vw", fontFamily:"math", marginRight:"0.17vw", fontWeight:"bolder"}}>Cursus.net </b> <b>{t("is_aproduct_of")}</b>  <b style={{fontFamily:"system-ui", fontWeight:"bolder", fontSize:"1.03vw"}}>BOGEDEV Corporation. </b> <b>{t("rightsReserve")}</b>
+                           <b style={{fontSize:"1.3vw", fontFamily:"math", marginRight:"0.17vw", fontWeight:"bolder"}}>{getAppName(currentAppContext.appVersion)}</b> {t("is_aproduct_of")}  <b style={{fontFamily:"system-ui", fontWeight:"bolder", fontSize:"1.03vw"}}>BOGEDEV Corporation. </b> {t("rightsReserve")}
                         </div>
 
                         {/* <div style={{width:"30vw", fontSize:"smaller"}}> 

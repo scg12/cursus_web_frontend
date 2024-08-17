@@ -9,11 +9,13 @@ import axiosInstance from '../../../../axios';
 import AddCauseConvocationCD from "../modals/AddCauseConvocationCD";
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+import { useTranslation } from 'react-i18next';
 
 
 var causes = [];  
 
 function ConfigCausesConvocationCD(props) {
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
     const [gridRows, setGridRows] = useState([]);
@@ -142,6 +144,15 @@ function ConfigCausesConvocationCD(props) {
         case 'Theme3': return classes.Theme3_BtnstyleSmall ;
         default: return classes.Theme1_BtnstyleSmall ;
       }
+    }
+
+    function getConfigTitleColor(){
+        switch(selectedTheme){
+            case 'Theme1': return "#3ca015" ;
+            case 'Theme2': return "#2358bb" ;
+            case 'Theme3': return "#d11e5a" ;
+            default: return "#3ca015" ;
+        }
     }
     
 /*************************** Handler functions ***************************/
@@ -292,6 +303,9 @@ function ConfigCausesConvocationCD(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:getConfigTitleColor(), fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:getConfigTitleColor(), borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("gest_conv_cd")}
+            </div>
             {(modalOpen!=0) && <AddCauseConvocationCD formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewCause : modifyCause} cancelHandler={quitForm} />}
 
             {(modalOpen==0) ?
@@ -302,7 +316,7 @@ function ConfigCausesConvocationCD(props) {
                                 
                     <div className={classes.gridAction}> 
                         <CustomButton
-                            btnText='+' 
+                            btnText={t('add')} 
                             buttonStyle={getButtonStyle()}
                             btnTextStyle = {classes.btnTextStyle}
                             btnClickHandler={()=>{setModalOpen(1); currentUiContext.setFormInputs([])}}
