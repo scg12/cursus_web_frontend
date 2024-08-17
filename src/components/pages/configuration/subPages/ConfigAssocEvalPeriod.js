@@ -53,6 +53,11 @@ const MSG_SUCCESS =1;
 const MSG_WARNING =2;
 
 
+var tabTrimestres = [];
+
+var evaluations = [];
+
+
 function ConfigAssocEvalPeriod(props) {
     const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
@@ -108,49 +113,42 @@ function ConfigAssocEvalPeriod(props) {
         {value:"trimestriel", label:t("conseil_bilan_trim")     },
         {value:"annuel",      label:t("conseil_bilan_annuel")   },
     ];
-
-    const verdictAnnuel = [
-        {value:"admis",        label:t("Admis") },
-        {value:"admis_sdc",    label:t("Admis SDC.") },
-        {value:"redouble",     label:t("Redouble")},
-        {value:"redouble_sdc", label:t("Redouble SDC.")},
-        {value:"exclu",        label:t("Exclu")},
-        {value:"Exclu_sdc",    label:t("Exclu SDC.")},
-    ];
-
-
-    const tabTrimestres = [
-        {value:1,     label:t("Trimestre1") },
-        {value:2,     label:t("Trimestre2") },
-        {value:3,     label:t("Trimestre3")},
-        {value:4,     label:t("Trimestre4")},
-        {value:5,     label:t("Trimestre5")},
-        {value:6,     label:t("Trimestre6")},
-    ];
-
-    const evaluations = [
-        {id:1,    nomEval:"evaluation1",    PourcentEval:0 },
-        {id:2,    nomEval:"evaluation2",    PourcentEval:0 },
-        {id:3,    nomEval:"evaluation3",    PourcentEval:0 },
-
-    ];
-
-   
-    
     
     
     useEffect(()=> {
         console.log("valeure", props.defaultMembres);
-     
-        setOptTirmestres(tabTrimestres);       
-      
-        setOptEvals(evaluations);    
-        
-        typedEvalName = evaluations[0].nomEval;
-        typedEvalID   = evaluations[0].id;
-        
-
+        listTrimestres();
+        listSequences();
     },[]);
+
+
+    function listTrimestres(){
+        console.log("currentAppContext.currentEtab: ",currentAppContext.currentEtab)
+        tabTrimestres = [];
+        axiosInstance
+        .post(`list-trimestres/`,{id_sousetab: currentAppContext.currentEtab}).then((res)=>{           
+            res.data.map((trm)=>{tabTrimestres.push({value:trm.id, label:trm.libelle})});
+            setOptTirmestres(tabTrimestres);
+        }, (err)=>{setOptTirmestres([])});  
+    }
+
+    function listSequences(){
+        console.log("currentAppContext.currentEtab: ",currentAppContext.currentEtab)
+       
+       
+        evaluations = [];
+        axiosInstance
+        .post(`list-sequences/`,{id_sousetab: currentAppContext.currentEtab,id_trimestre:""}).then((res)=>{
+                console.log(res.data);
+                res.data.sequences.map((seq)=>{evaluations.push({id:seq.id, nomEval:seq.libelle, PourcentEval:0})
+            });          
+            
+            setOptEvals(evaluations);    
+            typedEvalName = evaluations[0].nomEval;
+            typedEvalID   = evaluations[0].id;
+        })  
+    }
+
 
     
     const  getClassStudentList=(classId)=>{
