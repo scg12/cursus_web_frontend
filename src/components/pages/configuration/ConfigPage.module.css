@@ -94,7 +94,7 @@
     border-style: solid;
     border-width: 1.5px;
     align-self: flex-start;
-    border-color: rgb(60, 160, 21);
+    border-color: #3ca015;
     min-width: 37vw;
     min-height: 12vh;
     padding:7px;
@@ -118,7 +118,7 @@
     min-width: 73vw;
     border-radius: 7px 7px 7px 7px;
     
-    border-color: rgb(60, 160, 21);
+    border-color: #3ca015;
 }
 
 
@@ -133,7 +133,7 @@
     border-style: solid;
     border-width: 1.5px;
     align-self: flex-start;
-    border-color: rgb(35, 88, 187);
+    border-color: #2358bb;
     min-width: 37vw;
     min-height: 12vh;
     padding:7px;
@@ -156,7 +156,7 @@
     min-width: 73vw;
     border-radius: 7px 7px 7px 7px;
 
-    border-color: rgb(35, 88, 187);
+    border-color: #2358bb;
 }
 
 
@@ -172,7 +172,7 @@
     border-style: solid;
     border-width: 1.5px;
     align-self: flex-start;
-    border-color: rgb(209, 30, 90); 
+    border-color: #d11e5a; 
     min-width: 37vw;
     min-height: 12vh;
     padding:7px;
@@ -196,5 +196,5 @@
     min-width: 73vw;
     border-radius: 7px 7px 7px 7px;
 
-    border-color: rgb(209, 30, 90);
+    border-color: #d11e5a;
 }

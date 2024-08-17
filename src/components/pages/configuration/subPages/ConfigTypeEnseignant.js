@@ -162,6 +162,17 @@ function ConfigTypeEnseignant(props) {
         default: return classes.Theme1_BtnstyleSmall ;
       }
     }
+
+    
+    function getConfigTitleColor(){
+        switch(selectedTheme){
+            case 'Theme1': return "#3ca015" ;
+            case 'Theme2': return "#2358bb" ;
+            case 'Theme3': return "#d11e5a" ;
+            default: return "#3ca015" ;
+        }
+    }
+   
     
 /*************************** Handler functions ***************************/
     function ClearForm(){        
@@ -313,7 +324,7 @@ function ConfigTypeEnseignant(props) {
     /********************************** JSX Code **********************************/   
     return (
         <div className={classes.formStyle}>
-            <div className={classes.inputRowLeft} style={{color:'rgb(6, 146, 18)', fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:'rgb(6, 146, 18)', borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+            <div className={classes.inputRowLeft} style={{color:getConfigTitleColor(), fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:getConfigTitleColor(), borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
                 {t("conf_type_prof")}
             </div>
             

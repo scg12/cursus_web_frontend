@@ -6,11 +6,12 @@ import { useContext, useState } from "react";
 //import "@progress/kendo-theme-material/dist/all.css";
 import {Grid, GridColumn} from "@progress/kendo-react-grid";
 import AddSection from "../modals/AddSection";
+import { useTranslation } from 'react-i18next';
 
 
 var sectionLib,sectionDesc;
 function ConfigSection(props) {
-    
+    const { t, i18n } = useTranslation();
     const currentUiContext = useContext(UiContext);
     const [modalOpen, setModalOpen] = useState(0); //0 = close, 1=creation, 2=modif
     const selectedTheme = currentUiContext.theme;
@@ -30,6 +31,15 @@ function ConfigSection(props) {
         case 'Theme3': return classes.Theme3_Btnstyle ;
         default: return classes.Theme1_Btnstyle ;
       }
+    }
+
+    function getConfigTitleColor(){
+        switch(selectedTheme){
+            case 'Theme1': return "#3ca015" ;
+            case 'Theme2': return "#2358bb" ;
+            case 'Theme3': return "#d11e5a" ;
+            default: return "#3ca015" ;
+        }
     }
 
     function addNewSection() {
@@ -141,6 +151,9 @@ function ConfigSection(props) {
     
     return (
         <div className={classes.formStyle}>
+            <div className={classes.inputRowLeft} style={{color:getConfigTitleColor(), fontFamily:'Roboto, sans-serif', fontWeight:570, fontSize:'1.27vw', borderBottomStyle:'solid', borderBottomColor:getConfigTitleColor(), borderBottomWidth:1.97, marginBottom:'1.3vh'}}> 
+                {t("gest_section")}
+            </div>
             { (modalOpen!=0) && <AddSection formMode= {(modalOpen==1) ? 'creation': 'modif'}  actionHandler={(modalOpen==1) ? addNewSection : modifySection} cancelHandler={quitForm} />}
             
             <div className={classes.gridTitleRow}> 

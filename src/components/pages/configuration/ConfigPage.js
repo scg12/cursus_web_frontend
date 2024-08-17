@@ -166,15 +166,15 @@ function ConfigPage(props) {
             document.getElementById("link_head_conf_2").click(); 
         }
 
-        if(parseInt(NewActiveMenuId)>=32 && parseInt(NewActiveMenuId)<=34) {
+        if(parseInt(NewActiveMenuId)>=33 && parseInt(NewActiveMenuId)<=35) {
             document.getElementById("link_head_conf_3").click(); 
         }
 
-        if(parseInt(NewActiveMenuId)>=35 && parseInt(NewActiveMenuId)<=38) {
+        if(parseInt(NewActiveMenuId)>=36 && parseInt(NewActiveMenuId)<=39) {
             document.getElementById("link_head_conf_4").click(); 
         }
 
-        if(parseInt(NewActiveMenuId)>=39)  {
+        if(parseInt(NewActiveMenuId)>=40)  {
             document.getElementById("link_head_conf_5").click(); 
         }
             
