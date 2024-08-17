@@ -625,7 +625,7 @@ function LoginForm(props){
                     <div style={{display:"flex", flexDirection:"row", justifyContent:"center", marginLeft:(i18n.language=='fr') ? "-1vw":"0vw"}}>
                         {/* <img src="images/cursusLogo_Mob1.png" style={{position:"absolute",marginTop:"0.3vh", marginRight:"18.7vw", width:"7vw", height:"5vh"}}/> */}
                         <div className={classes.aboutAppTextStyle} style={{width:"29vw", color:"whitesmoke" /*"#bobob5"*/ /*"#2a2a32"*/ /*"#20202d"*/}}>
-                           <b style={{fontSize:"1.3vw", fontFamily:"math", marginRight:"0.17vw", fontWeight:"bolder"}}>{getAppName(currentAppContext.appVersion)}</b> <b>{t("is_aproduct_of")}</b>  <b style={{fontFamily:"system-ui", fontWeight:"bolder", fontSize:"1.03vw"}}>BOGEDEV Corporation. </b> <b>{t("rightsReserve")}</b>
+                           <b style={{fontSize:"1.3vw", fontFamily:"math", marginRight:"0.17vw", fontWeight:"bolder"}}>{getAppName(currentAppContext.appVersion)}</b> {t("is_aproduct_of")}  <b style={{fontFamily:"system-ui", fontWeight:"bolder", fontSize:"1.03vw"}}>BOGEDEV Corporation. </b> {t("rightsReserve")}
                         </div>
 
                         {/* <div style={{width:"30vw", fontSize:"smaller"}}> 

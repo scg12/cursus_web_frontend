@@ -251,7 +251,7 @@ function ScolaritePage(){
   return (
 
     <div className= {classes.viewContent}>
-      {(modalOpen!=0)   && <BackDrop style={{height:'120vh'}}/>}
+      {(modalOpen!=0)   && <BackDrop style={{height:'120vh', top:"-4vh"}}/>}
       {(modalOpen == 3) && <AddFicheProgess       formMode= {(modalOpen==1) ? 'creation': (modalOpen==2) ?  'modif' : 'consult'}  actionHandler={(modalOpen==1) ? addNewStudent : modifyStudent} cancelHandler={quitForm} />}
       {(modalOpen == 4) && <ActivateSequence      cancelHandler={quitForm} />}
       {(modalOpen == 5) && <SearchAcademicHistory cancelHandler={quitForm} />}
