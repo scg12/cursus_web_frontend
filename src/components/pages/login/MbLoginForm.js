@@ -450,19 +450,21 @@ function initUserNotifs(foundedNotifs){
     }
 
     function getImageFromAppVersion(version,langue){
-        if(version == "starter"){
-            if(langue=='fr'){
-                return 'images/logoStarterFrTr.png';
-            } else {
-                return 'images/logoStarterEnTr.png';
-            }  
+        if(langue=='fr'){
+            switch(version){
+                case 'starter': return 'images/logoStarterFrTr.png';
+                case 'admin'  : return 'images/logoAdminFrTr.png';
+                case 'online' : return "images/logoOnlineFrTr.png" ;
+                default: return "images/logoStarterFrTr.png" ;
+            }
         } else {
-            if(langue=='fr'){
-                return 'images/logoAdminFrTr.png';
-            } else {
-                return 'images/logoAdminEnTr.png';
-            }  
-        }
+            switch(version){
+                case 'starter': return 'images/logoStarterEnTr.png';
+                case 'admin'  : return 'images/logoAdminEnTr.png';
+                case 'online' : return "images/logoOnlineEnTr.png" ;
+                default: return "images/logoStarterEnTr.png" ;
+            }
+        }       
     }
     
 

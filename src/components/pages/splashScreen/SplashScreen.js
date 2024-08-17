@@ -110,19 +110,21 @@ function SplashScreen(props){
 
 
     function getImageFromAppVersion(version,langue){
-        if(version == "starter"){
-            if(langue=='fr'){
-                return 'images/logoStarterFrTr.png';
-            } else {
-                return 'images/logoStarterEnTr.png';
-            }  
+        if(langue=='fr'){
+            switch(version){
+                case 'starter': return 'images/logoStarterFrTr.png';
+                case 'admin'  : return 'images/logoAdminFrTr.png';
+                case 'online' : return "images/logoOnlineFrTr.png" ;
+                default: return "images/logoStarterFrTr.png" ;
+            }
         } else {
-            if(langue=='fr'){
-                return 'images/logoAdminFrTr.png';
-            } else {
-                return 'images/logoAdminEnTr.png';
-            }  
-        }
+            switch(version){
+                case 'starter': return 'images/logoStarterEnTr.png';
+                case 'admin'  : return 'images/logoAdminEnTr.png';
+                case 'online' : return "images/logoOnlineEnTr.png" ;
+                default: return "images/logoStarterEnTr.png" ;
+            }
+        }       
     }
     
     if(isLoginView) return (<LoginForm/>)
@@ -157,7 +159,15 @@ function SplashScreen(props){
                         }}
                         
                     />   
+                    
+                    {/* <div className={classes.creatorZone} style={{position:"absolute", right:3, bottom:-3 }}>
+                        <label className={classes.creatorName}>
+                            BOGEDEV
+                        </label>
+                    </div> */}
                 </div>
+
+               
             </div>
         )
     };
