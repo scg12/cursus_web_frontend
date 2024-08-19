@@ -18,6 +18,10 @@ var index;
 var pourcentage = 0;
 var objConf     = {};
 
+//Cette constante sera lu lors de la configuration de l'utilisateur.
+var selectedTheme = "";
+
+
 
 function SplashScreen(props){
     
@@ -34,21 +38,14 @@ function SplashScreen(props){
         i18n.changeLanguage(event.target.id);
     };
     
-    //Cette constante sera lu lors de la configuration de l'utilisateur.
-    const selectedTheme = currentUiContext.theme;
+    
 
 
     useEffect(()=> {
-        getAPPConfAndStoreServer();
-    
-
         pourcentage = 0;
         // Ici on charge le theme et la langue stockes ds le fichier local de conf.
-       
-
-        // Ici lit l'@ du serveur ds le fichier local de conf et la mettre dans le contexte.
-        
-        
+        // Ici lit aussi l'@ du serveur ds le fichier local de conf et la mettre dans le contexte.
+        getAPPConfAndStoreServer();       
        
         for(index=0;index<=4;index++){
             setTimeout(function() {
@@ -62,6 +59,8 @@ function SplashScreen(props){
 
         }
     },[]);
+
+
 
     const getAPPConfAndStoreServer =()=>{
         fetch('cursusConf.json',{
@@ -78,11 +77,16 @@ function SplashScreen(props){
             setAppVersion(objConf.version);
             currentAppContext.setServerAdress(objConf.adress);
             currentAppContext.setAppVersion(objConf.version);
+            currentUiContext.updateTheme(objConf.theme)
+            selectedTheme = objConf.theme;
+            i18n.changeLanguage(objConf.lng);
             //const axiosInstance = createAxiosInstance(objConf.adress);
             //currentAppContext.setAxiosInstance(axiosInstance);
             console.log("perepepepe",myJson)
         });
     }
+
+
 
 
 

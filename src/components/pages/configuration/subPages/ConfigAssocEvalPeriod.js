@@ -356,10 +356,6 @@ function ConfigAssocEvalPeriod(props) {
 
     }
 
-    
-    
-
-    
 
     function getSelectDropDownTextColr() {
         switch(selectedTheme){
@@ -401,6 +397,32 @@ function ConfigAssocEvalPeriod(props) {
             default: return "#3ca015" ;
         }
     }
+
+    function periodeEvalChanged(e){
+        var periodeId = e.target.value;
+        var evTab     = [];
+        var evIdTab   = [];
+        var optEvTab  = [];
+
+        axiosInstance
+        .post(`list-sequences/`,{id_sousetab: currentAppContext.currentEtab,id_trimestre:periodeId}).then((res)=>{
+                console.log("sequences"+res.data.sequences);
+                res.data.sequences.map((seq)=>{evTab.push({id:seq.id, etat:0, nomEval:seq.libelle, PourcentEval:0/*PourcentEval:seq.pourcentage*/})
+            });          
+            
+            evTab.map((ev)=>evIdTab.push(ev.id))
+            evaluations.map((ev)=>{
+                if(!evIdTab.includes(ev.id)){
+                    optEvTab.push(ev)
+            }});
+            setListEvals(evTab);
+            setOptEvals(optEvTab);    
+
+            typedEvalName = optEvTab[0].nomEval;
+            typedEvalID   = optEvTab[0].id;
+        })  
+
+    }
     
 
    
@@ -419,7 +441,7 @@ function ConfigAssocEvalPeriod(props) {
                 </div>
 
                 <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}> 
-                    <select className={classes.comboBoxStyle} id="id_trimestre" style={{color:getSelectDropDownTextColr(), width:'9.3vw',borderColor:getSelectDropDownTextColr()}}>  
+                    <select className={classes.comboBoxStyle} id="id_trimestre" style={{color:getSelectDropDownTextColr(), width:'9.3vw',borderColor:getSelectDropDownTextColr()}} onChange={periodeEvalChanged}>  
                         {                        
                         (optTirmestres||[]).map((option)=> {
                             return(

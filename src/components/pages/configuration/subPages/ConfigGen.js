@@ -454,20 +454,20 @@ function ConfigGen(props) {
      
         if (formDataCheck(etablismnt).length==0) { 
             axiosInstance.post(`update-sousetab/`, {
-                id: etablismnt.id,
-                libelle: etablismnt.libelle,
+                id           : etablismnt.id,
+                libelle      : etablismnt.libelle,
                 type_sousetab: etablismnt.type_sousetab,
                 date_creation: etablismnt.date_creation,
                 nom_fondateur:  etablismnt.nom_fondateur,
-                localisation: etablismnt.localisation,
-                bp: etablismnt.bp,
-                email: etablismnt.email,
-                tel: etablismnt.tel,
-                devise: etablismnt.devise,
-                logo: etablismnt.logo,
-                langue: etablismnt.langue,
-                site_web: etablismnt.site_web,
-                id_annee: currentAppContext.currentYear
+                localisation : etablismnt.localisation,
+                bp           : etablismnt.bp,
+                email        : etablismnt.email,
+                tel          : etablismnt.tel,
+                devise       : etablismnt.devise,
+                logo         : etablismnt.logo,
+                langue       : etablismnt.langue,
+                site_web     : etablismnt.site_web,
+                id_annee     : currentAppContext.currentYear
             }).then((res)=>{              
 
                 //currentAppContext.setCurrentEtabInfos(infosEtab);
