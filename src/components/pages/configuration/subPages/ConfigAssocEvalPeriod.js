@@ -17,60 +17,32 @@ import { useTranslation } from "react-i18next";
 
 
 
-var LIST_ELEVES = undefined;
-var SELECTED_ROLE = undefined;
-var typedEvalName = undefined;
-var typedEvalID   = undefined;
+var typedEvalName     = undefined;
+var typedEvalID       = undefined;
 var typedEvalPourcent = undefined;
-var SELECTED_DECISION = 0 //0-> Recale, 1-> Admis, 2-> Traduit, 3->Blame, 4->Autre
-var SELECTED_ELEVE = undefined;
-var MEETING_OBJET_ID = undefined;
-var MEETING_OBJET_LABEL = undefined;
+var CURRENT_PERIOD_ID = undefined;
+var LIST_SEQ_IDS      = undefined;
 
+var tabTrimestres     = [];
+var evaluations       = [];
+var eval_data         = [];
 
-var PERIODE_ID = undefined;
-var PERIODE_LABEL = "";
-var MEETING_GEN_DECISION = undefined
-
-var LIST_NEXT_CLASSES ='';
-
-
-var eval_data = [];
-
-
-var eleves_data=[];
-var MEETING = {};
-var dateDeb, heureDeb;
-
-var list_decisions_conseil_eleves  = [];
-var list_classes_promotions_eleves = [];
-
-var listDecisions  = [];
-var listPromotions = [];
-
-var chosenMsgBox;
-const MSG_SUCCESS =1;
-const MSG_WARNING =2;
-
-
-var tabTrimestres = [];
-
-var evaluations = [];
 
 
 function ConfigAssocEvalPeriod(props) {
-    const { t, i18n } = useTranslation();
-    const currentUiContext = useContext(UiContext);
+    const { t, i18n }       = useTranslation();
+    const currentUiContext  = useContext(UiContext);
     const currentAppContext = useContext(AppContext);
-    const selectedTheme = currentUiContext.theme;
+    const selectedTheme     = currentUiContext.theme;
 
     const [isValid, setIsValid] = useState(false);
     
     
-    const [optTirmestres, setOptTirmestres]   = useState([]);
-    const [listEvals,     setListEvals]       = useState([{id:0, nomEval:'', PourcentEval:0,  etat:-1}]);
-    const [optEvals,        setOptEvals]      = useState([]);
+    const [optTirmestres, setOptTirmestres]  = useState([]);
+    const [listEvals,     setListEvals]      = useState([{id:0, nomEval:'', PourcentEval:0,  etat:-1}]);
+    const [optEvals,      setOptEvals ]      = useState([]);
 
+    
     useEffect(()=> {
         console.log("valeure", props.defaultMembres);
         listTrimestres();
@@ -87,6 +59,7 @@ function ConfigAssocEvalPeriod(props) {
             setOptTirmestres(tabTrimestres);
         }, (err)=>{setOptTirmestres([])});  
     }
+
 
     function listSequences(){
         console.log("currentAppContext.currentEtab: ",currentAppContext.currentEtab)
@@ -106,6 +79,7 @@ function ConfigAssocEvalPeriod(props) {
     }
 
 
+
     function getGridButtonStyle()
     { // Choix du theme courant
         switch(selectedTheme){
@@ -115,6 +89,7 @@ function ConfigAssocEvalPeriod(props) {
             default: return classes.Theme1_gridBtnstyle + ' '+ classes.margRight5P;
         }
     }
+
 
     function getSmallButtonStyle()
     { // Choix du theme courant
@@ -126,6 +101,7 @@ function ConfigAssocEvalPeriod(props) {
       }
     }
 
+
     function getPuceByTheme()
     { // Choix du theme courant
         switch(selectedTheme){
@@ -135,6 +111,7 @@ function ConfigAssocEvalPeriod(props) {
             default: return 'puceN1.png' ;
         }
     }
+
 
     function getCurrentHeaderTheme()
     {  // Choix du theme courant
@@ -146,22 +123,6 @@ function ConfigAssocEvalPeriod(props) {
         }
     }
    
-    /************************************ Handlers ************************************/  
-    
-  
-    function validEvalPeriodeAssoc(){
-       
-
-    }
-    
-
-    function cancelHandler(){
-        MEETING={};
-        props.cancelHandler();
-    }
-  
-    
-
     /************************************ JSX Code ************************************/
 
     //----------------- EVALUATION -----------------
@@ -183,22 +144,21 @@ function ConfigAssocEvalPeriod(props) {
                 <div style={{width:'17vw'}}>
                     {(etat >= 0) ? 
                         props.nomEval
-                     :
-                     <select id='evalNameId' style={{height:'3.5vh', marginBottom:"1vh", fontSize:'0.87vw', width:'11.3vw', borderRadius:'1vh', borderColor:'grey', borderWidth:'1px'}} onChange={evaluationChangeHandler} >
-                        {(optEvals||[]).map((option)=> {
-                            return(
-                                <option  value={option.id}>{option.nomEval}</option>
-                            );
-                        })}
-                    </select> 
-                    //    <input id="evalNameId" type="text" style={{width:"13vw", height:"3vh", borderBottom:"none", borderStyle:"solid", borderWidth:1, borderColor:"grey", borderRadius:"1vh"}} onChange={evalNameChangeHandler}/> 
+                        :
+                        <select id='evalNameId' style={{height:'3.5vh', marginBottom:"1vh", fontSize:'0.87vw', width:'11.3vw', borderRadius:'1vh', borderColor:'grey', borderWidth:'1px'}} onChange={evaluationChangeHandler} >
+                            {(optEvals||[]).map((option)=> {
+                                return(
+                                    <option  value={option.id}>{option.nomEval}</option>
+                                );
+                            })}
+                        </select>
                     }
                 </div>
                 
                 <div style={{width:'11.3vw'}}>
                     {(etat >= 0) ? 
                         props.PourcentEval
-                     :
+                      :
                        <input id="evalPourcentId" type="number" style={{width:"3vw", height:"3vh", borderBottom:"none", borderStyle:"solid", borderWidth:1, borderColor:"grey",borderRadius:"1vh"}} onChange={evalPourcentChangeHandler}/> 
                     }
                    %
@@ -306,8 +266,6 @@ function ConfigAssocEvalPeriod(props) {
 
         setListEvals(eval_data);
 
-       
-
         //setOptEvals(tabEval);
         
         typedEvalName     = undefined;
@@ -352,14 +310,12 @@ function ConfigAssocEvalPeriod(props) {
             setListEvals(eval_data);
             setOptEvals(evaluations);
         }
-
+        
+        typedEvalID   = eval_data[0].id;
+        typedEvalName = eval_data[0].nomEval;
 
     }
 
-    
-    
-
-    
 
     function getSelectDropDownTextColr() {
         switch(selectedTheme){
@@ -380,8 +336,6 @@ function ConfigAssocEvalPeriod(props) {
         default: return classes.Theme1_Btnstyle ;
       }
     }
-
-    
    
     function getSmallButtonStyle()
     { // Choix du theme courant
@@ -401,9 +355,86 @@ function ConfigAssocEvalPeriod(props) {
             default: return "#3ca015" ;
         }
     }
+
+
+    /************************************ Handlers ************************************/  
+    
+    function validEvalPeriodeAssoc(){
+        LIST_SEQ_IDS = [];
+        listEvals.map((ev)=> LIST_SEQ_IDS.push(ev.id));
+
+        axiosInstance.post(`assoc-sequences-trimestre/`, {
+            id_trimestre   : CURRENT_PERIOD_ID, 
+            list_Seq_Ids   : LIST_SEQ_IDS.join('_'),
+            id_sousetab    : currentAppContext.currentEtab
+        }).then((res)=>{
+            console.log(res.data);
+            //Afficher un message de succes
+            var successDiv         = document.getElementById('errMsgPlaceHolder');
+            var succesMsg          = t("assoc_success");
+            successDiv.className   = classes.formSuccessMsg;
+            successDiv.textContent = succesMsg;  
+            //On met a jour la liste des sequences dispo  
+            
+        },(err)=>{
+            console.log(err);
+            //Afficher un message d'erreur
+            var errorDiv         = document.getElementById('errMsgPlaceHolder');
+            var errorMsg         = t("assoc_error");
+            errorDiv.className   = classes.errorMsg;
+            errorDiv.textContent = errorMsg;    
+        });      
+
+    }
+     
+ 
+    function cancelHandler(){
+        props.cancelHandler();
+    }
+   
+
+    function periodeEvalChanged(e){
+        var errorDiv         = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className   = null;
+        errorDiv.textContent = '';
+
+        CURRENT_PERIOD_ID = e.target.value;
+        getPeriodEvals(CURRENT_PERIOD_ID);      
+    }
+
+
+    function getPeriodEvals(periodId){
+
+        var evTab     = [];
+        var evIdTab   = [];
+        var optEvTab  = [];
+
+        axiosInstance
+        .post(`list-sequences/`,{id_sousetab: currentAppContext.currentEtab,id_trimestre:periodId}).then((res)=>{
+                console.log("sequences"+res.data.sequences);
+                res.data.sequences.map((seq)=>{evTab.push({id:seq.id, etat:0, nomEval:seq.libelle, PourcentEval:0/*PourcentEval:seq.pourcentage*/})
+            });          
+            
+            evTab.map((ev)=>evIdTab.push(ev.id))
+            evaluations.map((ev)=>{
+                if(!evIdTab.includes(ev.id)){
+                    optEvTab.push(ev)
+            }});
+            setListEvals(evTab);
+            setOptEvals(optEvTab);    
+
+            typedEvalName = optEvTab[0].nomEval;
+            typedEvalID   = optEvTab[0].id;
+        })  
+
+
+    }
     
 
-   
+   function cancelHandler(e){
+        setOptEvals(evaluations);
+        setListEvals([{id:0, nomEval:'', PourcentEval:0,  etat:-1}]);        
+   }
 
     
 
@@ -419,7 +450,7 @@ function ConfigAssocEvalPeriod(props) {
                 </div>
 
                 <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}> 
-                    <select className={classes.comboBoxStyle} id="id_trimestre" style={{color:getSelectDropDownTextColr(), width:'9.3vw',borderColor:getSelectDropDownTextColr()}}>  
+                    <select className={classes.comboBoxStyle} id="id_trimestre" style={{color:getSelectDropDownTextColr(), width:'9.3vw',borderColor:getSelectDropDownTextColr()}} onChange={periodeEvalChanged}>  
                         {                        
                         (optTirmestres||[]).map((option)=> {
                             return(
@@ -448,33 +479,30 @@ function ConfigAssocEvalPeriod(props) {
                             })
                         }
 
-                    <div className={classes.inputRowLeft} style={{justifyContent:"center", marginTop: '2vh', width:"100%"}}>
-                        <CustomButton
-                            btnText         = {t("cancel")} 
-                            buttonStyle     = {getButtonStyle()}
-                            btnTextStyle    = {classes.btnTextStyle}
-                            btnClickHandler = {cancelHandler}
-                            // style           = {{height:"4.3vh"}}
-                        />                            
+                        <div className={classes.inputRowLeft} style={{justifyContent:"center", marginTop: '2vh', width:"100%"}}>
+                            <CustomButton
+                                btnText         = {t("cancel")} 
+                                buttonStyle     = {getButtonStyle()}
+                                btnTextStyle    = {classes.btnTextStyle}
+                                btnClickHandler = {cancelHandler}
+                                // style           = {{height:"4.3vh"}}
+                            />                            
                         
-                        <CustomButton
-                            btnText         = {t("valider")} 
-                            buttonStyle     = {getButtonStyle()}
-                            btnTextStyle    = {classes.btnTextStyle}
-                            btnClickHandler = {validEvalPeriodeAssoc}
-                            style           = {{marginLeft:"2vw", /*height:"4.3vh"*/}}
-                        />
+                            <CustomButton
+                                btnText         = {t("valider")} 
+                                buttonStyle     = {getButtonStyle()}
+                                btnTextStyle    = {classes.btnTextStyle}
+                                btnClickHandler = {validEvalPeriodeAssoc}
+                                style           = {{marginLeft:"2vw", /*height:"4.3vh"*/}}
+                            />
+                        
+                        </div>
                         
                     </div>
-                </div>
 
                 </div>
-                
-                
-               
                                     
             </div>
-            
            
         </div>
        

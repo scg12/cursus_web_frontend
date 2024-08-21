@@ -18,6 +18,10 @@ var index;
 var pourcentage = 0;
 var objConf     = {};
 
+//Cette constante sera lu lors de la configuration de l'utilisateur.
+var selectedTheme = "";
+
+
 
 function SplashScreen(props){
     
@@ -34,21 +38,15 @@ function SplashScreen(props){
         i18n.changeLanguage(event.target.id);
     };
     
-    //Cette constante sera lu lors de la configuration de l'utilisateur.
-    const selectedTheme = currentUiContext.theme;
+    
 
 
     useEffect(()=> {
-        getAPPConfAndStoreServer();
-    
-
         pourcentage = 0;
         // Ici on charge le theme et la langue stockes ds le fichier local de conf.
+        // Ici lit aussi l'@ du serveur ds le fichier local de conf et la mettre dans le contexte.
+        getAPPConfAndStoreServer();      
        
-
-        // Ici lit l'@ du serveur ds le fichier local de conf et la mettre dans le contexte.
-        
-        
        
         for(index=0;index<=4;index++){
             setTimeout(function() {
@@ -63,6 +61,7 @@ function SplashScreen(props){
         }
     },[]);
 
+   
     const getAPPConfAndStoreServer =()=>{
         fetch('cursusConf.json',{
             headers : {
@@ -76,14 +75,37 @@ function SplashScreen(props){
             objConf = {...myJson};           
 
             setAppVersion(objConf.version);
+            getAPPTitle(objConf.version); 
+            getAPPLogoIcon(objConf.version);
             currentAppContext.setServerAdress(objConf.adress);
             currentAppContext.setAppVersion(objConf.version);
+            currentUiContext.updateTheme(objConf.theme)
+            selectedTheme = objConf.theme;
+            i18n.changeLanguage(objConf.lng);
             //const axiosInstance = createAxiosInstance(objConf.adress);
             //currentAppContext.setAxiosInstance(axiosInstance);
             console.log("perepepepe",myJson)
         });
     }
 
+    function getAPPTitle(version){
+        switch(version){
+            case 'admin'  :  document.getElementById("appTitle").textContent  = "Cursus Administration"; return;
+            case 'starter':  document.getElementById("appTitle").textContent  = "Cursus Starter";        return;
+            case 'online' :  document.getElementById("appTitle").textContent  = "Cursus Online";         return;
+            default: document.getElementById("appTitle").textContent  = "Cursus Starter";                return;
+        }
+    }
+
+
+    function getAPPLogoIcon(version){
+        switch(version){
+            case 'admin'  : document.getElementById("appLogo").setAttribute('href',"images/logoImages/Cadmin.png");   return;
+            case 'starter': document.getElementById("appLogo").setAttribute('href',"images/logoImages/Cstarter.png"); return;
+            case 'online' : document.getElementById("appLogo").setAttribute('href',"images/logoImages/Conline.png");  return;
+            default: document.getElementById("appLogo").setAttribute('href',"CWTitileLogo.png");                      return;
+        }
+    }
 
 
     function getCurrentContentTheme()
