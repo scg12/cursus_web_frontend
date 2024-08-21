@@ -3,6 +3,7 @@ import { Divider } from 'react-materialize';
 import classes from './FooterContent.module.css';
 import { useContext } from "react";
 import UiContext from '../../../../store/UiContext';
+import AppContext from '../../../../store/AppContext';
 
 import { useTranslation } from "react-i18next";
 import '../../../../translation/i18n'
@@ -11,7 +12,8 @@ import '../../../../translation/i18n'
  
 function FooterContent(props) {
   
-    const currentUiContext = useContext(UiContext);
+    const currentUiContext  = useContext(UiContext);
+    const currentAppContext = useContext(AppContext);
 
      //Cette constante sera lu lors de la configuration de l'utilisateur.
     const selectedTheme = currentUiContext.theme;
@@ -42,6 +44,16 @@ function FooterContent(props) {
         }
     }
 
+    function getAppBottomLogo(version){
+        switch(version){
+            case 'starter': return "images/starterBottomTr.png" ;
+            case 'admin'  : return "images/adminBottomTr.png" ;
+            case 'online' : return "images/onlineBottomTr.png" ;
+            default: return "images/starterBottomTr.png" ;
+        }
+    }
+
+
 
    return (
        
@@ -51,7 +63,7 @@ function FooterContent(props) {
                 </div>
                 
                 <div className={classes.LogoStyle}> 
-                    <img src='images/bottomLogo.png'  alt='AppLogo' className= {classes.logoStyle}></img>
+                    <img src={()=>getAppBottomLogo(currentAppContext.appVersion)} /*'images/bottomLogo.png'*/  alt='AppLogo' className= {classes.logoStyle}></img>
                 </div>
         </div>
     );

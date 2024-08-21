@@ -115,7 +115,7 @@ function AddSequence(props) {
             </div>
 
 
-            <div className={classes.inputRowLeft} style={{marginBottom:'1.3vh', marginTop:'1.3vh'}}> 
+            {/* <div className={classes.inputRowLeft} style={{marginBottom:'1.3vh', marginTop:'1.3vh'}}> 
                 <div className={classes.inputRowLabel}>
                     Trimestre :  
                 </div>
@@ -133,7 +133,7 @@ function AddSequence(props) {
                         })}
                     </select>}
                 </div>
-            </div>
+            </div> */}
 
             <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel}>
@@ -155,7 +155,7 @@ function AddSequence(props) {
                 </div>
             </div>
 
-            <div className={classes.inputRowLeft}> 
+            {/* <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel}>
                     Pourcentage :  
                 </div>
@@ -163,7 +163,7 @@ function AddSequence(props) {
                 <div> 
                     <input id="pourcentage" type="number" className={classes.inputRowControl} style={{width:'3.3vw', height:'1.5rem'}} onChange={handleChange} defaultValue={currentUiContext.formInputs[5]}/> %
                 </div>
-            </div>
+            </div> */}
 
             <div className={classes.inputRowLeft}> 
                 <div className={classes.inputRowLabel}>

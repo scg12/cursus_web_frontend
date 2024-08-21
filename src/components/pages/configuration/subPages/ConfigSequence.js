@@ -293,14 +293,14 @@ function ConfigSequence(props) {
             trimestres = [];   
            
             axiosInstance.post(`create-sequence/`, {
-                    id:seqInfo.id, 
-                    libelle:seqInfo.libelle,
-                    id_trimestre:seqInfo.id_tr,
-                    date_deb:seqInfo.date_deb,
-                    date_fin:seqInfo.date_fin,
-                    is_active:seqInfo.is_active,
-                    numero:0,
-                    id_sousetab: currentAppContext.currentEtab
+                id           : seqInfo.id, 
+                libelle      : seqInfo.libelle,
+                //id_trimestre : seqInfo.id_tr,
+                date_deb     : seqInfo.date_deb,
+                date_fin     : seqInfo.date_fin,
+                is_active    : seqInfo.is_active,
+                numero       : 0,
+                id_sousetab: currentAppContext.currentEtab
             }).then((res)=>{
                 console.log(res.data);
                 res.data.sequences.map((seq)=>{sequences.push(seq)});
