@@ -361,7 +361,8 @@ function GenStudentReport(props) {
         
         axiosInstance.post(`list-sequences/`, {
             id_sousetab: currentAppContext.currentEtab,
-            id_trimestre:""
+            id_trimestre:"",
+            // option: "bulletin_trimetriel"
         }).then((res)=>{                   
             tempTable = [...res.data.sequences];                         
             tempTable.map((seq)=>{
