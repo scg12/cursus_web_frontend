@@ -22,6 +22,7 @@ var typedEvalID       = undefined;
 var typedEvalPourcent = undefined;
 var CURRENT_PERIOD_ID = undefined;
 var LIST_SEQ_IDS      = undefined;
+var LIST_POURCENTAGES     = undefined;
 
 var tabTrimestres     = [];
 var evaluations       = [];
@@ -47,6 +48,7 @@ function ConfigAssocEvalPeriod(props) {
         console.log("valeure", props.defaultMembres);
         listTrimestres();
         listSequences();
+        getPeriodEvals(0);  
     },[]);
 
 
@@ -69,7 +71,7 @@ function ConfigAssocEvalPeriod(props) {
         axiosInstance
         .post(`list-sequences/`,{id_sousetab: currentAppContext.currentEtab,id_trimestre:""}).then((res)=>{
                 console.log(res.data);
-                res.data.sequences.map((seq)=>{evaluations.push({id:seq.id, nomEval:seq.libelle, PourcentEval:0})
+                res.data.sequences.map((seq)=>{evaluations.push({id:seq.id, nomEval:seq.libelle, PourcentEval:seq.pourcentage})
             });          
             
             setOptEvals(evaluations);    
@@ -374,6 +376,7 @@ function ConfigAssocEvalPeriod(props) {
     
     function validEvalPeriodeAssoc(){
         LIST_SEQ_IDS    = []; 
+        LIST_POURCENTAGES    = []; 
         var somPourcent = 0;
 
         var errorDiv         = document.getElementById('errMsgPlaceHolder');
@@ -381,10 +384,10 @@ function ConfigAssocEvalPeriod(props) {
         errorDiv.textContent = '';
 
         listEvals.map((ev)=> {
-            somPourcent = somPourcent + ev.PourcentEval;
+            somPourcent = somPourcent + parseFloat(ev.PourcentEval);
             LIST_SEQ_IDS.push(ev.id);
+            LIST_POURCENTAGES.push(ev.PourcentEval);
         });
-
         if(somPourcent>100 || somPourcent<0){
             //Afficher un message d'erreur
             var errorDiv         = document.getElementById('errMsgPlaceHolder');
@@ -394,11 +397,13 @@ function ConfigAssocEvalPeriod(props) {
             return;
         }
 
-
+        var item = document.getElementById("id_trimestre")
+        CURRENT_PERIOD_ID = item.options[item.selectedIndex].value;
 
         axiosInstance.post(`assoc-sequences-trimestre/`, {
             id_trimestre   : CURRENT_PERIOD_ID, 
             list_Seq_Ids   : LIST_SEQ_IDS.join('_'),
+            list_Pourcentages   : LIST_POURCENTAGES.join('_'),
             id_sousetab    : currentAppContext.currentEtab
         }).then((res)=>{
             console.log(res.data);
@@ -407,6 +412,7 @@ function ConfigAssocEvalPeriod(props) {
             var succesMsg          = t("assoc_success");
             successDiv.className   = classes.formSuccessMsg;
             successDiv.textContent = succesMsg;  
+            alert("DONE...")
             //On met a jour la liste des sequences dispo  
             
         },(err)=>{
@@ -430,7 +436,6 @@ function ConfigAssocEvalPeriod(props) {
         var errorDiv         = document.getElementById('errMsgPlaceHolder');
         errorDiv.className   = null;
         errorDiv.textContent = '';
-
         CURRENT_PERIOD_ID = e.target.value;
         getPeriodEvals(CURRENT_PERIOD_ID);      
     }
@@ -445,7 +450,7 @@ function ConfigAssocEvalPeriod(props) {
         axiosInstance
         .post(`list-sequences/`,{id_sousetab: currentAppContext.currentEtab,id_trimestre:periodId}).then((res)=>{
                 console.log("sequences"+res.data.sequences);
-                res.data.sequences.map((seq)=>{evTab.push({id:seq.id, etat:0, nomEval:seq.libelle, PourcentEval:0/*PourcentEval:seq.pourcentage*/})
+                res.data.sequences.map((seq)=>{evTab.push({id:seq.id, etat:0, nomEval:seq.libelle, PourcentEval:seq.pourcentage})
             });          
             
             evTab.map((ev)=>evIdTab.push(ev.id))
