@@ -222,7 +222,12 @@ function ConfigAssocEvalPeriod(props) {
     }
 
 
-    function addEvalRow(e){       
+    function addEvalRow(e){    
+
+        var errorDiv         = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className   = null;
+        errorDiv.textContent = '';
+
         eval_data = [...listEvals];
 
         var tabEvals = [];
@@ -245,6 +250,10 @@ function ConfigAssocEvalPeriod(props) {
     }
 
     function addEvaluation(e){
+        var errorDiv         = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className   = null;
+        errorDiv.textContent = '';
+
         eval_data =[...listEvals];
 
         if(typedEvalName==undefined || typedEvalName==""){
@@ -299,6 +308,10 @@ function ConfigAssocEvalPeriod(props) {
 
 
     function updateEvaluation(idEval){
+        var errorDiv         = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className   = null;
+        errorDiv.textContent = '';
+
         eval_data = [...listEvals];
         var index = eval_data.findIndex((ev)=>ev.id==idEval);
         var evalToUpdate = eval_data.find((ev)=>ev.id==idEval);
@@ -360,8 +373,28 @@ function ConfigAssocEvalPeriod(props) {
     /************************************ Handlers ************************************/  
     
     function validEvalPeriodeAssoc(){
-        LIST_SEQ_IDS = [];
-        listEvals.map((ev)=> LIST_SEQ_IDS.push(ev.id));
+        LIST_SEQ_IDS    = []; 
+        var somPourcent = 0;
+
+        var errorDiv         = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className   = null;
+        errorDiv.textContent = '';
+
+        listEvals.map((ev)=> {
+            somPourcent = somPourcent + ev.PourcentEval;
+            LIST_SEQ_IDS.push(ev.id);
+        });
+
+        if(somPourcent>100 || somPourcent<0){
+            //Afficher un message d'erreur
+            var errorDiv         = document.getElementById('errMsgPlaceHolder');
+            var errorMsg         = t("pourcent_error");
+            errorDiv.className   = classes.errorMsg;
+            errorDiv.textContent = errorMsg;    
+            return;
+        }
+
+
 
         axiosInstance.post(`assoc-sequences-trimestre/`, {
             id_trimestre   : CURRENT_PERIOD_ID, 
@@ -388,9 +421,9 @@ function ConfigAssocEvalPeriod(props) {
     }
      
  
-    function cancelHandler(){
-        props.cancelHandler();
-    }
+    // function cancelHandler(){
+    //     props.cancelHandler();
+    // }
    
 
     function periodeEvalChanged(e){
@@ -432,6 +465,10 @@ function ConfigAssocEvalPeriod(props) {
     
 
    function cancelHandler(e){
+        var errorDiv         = document.getElementById('errMsgPlaceHolder');
+        errorDiv.className   = null;
+        errorDiv.textContent = '';
+        
         setOptEvals(evaluations);
         setListEvals([{id:0, nomEval:'', PourcentEval:0,  etat:-1}]);        
    }
